@@ -50,6 +50,8 @@ c Anzahl der Randelemente
 
 c Zeiger auf Werte der Randelemente
         integer         * 4     rnr(relmax)
+c Zeiger auf die Nachbarn 	
+	integer         * 4     nachbar(elmax,0:selmax)
 
 c switch/number fictitious sink node, switch boundary values
         logical         * 4     lsink
@@ -73,4 +75,5 @@ c.....................................................................
      1                  rnr,   
      1                  lsink,
      1                  nsink,
-     1                  lrandb2
+     1                  lrandb2,
+     1			nachbar
