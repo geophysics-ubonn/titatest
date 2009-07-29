@@ -445,10 +445,10 @@ c                end if
 cak
 
 c Rauhigkeitsmatrix belegen
-               IF (ltri) THEN
-                  CALL bsmatmtri
-               ELSE
+               IF (ltri==0) THEN
                   call bsmatm()
+               ELSE IF (ltri==1) THEN
+                  CALL bsmatmtri
                END IF 
 c     ak
 
@@ -591,10 +591,10 @@ c UPDATE anbringen
         call update(dpar2,cgres2)
 
 c Leitfaehigkeiten belegen und Roughness bestimmen
-        IF (ltri) THEN
-           CALL broughtri
-        ELSE
+        IF (ltri==0) THEN
            call brough()
+        ELSE IF (ltri==1) THEN
+           CALL broughtri
         END IF
 
 c Ggf. Referenzleitfaehigkeit bestimmen

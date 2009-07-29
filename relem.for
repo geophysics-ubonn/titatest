@@ -102,7 +102,7 @@ c einlesen
 
 c Knotennummern der Elemente einlesen
         idum = 0
-
+        iflnr= 0
         do i=1,typanz
             do j=1,nelanz(i)
                 read(kanal,*,end=1001,err=1000)

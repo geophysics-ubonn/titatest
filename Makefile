@@ -30,13 +30,15 @@ linux:		all
 # default targets
 
 crt:		*.for
-		$(MV) fem.for cr.fem
+		$(CP) fem.for cr.fem
+		$(RM) fem.for
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for
 		$(CP) CRTomo $(WPATH)
 		$(MV) cr.fem fem.for
 
 crm:		*.for
-		$(MV) inv.for cr.inv
+		$(CP) inv.for cr.inv
+		$(RM) inv.for
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for
 		$(CP) CRMod $(WPATH)
 		$(MV) cr.inv inv.for

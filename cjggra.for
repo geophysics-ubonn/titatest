@@ -72,10 +72,10 @@ cak                beta = beta*dcmplx(-alpha/dr1)
                 pvec(j) = rvec(j) + beta*pvec(j)
             end do
             
-            IF (ltri) THEN
-               CALL bptri(bvec,pvec)
-            ELSE
-               call bp(bvec,pvec)
+            IF (ltri==0) THEN
+               CALL bp(bvec,pvec)
+            ELSE IF (ltri==1) THEN
+               call bptri(bvec,pvec)
             END IF
 
             dr1 = 0d0

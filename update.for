@@ -150,7 +150,7 @@ c     Skalierungsfaktoren bestimmen
 c     triang< 
             if (ltri==0) then
                dum    = dum + lam*smatm(j,1)
-            else if (lsmat==1) then
+            else if (ltri==1) then
                dum    = dum + lam*smatm(j,0)
             end if
 c     triang> 

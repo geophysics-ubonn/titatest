@@ -58,10 +58,10 @@
         DO i=1,manz
             dum = 0d0
             if ((.not.lfcon).OR.(.not.lme)) then
-            DO j=1,nachbar(i,0)
-            IF (nachbar(i,j)/=0) dum = dum + pvec(nachbar(i,j)) * 
-     1                       smatm(i,j)*fak(nachbar(i,j))
-            END DO
+               DO j=1,nachbar(i,0)
+                  IF (nachbar(i,j)/=0) dum=dum+pvec(nachbar(i,j))* 
+     1                 smatm(i,j)*fak(nachbar(i,j))
+               END DO
             else
             end if
             if (lfregu.OR.lfregud) then
@@ -96,12 +96,9 @@
      1                           wmatd(i)*dble(wdfak(i))*ap(i)
                 end do
             end if
-            if (.not.lfregud) then
+
             bvec(j) = dum + lam*bvec(j)
-            else 
-            bvec(j) = cdum + dcmplx(lam)*bvec(j)+pvec(j)*(
-     1   1/(fvel**2 * fincr**2))*fak(j)
-            end if
+
             bvec(j) = bvec(j)*fak(j)
         end do
 

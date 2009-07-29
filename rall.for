@@ -135,6 +135,7 @@ cak        lpol   = .false.
         lsr    = .false.
         lpol   = .false.
         lindiv = .false.
+        ltri   = 1
 
 c Ggf. Fehlermeldungen
         if (nx.lt.2.or.nz.lt.2) then
@@ -280,7 +281,8 @@ c Dateien
 c Elementeinteilung einlesen
         call relem(kanal,delem)
         if (errnr.ne.0) goto 999
-
+        
+        IF (ltri==1) CALL bnachbar
 c Modelleinteilung gemaess Elementeinteilung belegen
         manz = nx*nz
 

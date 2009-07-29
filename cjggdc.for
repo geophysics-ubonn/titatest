@@ -70,10 +70,10 @@ c.....................................................................
                 pvec(j) = rvec(j) + beta*pvec(j)
             end do
             
-            IF (ltri) THEN
-               CALL bpdctri(bvecdc,pvec)
-            ELSE
-               call bpdc(bvecdc,pvec)
+            IF (ltri==0) THEN
+               CALL bpdc(bvecdc,pvec)
+            ELSE IF (ltri==1) THEN
+               call bpdctri(bvecdc,pvec)
             END IF
 
             dr1 = 0d0

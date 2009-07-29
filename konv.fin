@@ -115,7 +115,10 @@ c Schalter ob positive Phasen auf Null korrigiert werden sollen
         
 c Schalter ob "final phase improvement" durchgefuehrt werden soll
         logical         * 4     lfphai
-
+c	triang>
+c Schalter für die Triangularisierungsinversion
+        integer         * 4	ltri
+c	triang<	
 c.....................................................................
 
         common/ckonv/   lam,
