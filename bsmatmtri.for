@@ -1,4 +1,4 @@
-      subroutine bsmatm3()      !tri
+      subroutine bsmatmtri()      !tri
       
 ! Unterprogramm belegt die Rauhigkeitsmatrix.
 

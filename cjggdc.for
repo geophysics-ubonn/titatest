@@ -69,8 +69,12 @@ c.....................................................................
             do j=1,manz
                 pvec(j) = rvec(j) + beta*pvec(j)
             end do
-
-            call bpdc(bvecdc,pvec)
+            
+            IF (ltri) THEN
+               CALL bpdctri(bvecdc,pvec)
+            ELSE
+               call bpdc(bvecdc,pvec)
+            END IF
 
             dr1 = 0d0
             do j=1,manz

@@ -1,238 +1,267 @@
-        subroutine update(dpar2,cgres2)
+      subroutine update(dpar2,cgres2)
 
-c Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
-c mittels 'Smoothness Least Squares Method' und konjugierten
-c Gradienten.
+c     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
+c     mittels 'Smoothness Least Squares Method' und konjugierten
+c     Gradienten.
 
-c Andreas Kemna                                            01-Mar-1996
-c                                       Letzte Aenderung   15-Jan-2001
-       
+c     Andreas Kemna                                            01-Mar-1996
+c     Letzte Aenderung   15-Jan-2001
+      
 c.....................................................................
 
-        USE alloci
+      USE alloci
 
-        INCLUDE 'parmax.fin'
-        INCLUDE 'elem.fin'
-        INCLUDE 'sigma.fin'
-        INCLUDE 'dat.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'fem.fin'
-        INCLUDE 'inv.fin'
-        INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c EIN-/AUSGABEPARAMETER:
-
-c Felder zum Zwischenspeichern
-        complex         * 16    dpar2(mmax)
-        real            * 4     cgres2(mmax+1)
+      INCLUDE 'parmax.fin'
+      INCLUDE 'elem.fin'
+      INCLUDE 'sigma.fin'
+      INCLUDE 'dat.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'fem.fin'
+      INCLUDE 'inv.fin'
+      INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c PROGRAMMINTERNE PARAMETER:
+c     EIN-/AUSGABEPARAMETER:
 
-c Hilfsvariablen
-        complex         * 16    cdum
-        real            * 8     dum
-
-c Hilfsfelder
-        logical         * 4     lfeld(mmax)
-        complex         * 16    bvec(mmax)
-
-c Indexvariablen
-        integer         * 4     i,j,k
+c     Felder zum Zwischenspeichern
+      complex         * 16    dpar2(mmax)
+      real            * 4     cgres2(mmax+1)
 
 c.....................................................................
 
-c Parametervektor belegen
-        do j=1,manz
-            lfeld(j) = .false.
-        end do
+c     PROGRAMMINTERNE PARAMETER:
 
-        do k=1,elanz
-            j = mnr(k)
+c     Hilfsvariablen
+      complex         * 16    cdum
+      real            * 8     dum
 
-            if (.not.lfeld(j)) then
-                lfeld(j) = .true.
-                par(j)   = cdlog(sigma(k))
-            end if
-        end do
+c     Hilfsfelder
+      logical         * 4     lfeld(mmax)
+      complex         * 16    bvec(mmax)
 
-        if (.not.llam) then
+c     Indexvariablen
+      integer         * 4     i,j,k
 
-c Felder speichern
-            do j=1,manz
-                dpar2(j) = dpar(j)
-            end do
+c.....................................................................
 
-            i = int(cgres(1))+1
-            do k=1,i
-                cgres2(k) = cgres(k)
-            end do
+c     Parametervektor belegen
+      do j=1,manz
+         lfeld(j) = .false.
+      end do
 
-c Smoothnessvektor berechnen
+      do k=1,elanz
+         j = mnr(k)
+
+         if (.not.lfeld(j)) then
+            lfeld(j) = .true.
+            par(j)   = cdlog(sigma(k))
+         end if
+      end do
+
+      if (.not.llam) then
+
+c     Felder speichern
+         dpar2 = dpar
+
+         i = int(cgres(1))+1
+         cgres2(1:i) = cgres(1:i)
+
+c     Smoothnessvektor berechnen
+c     triang>
+         if (ltri==0) then
+c     triang<
             do i=1,manz
-                cdum = dcmplx(0d0)
+               cdum = dcmplx(0d0)
+c     diff+<
+               if (.not.ldiff) then
+c     diff+>
+                  if (i.gt.1)
+     1                 cdum = dcmplx(smatm(i-1,2))*par(i-1)
+                  if (i.lt.manz)
+     1                 cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
+                  if (i.gt.nx)
+     1                 cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
+                  if (i.lt.manz-nx+1)
+     1                 cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
 
-cdiff+<
-              if (.not.ldiff) then
-cdiff+>
-                if (i.gt.1)
-     1              cdum = dcmplx(smatm(i-1,2))*par(i-1)
-                if (i.lt.manz)
-     1              cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
-                if (i.gt.nx)
-     1              cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
-                if (i.lt.manz-nx+1)
-     1              cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
+                  bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
+c     diff+<
+               else
+                  if (i.gt.1)
+     1                 cdum = dcmplx(smatm(i-1,2))*(par(i-1)-m0(i-1))
+                  if (i.lt.manz)
+     1                 cdum=cdum+dcmplx(smatm(i,2))*(par(i+1)-m0(i+1))
+                  if (i.gt.nx)
+     1                 cdum = cdum + dcmplx(smatm(i-nx,3))*
+     1                 (par(i-nx)-m0(i-nx))
+                  if (i.lt.manz-nx+1)
+     1                 cdum=cdum+dcmplx(smatm(i,3))*(par(i+nx)-m0(i+nx))
 
-                bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
-cdiff+<
-              else
-                if (i.gt.1)
-     1            cdum = dcmplx(smatm(i-1,2))*(par(i-1)-m0(i-1))
-                if (i.lt.manz)
-     1            cdum = cdum + dcmplx(smatm(i,2))*(par(i+1)-m0(i+1))
-                if (i.gt.nx)
-     1            cdum = cdum + dcmplx(smatm(i-nx,3))*
-     1                                             (par(i-nx)-m0(i-nx))
-                if (i.lt.manz-nx+1)
-     1            cdum = cdum + dcmplx(smatm(i,3))*(par(i+nx)-m0(i+nx))
+                  bvec(i) = cdum + dcmplx(smatm(i,1))*(par(i)-m0(i))
+               end if
+c     diff+>
+c     triang>
+            else if (ltri==1) then
+               do i=1,manz
+                  cdum = dcmplx(0d0)
+                  DO ij=1,nachbar(i,0)
+                     IF (nachbar(i,ij)/=0) then
+                        if (.not.ldiff) then
+                           cdum = cdum + DCMPLX(smatm(i,ij))*
+     1                          par(nachbar(i,ij))
+                        else
+                           cdum = cdum + DCMPLX(smatm(i,ij))* 
+     1                          (par(nachbar(i,ij))-m0(nachbar(i,ij)))
+                        end if
+                     end if
+                  END DO 
+                  if ((.not.ldiff).and.(.not.lmdiff)) then
+                     bvec(i) = cdum + DCMPLX(smatm(i,0))*par(i)
+                  else
+                     bvec(i) = cdum + DCMPLX(smatm(i,0))*(par(i)-m0(i))
+                  end if
+               end do
+            end if
+c     triang<
+         end do
 
-                bvec(i) = cdum + dcmplx(smatm(i,1))*(par(i)-m0(i))
-              end if
-cdiff+>
-            end do
+c     Skalierungsfaktoren bestimmen
+         do j=1,manz
+            dum = 0d0
 
-c Skalierungsfaktoren bestimmen
-            do j=1,manz
-                dum = 0d0
-
-                if (ldc) then
-                    do i=1,nanz
-                        dum = dum + sensdc(i,j)*sensdc(i,j)*
-     1                              wmatd(i)*dble(wdfak(i))
-                    end do
-                else if (lip) then
-                    do i=1,nanz
-                        dum = dum + dble(sens(i,j))*dble(sens(i,j))*
-     1                              wmatd(i)*dble(wdfak(i))
-                    end do
-                else
-                    do i=1,nanz
-                        dum = dum + dble(dconjg(sens(i,j))*sens(i,j))*
-     1                              wmatd(i)*dble(wdfak(i))
-                    end do
-                end if
-
-                dum    = dum + lam*smatm(j,1)
-                fak(j) = 1d0/dsqrt(dum)
-            end do
-
-c Konstantenvektor berechen und skalieren
-            do j=1,manz
-                cdum = dcmplx(0d0)
-
-cdiff+<
-              if (.not.ldiff) then
-cdiff+>
-                if (ldc) then
-                    do i=1,nanz
-                        cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i))
-                    end do
-                else if (lip) then
-                    do i=1,nanz
-                        cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i))
-                    end do
-                else
-                    do i=1,nanz
-                        cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i))
-                    end do
-                end if
-cdiff+<
-              else
-                if (ldc) then
-                    do i=1,nanz
-                        cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i)-
-     1                                                 (d0(i)-fm0(i)))
-                    end do
-                else if (lip) then
-                    do i=1,nanz
-                        cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i)-
-     1                                                 (d0(i)-fm0(i)))
-                    end do
-                else
-                    do i=1,nanz
-                        cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)*
-     1                                dble(wdfak(i)))*(dat(i)-sigmaa(i)-
-     1                                                 (d0(i)-fm0(i)))
-                    end do
-                end if
-              end if
-cdiff+>
-
-                bvec(j) = cdum - dcmplx(lam)*bvec(j)
-                bvec(j) = bvec(j)*dcmplx(fak(j))
-            end do
-
-c Modellverbesserung mittels konjugierter Gradienten bestimmen
-            if (ldc.or.lip) then
-                call cjggdc(bvec)
+            if (ldc) then
+               do i=1,nanz
+                  dum = dum + sensdc(i,j)*sensdc(i,j)*
+     1                 wmatd(i)*dble(wdfak(i))
+               end do
+            else if (lip) then
+               do i=1,nanz
+                  dum = dum + dble(sens(i,j))*dble(sens(i,j))*
+     1                 wmatd(i)*dble(wdfak(i))
+               end do
             else
-                call cjggra(bvec)
+               do i=1,nanz
+                  dum = dum + dble(dconjg(sens(i,j))*sens(i,j))*
+     1                 wmatd(i)*dble(wdfak(i))
+               end do
             end if
-
-c Ggf. Verbesserung umspeichern
-            if (lip) then
-                do j=1,manz
-                    dpar(j) = dcmplx(0d0,dble(dpar(j)))
-                end do
+            
+c     triang< 
+            if (ltri==0) then
+               dum    = dum + lam*smatm(j,1)
+            else if (lsmat==1) then
+               dum    = dum + lam*smatm(j,0)
             end if
+c     triang> 
 
-c Verbesserung skalieren
+
+            dum    = dum + lam*smatm(j,1)
+            fak(j) = 1d0/dsqrt(dum)
+         end do
+
+c     Konstantenvektor berechen und skalieren
+         do j=1,manz
+            cdum = dcmplx(0d0)
+
+c     diff+<
+            if (.not.ldiff) then
+c     diff+>
+               if (ldc) then
+                  do i=1,nanz
+                     cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i))
+                  end do
+               else if (lip) then
+                  do i=1,nanz
+                     cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i))
+                  end do
+               else
+                  do i=1,nanz
+                     cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i))
+                  end do
+               end if
+c     diff+<
+            else
+               if (ldc) then
+                  do i=1,nanz
+                     cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i)-
+     1                    (d0(i)-fm0(i)))
+                  end do
+               else if (lip) then
+                  do i=1,nanz
+                     cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i)-
+     1                    (d0(i)-fm0(i)))
+                  end do
+               else
+                  do i=1,nanz
+                     cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)*
+     1                    dble(wdfak(i)))*(dat(i)-sigmaa(i)-
+     1                    (d0(i)-fm0(i)))
+                  end do
+               end if
+            end if
+c     diff+>
+            bvec(j) = cdum - dcmplx(lam)*bvec(j)
+            bvec(j) = bvec(j)*dcmplx(fak(j))
+         end do
+
+c     Modellverbesserung mittels konjugierter Gradienten bestimmen
+         if (ldc.or.lip) then
+            call cjggdc(bvec)
+         else
+            call cjggra(bvec)
+         end if
+
+c     Ggf. Verbesserung umspeichern
+         if (lip) then
             do j=1,manz
-                dpar(j) = dpar(j)*dcmplx(fak(j))
+               dpar(j) = dcmplx(0d0,dble(dpar(j)))
             end do
-        else
+         end if
 
-c Felder zuruecksetzen
-            do j=1,manz
-                dpar(j) = dpar2(j)
-            end do
+c     Verbesserung skalieren
+         do j=1,manz
+            dpar(j) = dpar(j)*dcmplx(fak(j))
+         end do
+      else
 
-            i = int(cgres2(1))+1
-            do k=1,i
-                cgres(k) = cgres2(k)
-            end do
-        end if
+c     Felder zuruecksetzen
+         do j=1,manz
+            dpar(j) = dpar2(j)
+         end do
 
-        do j=1,manz
-        
-c Verbesserung anbringen        
-            par(j) = par(j) + dpar(j)*dcmplx(step)
+         i = int(cgres2(1))+1
+         do k=1,i
+            cgres(k) = cgres2(k)
+         end do
+      end if
 
-c Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
-            if (lphi0.and.dimag(par(j)).lt.0d0)
-     1          par(j) = dcmplx(dble(par(j)))
-cakc Ggf. (Leitfaehigkeits-)Phasen < 1 mrad korrigieren
-cak            if (lphi0.and.dimag(par(j)).lt.1d-3)
-cak     1          par(j) = dcmplx(dble(par(j)),1d-3)
-        end do
+      do j=1,manz
+         
+c     Verbesserung anbringen        
+         par(j) = par(j) + dpar(j)*dcmplx(step)
 
-c Betrag des Verbesserungsvektors bestimmen
-        bdpar = 0d0
+c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
+         if (lphi0.and.dimag(par(j)).lt.0d0)
+     1        par(j) = dcmplx(dble(par(j)))
+c     akc Ggf. (Leitfaehigkeits-)Phasen < 1 mrad korrigieren
+c     ak            if (lphi0.and.dimag(par(j)).lt.1d-3)
+c     ak     1          par(j) = dcmplx(dble(par(j)),1d-3)
+      end do
 
-        do j=1,manz
-            bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
-        end do
+c     Betrag des Verbesserungsvektors bestimmen
+      bdpar = 0d0
 
-        bdpar = dsqrt(bdpar/dble(manz))
+      do j=1,manz
+         bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
+      end do
 
-        return
-        end
+      bdpar = dsqrt(bdpar/dble(manz))
+
+      return
+      end

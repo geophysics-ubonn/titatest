@@ -445,8 +445,13 @@ c                end if
 cak
 
 c Rauhigkeitsmatrix belegen
-                call bsmatm()
-cak
+               IF (ltri) THEN
+                  CALL bsmatmtri
+               ELSE
+                  call bsmatm()
+               END IF 
+c     ak
+
 c                open(21,file='smatm.dat',
 c     1                  access='sequential',form='unformatted')
 c                do j=1,mmax
@@ -586,7 +591,11 @@ c UPDATE anbringen
         call update(dpar2,cgres2)
 
 c Leitfaehigkeiten belegen und Roughness bestimmen
-        call brough()
+        IF (ltri) THEN
+           CALL broughtri
+        ELSE
+           call brough()
+        END IF
 
 c Ggf. Referenzleitfaehigkeit bestimmen
         if (lsr) call refsig()
