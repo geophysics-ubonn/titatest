@@ -1,0 +1,72 @@
+c 'dat.fin'
+
+c Andreas Kemna                                            07-Oct-1993
+c                                       Letzte Aenderung   16-Jul-2007
+  
+c.....................................................................
+
+c COMMON
+
+c Anzahl der Messwerte
+        integer         * 4     nanz
+
+c Nummern der Stromelektroden
+        integer         * 4     strnr(nmax)
+
+c Stromwerte
+        real            * 8     strom(nmax)
+
+c Nummern der Spannungselektroden
+        integer         * 4     vnr(nmax)
+
+c Spannungswerte
+        complex         * 16    volt(nmax)
+
+c Scheinbare Leitfaehigkeiten
+        complex         * 16    sigmaa(nmax)
+
+c Konfigurationsfaktoren
+        real            * 8     kfak(nmax)
+
+c Wichtungsvektor der Phasen
+        real            * 8     wmatdp(nmax)
+
+c parameters of resistance error model
+        real            * 8     stabw0,stabm0
+
+c parameters of phase error model
+        real            * 8     stabp0,stabpA1,stabpB,stabpA2
+
+c Schalter ob 'individual error' (.true.) oder 'uniform weighting'
+c (.false.)
+        logical         * 4     lindiv
+
+c Schalter ob ratio-dataset (.true.)
+        logical         * 4     lratio
+
+c Schalter ob Polaritaeten gecheckt werden sollen (.true.)
+        logical         * 4     lpol
+        
+c Anzahl der nicht beruecksichtigten Messwerte
+        integer         * 4     npol
+
+c.....................................................................
+
+        common/cdat/    volt,
+     1                  sigmaa,
+     1                  kfak,
+     1                  strom,
+     1                  wmatdp,
+     1                  stabw0,
+     1                  stabm0,
+     1                  stabp0,
+     1                  stabpA1,
+     1                  stabpB,
+     1                  stabpA2,
+     1                  strnr,
+     1                  vnr,
+     1                  nanz,
+     1                  npol,
+     1                  lindiv,
+     1                  lratio,
+     1                  lpol

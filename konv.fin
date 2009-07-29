@@ -1,0 +1,164 @@
+c 'konv.fin'
+
+c Andreas Kemna                                            01-Mar-1995
+c                                       Letzte Aenderung   04-Jan-2001
+              
+c.....................................................................
+
+c COMMON
+
+c Regularisierungsparameter
+        real            * 8     lam
+
+c Maximaler Regularisierungsparameter
+        real            * 8     lammax
+
+c Schrittweitenfaktor, maximale Anzahl der Schritte
+        real            * 8     dlam,dlalt
+        integer         * 4     nlam
+
+c Parameter "a", "initial/final step factor"
+        real            * 8     alam
+        real            * 8     fstart
+        real            * 8     fstop
+
+c Step-length der Modellverbesserung
+        real            * 8     step
+
+c Step-length der vorherigen Iteration
+        real            * 8     stpalt
+
+c Mindest-step-length
+        real            * 8     stpmin
+
+c Schalter zur Steuerung der Regularisierung und der step-length-Wahl
+        logical         * 4     llam,
+     1                          lstep,
+     1                          ldlami,
+     1                          ldlamf
+
+c Schalter ob volle step-length angebracht werden soll
+        logical         * 4     lfstep
+
+c Daten-RMS
+        real            * 8     nrmsd
+
+c Daten-RMS der vorherigen Iteration
+        real            * 8     rmsalt
+
+c Daten-RMS des vorherigen "Regularisierungsschritts"
+        real            * 8     rmsreg
+
+c Daten-Misfit insgesamt (in der objective function),
+c Misfit der Betraege, Misfit der Phasen
+        real            * 8     rmssum,
+     1                          betrms,
+     1                          pharms
+
+c Roughness
+        real            * 8     rough
+
+c Minimaler Daten-RMS
+        real            * 8     nrmsdm
+
+c Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
+c bzw. zwischen tatsaechlichem und minimalem Daten-RMS
+        real            * 8     mqrms
+
+c Minimale "L1-ratio" (Grenze der "robust inversion")
+        real            * 8     l1min
+
+c "L1-ratio"
+        real            * 8     l1rat
+
+c Betrag des Verbesserungsvektors
+        real            * 8     bdpar
+
+c CG-Epsilon
+        real            * 8     eps
+
+c CG-Residuen
+        real            * 4     cgres(mmax+1)
+
+c Felddimensionen in x- und z-Richtung
+        integer         * 4     nx,nz
+
+c Maximale Anzahl der Iterationen
+        integer         * 4     itmax
+
+c Iterationsindex
+        integer         * 4     it
+
+c Index des Regularisierungsschritts
+        integer         * 4     itr
+
+c Maximale Anzahl an CG-Steps
+        integer         * 4     ncgmax
+
+c CG-Index
+        integer         * 4     ncg
+
+c Parameter zur Glaettung in x- und z-Richtung
+c (=0 bedeutet keine Glaettung in der jeweiligen Richtung)
+        real            * 8     alfx,alfz
+
+c Schalter ob "robust inversion" durchgefuehrt werden soll
+        logical         * 4     lrobust
+
+cdiff+<
+c Schalter ob "difference inversion" durchgefuehrt werden soll
+        logical         * 4     ldiff
+cdiff+>
+
+c Schalter ob positive Phasen auf Null korrigiert werden sollen
+        logical         * 4     lphi0
+        
+c Schalter ob "final phase improvement" durchgefuehrt werden soll
+        logical         * 4     lfphai
+
+c.....................................................................
+
+        common/ckonv/   lam,
+     1                  lammax,
+     1                  dlam,
+     1                  dlalt,
+     1                  alam,
+     1                  fstart,
+     1                  fstop,
+     1                  step,
+     1                  stpalt,
+     1                  stpmin,
+     1                  nrmsd,
+     1                  rmsalt,
+     1                  rmsreg,
+     1                  rmssum,
+     1                  betrms,
+     1                  pharms,
+     1                  rough,
+     1                  nrmsdm,
+     1                  mqrms,
+     1                  bdpar,
+     1                  eps,
+     1                  alfx,
+     1                  alfz,
+     1                  l1min,
+     1                  l1rat,
+     1                  cgres,
+     1                  nx,
+     1                  nz,
+     1                  itmax,
+     1                  it,
+     1                  itr,
+     1                  ncgmax,
+     1                  ncg,
+     1                  nlam,
+     1                  llam,
+     1                  ldlami,
+     1                  ldlamf,
+     1                  lstep,
+     1                  lrobust,
+cdiff+<
+     1                  ldiff,
+cdiff+>
+     1                  lphi0,
+     1                  lfphai

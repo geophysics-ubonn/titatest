@@ -1,0 +1,34 @@
+c 'waven.fin'
+
+c Andreas Kemna                                            07-Oct-1993
+c                                       Letzte Aenderung   07-Nov-1997
+
+c.....................................................................
+
+c COMMON
+
+c Anzahl der Wellenzahlwerte
+        integer         * 4     kwnanz
+
+c Schalter steuert Art der Ruecktransformation
+c ( = 0 : keine Trafo (2D Fall),
+c   = 1 : Gauss/Laguerre-Integration )
+        integer         * 4     swrtr
+
+c Wellenzahlwerte
+        real            * 8     kwn(kwnmax)
+
+c Wichtungsfaktoren fuer Ruecktransformation
+        real            * 8     kwnwi(kwnmax)
+
+c Fuer Ruecktransformation relevanter Abstandsbereich
+        real            * 8     amin,amax
+
+c.....................................................................
+
+        common/cwaven/  kwn,
+     1                  kwnwi,
+     1                  amin,
+     1                  amax,
+     1                  kwnanz,
+     1                  swrtr

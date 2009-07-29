@@ -1,0 +1,21 @@
+c 'path.fin'
+
+c Andreas Kemna                                            25-Jun-1996
+c                                       Letzte Aenderung   24-Oct-1996
+
+c.....................................................................
+
+c (Back-) Slash
+        character       * 1     slash
+
+c RAM-Disk-Pfad
+        character       * 60    ramd
+
+c Laenge des RAM-Disk-Pfades
+        integer         * 4     lnramd
+
+c.....................................................................
+                  
+        common/cpath/   ramd,
+     1                  lnramd,
+     1                  slash

@@ -1,0 +1,40 @@
+c 'randb.fin'
+
+c Andreas Kemna                                            03-May-1993
+c                                       Letzte Aenderung   15-Jul-2007
+
+c.....................................................................
+
+c COMMON
+
+c Anzahl der vorgegebenen Potentialwerte (Dirichletsche Randbedingung)
+        integer         * 4     rwdanz
+
+c Knotennummern der vorgegebenen Potentialwerte
+        integer         * 4     rwdnr(rwdmax)
+
+c Randwerte (Dirichletsche Randbedingung)
+        real            * 8     rwddc(rwdmax)
+        complex         * 16    rwd(rwdmax)
+
+c Zeiger ab wann Potentialwerte automatisch belegt werden sollen
+        integer         * 4     rwdbnr
+
+c Anzahl der Randwerte (Neumannsche Randbedingung)
+        integer         * 4     rwnanz
+
+c Randwerte (Neumannsche Randbedingung)
+c (fuer 'beta' belegt mit den Widerstandswerten der Randelemente)
+        real            * 8     rwndc(relmax)
+        complex         * 16    rwn(relmax)
+
+c.....................................................................
+
+        common/crandb/  rwd,
+     1                  rwn,
+     1                  rwddc,
+     1                  rwndc,
+     1                  rwdanz,
+     1                  rwdnr,
+     1                  rwdbnr,
+     1                  rwnanz

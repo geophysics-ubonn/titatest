@@ -1,0 +1,27 @@
+c 'err.fin'
+
+c Andreas Kemna                                            06-Feb-1993
+c                                       Letzte Aenderung   24-Oct-1996
+                    
+c.....................................................................
+
+c COMMON
+
+c Fehlernummer
+        integer         * 4     errnr
+
+c Fehlerart
+c 0 : GKS - nicht aktiv, Programm nicht verlassen
+c 1 : GKS - nicht aktiv, Programm verlassen
+c 2 : GKS - aktiv      , Programm nicht verlassen
+c 3 : GKS - aktiv      , Programm verlassen und GKS schlieáen
+        integer         * 4     errflag
+
+c Fehlertext
+        character       * 80    fetxt
+
+c.....................................................................
+
+        common/cerr/    errnr,
+     1                  errflag,
+     1                  fetxt
