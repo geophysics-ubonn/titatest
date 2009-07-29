@@ -33,7 +33,8 @@ c Rauhigkeitsmatrix C der Modelleinteilung
 c ( C = alfx*Wx^t*Wx + alfz*Wz^t*Wz, Hauptdiagonale in smatm(i,1),
 c                              erste Nebendiagonale in smatm(i,2),
 c                              nx-te Nebendiagonale in smatm(i,3) )
-        real            * 8     smatm(mmax,3)
+c        real            * 8     smatm(mmax,3)
+        real            * 8     smatm(mmax,0:selmax)
 
 c Schalter ob reine Phaseninversion durchgefuehrt werden soll
         logical         * 4     lip
