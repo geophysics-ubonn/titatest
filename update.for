@@ -41,7 +41,7 @@ c     Hilfsfelder
       complex         * 16    bvec(mmax)
 
 c     Indexvariablen
-      integer         * 4     i,j,k
+      integer         * 4     i,j,k,ij,in
 
 c.....................................................................
 
@@ -76,64 +76,66 @@ c     triang<
 c     diff+<
                if (.not.ldiff) then
 c     diff+>
-                  if (i.gt.1)
-     1                 cdum = dcmplx(smatm(i-1,2))*par(i-1)
-                  if (i.lt.manz)
-     1                 cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
-                  if (i.gt.nx)
-     1                 cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
-                  if (i.lt.manz-nx+1)
-     1                 cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
-
+                  if (i.gt.1) cdum =
+     1                 dcmplx(smatm(i-1,2))*par(i-1)
+                  if (i.lt.manz) cdum = cdum +
+     1                 dcmplx(smatm(i,2))*par(i+1)
+                  if (i.gt.nx) cdum = cdum +
+     1                 dcmplx(smatm(i-nx,3))*par(i-nx)
+                  if (i.lt.manz-nx+1) cdum = cdum +
+     1                 dcmplx(smatm(i,3))*par(i+nx)
+                  
                   bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
 c     diff+<
                else
-                  if (i.gt.1)
-     1                 cdum = dcmplx(smatm(i-1,2))*(par(i-1)-m0(i-1))
-                  if (i.lt.manz)
-     1                 cdum=cdum+dcmplx(smatm(i,2))*(par(i+1)-m0(i+1))
-                  if (i.gt.nx)
-     1                 cdum = cdum + dcmplx(smatm(i-nx,3))*
-     1                 (par(i-nx)-m0(i-nx))
-                  if (i.lt.manz-nx+1)
-     1                 cdum=cdum+dcmplx(smatm(i,3))*(par(i+nx)-m0(i+nx))
-
-                  bvec(i) = cdum + dcmplx(smatm(i,1))*(par(i)-m0(i))
+                  if (i.gt.1) cdum =
+     1                 dcmplx(smatm(i-1,2))*(par(i-1)-m0(i-1))
+                  if (i.lt.manz) cdum = cdum +
+     1                 dcmplx(smatm(i,2))*(par(i+1)-m0(i+1))
+                  if (i.gt.nx) cdum = cdum +
+     1                 dcmplx(smatm(i-nx,3))*(par(i-nx)-m0(i-nx))
+                  if (i.lt.manz-nx+1) cdum = cdum +
+     1                 dcmplx(smatm(i,3))*(par(i+nx)-m0(i+nx))
+                  
+                  bvec(i)=cdum+dcmplx(smatm(i,1))*(par(i)-m0(i))
                end if
 c     diff+>
+            end do
 c     triang>
-            else if (ltri==1) then
-               do i=1,manz
-                  cdum = dcmplx(0d0)
-                  DO ij=1,nachbar(i,0)
-                     IF (nachbar(i,ij)/=0) then
-                        if (.not.ldiff) then
-                           cdum = cdum + DCMPLX(smatm(i,ij))*
-     1                          par(nachbar(i,ij))
-                        else
-                           cdum = cdum + DCMPLX(smatm(i,ij))* 
-     1                          (par(nachbar(i,ij))-m0(nachbar(i,ij)))
-                        end if
+         else if (ltri==1) then
+            do i=1,manz
+               cdum = dcmplx(0d0)
+               DO ij=1,nachbar(i,0)
+                  in=nachbar(i,ij)
+                  IF (in/=0) then
+                     if (.not.ldiff) then
+                        cdum = cdum + DCMPLX(smatm(i,ij))*
+     1                       par(in)
+                     else
+                        cdum = cdum + DCMPLX(smatm(i,ij))* 
+     1                       (par(in)-m0(in))
                      end if
-                  END DO 
-                  if ((.not.ldiff).and.(.not.lmdiff)) then
-                     bvec(i) = cdum + DCMPLX(smatm(i,0))*par(i)
-                  else
-                     bvec(i) = cdum + DCMPLX(smatm(i,0))*(par(i)-m0(i))
                   end if
-               end do
-            end if
+               END DO 
+               if (.not.ldiff) then
+                  bvec(i) = cdum + DCMPLX(smatm(i,0))*
+     1                 par(i)
+               else
+                  bvec(i) = cdum + DCMPLX(smatm(i,0))*
+     1                 (par(i)-m0(i))
+               end if
+            end do
+         end if
 c     triang<
-         end do
-
+         
 c     Skalierungsfaktoren bestimmen
          do j=1,manz
             dum = 0d0
 
             if (ldc) then
                do i=1,nanz
-                  dum = dum + sensdc(i,j)*sensdc(i,j)*
-     1                 wmatd(i)*dble(wdfak(i))
+                  dum = dum + sensdc(i,j)*
+     1                 sensdc(i,j)*wmatd(i)*dble(wdfak(i))
                end do
             else if (lip) then
                do i=1,nanz
@@ -142,8 +144,8 @@ c     Skalierungsfaktoren bestimmen
                end do
             else
                do i=1,nanz
-                  dum = dum + dble(dconjg(sens(i,j))*sens(i,j))*
-     1                 wmatd(i)*dble(wdfak(i))
+                  dum = dum + dble(dconjg(sens(i,j))*
+     1                 sens(i,j))*wmatd(i)*dble(wdfak(i))
                end do
             end if
             

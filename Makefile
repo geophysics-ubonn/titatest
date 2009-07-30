@@ -11,7 +11,7 @@ WPATH 		= ~/bin
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
-#FFLAG90         = -C
+FFLAG90         = -C
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
@@ -30,18 +30,16 @@ linux:		all
 # default targets
 
 crt:		*.for
-		$(CP) fem.for cr.fem
-		$(RM) fem.for
+		if [ -e "fem.for" ];then $(MV) fem.for cr.fem; fi
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for
 		$(CP) CRTomo $(WPATH)
-		$(MV) cr.fem fem.for
+		if [ -e "cr.fem" ];then $(MV) cr.fem fem.for; fi
 
 crm:		*.for
-		$(CP) inv.for cr.inv
-		$(RM) inv.for
+		if [ -e "inv.for" ];then $(MV) inv.for cr.inv; fi
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for
 		$(CP) CRMod $(WPATH)
-		$(MV) cr.inv inv.for
+		if [ -e "cr.inv" ];then $(MV) cr.inv inv.for; fi
 
 
 all:		

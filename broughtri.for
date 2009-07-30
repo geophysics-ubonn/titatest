@@ -1,66 +1,56 @@
       subroutine broughtri()
 
-! Unterprogramm zum Belegen der Leitfaehigkeit und zum Bestimmen der
-! Rauhigkeit.
+!     Unterprogramm zum Belegen der Leitfaehigkeit und zum Bestimmen der
+!     Rauhigkeit.
 
-! Andreas Kemna                                            12-Apr-1996
-!                                       Letzte Aenderung   16-Jan-1998
-! geaendert auf zunaechst reine Triangulation, 
-! Roland Blaschek, 5.6.2003 
-! jetzt allgemein, 12.6.2003
+!     Andreas Kemna                                            12-Apr-1996
+!     Letzte Aenderung   16-Jan-1998
+!     geaendert auf zunaechst reine Triangulation, 
+!     Roland Blaschek, 5.6.2003 
+!     jetzt allgemein, 12.6.2003
 !.....................................................................
 
-        INCLUDE 'parmax.fin'
-        INCLUDE 'elem.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'sigma.fin'
-        INCLUDE 'inv.fin'
-        INCLUDE 'konv.fin'
-
-!.....................................................................
-
-! PROGRAMMINTERNE PARAMETER:
-
-! Hilfsvariablen
-        integer         * 4     i,j,k
-        complex         * 16    cdum
+      INCLUDE 'parmax.fin'
+      INCLUDE 'elem.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'sigma.fin'
+      INCLUDE 'inv.fin'
+      INCLUDE 'konv.fin'
 
 !.....................................................................
 
-  
-! Roughness bestimmen
-        rough = 0d0
+!     PROGRAMMINTERNE PARAMETER:
+
+!     Hilfsvariablen
+      integer         * 4     i,j,k
+      complex         * 16    cdum
+
+!.....................................................................
+
+      
+!     Roughness bestimmen
+      rough = 0d0
 
       DO i=1,manz
-      cdum = dcmplx(0d0)
-      DO j=1,nachbar(i,0)
-      IF (nachbar(i,j)/=0) cdum = cdum + DCMPLX(smatm(i,j))* 
-     1 par(nachbar(i,j))
+         cdum = dcmplx(0d0)
+         DO j=1,nachbar(i,0)
+            IF (nachbar(i,j)/=0)cdum=cdum+
+     1           DCMPLX(smatm(i,j))*par(nachbar(i,j))
+         END DO
+         cdum = cdum + dcmplx(smatm(i,0))*par(i)
+         if (lip) then
+            rough = rough + dimag(cdum)*dimag(par(i))
+         else
+            rough = rough + dble(cdum*dconjg(par(i)))
+         end if
+         
+         
+         
       END DO
-      cdum = cdum + dcmplx(smatm(i,0))*par(i)
-      if (lip) then
-       rough = rough + dimag(cdum)*dimag(par(i))
-      else
-      rough = rough + dble(cdum*dconjg(par(i)))
-      end if
-      
-      
-      
-      END DO
-c      if (real(rough)<0) then
-      
-c      write(*,*) 'Attention,  negative roughness'
-      
-      
-      
-      
-c      end if
-c      WRITE(*,*) "rough", rough
-      
-! Leitfaehigkeiten belegen
+!     Leitfaehigkeiten belegen
       do k=1,elanz
-      j = mnr(k)
-      sigma(k) = cdexp(par(j))
+         j = mnr(k)
+         sigma(k) = cdexp(par(j))
       end do
       
 
