@@ -2,6 +2,7 @@
       
 c     Unterprogramm zum Bestimmen der Elementnachbarn
 c     zur Realisierung der Triangulationsregularisierung
+c     in CRTomo.
 c
 c     Andreas Kemna
 ci.A. Roland Martin                                            29-Jul-2009
@@ -19,12 +20,15 @@ c PROGRAMMINTERNE PARAMETER:
 
 c Indexvariablen
       integer         * 4     i,j,k,ik,j2
-c Flächenelementzähler Knotennummer von Kanten zähler
-      integer         * 4     ifl,ifl2,ik1,ik2,in1,in2
+c Knotennummer von Kanten zähler
+      integer         * 4     ik1,ik2,in1,in2
 
       nachbar=0
+
       DO i=1,typanz
+
          IF (typ(i)>10) EXIT    ! nur die flächenelemente die als erste kommen
+
          DO j=1,nelanz(i)       ! alle FL-elemente durchgehen
 
             nachbar(j,0)=selanz(i) ! knotenpunkte speichern :(
@@ -52,23 +56,13 @@ c Flächenelementzähler Knotennummer von Kanten zähler
                         in2=nrel(j2,ik+1)
                      END IF
 
-                     WRITE (*,'(a,I5,2(A,2I5))',ADVANCE='no')ACHAR(13)//
-     1                    'Kante ',k,' : ',ik1,ik2,' / ',in1,in2
-                     
                      IF ( (ik1==in1.AND.ik2==in2).OR.
-     1                    (ik1==in2.AND.ik2==in1)) THEN
-                        WRITE (*,*)'Gotcha!!',ik,j2
-                        nachbar(j,k)=j2
-                     END IF
+     1                    (ik1==in2.AND.ik2==in1)) nachbar(j,k)=j2
+
                   END DO
                END DO
             END DO
-
-            WRITE (*,*)'Nachbarn von element',j,
-     1           '::',nachbar(j,0:selanz(i))
-
          END DO
-         
       END DO
 
       END 

@@ -249,8 +249,8 @@ c     Verbesserung anbringen
          par(j) = par(j) + dpar(j)*dcmplx(step)
 
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
-         if (lphi0.and.dimag(par(j)).lt.0d0)
-     1        par(j) = dcmplx(dble(par(j)))
+c         if (lphi0.and.dimag(par(j)).lt.0d0)
+c     1        par(j) = dcmplx(dble(par(j)))
 c     akc Ggf. (Leitfaehigkeits-)Phasen < 1 mrad korrigieren
 c     ak            if (lphi0.and.dimag(par(j)).lt.1d-3)
 c     ak     1          par(j) = dcmplx(dble(par(j)),1d-3)

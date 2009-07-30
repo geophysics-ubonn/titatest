@@ -36,9 +36,11 @@ c Pi
 c Hilfsvariablen
         real            * 8     bet,pha,npi
         integer         * 4     ie1,ie2
-
+c Standartabweichung.-..
+        real            * 4     stab
 c.....................................................................
 
+ 100    FORMAT(2(4X,I6),2(2x,G12.3))
         pi = dacos(-1d0)
 
 c 'datei' oeffnen
@@ -52,6 +54,7 @@ c Anzahl der Messwerte schreiben
 
 c Stromelektrodennummern, Spannungselektrodennummern und scheinbare
 c Widerstandswerte (Betrag und Phase (in mrad)) schreiben
+        stab=5.0
         do i=1,nanz
             bet = cdabs(sigmaa(i))
             pha = datan2(dimag(sigmaa(i)),dble(sigmaa(i)))
@@ -66,8 +69,10 @@ c Ggf. Polaritaet vertauschen
                 vnr(i) = ie1*10000+ie2
             end if
 
-            write(kanal,*,err=1000)
-     1                  strnr(i),vnr(i),real(bet),real(1d3*pha)
+c$$$            write(kanal,*,err=1000)
+c$$$     1                  strnr(i),vnr(i),real(bet),real(1d3*pha)
+            write(kanal,100,err=1000)
+     1           strnr(i),vnr(i),real(bet),real(1d3*pha)
 c     1                  strnr(i),vnr(i),real(bet),real(1d3*pha),
 c     1                  real(kfak(i))
         end do

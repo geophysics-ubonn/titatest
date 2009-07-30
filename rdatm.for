@@ -44,7 +44,6 @@ c 'datei' oeffnen
 
 c Anzahl der Messwerte lesen
         read(kanal,*,end=1001,err=1000) nanz
-
 c Ggf. Fehlermeldung
         if (nanz.gt.nmax) then
             fetxt = ' '
@@ -54,6 +53,8 @@ c Ggf. Fehlermeldung
 
 c Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
         do i=1,nanz
+           WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(13)//
+     1          'Getting voltage ',i
             read(kanal,*,end=1001,err=1000) strnr(i),vnr(i)
 c Einheitsstrom annehmen
             strom(i) = 1d0
