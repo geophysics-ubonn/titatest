@@ -72,7 +72,7 @@ c Ggf. Fehlermeldung
 c Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
         do i=1,nanz
-           WRITE (*,'(A,I9)',advance='no')'data set ',i
+           WRITE (*,'(A,I9)',advance='no')'data set '//ACHAR(13),i
             if (lindiv) then
 	          if (ldc) then
                     read(kanal,*,end=1001,err=1000)

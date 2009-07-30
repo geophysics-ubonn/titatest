@@ -10,7 +10,8 @@ c.....................................................................
         INCLUDE 'parmax.fin'
         INCLUDE 'err.fin'
         INCLUDE 'elem.fin'
-                 
+        INCLUDE 'konv.fin'
+
 c.....................................................................
 
 c EIN-/AUSGABEPARAMETER:
@@ -116,7 +117,7 @@ c Zeiger auf Werte der Randelemente einlesen
 
 c 'datei' schliessen
         close(kanal)
-
+        
         errnr = 0
         return
 

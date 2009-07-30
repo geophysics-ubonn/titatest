@@ -135,10 +135,12 @@ cak        lpol   = .false.
         lsr    = .false.
         lpol   = .false.
         lindiv = .false.
-        ltri   = 1
-
+        ltri   = 0
+        
+        IF (nx==0.OR.nz==0) ltri=1
+        
 c Ggf. Fehlermeldungen
-        if (nx.lt.2.or.nz.lt.2) then
+        if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
             fetxt = ' '
             errnr = 89
             goto 999
@@ -281,10 +283,14 @@ c Dateien
 c Elementeinteilung einlesen
         call relem(kanal,delem)
         if (errnr.ne.0) goto 999
-        
-        IF (ltri==1) CALL bnachbar
-c Modelleinteilung gemaess Elementeinteilung belegen
-        manz = nx*nz
+
+        IF (ltri==1) THEN
+           CALL bnachbar
+           manz=elanz
+        ELSE
+c     Modelleinteilung gemaess Elementeinteilung belegen
+           manz = nx*nz         ! nur für strukturierte gitter
+        END IF
 
         if (manz.ne.elanz) then
             fetxt = ' '

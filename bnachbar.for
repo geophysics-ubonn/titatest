@@ -18,32 +18,54 @@ c.....................................................................
 c PROGRAMMINTERNE PARAMETER:
 
 c Indexvariablen
-      integer         * 4     i,j,k,i2,j2,k2
-c Flächenelementzähler
-      integer         * 4     ifl,ifl2
-c Hilfsvariable
-      integer         * 4     idum,idum2
+      integer         * 4     i,j,k,ik,j2
+c Flächenelementzähler Knotennummer von Kanten zähler
+      integer         * 4     ifl,ifl2,ik1,ik2,in1,in2
 
-      ifl=0
       nachbar=0
       DO i=1,typanz
          IF (typ(i)>10) EXIT    ! nur die flächenelemente die als erste kommen
          DO j=1,nelanz(i)       ! alle FL-elemente durchgehen
-            ifl=ifl+1
-            nachbar(ifl,0)=selanz(i) ! knotenpunkte speichern :(
-            DO k=1,selanz(i)    ! alle knoten jeden Elements
-               idum=nrel(ifl,k) ! zeigt auf den Knotenindex 
-               ifl2=0
+
+            nachbar(j,0)=selanz(i) ! knotenpunkte speichern :(
+
+            DO k=1,selanz(i)    ! alle kanten jeden Elements
+
+               ik1=nrel(j,k)
+               IF (k==selanz(i)) THEN
+                  ik2=nrel(j,1)
+               ELSE
+                  ik2=nrel(j,k+1)
+               END IF
+
                DO j2=1,nelanz(i) ! suche nach gemeinsamen Knoten
-                  ifl2=ifl2+1
-                  DO k2=1,selanz(i)
-                     idum2=nrel(ifl2,k2)
-                     IF (idum==idum2) nachbar(ifl,k)=ifl2
+
+                  IF (j2==j) CYCLE
+
+                  DO ik=1,selanz(i)
+                     
+                     in1=nrel(j2,ik)
+
+                     IF (ik==selanz(i)) THEN
+                        in2=nrel(j2,1)
+                     ELSE
+                        in2=nrel(j2,ik+1)
+                     END IF
+
+                     WRITE (*,'(a,I5,2(A,2I5))',ADVANCE='no')ACHAR(13)//
+     1                    'Kante ',k,' : ',ik1,ik2,' / ',in1,in2
+                     
+                     IF ( (ik1==in1.AND.ik2==in2).OR.
+     1                    (ik1==in2.AND.ik2==in1)) THEN
+                        WRITE (*,*)'Gotcha!!',ik,j2
+                        nachbar(j,k)=j2
+                     END IF
                   END DO
                END DO
             END DO
 
-            WRITE (*,*)'Nachbarn von element',ifl,'::',nachbar(ifl,:)
+            WRITE (*,*)'Nachbarn von element',j,
+     1           '::',nachbar(j,0:selanz(i))
 
          END DO
          
