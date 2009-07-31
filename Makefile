@@ -25,26 +25,45 @@ PR1		= crt
 
 PR2		= crm
 
-linux:		all
+CI		= checkinv 
 
+IC 		= invcheck
+
+CF		= checkfem
+
+FC 		= femcheck
+
+all:		$(PR1) $(PR2)
+
+#.SILENT:	all crt crm
 # default targets
 
 crt:		*.for
-		if [ -e "fem.for" ];then $(MV) fem.for cr.fem; fi
+		if [ -e "fem.for" ];then \
+			echo $(MV) fem.for cr.fem;\
+			$(MV) fem.for cr.fem;\
+	        fi
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for
 		$(CP) CRTomo $(WPATH)
-		if [ -e "cr.fem" ];then $(MV) cr.fem fem.for; fi
+		if [ -e "cr.fem" ];then \
+			echo $(MV) cr.fem fem.for; \
+			$(MV) cr.fem fem.for; \
+		fi
 
 crm:		*.for
-		if [ -e "inv.for" ];then $(MV) inv.for cr.inv; fi
+		if [ -e "inv.for" ];then \
+			echo $(MV) inv.for cr.inv; \
+			$(MV) inv.for cr.inv; \
+		fi
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for
 		$(CP) CRMod $(WPATH)
-		if [ -e "cr.inv" ];then $(MV) cr.inv inv.for; fi
-
-
-all:		
-		crt crm
-
+		if [ -e "cr.inv" ];then \
+			echo $(MV) cr.inv inv.for; \
+			$(MV) cr.inv inv.for; \
+		fi
 install:		
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
+
+clean:		
+		$(RM) CRTomo CRmod

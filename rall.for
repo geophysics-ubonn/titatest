@@ -285,7 +285,6 @@ c     Elementeinteilung einlesen
       if (errnr.ne.0) goto 999
 
       IF (ltri==1) THEN
-         PRINT*,'bnachbar'
          CALL bnachbar
          manz=elanz
       ELSE
@@ -408,7 +407,6 @@ c     diff+>
       
       errnr = 0
 
-      PRINT*,'ltri in rall',ltri
       return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

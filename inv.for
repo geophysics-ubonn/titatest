@@ -53,8 +53,6 @@ c     diff+<
 c     diff+>
       if (errnr.ne.0) goto 999
 
-      PRINT*,'ltri::',ltri
-
 c     Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 c     zur Berechnung der gemischten Randbedingung bestimmen
       call precal()
@@ -446,7 +444,6 @@ c     if (errnr.ne.0) goto 999
 c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
-            PRINT*,'first iter..',ltri
             IF (ltri==0) THEN
                call bsmatm()
             ELSE IF (ltri==1) THEN
