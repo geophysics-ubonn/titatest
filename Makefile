@@ -25,14 +25,6 @@ PR1		= crt
 
 PR2		= crm
 
-CI		= checkinv 
-
-IC 		= invcheck
-
-CF		= checkfem
-
-FC 		= femcheck
-
 all:		$(PR1) $(PR2)
 
 #.SILENT:	all crt crm
