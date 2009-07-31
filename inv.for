@@ -593,10 +593,8 @@ c     UPDATE anbringen
 
 c     Leitfaehigkeiten belegen und Roughness bestimmen
       IF (ltri==0) THEN
-         PRINT*,'Old roughness'
          call brough()
       ELSE IF (ltri==1) THEN
-         PRINT*,'Triangulation roughness'         
          CALL broughtri
       END IF
 
