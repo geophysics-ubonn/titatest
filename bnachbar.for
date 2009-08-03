@@ -4,10 +4,8 @@ c     Unterprogramm zum Bestimmen der Elementnachbarn
 c     zur Realisierung der Triangulationsregularisierung
 c     in CRTomo.
 c
-c     Andreas Kemna
-ci.A. Roland Martin                                            29-Jul-2009
-c     Letzte Aenderung   29-Jul-2009
-c 
+c     Andreas Kemna/Roland Martin                              29-Jul-2009
+c     Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
  
 
@@ -65,4 +63,4 @@ c Knotennummer von Kanten zähler
          END DO
       END DO
 
-      END 
+      END

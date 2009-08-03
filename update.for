@@ -42,10 +42,12 @@ c     Hilfsfelder
 
 c     Indexvariablen
       integer         * 4     i,j,k,ij,in
-
+      integer         * 4     smaxs !
 c.....................................................................
 
 c     Parametervektor belegen
+      smaxs=MAXVAL(selanz)
+
       do j=1,manz
          lfeld(j) = .false.
       end do
@@ -118,14 +120,27 @@ c     triang>
                   end if
                END DO 
                if (.not.ldiff) then
-                  bvec(i) = cdum + DCMPLX(smatm(i,0))*
+                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
      1                 par(i)
                else
-                  bvec(i) = cdum + DCMPLX(smatm(i,0))*
+                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
      1                 (par(i)-m0(i))
                end if
             end do
-         end if
+
+         else if (ltri==2) then
+
+            if (.not.ldiff) then
+               bvec(1:manz) = 
+     1              MATMUL(DCMPLX(smatm),par(1:manz))
+            else
+               bvec(1:manz) = 
+     1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
+            end if
+
+            print*,'bvec',bvec(1)
+
+         END IF
 c     triang<
          
 c     Skalierungsfaktoren bestimmen
@@ -153,13 +168,16 @@ c     triang<
             if (ltri==0) then
                dum    = dum + lam*smatm(j,1)
             else if (ltri==1) then
-               dum    = dum + lam*smatm(j,0)
+               dum    = dum + lam*smatm(j,smaxs+1)
+            else if (ltri==2) then
+               dum    = dum + lam*smatm(j,j)
             end if
 c     triang> 
-
-
-            dum    = dum + lam*smatm(j,1)
+            
+            IF (dum==0.) PRINT*,'gleich null!!',dum,j
+            
             fak(j) = 1d0/dsqrt(dum)
+
          end do
 
 c     Konstantenvektor berechen und skalieren
@@ -230,7 +248,9 @@ c     Verbesserung skalieren
          do j=1,manz
             dpar(j) = dpar(j)*dcmplx(fak(j))
          end do
-      else
+
+      else !(llam)
+
 
 c     Felder zuruecksetzen
          do j=1,manz
@@ -238,10 +258,16 @@ c     Felder zuruecksetzen
          end do
 
          i = int(cgres2(1))+1
+
+         print*,'setting back.. cgres',i
+
          do k=1,i
             cgres(k) = cgres2(k)
          end do
+         
       end if
+
+      print*,'step::#',step
 
       do j=1,manz
          
@@ -249,7 +275,7 @@ c     Verbesserung anbringen
          par(j) = par(j) + dpar(j)*dcmplx(step)
 
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
-c         if (lphi0.and.dimag(par(j)).lt.0d0)
+c     if (lphi0.and.dimag(par(j)).lt.0d0)
 c     1        par(j) = dcmplx(dble(par(j)))
 c     akc Ggf. (Leitfaehigkeits-)Phasen < 1 mrad korrigieren
 c     ak            if (lphi0.and.dimag(par(j)).lt.1d-3)

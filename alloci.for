@@ -40,5 +40,7 @@ c Potentialwerte aller Elektrodenlokationen nach Ruecktransformation
 c Sensitivitaeten
         real            * 8     , dimension(:,:)
      1                          , ALLOCATABLE, save :: sensdc
-
+c Regularisierungsmatrix
+        real            * 8     , dimension(:,:)
+     1                          , ALLOCATABLE, save :: smatm
         end

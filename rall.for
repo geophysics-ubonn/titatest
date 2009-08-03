@@ -54,6 +54,7 @@ c     werden soll
 
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
+      logical         * 4     lsto
 
 c.....................................................................
 
@@ -81,6 +82,8 @@ c.....................................................................
 c     'crtomo.cfg' EINLESEN
       fetxt = 'crtomo.cfg'
       errnr = 3
+      ltri   = 0
+
       read(12,*,end=1001,err=999)
       read(12,'(a80)',end=1001,err=999) delem
       read(12,'(a80)',end=1001,err=999) delectr
@@ -120,6 +123,20 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
+      read(12,'(L)',end=100,err=999) lsto
+       
+      IF (lsto) THEN
+         ltri=2
+         GOTO 101
+      END IF
+
+ 100  lsto=.false.           !dfault wert
+
+ 101  IF (lsto) THEN
+         PRINT*,'Stochastische Regualrisierung'
+      ELSE
+         PRINT*,'Keine Stochastik :('
+      END IF
 
 c     ro        lsr    = .false.
 c     ro        lpol   = .true.
@@ -135,9 +152,8 @@ c     ak        lpol   = .false.
       lsr    = .false.
       lpol   = .false.
       lindiv = .false.
-      ltri   = 0
       
-      IF (nx==0.OR.nz==0) ltri=1
+      IF ((nx==0.OR.nz==0).AND..NOT.lsto) ltri=1
       
 c     Ggf. Fehlermeldungen
       if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
@@ -286,6 +302,8 @@ c     Elementeinteilung einlesen
 
       IF (ltri==1) THEN
          CALL bnachbar
+         manz=elanz
+      ELSE IF (ltri==2) THEN
          manz=elanz
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen

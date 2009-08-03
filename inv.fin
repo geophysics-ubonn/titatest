@@ -34,7 +34,7 @@ c ( C = alfx*Wx^t*Wx + alfz*Wz^t*Wz, Hauptdiagonale in smatm(i,1),
 c                              erste Nebendiagonale in smatm(i,2),
 c                              nx-te Nebendiagonale in smatm(i,3) )
 c        real            * 8     smatm(mmax,3)
-        real            * 8     smatm(mmax,0:selmax)
+c        real            * 8     smatm(mmax,0:selmax)
 
 c Schalter ob reine Phaseninversion durchgefuehrt werden soll
         logical         * 4     lip
@@ -50,6 +50,6 @@ cdiff+<
      1                  fm0,
 cdiff+>
      1                  wmatd,
-     1                  smatm,
+c     1                  smatm, ! RM
      1                  wdfak,
      1                  lip

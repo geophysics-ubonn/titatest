@@ -1,13 +1,10 @@
       subroutine bptri(bvec,pvec)
 
-!     Unterprogramm berechnet b = B * p .
+c     Unterprogramm berechnet b = B * p .
 
-!     Andreas Kemna                                            29-Feb-1996
-!     Letzte Aenderung   10-Nov-1997
-!     geaendert auf zunaechst reine Triangulation
-!     Roland Blaschek, 5.6.2003
-!     jetzt allgemein gueltig, 12.6.2003
-!...................................................................
+c     Andreas Kemna                                            29-Feb-1996
+c     Letzte Aenderung                                         29-Jul-2009
+c...................................................................
 
       USE alloci
 
@@ -37,10 +34,14 @@
 !     Hilfsvariablen
       complex         * 16    cdum
       integer         * 4     i,j,idum
+      integer         * 4     smaxs ! maximale knotenanzahl
 
 !.....................................................................
 !     
 !     A * p  berechnen (skaliert)
+
+      smaxs=MAXVAL(selanz)
+
       do i=1,nanz
          ap(i) = dcmplx(0d0)
 
@@ -59,7 +60,7 @@
      1           DCMPLX(smatm(i,j))*fak(idum)
          END DO
 
-         bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,0))*fak(i)
+         bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,smaxs+1))*fak(i)
 
       END DO
       

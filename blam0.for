@@ -79,11 +79,13 @@ c Start-Regularisierungsparameter bestimmen
 
         end if
 
-        lammax = lammax/dble(manz)
+        IF (ltri/=2) lammax = lammax/dble(manz)
         lammax = lammax * 2d0/(alfx+alfz)
 
 cak Default
         lammax = lammax * 5d0
+
+        print*,'lam0::',lammax
 
 cak Synthetic Example (JoH)
 cak        lammax = lammax * 1d1

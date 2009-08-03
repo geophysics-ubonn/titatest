@@ -4,8 +4,7 @@ c Unterprogramm berechnet Modellverbesserung mittels konjugierter
 c Gradienten.
 
 c Andreas Kemna                                            01-Mar-1996
-c                                       Letzte Aenderung   09-Jan-1998
-         
+c Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
 
         INCLUDE 'parmax.fin'
@@ -74,6 +73,8 @@ c.....................................................................
                CALL bpdc(bvecdc,pvec)
             ELSE IF (ltri==1) THEN
                call bpdctri(bvecdc,pvec)
+            ELSE IF (ltri==2) THEN
+               call bpdcsto(bvecdc,pvec)
             END IF
 
             dr1 = 0d0

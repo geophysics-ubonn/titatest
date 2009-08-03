@@ -4,8 +4,7 @@ c Unterprogramm berechnet Modellverbesserung mittels konjugierter
 c Gradienten.
 
 c Andreas Kemna                                            01-Mar-1996
-c                                       Letzte Aenderung   04-Feb-1998
-         
+c                                       Letzte Aenderung   04-Jul-2009
 c.....................................................................
 
         INCLUDE 'parmax.fin'
@@ -76,6 +75,8 @@ cak                beta = beta*dcmplx(-alpha/dr1)
                CALL bp(bvec,pvec)
             ELSE IF (ltri==1) THEN
                call bptri(bvec,pvec)
+            ELSE IF (ltri==2) THEN
+               call bpsto(bvec,pvec)
             END IF
 
             dr1 = 0d0

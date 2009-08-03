@@ -3,6 +3,8 @@
 !     Unterprogramm berechnet b = B * p .
 
 !     Andreas Kemna                                            29-Feb-1996
+!     Aenderungen auf allgemeine Netze, Roland Blaschek, Roland Martin
+!     Letzte Aenderung   29-Jul-2009
 !     Letzte Aenderung   09-Jan-1998
 !     geaendert auf zunaechst reine Triangulation
 !     Roland Blaschek, 5.6.2003
@@ -36,10 +38,12 @@
 !     Hilfsvariablen
       real            * 8     dum
       integer         * 4     i,j
-
+      integer         * 4     smaxs
 !.....................................................................
 !     WRITE(*,*) "BPDCtri",errnr 
 !     A * p  berechnen (skaliert)
+      smaxs=MAXVAL(selanz)
+
       do i=1,nanz
          ap(i) = 0d0
 
@@ -61,7 +65,7 @@
             IF (nachbar(i,j)/=0) dum=dum+pvec(nachbar(i,j))* 
      1           smatm(i,j)*fak(nachbar(i,j))
          END DO
-         bvec(i)=dum+pvec(i)*smatm(i,0)*fak(i)
+         bvec(i)=dum+pvec(i)*smatm(i,smaxs+1)*fak(i)
       END DO
 
 !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
