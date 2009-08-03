@@ -1,12 +1,14 @@
       subroutine update(dpar2,cgres2)
-
+c
 c     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
 c     mittels 'Smoothness Least Squares Method' und konjugierten
 c     Gradienten.
-
+c     Fuer beliebige Triangulierung und Stochastische Regularisierung
+c
 c     Andreas Kemna                                            01-Mar-1996
-c     Letzte Aenderung   15-Jan-2001
-      
+c
+c     Letzte Aenderung                                         03-Aug-2009
+c      
 c.....................................................................
 
       USE alloci

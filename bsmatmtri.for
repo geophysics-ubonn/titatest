@@ -1,9 +1,12 @@
       subroutine bsmatmtri      !tri
-      
-c     Unterprogramm belegt die Rauhigkeitsmatrix.
 c
-c     Andreas Kemna/Roland Blaschek                            29-Feb-1996
+c     Unterprogramm belegt die Rauhigkeitsmatrix....
+c     Fuer beliebige Triangulierung
+c
+c     Andreas Kemna                                            29-Feb-1996
+c
 c     Letzte Aenderung                                         29-Jul-2009
+c
 c.........................................................................
 
       USE alloci

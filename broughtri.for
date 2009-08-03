@@ -1,14 +1,13 @@
       subroutine broughtri()
-
-!     Unterprogramm zum Belegen der Leitfaehigkeit und zum Bestimmen der
-!     Rauhigkeit.
-
-!     Andreas Kemna                                            12-Apr-1996
-!     Letzte Aenderung   16-Jan-1998
-!     geaendert auf zunaechst reine Triangulation, 
-!     Roland Blaschek, 5.6.2003 
-!     jetzt allgemein, 12.6.2003
-!.....................................................................
+c
+c     Belegen der Leitfaehigkeit und zum Bestimmen der Rauhigkeit...
+c     Fuer beliebige Triangulierung
+c
+c     Andreas Kemna                                            12-Apr-1996
+c
+c     Letzte Aenderung                                         29-Jul-2009
+c
+c.....................................................................
       USE alloci
 
       INCLUDE 'parmax.fin'

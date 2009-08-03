@@ -1,15 +1,13 @@
       subroutine bpdctri(bvec,pvec)
-
-!     Unterprogramm berechnet b = B * p .
-
-!     Andreas Kemna                                            29-Feb-1996
-!     Aenderungen auf allgemeine Netze, Roland Blaschek, Roland Martin
-!     Letzte Aenderung   29-Jul-2009
-!     Letzte Aenderung   09-Jan-1998
-!     geaendert auf zunaechst reine Triangulation
-!     Roland Blaschek, 5.6.2003
-!     jetzt allgemein gueltig, 12.6.2003
-!.....................................................................
+c
+c     Unterprogramm berechnet b = B * p .
+c     Fuer beliebige Triangulierung
+c
+c     Andreas Kemna                                            29-Feb-1996
+c
+c     Letzte Aenderung                                         29-Jul-2009
+c
+c.....................................................................
 
       USE alloci
 

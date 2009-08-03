@@ -1,10 +1,11 @@
       SUBROUTINE bnachbar
-      
+c      
 c     Unterprogramm zum Bestimmen der Elementnachbarn
 c     zur Realisierung der Triangulationsregularisierung
-c     in CRTomo.
+c     in CRTomo von Andreas Kemna
 c
-c     Andreas Kemna/Roland Martin                              29-Jul-2009
+c     Roland Martin                                            29-Jul-2009
+c
 c     Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
  
