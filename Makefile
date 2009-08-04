@@ -30,29 +30,13 @@ all:		$(PR1) $(PR2)
 #.SILENT:	all crt crm
 # default targets
 
-crt:		*.for
-		if [ -e "fem.for" ];then \
-			echo $(MV) fem.for cr.fem;\
-			$(MV) fem.for cr.fem;\
-	        fi
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for
+crt:		*.for inv.f
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for inv.f
 		$(CP) CRTomo $(WPATH)
-		if [ -e "cr.fem" ];then \
-			echo $(MV) cr.fem fem.for; \
-			$(MV) cr.fem fem.for; \
-		fi
 
-crm:		*.for
-		if [ -e "inv.for" ];then \
-			echo $(MV) inv.for cr.inv; \
-			$(MV) inv.for cr.inv; \
-		fi
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for
+crm:		*.for fem.f
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for fem.f
 		$(CP) CRMod $(WPATH)
-		if [ -e "cr.inv" ];then \
-			echo $(MV) cr.inv inv.for; \
-			$(MV) cr.inv inv.for; \
-		fi
 install:		
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
