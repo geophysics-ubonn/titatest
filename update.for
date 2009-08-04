@@ -140,7 +140,8 @@ c     triang>
      1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
             end if
             DO i=1,manz
-c               WRITE (*,*)i,REAL(bvec(i)),REAL(par(i))
+               PRINT*,'bvec/smatm::',i,REAL(bvec(i)),
+     1              REAL(par(i)),smatm(i,:)
             END DO
          END IF
 c     triang<

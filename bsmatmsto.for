@@ -37,9 +37,10 @@ c     Schwerpunktvektoren
 c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj
 
-      
+      logical :: ex,exc ! gibt es evtl schon eine inverse?
+
 c     Hilfsvariablen
-      integer :: i,j,l,smaxi
+      integer :: i,j,l,smaxs,ifp
       
 
       IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
@@ -48,7 +49,7 @@ c     Hilfsvariablen
       Ix=alfx
       Iz=alfz 
 
-      smaxi=MAXVAL(selanz)
+      smaxs=MAXVAL(selanz)
 
 c     Belege die Matrix
       covTT=0
@@ -57,31 +58,31 @@ c     Belege die Matrix
          WRITE (*,'(A,I7)',ADVANCE='no')
      1        ACHAR(13)//ACHAR(9)//'Element ',i
 
-         do l=1,smaxi
+         do l=1,smaxs
             xmeani = xmeani + sx(snr(nrel(i,l)))
          end do
 
-         xmeani = xmeani/smaxi ! x- schwerpunkt
+         xmeani = xmeani/smaxs ! x- schwerpunkt
 
-         do l=1,smaxi
+         do l=1,smaxs
             zmeani = zmeani + sy(snr(nrel(i,l)))
          end do
 
-         zmeani = zmeani/smaxi ! y- schwerpunkt
+         zmeani = zmeani/smaxs ! y- schwerpunkt
 
          do j = 1,manz
             
-            do l=1,smaxi
+            do l=1,smaxs
                xmeanj = xmeanj + sx(snr(nrel(j,l)))
             end do
 
-            xmeanj = xmeanj/smaxi ! x- schwerpunkt
+            xmeanj = xmeanj/smaxs ! x- schwerpunkt
 
-            do l=1,smaxi
+            do l=1,smaxs
                zmeanj = zmeanj + sy(snr(nrel(j,l)))
             end do
             
-            zmeanj = zmeanj/smaxi ! y- schwerpunkt
+            zmeanj = zmeanj/smaxs ! y- schwerpunkt
 
 c$$$            IF ((abs((xmeani-xmeanj)/xmeani)<0.3).OR.
 c$$$     1           abs((zmeani-zmeanj)/zmeani)<0.3) CYCLE
@@ -98,20 +99,38 @@ c     Berechne njn (komponentenweise)
 
 c     Berechne njn (komponentenweise)
       CovTT = var*exp(-CovTT)
+      exc=.FALSE.
+      INQUIRE(FILE='tmp.smatmi',EXIST=ex)
 
-      WRITE (*,'(A)',ADVANCE='no')'   Invertiere CovTT ... '
+      IF (ex) THEN
+         CALL get_unit(ifp)
+         OPEN (ifp,FILE='tmp.smatmi',STATUS='old',
+     1        ACCESS='sequential',FORM='unformatted')
+         READ (ifp) i
+         IF (i==manz) THEN
+            PRINT*,'found appropriate inverse smatm'
+            READ (ifp) smatm
+         END IF
+         CLOSE (ifp)
+      END IF
 
+      IF (exc) THEN
+         WRITE (*,'(A)',ADVANCE='no')'   Invertiere CovTT ... '
 c     Berechne nun die Inierse der Covarianzmatrix!!!
-      CALL findinv(CovTT,smatm,manz,ErrorFlag)
-      
-      IF (errorflag==0) THEN
-
-         PRINT*,'got inverse'
-
-c         PRINT*,'smamtm1::',smatm(:,1)
-      ELSE
-         PRINT*,'got NO inverse'
-      end if      
+         CALL findinv(CovTT,smatm,manz,ErrorFlag)
+         IF (errorflag==0) THEN
+            PRINT*,'got inverse and write out'
+            CALL get_unit(ifp)
+            OPEN (ifp,FILE='tmp.smatmi',STATUS='replace',
+     1           ACCESS='sequential',FORM='unformatted')
+            WRITE (ifp) manz
+            WRITE (ifp) smatm
+            CLOSE (ifp)
+         ELSE
+            PRINT*,'got NO inverse'
+            STOP
+         END IF     
+      END IF
 
       IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
 
