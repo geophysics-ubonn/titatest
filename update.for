@@ -139,10 +139,6 @@ c     triang>
                bvec(1:manz) = 
      1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
             end if
-            DO i=1,manz
-               PRINT*,'bvec/smatm::',i,REAL(bvec(i)),
-     1              REAL(par(i)),smatm(i,:)
-            END DO
          END IF
 c     triang<
          
@@ -166,7 +162,7 @@ c     Skalierungsfaktoren bestimmen
      1                 sens(i,j))*wmatd(i)*dble(wdfak(i))
                end do
             end if
-            
+
 c     triang< 
             if (ltri==0) then
                dum    = dum + lam*smatm(j,1)
@@ -177,14 +173,13 @@ c     triang<
             end if
 c     triang> 
             
-            IF (dum==0.) PRINT*,'gleich null!!',dum,j
-            
             fak(j) = 1d0/dsqrt(dum)
 
          end do
 
 c     Konstantenvektor berechen und skalieren
          do j=1,manz
+
             cdum = dcmplx(0d0)
 
 c     diff+<
@@ -262,15 +257,11 @@ c     Felder zuruecksetzen
 
          i = int(cgres2(1))+1
 
-c        print*,'setting back.. cgres',i
-
          do k=1,i
             cgres(k) = cgres2(k)
          end do
          
       end if
-
-      print*,'step::#',step,dpar(1)
 
       do j=1,manz
          

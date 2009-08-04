@@ -594,8 +594,6 @@ c     Leitfaehigkeiten belegen und Roughness bestimmen
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
 
-      IF (it==2) STOP
-
 c     Neues Modelling
       goto 10
 

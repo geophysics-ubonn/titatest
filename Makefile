@@ -17,7 +17,7 @@ FFLAGMPI        =
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
 FLIBMPI         = 
 FLIBLINBLAS     = -llapack -lblas
-FLIBLINBLAS     = 
+#FLIBLINBLAS     = 
 FLIB            = -lm
 FLIBF77         = -lm
 
@@ -31,11 +31,13 @@ all:		$(PR1) $(PR2)
 # default targets
 
 crt:		*.for inv.f
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo *.for inv.f
+		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
+		*.for inv.f
 		$(CP) CRTomo $(WPATH)
 
 crm:		*.for fem.f
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod *.for fem.f
+		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
+		*.for fem.f
 		$(CP) CRMod $(WPATH)
 install:		
 		$(CP) CRTomo $(WPATH)
