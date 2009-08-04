@@ -101,7 +101,6 @@ c     Berechne nun die Inierse der Covarianzmatrix!!!
       CALL findinv(CovTT,smatm,manz,ErrorFlag)
       
       IF (errorflag==0) THEN
-
          PRINT*,'got inverse'
       ELSE
          PRINT*,'got NO inverse'

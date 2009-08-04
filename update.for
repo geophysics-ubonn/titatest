@@ -140,7 +140,7 @@ c     triang>
      1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
             end if
 
-            print*,'bvec',bvec(1)
+            print*,'bvec',bvec(1:manz)
 
          END IF
 c     triang<
