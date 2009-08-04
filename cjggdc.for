@@ -42,12 +42,12 @@ c.....................................................................
             else
                 bvecdc(j) = dble(bvec(j))
             end if
-
             dpar(j) = dcmplx(0d0)
             rvec(j) = bvecdc(j)
             pvec(j) = 0d0
+            print*,'rvec::#',j,rvec(j),bvec(j)
         end do
-
+        stop
         do k=1,ncgmax
             ncg = k-1
 
@@ -67,8 +67,9 @@ c.....................................................................
 
             do j=1,manz
                 pvec(j) = rvec(j) + beta*pvec(j)
+                print*,'pvec cjg::',j,pvec(j),rvec(j)
             end do
-            
+            STOP
             IF (ltri==0) THEN
                CALL bpdc(bvecdc,pvec)
             ELSE IF (ltri==1) THEN

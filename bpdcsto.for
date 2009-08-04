@@ -57,9 +57,13 @@ c R^m * p  berechnen (skaliert)
 caa Abgeändert auf (4 Zeilen)
 	do i=1,manz
            pvecdum(i)=pvec(i)*fak(i)
+c           PRINT*,'pvec bp::',i,pvec(i),fak(i)
 	end do
 
         bvec(1:manz)=MATMUL(smatm,pvecdum(1:manz))
+
+c        PRINT*,'bvec cg::',bvec(1:manz)
+
 
 c A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
         do j=1,manz

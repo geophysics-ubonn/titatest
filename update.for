@@ -131,17 +131,17 @@ c     triang>
             end do
 
          else if (ltri==2) then
-
+            
             if (.not.ldiff) then
                bvec(1:manz) = 
      1              MATMUL(DCMPLX(smatm),par(1:manz))
             else
                bvec(1:manz) = 
-     1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
+     1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
             end if
-
-            print*,'bvec',bvec(1)
-
+            DO i=1,manz
+c               WRITE (*,*)i,REAL(bvec(i)),REAL(par(i))
+            END DO
          END IF
 c     triang<
          
@@ -261,7 +261,7 @@ c     Felder zuruecksetzen
 
          i = int(cgres2(1))+1
 
-         print*,'setting back.. cgres',i
+c        print*,'setting back.. cgres',i
 
          do k=1,i
             cgres(k) = cgres2(k)
@@ -269,7 +269,7 @@ c     Felder zuruecksetzen
          
       end if
 
-      print*,'step::#',step
+      print*,'step::#',step,dpar(1)
 
       do j=1,manz
          

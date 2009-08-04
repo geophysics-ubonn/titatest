@@ -58,4 +58,4 @@ install:
 		$(CP) CRMod $(WPATH)
 
 clean:		
-		$(RM) CRTomo CRmod
+		$(RM) CRTomo CRmod *~ *.mod

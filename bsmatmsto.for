@@ -51,6 +51,7 @@ c     Hilfsvariablen
       smaxi=MAXVAL(selanz)
 
 c     Belege die Matrix
+      covTT=0
 
       do i = 1,manz
          WRITE (*,'(A,I7)',ADVANCE='no')
@@ -69,7 +70,7 @@ c     Belege die Matrix
          zmeani = zmeani/smaxi ! y- schwerpunkt
 
          do j = 1,manz
-
+            
             do l=1,smaxi
                xmeanj = xmeanj + sx(snr(nrel(j,l)))
             end do
@@ -81,6 +82,9 @@ c     Belege die Matrix
             end do
             
             zmeanj = zmeanj/smaxi ! y- schwerpunkt
+
+c$$$            IF ((abs((xmeani-xmeanj)/xmeani)<0.3).OR.
+c$$$     1           abs((zmeani-zmeanj)/zmeani)<0.3) CYCLE
 
             CovTT(i,j) = ((xmeani-xmeanj)/Ix)**2
      1           + ((zmeani-zmeanj)/Iz)**2
@@ -95,7 +99,7 @@ c     Berechne njn (komponentenweise)
 c     Berechne njn (komponentenweise)
       CovTT = var*exp(-CovTT)
 
-      WRITE (*,'(A)',ADVANCE='no')'Invertiere CovTT ... '
+      WRITE (*,'(A)',ADVANCE='no')'   Invertiere CovTT ... '
 
 c     Berechne nun die Inierse der Covarianzmatrix!!!
       CALL findinv(CovTT,smatm,manz,ErrorFlag)
@@ -103,6 +107,8 @@ c     Berechne nun die Inierse der Covarianzmatrix!!!
       IF (errorflag==0) THEN
 
          PRINT*,'got inverse'
+
+c         PRINT*,'smamtm1::',smatm(:,1)
       ELSE
          PRINT*,'got NO inverse'
       end if      
