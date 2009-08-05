@@ -35,14 +35,14 @@ c---------------------------------------------
 
       nachbar = 0
 
-      DO i=1,manz
+      DO i=1,elanz
 
          DO ik=1,smaxs
 
             ik1 = nrel(i,ik)
             ik2 = nrel(i,MOD(ik,smaxs)+1)
 
-            DO j=1,manz
+            DO j=1,elanz
 
                IF (j==i) CYCLE
                
@@ -60,10 +60,9 @@ c---------------------------------------------
                   END IF
                   
                END DO
-            END DO              ! inner loop j=1,manz
+            END DO              ! inner loop j=1,elanz
 
          END DO
-      END DO                    ! outer loop i=1,manz
-
+      END DO                    ! outer loop i=1,elanz
 
       END

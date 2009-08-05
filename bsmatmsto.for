@@ -42,19 +42,14 @@ c     !!
 
 c     Hilfsvariablen
       integer :: i,j,l,smaxs,ifp,c1,c2
-c border element bool
-      LOGICAL,DIMENSION(:),ALLOCATABLE :: bel
 
       CALL SYSTEM_CLOCK (c1,i)
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
-      IF (.NOT.ALLOCATED (bel)) ALLOCATE (bel(manz))
 
       Ix=alfx
       Iz=alfz 
       
-      bel=.FALSE.
-
       smaxs=MAXVAL(selanz)
       
 c     Belege die Matrix
@@ -172,12 +167,15 @@ c     Berechne nun die Inierse der Covarianzmatrix!!!
             STOP
          END IF     
       END IF
-      PRINT*,'Erasing border cell influence..'
-      DO i=1,manz
-         
-         PRINT*,'Zeile::',i,smatm(i,:)
-      END DO
-      stop
+c$$$      PRINT*,'Erasing border cell influence..'
+c$$$      DO i=1,manz
+c$$$         IF (nachbar(i,0)/=smaxs) THEN
+c$$$            PRINT*,'Damping for cell#',i
+c$$$            smatm(i,:)=0.
+c$$$            smatm(i,i)=1.
+c$$$         END IF
+c$$$      END DO
+
       CALL SYSTEM_CLOCK (c2,i)
       WRITE (*,'(a,I6,a)')' in ',((c2-c1)/(i)),' s'
 

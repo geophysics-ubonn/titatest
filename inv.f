@@ -136,8 +136,9 @@ c     'a', 'hpot' und 'kpot' zuweisen
       end if
 
 c     Kontrollausgaben
-      write(*,'(a11,i3,a2,i3,a25)')
-     1     ' Iteration ',it,', ',itr,
+      WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+      write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Calculating Potentials'
 
       errnr = 1
@@ -147,8 +148,9 @@ c     Kontrollausgaben
       goto 11
  12   backspace(10)
       errnr = 4
-      write(10,'(a11,i3,a2,i3,a25)',err=999)
-     1     ' Iteration ',it,', ',itr,
+
+      write(10,'(a,i3,a,i3,a)',ADVANCE='no')
+     1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Calculating Potentials'
       close(10)
 
@@ -409,8 +411,9 @@ c     Felder speichern
          end do
 
 c     Kontrollausgaben
-         write(*,'(a11,i3,a2,i3,a28)')
-     1        ' Iteration ',it,', ',itr,
+         WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+         write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1        ACHAR(13)//' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
 
          errnr = 1
@@ -420,8 +423,9 @@ c     Kontrollausgaben
          goto 17
  18      backspace(10)
          errnr = 4
-         write(10,'(a11,i3,a2,i3,a28)')
-     1        ' Iteration ',it,', ',itr,
+
+         write(10,'(a,i3,a,i3,a)',ADVANCE='no')
+     1        ACHAR(13)//' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
          close(10)
 
@@ -445,13 +449,19 @@ c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
             IF (ltri==0) THEN
-               PRINT*,'Here:: Old regularization'
+               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+               WRITE (*,'(a)',ADVANCE='no')
+     1              'Here:: Old regularization'
                call bsmatm()
             ELSE IF (ltri==1) THEN
-               PRINT*,'Here:: Triangulation regularization'
+               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+               WRITE (*,'(a)',ADVANCE='no')
+     1              'Here:: Triangulation regularization'
                CALL bsmatmtri
             ELSE IF (ltri==2) THEN
-               PRINT*,'Here:: Stochastic regularization'
+               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+               WRITE (*,'(a)',ADVANCE='no')
+     1              'Here:: Stochastic regularization'
                CALL bsmatmsto
             END IF 
          end if
@@ -495,8 +505,9 @@ c     Regularisierungsparameter bestimmen
                if (lsetup.or.lsetip) then
 
 c     Kontrollausgabe
-                  write(*,'(a11,i3,a2,i3,a43)')
-     1                 ' Iteration ',it,', ',itr,
+                  WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+                  write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1                 ACHAR(13)//' Iteration ',it,', ',itr,
      1                 ' : Calculating 1st regularization parameter'
                   call blam0()
                   lam = lammax
@@ -564,8 +575,9 @@ c     Step-length speichern
       end if
 
 c     Kontrollausgaben
-      write(*,'(a11,i3,a2,i3,a11)')
-     1     ' Iteration ',it,', ',itr,
+      WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
+      write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
 
       errnr = 1
@@ -575,8 +587,9 @@ c     Kontrollausgaben
       goto 19
  20   backspace(10)
       errnr = 4
-      write(10,'(a11,i3,a2,i3,a11)')
-     1     ' Iteration ',it,', ',itr,
+
+      write(10,'(a,i3,a,i3,a)',ADVANCE='no')
+     1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
       close(10)
 

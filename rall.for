@@ -296,11 +296,9 @@ c     Elementeinteilung einlesen
       call relem(kanal,delem)
       if (errnr.ne.0) goto 999
 
-      IF (ltri==1) THEN
-         manz=elanz
+      IF (ltri/=0) THEN
+         manz=elanz ! wichtig an dieser stelle..
          CALL bnachbar
-      ELSE IF (ltri==2) THEN
-         manz=elanz
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
