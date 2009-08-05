@@ -132,11 +132,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
 
  100  lsto=.false.           !dfault wert
 
- 101  IF (lsto) THEN
-         PRINT*,'Stochastische Regualrisierung'
-      ELSE
-         PRINT*,'Keine Stochastik :('
-      END IF
+ 101  IF (lsto) PRINT*,'Stochastische Regualrisierung'
 
 c     ro        lsr    = .false.
 c     ro        lpol   = .true.
@@ -301,8 +297,8 @@ c     Elementeinteilung einlesen
       if (errnr.ne.0) goto 999
 
       IF (ltri==1) THEN
-         CALL bnachbar
          manz=elanz
+         CALL bnachbar
       ELSE IF (ltri==2) THEN
          manz=elanz
       ELSE
@@ -332,6 +328,9 @@ c     Elektrodenverteilung und Daten einlesen sowie Wellenzahlwerte
 c     bestimmen
       call relectr(kanal,delectr)
       if (errnr.ne.0) goto 999
+
+      IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
+     1     nsink,sx(snr(nsink)),sy(snr(nsink))
 
       call rdati(kanal,dstrom)
       PRINT*,'data in'

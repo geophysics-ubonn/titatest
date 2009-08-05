@@ -445,6 +445,7 @@ c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
             IF (ltri==0) THEN
+               PRINT*,'Here:: Old regularization'
                call bsmatm()
             ELSE IF (ltri==1) THEN
                PRINT*,'Here:: Triangulation regularization'

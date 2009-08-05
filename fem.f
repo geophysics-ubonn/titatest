@@ -138,7 +138,7 @@ c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
       
       IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')
-     1     'Fictious sink @ node ',nsink,sx(nsink),sy(nsink)
+     1     'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
 c     Element- und Randelementbeitraege sowie Konfigurationsfaktoren zur
 c     Berechnung der gemischten Randbedingung bestimmen
       call precal()

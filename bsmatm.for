@@ -62,6 +62,8 @@ cak        ndis_z    = 3
         idis_z(1) = 6
         idis_z(2) = 12
         idis_z(3) = 19
+        
+        IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,3))
 
 c Rauhigkeitsmatrix auf Null setzen
         do i=1,manz
