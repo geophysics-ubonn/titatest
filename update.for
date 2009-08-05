@@ -109,7 +109,7 @@ c     triang>
          else if (ltri==1) then
             do i=1,manz
                cdum = dcmplx(0d0)
-               DO ij=1,nachbar(i,0)
+               DO ij=1,smaxs
                   in=nachbar(i,ij)
                   IF (in/=0) then
                      if (.not.ldiff) then

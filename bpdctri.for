@@ -59,7 +59,7 @@ c.....................................................................
 !     R^m * p  berechnen (skaliert)
       DO i=1,manz
          dum = 0d0
-         DO j=1,nachbar(i,0)
+         DO j=1,smaxs
             IF (nachbar(i,j)/=0) dum=dum+pvec(nachbar(i,j))* 
      1           smatm(i,j)*fak(nachbar(i,j))
          END DO

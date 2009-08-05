@@ -1,67 +1,69 @@
       SUBROUTINE bnachbar
-c      
+c     
 c     Unterprogramm zum Bestimmen der Elementnachbarn
 c     zur Realisierung der Triangulationsregularisierung
 c     in CRTomo von Andreas Kemna
-c
+c     
 c     Roland Martin                                            29-Jul-2009
-c
+c     
 c     Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
- 
+      
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin' ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin' ! fuer nachbar, nrel etc. 
+      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
+      INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
+      INCLUDE 'model.fin'       ! fuer manz
 
-c PROGRAMMINTERNE PARAMETER:
+c     PROGRAMMINTERNE PARAMETER:
 
-c Indexvariablen
-      integer         * 4     i,j,k,ik,j2
-c Knotennummer von Kanten zähler
-      integer         * 4     ik1,ik2,in1,in2
+c     Indexvariablen
+      INTEGER :: i,j,ik,jk
+c     Knotennummer der Kanten zaehler von element i und j
+      INTEGER :: ik1,ik2,jk1,jk2
+c     maximale knotenanzahl nicht entarteter elemente
+      INTEGER :: smaxs
+c---------------------------------------------
+      
+      smaxs = selanz(1)
 
-      nachbar=0
+      IF (smaxs /= MAXVAL(selanz)) THEN
+         PRINT*,'smaxs/=MAXVAL(selanz)!! check grid file please'
+         STOP
+      END IF
 
-      DO i=1,typanz
+      nachbar = 0
 
-         IF (typ(i)>10) EXIT    ! nur die flächenelemente die als erste kommen
+      DO i=1,manz
 
-         DO j=1,nelanz(i)       ! alle FL-elemente durchgehen
+         DO ik=1,smaxs
 
-            nachbar(j,0)=selanz(i) ! knotenpunkte speichern :(
+            ik1 = nrel(i,ik)
+            ik2 = nrel(i,MOD(ik,smaxs)+1)
 
-            DO k=1,selanz(i)    ! alle kanten jeden Elements
+            DO j=1,manz
 
-               ik1=nrel(j,k)
-               IF (k==selanz(i)) THEN
-                  ik2=nrel(j,1)
-               ELSE
-                  ik2=nrel(j,k+1)
-               END IF
-
-               DO j2=1,nelanz(i) ! suche nach gemeinsamen Knoten
-
-                  IF (j2==j) CYCLE
-
-                  DO ik=1,selanz(i)
+               IF (j==i) CYCLE
+               
+               DO jk=1,smaxs
+                  
+                  jk1 = nrel(j,jk)
+                  jk2 = nrel(j,MOD(jk,smaxs)+1)
+                  
+                  IF ( (ik1==jk1.AND.ik2==jk2) .OR.
+     1                 (ik1==jk2.AND.ik2==jk1) ) THEN
                      
-                     in1=nrel(j2,ik)
-
-                     IF (ik==selanz(i)) THEN
-                        in2=nrel(j2,1)
-                     ELSE
-                        in2=nrel(j2,ik+1)
-                     END IF
-
-                     IF ( (ik1==in1.AND.ik2==in2).OR.
-     1                    (ik1==in2.AND.ik2==in1)) nachbar(j,k)=j2
-
-                  END DO
+                     nachbar(i,ik) = j ! Element teilt kante
+                     nachbar(i,0) = nachbar(i,0)+1 ! Anzahl der Nachbarn
+                     
+                  END IF
+                  
                END DO
-            END DO
+            END DO              ! inner loop j=1,manz
+
          END DO
-      END DO
+      END DO                    ! outer loop i=1,manz
+
 
       END

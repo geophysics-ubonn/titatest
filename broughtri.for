@@ -34,7 +34,7 @@ c.....................................................................
 
       DO i=1,manz
          cdum = dcmplx(0d0)
-         DO j=1,nachbar(i,0)
+         DO j=1,smaxs
             IF (nachbar(i,j)/=0)cdum=cdum+
      1           DCMPLX(smatm(i,j))*par(nachbar(i,j))
          END DO
