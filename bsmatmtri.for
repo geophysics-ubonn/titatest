@@ -62,9 +62,7 @@ c.........................................................................
 
                IF (nachbar(iflnr,k)>0) THEN !nachbar existiert 
 
-                  ijdum=nachbar(nachbar(iflnr,k),0)
-
-                  DO l=1,ijdum  
+                  DO l=1,smaxs
 
                      sp(k,1)=sp(k,1)+
      1                    sx(snr(nrel(nachbar(iflnr,k),l)))
