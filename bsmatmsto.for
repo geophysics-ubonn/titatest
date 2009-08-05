@@ -167,11 +167,8 @@ c     Berechne nun die Inierse der Covarianzmatrix!!!
             STOP
          END IF     
       END IF
+
       CALL SYSTEM_CLOCK (c2,i)
       WRITE (*,'(a,I6,a)')' in ',((c2-c1)/(i)),' s'
-      
-      STOP
-      
-      
-      return
+
       end
