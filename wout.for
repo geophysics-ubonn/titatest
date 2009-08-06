@@ -63,7 +63,7 @@ c     Hilfsfunctions
 c     diff+<
       real            * 8     dum2,dum3
 c     diff+>
-
+      logical         * 4     exi
 c.....................................................................
 
 c     Schwerpunktkoordinaten der Elemente bestimmen
@@ -139,6 +139,23 @@ c     diff+>
       end do
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
+
+      OPEN (kanal,FILE='tmp.lastmod',STATUS='replace')
+      WRITE (kanal,*)TRIM(fetxt)
+      CLOSE (kanal)
+c$$$  
+c$$$  INQUIRE (FILE='tmp.matinfo',EXIST=exi)
+c$$$  IF (exi) THEN
+c$$$  OPEN (kanal,FILE='tmp.matinfo',STATUS='old',
+c$$$  1        POSITION='append')
+c$$$  WRITE (kanal,*)TRIM(fetxt)
+c$$$  CLOSE (kanal)
+c$$$  ELSE
+c$$$  OPEN (kanal,FILE='tmp.matinfo',STATUS='new')
+c$$$  WRITE (kanal,*)TRIM(fetxt)
+c$$$  CLOSE (kanal)
+c$$$  END IF
+
       OPEN (kanal,FILE=fetxt,status='replace')
       WRITE (kanal,'(I7)',err=1000) elanz
       DO i=1,elanz
