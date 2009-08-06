@@ -44,6 +44,7 @@ crm:		*.for fem.f
 
 mtools:		
 		$(CP) m_tools/crtomo_plot.sh $(WPATH)
+		$(CP) m_tools/crtomo_run.sh $(WPATH)
 		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
 install:		
