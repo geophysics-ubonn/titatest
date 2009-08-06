@@ -42,7 +42,6 @@ c.....................................................................
             else
                 bvecdc(j) = dble(bvec(j))
             end if
-
             dpar(j) = dcmplx(0d0)
             rvec(j) = bvecdc(j)
             pvec(j) = 0d0
@@ -68,7 +67,7 @@ c.....................................................................
             do j=1,manz
                 pvec(j) = rvec(j) + beta*pvec(j)
             end do
-            
+
             IF (ltri==0) THEN
                CALL bpdc(bvecdc,pvec)
             ELSE IF (ltri==1) THEN

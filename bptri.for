@@ -57,7 +57,7 @@ c...................................................................
 !     R^m * p  berechnen (skaliert)
       DO i=1,manz
          cdum = dcmplx(0d0)
-         DO j=1,nachbar(i,0)
+         DO j=1,smaxs
             idum=nachbar(i,j)
             IF (idum/=0) cdum = cdum + pvec(idum)*
      1           DCMPLX(smatm(i,j))*fak(idum)

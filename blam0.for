@@ -85,8 +85,6 @@ c Start-Regularisierungsparameter bestimmen
 cak Default
         lammax = lammax * 5d0
 
-        print*,'lam0::',lammax
-
 cak Synthetic Example (JoH)
 cak        lammax = lammax * 1d1
 

@@ -301,8 +301,8 @@ c     Elementeinteilung einlesen
       if (errnr.ne.0) goto 999
 
       IF (ltri==1) THEN
+         manz=elanz ! wichtig an dieser stelle..
          CALL bnachbar
-         manz=elanz
       ELSE IF (ltri==2) THEN
          manz=elanz
       ELSE

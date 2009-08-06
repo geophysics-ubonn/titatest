@@ -43,6 +43,7 @@ c Hilfsfunction
 
 c.....................................................................
 
+	IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,3))
         ndis_z = 0
 cak BAW
 cak        ndis_z    = 2
