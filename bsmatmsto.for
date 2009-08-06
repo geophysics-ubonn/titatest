@@ -176,6 +176,8 @@ c$$$            smatm(i,i)=1.
 c$$$         END IF
 c$$$      END DO
 
+      IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
+
       CALL SYSTEM_CLOCK (c2,i)
       WRITE (*,'(a,I6,a)')' in ',((c2-c1)/(i)),' s'
 
