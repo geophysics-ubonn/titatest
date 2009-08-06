@@ -27,19 +27,45 @@ PR2		= crm
 
 PR3		= mtools
 
+f90crt		= get_unit.o make_noise.o alloci.o
+
+f90crm		= alloci.o
+
 all:		$(PR1) $(PR2) $(PR3)
+
+
+# rules
+#.f90.mod:		
+#		$(F90) $(FFLAG90) -c $<
+#
+#.mod.o:		
+#		$(F90) $(FFLAG90) -c $<
+#
+
+#.f90.o:		
+#		$(F90) $(FFLAG90) -c $<
 
 #.SILENT:	all crt crm
 # default targets
+################################## F90 targets..
+make_noise.o:	make_noise.f90
+		$(F90) $(FFLAG90) -c make_noise.f90
 
-crt:		*.for inv.f
+get_unit.o:	get_unit.f90
+		$(F90) $(FFLAG90) -c get_unit.f90
+
+alloci.o:	alloci.f90
+	        $(F90) $(FFLAG90) -c alloci.f90
+###################################
+
+crt:		*.for inv.f $(f90crt)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
-		*.for inv.f
+		*.for inv.f $(f90crt)
 		$(CP) CRTomo $(WPATH)
 
-crm:		*.for fem.f
+crm:		*.for fem.f $(f90crm)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
-		*.for fem.f
+		*.for fem.f $(f90crm)
 		$(CP) CRMod $(WPATH)
 
 mtools:		

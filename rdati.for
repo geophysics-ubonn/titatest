@@ -7,6 +7,7 @@ c     Andreas Kemna                                            11-Oct-1993
 c     Letzte Aenderung   20-Aug-2007
       
 c.....................................................................
+      USE make_noise
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'

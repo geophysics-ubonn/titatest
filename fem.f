@@ -228,6 +228,7 @@ c     (bzw. scheinbaren Widerstandswerte)
             call bkfak()
             if (errnr.ne.0) goto 999
          else
+c nur echte Spannungen ausgeben...
             kfak=1.0 
          end if
 

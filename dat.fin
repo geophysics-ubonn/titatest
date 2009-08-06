@@ -46,7 +46,8 @@ c Schalter ob ratio-dataset (.true.)
 
 c Schalter ob Polaritaeten gecheckt werden sollen (.true.)
         logical         * 4     lpol
-        
+c Daten Verrauschen?
+  	logical		* 4	lnse
 c Anzahl der nicht beruecksichtigten Messwerte
         integer         * 4     npol
 
@@ -69,4 +70,5 @@ c.....................................................................
      1                  npol,
      1                  lindiv,
      1                  lratio,
-     1                  lpol
+     1                  lpol,
+     1			lnse

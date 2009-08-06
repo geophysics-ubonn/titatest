@@ -11,6 +11,7 @@ c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   20-Aug-2007
 
 c.....................................................................
+      USE make_noise
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
@@ -124,9 +125,19 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
       read(12,'(L)',end=100,err=999) lsto
-       
-      IF (lsto) THEN
-         ltri=2
+
+      lnse = ( stabw0 < 0 ) 
+      IF ( lnse ) THEN
+         stabw0 = -stabw0
+         WRITE (*,'(a,F4.1,a)')
+     1        'Verrausche Daten mit RMS ::',stabw0,' /%'
+         i=initrand()
+         dum3=ran1(i)
+         WRITE (*,'(/a,I6,a,G12.3/)')'Seed / ran ::',i,'/',dum3
+      END IF
+
+      IF ( lsto ) THEN
+         ltri = 2
          GOTO 101
       END IF
 
@@ -331,7 +342,7 @@ c     bestimmen
      1     nsink,sx(snr(nsink)),sy(snr(nsink))
 
       call rdati(kanal,dstrom)
-      PRINT*,'data in'
+c      PRINT*,'data in'
       if (errnr.ne.0) goto 999
 
       if (swrtr.eq.0) then
