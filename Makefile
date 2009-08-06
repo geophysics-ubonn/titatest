@@ -25,7 +25,9 @@ PR1		= crt
 
 PR2		= crm
 
-all:		$(PR1) $(PR2)
+PR3		= mtools
+
+all:		$(PR1) $(PR2) $(PR3)
 
 #.SILENT:	all crt crm
 # default targets
@@ -39,9 +41,14 @@ crm:		*.for fem.f
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
 		*.for fem.f
 		$(CP) CRMod $(WPATH)
+
+mtools:		
+		$(CP) m_tools/crtomo_plot.sh $(WPATH)
+		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
+
 install:		
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
 
 clean:		
-		$(RM) CRTomo CRmod *~ *.mod
+		$(RM) CRTomo CRmod *~ *.mod m_tools/*~
