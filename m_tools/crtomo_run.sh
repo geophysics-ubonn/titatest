@@ -15,18 +15,19 @@ if [ -z "$crt" ];then
 	fi
 fi
 
-cur=`pwd`
 
+nme='sto_'
 corrl='1 0.8 0.6 0.5 0.4 0.3 0.2 0.1 0.09 0.08 0.07 0.06 0.05 0.04 0.03 0.02 0.01 0.005 0.001'
 
+cur=`pwd`
 for c in $corrl;do
-	if [ -d sto_$c ];then
-		rm -fR sto_$c;
+	if [ -d $nme$c ];then
+		rm -fR $nme$c;
 	fi
-	cp -R skel sto_$c
-	cd sto_$c;
+	cp -R skel $nme$c
+	cd $nme$c;
 	awk -v cor=$c '{if (NR==13||NR==14){print cor}else{print}}' crtomo.cfg > tmp.cfg
 	mv tmp.cfg crtomo.cfg
-	nohup $crt $c &
+	nohup $crt $nme$c &
 	cd $cur
 done
