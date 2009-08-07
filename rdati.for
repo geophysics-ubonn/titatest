@@ -32,7 +32,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i
+      integer         * 4     i,idum
 
 c     Elektrodennummern
       integer         * 4     elec1,elec2,
@@ -49,6 +49,8 @@ c     Standardabweichung der Phase
 
 c     Pi
       real            * 8     pi
+c    dummi
+      REAL            * 8     rdum,rlev
 
 c.....................................................................
 
@@ -72,7 +74,9 @@ c     Ggf. Fehlermeldung
 
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
+
       do i=1,nanz
+         stabwp = 0.; stabwb = 0.
          WRITE (*,'(A,I9)',advance='no')'data set '//ACHAR(13),i
          if (lindiv) then
             if (ldc) then
@@ -127,14 +131,13 @@ c     ak Inga
 c     ak     1                         elec1,elec2,elec3,elec4,bet
 c     ak                    strnr(i) = elec1*10000 + elec2
 c     ak                    vnr(i)   = elec3*10000 + elec4
-
             else
                read(kanal,*,end=1001,err=1000)
      1              strnr(i),vnr(i),bet,pha
 
-               if (lfphai) stabwp = 1d-3*stabpA1*bet**stabpB
-     1              + 1d-2*stabpA2*1d-3*dabs(pha)
-     1              + 1d-3*stabp0
+               if (lfphai) stabwp = ( stabpA1*bet**stabpB
+     1              + 1d-2*stabpA2*dabs(pha)
+     1              + stabp0 ) * 1d-3
             end if
 
 c     Ggf. Fehlermeldung
@@ -147,6 +150,13 @@ c     ak                    write(*,*) i
             end if
 
             stabw = 1d-2*stabw0 + stabm0/bet
+
+            IF ( lnse ) THEN
+               WRITE (*,'(A)',advance='no')' adding noise '
+               bet = bet*(1.+dp_noise(idum)*stabw)
+               pha = pha*(1.+dp_noise(idum)*stabwp)
+            END IF
+
          end if
 
 c     Ggf. Fehlermeldung

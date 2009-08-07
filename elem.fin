@@ -52,7 +52,8 @@ c Zeiger auf Werte der Randelemente
         integer         * 4     rnr(relmax)
 c Zeiger auf die Nachbarn 	
 	integer         * 4     nachbar(elmax,0:selmax)
-
+c Kleinster Abstand der Elementmittelpunkte
+  	real            * 8     sd_el
 c switch/number fictitious sink node, switch boundary values
         logical         * 4     lsink
         integer         * 4     nsink
@@ -62,6 +63,7 @@ c.....................................................................
 
         common/celem/   sx,
      1                  sy,
+     1			sd_el,
      1                  sanz,
      1                  typanz,
      1                  mb,

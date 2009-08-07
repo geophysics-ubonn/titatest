@@ -42,7 +42,7 @@ for x in $tools;do
 	i=$[$i+1];
 done
 
-rm -f *.eps *.pdf
+rm -f *.eps *.pdf *.jpg
 
 awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 

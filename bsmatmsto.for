@@ -1,14 +1,15 @@
       subroutine bsmatmsto()
-
-c     Unterprogramm belegt die Kovarianzmatrix.   Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-
+c
+c     Unterprogramm belegt die Kovarianzmatrix.   
+c     Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+c
 c     Andreas Kemna                                            29-Feb-1996
 c     Letzte Aenderung   03-Apr-2009
 
 c.....................................................................
-c     !!
-      USE alloci
 
+      USE alloci
+      
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'dat.fin'
@@ -37,7 +38,7 @@ c     Schwerpunktvektoren
 c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj,
      1     dump
-
+      
       logical :: ex,exc         ! gibt es evtl schon eine inverse?
 
 c     Hilfsvariablen
@@ -47,8 +48,18 @@ c     Hilfsvariablen
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
-      Ix=alfx
-      Iz=alfz 
+      WRITE (*,'(/2(A,F10.4)/)')
+     1     'Scale length a_x',alfx,' sd_el ',sd_el
+      WRITE (*,'(/2(A,F10.4)/)')
+     1     'Scale length a_z',alfz,' sd_el ',sd_el
+
+      IF (alfx < sd_el) WRITE (*,'(/2(A,F10.4)/)')
+     1     'Scale length a_x',alfx,' to small, I set it to ',sd_el
+      IF (alfz < sd_el) WRITE (*,'(/2(A,F10.4)/)')
+     1     'Scale length a_z',alfz,' to small, I set it to ',sd_el
+
+      Ix=MAX(alfx,sd_el)
+      Iz=MAX(alfz,sd_el)
       
       smaxs=MAXVAL(selanz)
       
