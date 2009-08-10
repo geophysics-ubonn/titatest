@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tools="plotCRTmod_batch.m CRTomo epstopdf matlab mogrify";
+tools="plotCRTmod_batch.m epstopdf matlab mogrify";
 
 echo "checking for tools"
 forcecheck(){
@@ -23,15 +23,12 @@ for x in $tools;do
 			plotmod=$Ret_val
 		;;
 		2)
-			crt=$Ret_val
-		;;
-		3)
 			epsp=$Ret_val
 		;;
-		4)
+		3)
 			mtlb=$Ret_val
 		;;
-		5)
+		4)
 			mogri=$Ret_val
 		;;
 		*)
@@ -42,16 +39,16 @@ for x in $tools;do
 	i=$[$i+1];
 done
 
-awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
-awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
+awk '{if (NR==2){print}}' crmod.cfg > tmp.meshname
+awk '{if (NR==3){print}}' crmod.cfg > tmp.elecname
+awk '{if (NR==4){print}}' crmod.cfg > tmp.lastmod
 
-$crt >& $1'.crtrun'
 $mtlb < $plotmod >& /dev/null
 
 tmp=`cat tmp.lastmod`
 myeps=`basename $tmp`'.eps'
 mypdf=`basename $myeps '.eps'`'.pdf'
-echo "making image conversion..."
+echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$mypdf >& /dev/null
 $mogri -format jpg $myeps
 echo "done $1"

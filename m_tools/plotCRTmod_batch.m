@@ -9,10 +9,16 @@ fp=fopen('tmp.meshname','r');
 gridelem=fscanf(fp,'%s',1);
 fclose(fp);
 
+fp=fopen('tmp.elecname','r');
+elecfile=fscanf(fp,'%s',1);
+fclose(fp);
+
 fp=fopen('tmp.lastmod','r');
 modfile=fscanf(fp,'%s',1);
 fclose(fp);
 
+elecmark='bo';
+marksize=5;
 az=0; % Azimuth for the plot 
 el=90; % elongation for thew plot
 fns=14; % font size
@@ -111,6 +117,19 @@ for i=1:nm
     rho(i)=fscanf(fp,'%f',1);
     phase(i)=fscanf(fp,'%f',1);
 end
+fclose(fp);
+%%
+% Einlesen der Elektroden
+fp=fopen(elecfile,'r');
+line=fgetl(fp);
+nelec=sscanf(line,'%d',1);
+elecpos=zeros(nelec,2);
+for i=1:nelec
+    ie=fscanf(fp,'%d',1);
+    elecpos(i,1)=sxp(ie);
+    elecpos(i,2)=syp(ie);
+end
+fclose(fp);
 %%
 % open figure with name
 name=sprintf('CRTomo model');
@@ -146,7 +165,7 @@ end
 if (cmax==0)
     cmax=rolmax;
 end
-sprintf('Plot range:: %f\t%f\n',cmin,cmax)
+sprintf('Plot range:: %f\t%f\n',cmin,cmax);
 patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat')%,'Edgecolor','none')
 caxis([cmin cmax])
 
@@ -180,14 +199,20 @@ set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
 set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
 view(az,el);
-
+hold on
+for i=1:nelec
+    plot(elecpos(i,1),elecpos(i,2),elecmark,...
+        'MarkerEdgeColor','k','MarkerFaceColor','k',...
+        'MarkerSize',marksize);
+end
 if (saveplot==1)
     %pause
     [p,fls,app,m]=fileparts(modfile);
-    fleps=strcat(fls,'.eps');
+    fleps=strcat(fls,app,'.eps');
     set(gcf,'PaperPositionMode','auto');
-    print('-depsc2','-r600',fleps)
+    print('-depsc2','-r400',fleps)
 %    print('-dpdf','-r400',flpdf) %%%geht nicht
     %print('-depsc2','-r600',file_save)
 end
-close(fig)
+close all
+clear all

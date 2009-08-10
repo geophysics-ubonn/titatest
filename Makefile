@@ -71,6 +71,7 @@ crm:		*.for fem.f $(f90crm)
 mtools:		
 		$(CP) m_tools/crtomo_plot.sh $(WPATH)
 		$(CP) m_tools/crtomo_run.sh $(WPATH)
+		$(CP) m_tools/plot_cur_crmod $(WPATH)
 		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
 install:		
