@@ -53,9 +53,11 @@ c     Hilfsvariablen
       IF (alfz < sd_el) WRITE (*,'(/2(A,F10.4)/)')
      1     'Scale length a_z',alfz,' to small, I would set it to ',sd_el
 
+      Ix=alfx;Iz=alfz
+
 c$$$      Ix=MAX(alfx,sd_el)
 c$$$      Iz=MAX(alfz,sd_el)
-      
+
       smaxs=MAXVAL(selanz)
       
 c     Belege die Matrix
