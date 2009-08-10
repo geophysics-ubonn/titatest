@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 tools="plotCRTmod_batch.m CRTomo epstopdf matlab mogrify";
 
