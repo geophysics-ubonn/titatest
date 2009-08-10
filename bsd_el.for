@@ -29,7 +29,8 @@ c     Abstand
 c-----------------------------------------------------------------------
 
       smaxs = selanz(1)
-      sd_el = 0.
+
+      sd_elmin = 0.;sd_elmax=1.0e10
       
       DO i=1,elanz
 
@@ -53,12 +54,14 @@ c-----------------------------------------------------------------------
             
             r = SQRT((spx1-spx2)**2 + (spy1-spy2)**2)
 c     maximaler wert aus der Menge der Nachbarmittelpunkte
-            sd_el = MAX(sd_el,r) 
+            sd_elmax = MAX(sd_elmax,r) 
+            sd_elmin = MIN(sd_elmin,r) 
             
          END DO                 ! inner loop ik=1,smaxs
       END DO                    ! outer loop i=1,elanz
       
-      WRITE (*,'(A,F10.4)')'Max minimalabstand:: ',sd_el
+      WRITE (*,'(A,2(2X,F10.4))')'Min/Max Abstand:: ',
+     1     sd_elmin,sd_elmax
       
       END SUBROUTINE bsd_el
       

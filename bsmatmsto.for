@@ -37,7 +37,7 @@ c     PROGRAMMINTERNE PARAMETER:
 c     Schwerpunktvektoren
 c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj,
-     1     dump
+     1     dump,sd_el
       
       logical :: ex,exc         ! gibt es evtl schon eine inverse?
 
@@ -48,14 +48,18 @@ c     Hilfsvariablen
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
+
+      sd_el=(sd_elmin+sd_elmax)*.5
+
+
       IF (alfx < sd_el) WRITE (*,'(/2(A,F10.4)/)')
      1     'Scale length a_x',alfx,' to small, I would set it to ',sd_el
       IF (alfz < sd_el) WRITE (*,'(/2(A,F10.4)/)')
      1     'Scale length a_z',alfz,' to small, I would set it to ',sd_el
-
+      
       Ix=alfx;Iz=alfz
-
-c$$$      Ix=MAX(alfx,sd_el)
+      
+c$$$  Ix=MAX(alfx,sd_el)
 c$$$      Iz=MAX(alfz,sd_el)
 
       smaxs=MAXVAL(selanz)
