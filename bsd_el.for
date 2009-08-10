@@ -58,7 +58,7 @@ c     maximaler wert aus der Menge der Nachbarmittelpunkte
          END DO                 ! inner loop ik=1,smaxs
       END DO                    ! outer loop i=1,elanz
       
-      WRITE (*,'(A,F10.4)')'Minimalabstand:: ',sd_el
+      WRITE (*,'(A,F10.4)')'Max minimalabstand:: ',sd_el
       
       END SUBROUTINE bsd_el
       

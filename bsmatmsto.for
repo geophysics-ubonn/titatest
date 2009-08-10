@@ -48,18 +48,13 @@ c     Hilfsvariablen
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
-      WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_x',alfx,' sd_el ',sd_el
-      WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_z',alfz,' sd_el ',sd_el
-
       IF (alfx < sd_el) WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_x',alfx,' to small, I set it to ',sd_el
+     1     'Scale length a_x',alfx,' to small, I would set it to ',sd_el
       IF (alfz < sd_el) WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_z',alfz,' to small, I set it to ',sd_el
+     1     'Scale length a_z',alfz,' to small, I would set it to ',sd_el
 
-      Ix=MAX(alfx,sd_el)
-      Iz=MAX(alfz,sd_el)
+c$$$      Ix=MAX(alfx,sd_el)
+c$$$      Iz=MAX(alfz,sd_el)
       
       smaxs=MAXVAL(selanz)
       
