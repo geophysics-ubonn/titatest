@@ -63,9 +63,9 @@ crt:		*.for inv.f $(f90crt)
 		*.for inv.f $(f90crt)
 		$(CP) CRTomo $(WPATH)
 
-crm:		*.for fem.f $(f90crm)
+crm:		*.for fem.f $(f90crt)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
-		*.for fem.f $(f90crm)
+		*.for fem.f $(f90crt)
 		$(CP) CRMod $(WPATH)
 
 mtools:		

@@ -126,6 +126,16 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,'(a80)',end=1001,err=999) drandb
       read(12,'(L)',end=100,err=999) lsto
 
+      IF ( lsto ) THEN
+         ltri = 2
+         GOTO 101
+      END IF
+
+ 100  lsto=.false.           !dfault wert
+
+ 101  IF (lsto) PRINT*,'Stochastische Regualrisierung'
+
+
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
@@ -135,15 +145,6 @@ c     ak        read(12,*,end=1001,err=999) lindiv
          dum3=ran1(i)
          WRITE (*,'(/a,I6,a,G12.3/)')'Seed / ran ::',i,'/',dum3
       END IF
-
-      IF ( lsto ) THEN
-         ltri = 2
-         GOTO 101
-      END IF
-
- 100  lsto=.false.           !dfault wert
-
- 101  IF (lsto) PRINT*,'Stochastische Regualrisierung'
 
 c     ro        lsr    = .false.
 c     ro        lpol   = .true.

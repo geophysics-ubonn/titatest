@@ -52,7 +52,7 @@ c Zeiger auf Werte der Randelemente
         integer         * 4     rnr(relmax)
 c Zeiger auf die Nachbarn 	
 	integer         * 4     nachbar(elmax,0:selmax)
-c Kleinster Abstand der Elementmittelpunkte
+c Maximaler Abstand zwischen (Flaechen) Elementmittelpunkten
   	real            * 8     sd_el
 c switch/number fictitious sink node, switch boundary values
         logical         * 4     lsink

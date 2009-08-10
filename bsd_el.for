@@ -29,7 +29,7 @@ c     Abstand
 c-----------------------------------------------------------------------
 
       smaxs = selanz(1)
-      sd_el = 1.e10;
+      sd_el = 0.
       
       DO i=1,elanz
 
@@ -40,22 +40,25 @@ c-----------------------------------------------------------------------
          END DO
          spx1 = spx1/smaxs; spy1 = spy1/smaxs
 
-         DO j=1,elanz
-            IF (j==i) CYCLE
-
+         DO ik=1,smaxs
+            
+            IF (nachbar(i,ik)==0) CYCLE
+            
             spx2=0.;spy2=0.
             DO jk=1,smaxs
-               spx2 = spx2 + sx(snr(nrel(j,jk)))
-               spy2 = spy2 + sy(snr(nrel(j,jk)))
+               spx2 = spx2 + sx(snr(nrel(nachbar(i,ik),jk)))
+               spy2 = spy2 + sy(snr(nrel(nachbar(i,ik),jk)))
             END DO
             spx2 = spx2/smaxs; spy2 = spy2/smaxs
-
+            
             r = SQRT((spx1-spx2)**2 + (spy1-spy2)**2)
-            sd_el = MIN(sd_el,r)
-
-         END DO                 ! inner loop j=1,elanz
+c     maximaler wert aus der Menge der Nachbarmittelpunkte
+            sd_el = MAX(sd_el,r) 
+            
+         END DO                 ! inner loop ik=1,smaxs
       END DO                    ! outer loop i=1,elanz
-
+      
       WRITE (*,'(A,F10.4)')'Minimalabstand:: ',sd_el
-
+      
       END SUBROUTINE bsd_el
+      
