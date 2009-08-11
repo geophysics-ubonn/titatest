@@ -52,8 +52,11 @@ c Zeiger auf Werte der Randelemente
         integer         * 4     rnr(relmax)
 c Zeiger auf die Nachbarn 	
 	integer         * 4     nachbar(elmax,0:selmax)
-c Min/Maximaler Abstand zwischen (Flaechen) Elementmittelpunkten
-  	real            * 8     sd_elmin,sd_elmax
+c Gitter statistiken..
+c Min/Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten (ESP)
+  	real            * 8     esp_min,esp_max
+c Mittelwert/Median und Standardabweichung der ESP
+  	real            * 8     esp_mit,esp_med,esp_std
 c switch/number fictitious sink node, switch boundary values
         logical         * 4     lsink
         integer         * 4     nsink
@@ -63,7 +66,8 @@ c.....................................................................
 
         common/celem/   sx,
      1                  sy,
-     1			sd_elmin,sd_elmax,
+     1			esp_min,esp_max,
+     1			esp_mit,esp_med,esp_std,
      1                  sanz,
      1                  typanz,
      1                  mb,

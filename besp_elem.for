@@ -1,4 +1,4 @@
-      SUBROUTINE bsd_el
+      SUBROUTINE besp_elem
 c     
 c     Unterprogramm zum Bestimmen der kleinsten moeglichen 
 c     Skalenlaenge zur stochastischen Regularisierung
@@ -24,15 +24,14 @@ c     Maximale knotenanzahl nicht entarteter Elemente
       INTEGER :: smaxs
 c     Schwerpunktskoordinaten der Flaechenelemente
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2
-c     Abstand
-      REAL(KIND(0D0)) :: r
+c     ESP Abstaende
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: abst 
 c-----------------------------------------------------------------------
+
+      IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))
 
       smaxs = selanz(1)
 
-      sd_elmin = 1.0e10
-      sd_elmax = 0.0
-      
       DO i=1,elanz
 
          spx1=0.;spy1=0.
@@ -53,16 +52,32 @@ c-----------------------------------------------------------------------
             END DO
             spx2 = spx2/smaxs; spy2 = spy2/smaxs
             
-            r = SQRT((spx1-spx2)**2 + (spy1-spy2)**2)
-c     maximaler wert aus der Menge der Nachbarmittelpunkte
-            sd_elmax = MAX(sd_elmax,r) 
-            sd_elmin = MIN(sd_elmin,r) 
+            abst(i) = SQRT((spx1-spx2)**2 + (spy1-spy2)**2)
             
          END DO                 ! inner loop ik=1,smaxs
       END DO                    ! outer loop i=1,elanz
       
-      WRITE (*,'(A,2(2X,F10.4))')'Min/Max Abstand:: ',
-     1     sd_elmin,sd_elmax
+c     maximaler wert aus der Menge der Nachbarmittelpunkte
+      esp_max = MAXVAL(abst) 
+      esp_min = MINVAL(abst)
+
+      esp_mit = SUM(abst)/elanz
+
+      esp_std = 0.
+      DO i=1,elanz
+         esp_std = esp_std + SQRT((abst(i) - esp_mit)**2.)
+      END DO
+      esp_std = esp_std/elanz
       
-      END SUBROUTINE bsd_el
+      CALL MDIAN1(abst,elanz,esp_med)
+
+      WRITE (*,'(//A/)')'Grid statistics:'
+      WRITE (*,'(20X,A,2F10.3)')'Min/Max:'//ACHAR(9),esp_min,esp_max
+      WRITE (*,'(20X,A,3F10.3)')'Mean/Median/Var:'//ACHAR(9),
+     1     esp_mit,esp_med,esp_std
+      WRITE (*,'(//)')
+
+      IF (ALLOCATED(abst)) DEALLOCATE (abst)
+
+      END SUBROUTINE besp_elem
       

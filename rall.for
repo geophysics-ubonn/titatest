@@ -311,7 +311,7 @@ c     Elementeinteilung einlesen
       IF (ltri/=0) THEN
          manz=elanz ! wichtig an dieser stelle..
          CALL bnachbar
-         CALL bsd_el
+         CALL besp_elem
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
