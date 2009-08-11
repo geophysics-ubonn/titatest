@@ -19,7 +19,7 @@ c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
-      INTEGER :: i,j,ik,jk
+      INTEGER :: i,j,ik,jk,fp
 c     Maximale knotenanzahl nicht entarteter Elemente
       INTEGER :: smaxs
 c     Schwerpunktskoordinaten der Flaechenelemente
@@ -71,11 +71,13 @@ c     maximaler wert aus der Menge der Nachbarmittelpunkte
       
       CALL MDIAN1(abst,elanz,esp_med)
 
-      WRITE (*,'(//A/)')'Grid statistics:'
-      WRITE (*,'(20X,A,2F10.3)')'Min/Max:'//ACHAR(9),esp_min,esp_max
-      WRITE (*,'(20X,A,3F10.3)')'Mean/Median/Var:'//ACHAR(9),
+      CALL get_unit(fp)
+      OPEN (fp,FILE='tmp.gstat',STATUS='replace')
+      WRITE (fp,'(//A/)')'Grid statistics:'
+      WRITE (fp,'(20X,A,2F10.4)')'Min/Max:'//ACHAR(9),esp_min,esp_max
+      WRITE (fp,'(20X,A,3F10.4)')'Mean/Median/Var:'//ACHAR(9),
      1     esp_mit,esp_med,esp_std
-      WRITE (*,'(//)')
+      CLOSE (fp)
 
       IF (ALLOCATED(abst)) DEALLOCATE (abst)
 

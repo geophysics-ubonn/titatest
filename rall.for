@@ -139,11 +139,11 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
-         WRITE (*,'(a,F4.1,a)')
+         WRITE (*,'(a,F4.1,a)',ADVANCE='no')
      1        'Verrausche Daten mit RMS ::',stabw0,' /%'
          i=initrand()
          dum3=ran1(i)
-         WRITE (*,'(/a,I6,a,G12.3/)')'Seed / ran ::',i,'/',dum3
+         WRITE (*,'(a,I6,a,G12.3)')'  Seed / ran ::',i,'/',dum3
       END IF
 
 c     ro        lsr    = .false.
