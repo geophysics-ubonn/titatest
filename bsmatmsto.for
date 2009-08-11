@@ -48,19 +48,18 @@ c     Hilfsvariablen
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
-
-      sd_el=(sd_elmin+sd_elmax)*.5
-
-
-      IF (alfx < sd_el) WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_x',alfx,' to small, I would set it to ',sd_el
-      IF (alfz < sd_el) WRITE (*,'(/2(A,F10.4)/)')
-     1     'Scale length a_z',alfz,' to small, I would set it to ',sd_el
-      
-      Ix=alfx;Iz=alfz
-      
-c$$$  Ix=MAX(alfx,sd_el)
-c$$$      Iz=MAX(alfz,sd_el)
+      IF (alfx==0.) THEN
+         Ix=esp_mit
+         Iz=esp_mit
+         PRINT*,'Choosing mean ESP distance as scale length:',Ix
+      ELSE IF (alfz==0.) THEN
+         Ix=esp_med
+         Iz=esp_med
+         PRINT*,'Choosing median ESP distance as scale length:',Ix
+      ELSE
+         Ix=alfx
+         Iz=alfz
+      END IF
 
       smaxs=MAXVAL(selanz)
       
@@ -68,7 +67,6 @@ c     Belege die Matrix
 c     covTT=0
 
       smatm=0.
-
       do i = 1,manz
          xmeani=0.
          do l=1,smaxs
@@ -179,6 +177,7 @@ c     Berechne nun die Inierse der Covarianzmatrix!!!
             STOP
          END IF     
       END IF
+
 c$$$      PRINT*,'Erasing border cell influence..'
 c$$$      DO i=1,manz
 c$$$         IF (nachbar(i,0)/=smaxs) THEN
