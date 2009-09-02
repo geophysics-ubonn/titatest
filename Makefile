@@ -8,6 +8,7 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
+
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
@@ -21,6 +22,8 @@ FLIBLINBLAS     = -llapack -lblas
 FLIB            = -lm
 FLIBF77         = -lm
 
+C1		= cbn
+
 PR1		= crt
 
 PR2		= crm
@@ -31,8 +34,7 @@ f90crt		= get_unit.o make_noise.o alloci.o get_error.o
 
 f90crm		= alloci.o
 
-all:		$(PR1) $(PR2) $(PR3)
-
+all:		$(C1) $(PR1) $(PR2) $(PR3)
 
 # rules
 #.f90.mod:		
@@ -45,7 +47,7 @@ all:		$(PR1) $(PR2) $(PR3)
 #.f90.o:		
 #		$(F90) $(FFLAG90) -c $<
 
-#.SILENT:	all crt crm
+.SILENT:	cbn
 # default targets
 ################################## F90 targets..
 make_noise.o:	make_noise.f90
@@ -62,24 +64,32 @@ alloci.o:	alloci.f90
 	        $(F90) $(FFLAG90) -c alloci.f90
 ###################################
 
-crt:		*.for inv.f $(f90crt)
+cbn:		
+		if [ -d ~/bin ]; then \
+			echo "ok"; \
+		else \
+			echo "Du hast kein bin in deinem home.--"; \
+			mkdir ~/bin; \
+		fi
+
+crt:		$(C1) *.for inv.f $(f90crt)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
 		*.for inv.f $(f90crt)
 		$(CP) CRTomo $(WPATH)
 
-crm:		*.for fem.f $(f90crt)
+crm:		$(C1) *.for fem.f $(f90crt)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
 		*.for fem.f $(f90crt)
 		$(CP) CRMod $(WPATH)
 
-mtools:		
+mtools:		$(C1)		
 		$(CP) m_tools/crtomo_plot.sh $(WPATH)
 		$(CP) m_tools/crtomo_run.sh $(WPATH)
 		$(CP) m_tools/plot_cur_crmod $(WPATH)
 		$(CP) m_tools/plot_cur_crtomo $(WPATH)
 		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
-install:		
+install:	$(C1)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
 
