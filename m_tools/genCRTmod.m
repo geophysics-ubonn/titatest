@@ -221,6 +221,12 @@ for i=1:nm
     fprintf(fp,'%f\t%f\n',rho(i),0.0);
 end
 fclose(fp);
+fp=fopen('gen_cr.mag','w');
+fprintf(fp,'%d\n',nm)
+for i=1:nm
+    fprintf(fp,'%f\t%f\t%f\n',midx(i),midy(i),log10(rho(i)));
+end
+fclose(fp);
 saveplot=1
 if (saveplot==1)
     pause

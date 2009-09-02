@@ -173,7 +173,7 @@ caxis([cmin cmax])
 set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
-
+axis tight
 if logme~=0
     % Colortable neu definieren
     ni=(rolmax-rolmin)/nd; %increment
