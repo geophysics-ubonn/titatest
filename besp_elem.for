@@ -73,7 +73,8 @@ c     maximaler wert aus der Menge der Nachbarmittelpunkte
 
       CALL get_unit(fp)
       OPEN (fp,FILE='tmp.gstat',STATUS='replace')
-      WRITE (fp,'(//A/)')'Grid statistics:'
+      WRITE (fp,'(a/)')'Grid statistics:'
+      WRITE (fp,'(20X,A,I10)')'Gridcells:'//ACHAR(9),elanz
       WRITE (fp,'(20X,A,2F10.4)')'Min/Max:'//ACHAR(9),esp_min,esp_max
       WRITE (fp,'(20X,A,3F10.4)')'Mean/Median/Var:'//ACHAR(9),
      1     esp_mit,esp_med,esp_std
