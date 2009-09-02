@@ -17,6 +17,13 @@ fp=fopen('tmp.lastmod','r');
 modfile=fscanf(fp,'%s',1);
 fclose(fp);
 
+checkme = exist ('tmp.fenster','file');
+if checkme~=0
+    fp=fopen('tmp.fenster','r');
+    fenster=fscanf(fp,'%s',1);
+    fclose(fp);
+end
+
 elecmark='bo';
 marksize=5;
 az=0; % Azimuth for the plot 
@@ -133,6 +140,9 @@ fclose(fp);
 %%
 % open figure with name
 name=sprintf('CRTomo model');
+if checkme ~= 0
+    name = sprintf('%s %s',name,fenster);
+end
 fig=figure('Name',name,'Numbertitle','off');
 
 %%
