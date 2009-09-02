@@ -32,6 +32,8 @@ c     USE portlib
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
+      CHARACTER(256)  :: ftext
+
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
@@ -698,7 +700,9 @@ c.....................................................................
 c     Fehlermeldung
  999  open(9,file='error.dat',status='replace')
       errflag = 2
+      CALL get_error(ftext,errnr,errflag,fetxt)
       write(9,'(a80,i3,i1)') fetxt,errnr,errflag
+      write(9,*)ftext
       close(9)
       stop ' '
 

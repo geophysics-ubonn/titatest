@@ -27,7 +27,7 @@ PR2		= crm
 
 PR3		= mtools
 
-f90crt		= get_unit.o make_noise.o alloci.o
+f90crt		= get_unit.o make_noise.o alloci.o get_error.o
 
 f90crm		= alloci.o
 
@@ -50,6 +50,9 @@ all:		$(PR1) $(PR2) $(PR3)
 ################################## F90 targets..
 make_noise.o:	make_noise.f90
 		$(F90) $(FFLAG90) -c make_noise.f90
+
+get_error.o:	get_error.f90
+		$(F90) $(FFLAG90) -c get_error.f90
 
 get_unit.o:	get_unit.f90
 		$(F90) $(FFLAG90) -c get_unit.f90
