@@ -26,16 +26,21 @@ c PROGRAMMINTERNE PARAMETER:
 
 c Indexvariable
         integer         * 4     k
-
+c Platzhalter
+        INTEGER,PARAMETER :: ncdump=66
+        CHARACTER         :: cdump(ncdump)
 c.....................................................................
 
 c 'inv.ctr' oeffnen
+        DO i=1,ncdump-1
+           cdump(i:i+1)='#'
+        END DO
         errnr = 1
         fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-        open(13,file=fetxt,status='old',err=1000)
-1       read(13,*,end=2)
-            goto 1
-2       backspace(13)
+        open(13,file=fetxt,status='old',err=1000,position='append')
+c$$$1       read(13,*,end=2)
+c$$$            goto 1
+c$$$2       backspace(13)
         errnr = 4
 
         if (lsetup) then
@@ -53,7 +58,7 @@ c 'inv.ctr' oeffnen
             ncg = int(cgres(1))
 
             if (llam.and..not.lstep) then
-                write(13,*,err=1000)
+                write(13,'(a)',err=1000)cdump
                 if (lrobust) then
                     write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1                         t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
@@ -67,7 +72,7 @@ c 'inv.ctr' oeffnen
      1                       it,nrmsd,step,lam,rough,ncg,betrms,
      1                       pharms,npol
                 end if
-                write(13,*,err=1000)
+                write(13,'(a)',err=1000)cdump
 
                 fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
                 write(14,*,err=1000)
