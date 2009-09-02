@@ -265,7 +265,7 @@ c     Mindest-step-length
 
 c     Regularisierungsparameter
 c     ak Default
-      nlam   = 20
+      nlam   = 50
 
 c     ak Default
       fstart = 0.5d0
