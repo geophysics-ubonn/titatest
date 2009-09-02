@@ -27,13 +27,13 @@ c PROGRAMMINTERNE PARAMETER:
 c Indexvariable
         integer         * 4     k
 c Platzhalter
-        INTEGER,PARAMETER :: ncdump=66
-        CHARACTER         :: cdump(ncdump)
+        INTEGER,PARAMETER :: ncdump=97
+        CHARACTER(ncdump) :: cdump
 c.....................................................................
 
 c 'inv.ctr' oeffnen
         DO i=1,ncdump-1
-           cdump(i:i+1)='#'
+           cdump(i:i+1)='*'
         END DO
         errnr = 1
         fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
@@ -44,6 +44,8 @@ c$$$2       backspace(13)
         errnr = 4
 
         if (lsetup) then
+
+           write(13,'(a)',err=1000)cdump
             if (lrobust) then
                 write(13,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
      1                     t89,i4,t101,g9.3)',err=1000)
@@ -53,7 +55,7 @@ c$$$2       backspace(13)
      1                     t89,i4)',err=1000)
      1                   it,nrmsd,betrms,pharms,npol
             end if
-            write(13,*,err=1000)
+            write(13,'(a)',err=1000)cdump
         else
             ncg = int(cgres(1))
 
