@@ -65,6 +65,7 @@ alloci.o:	alloci.f90
 ###################################
 
 cbn:		
+		echo "Pruefe ~/bin"
 		if [ -d ~/bin ]; then \
 			echo "ok"; \
 		else \
