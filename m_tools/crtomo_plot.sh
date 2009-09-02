@@ -44,6 +44,7 @@ done
 
 awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
+echo $1 > tmp.fenster
 
 $crt >& $1'.crtrun'
 $mtlb < $plotmod >& /dev/null
@@ -52,7 +53,7 @@ tmp=`cat tmp.lastmod`
 myeps=`basename $tmp`'.eps'
 mypdf=`basename $myeps '.eps'`'.pdf'
 echo "making image conversion..."
-$epsp $myeps -o=$mypdf >& /dev/null
+$epsp $myeps -o=$1$mypdf >& /dev/null
 $mogri -format jpg $myeps
 echo "done $1"
 
