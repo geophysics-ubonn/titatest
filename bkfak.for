@@ -19,7 +19,7 @@ c.....................................................................
 c PROGRAMMINTERNE PARAMETER:
 
 c Indexvariable
-        integer         * 4     i
+        integer         * 4     i,fp
 
 c Elektrodennummern
         integer         * 4     elec1,elec2,
@@ -39,6 +39,9 @@ c.....................................................................
 
         pi = dacos(-1d0)
 
+        CALL get_unit(fp)
+        OPEN (fp,FILE='tmp.kfak',STATUS='replace')
+        
         do i=1,nanz
             elec1 = mod(strnr(i),10000)
             elec2 = (strnr(i)-elec1)/10000
@@ -123,8 +126,10 @@ ctmp                dum = 1d-12
 
             dum     = 4d0*pi / dum
             kfak(i) = dum
-            print*,i,kfak(i)
+            
         end do
+
+        WRITE (fp,'(I8,2X,G12.4)')(i,kfak(i),i=1,nanz)
 
         errnr = 0
         return

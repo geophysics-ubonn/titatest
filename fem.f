@@ -55,9 +55,13 @@ c     Schalter ob Sensitivitaeten ausgegeben werden sollen
 c     Schalter ob weiterer Datensatz modelliert werden soll
       logical         * 4     lagain
 
+c     Schalter ob mit K-Faktor modelliert werden soll (default ohne)
+      logical         * 4     wkfak
+
 c     Indexvariablen
       integer         * 4     j,k,l,count1,irate,count2
-
+      
+      character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
       CALL SYSTEM_CLOCK (count1,irate)
@@ -106,6 +110,14 @@ c     'crmod.cfg' einlesen
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
+      read(12,'(L)',end=100,err=999) wkfak
+
+      IF ( wkfak ) GOTO 101
+
+ 100  wkfak=.false.           !dfault wert
+      PRINT*,'Modelling without K-Faktor!'
+ 101  IF (wkfak) PRINT*,'Modelling with K-Faktor!'
+
 
 c     Alles einlesen
       call relem(kanal,delem)
@@ -224,7 +236,7 @@ c     Ggf. Potentialwerte berechnen und ausgeben
 c     Ggf. Spannungswerte berechnen und ausgeben
 c     (bzw. scheinbaren Widerstandswerte)
       if (lvolt) then
-         if (lbeta) then
+         IF (wkfak.AND.lbeta) then
             call bkfak()
             if (errnr.ne.0) goto 999
          else
@@ -289,21 +301,26 @@ c     Kontrollausgabe
 
       CALL SYSTEM_CLOCK (count2,irate)
       print*,((count2-count1)/(irate)),' seconds'
-      stop ' '
-
+      
+      RETURN
+      
 c.....................................................................
 
 c     (Fehler-) Meldung schreiben
  999  open(9,file='error.dat',status='replace')
       errflag = 2
+      CALL get_error(ftext,errnr,errflag,fetxt)
       write(9,'(a80,i3,i1)') fetxt,errnr,errflag
+      write(9,*)ftext
       close(9)
       stop ' '
 
  1001 open(9,file='error.dat',status='replace')
       errnr   = 2
       errflag = 2
+      CALL get_error(ftext,errnr,errflag,fetxt)
       write(9,'(a80,i3,i1)') fetxt,errnr,errflag
+      write(9,*)ftext
       close(9)
       stop ' '
 
