@@ -51,7 +51,8 @@ all:		$(PR1) $(PR2) $(PR3)
 make_noise.o:	make_noise.f90
 		$(F90) $(FFLAG90) -c make_noise.f90
 
-get_error.o:	get_error.f90
+get_error.o:	error.txt get_error.f90
+		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
 
 get_unit.o:	get_unit.f90
@@ -75,6 +76,7 @@ mtools:
 		$(CP) m_tools/crtomo_plot.sh $(WPATH)
 		$(CP) m_tools/crtomo_run.sh $(WPATH)
 		$(CP) m_tools/plot_cur_crmod $(WPATH)
+		$(CP) m_tools/plot_cur_crtomo $(WPATH)
 		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
 install:		
