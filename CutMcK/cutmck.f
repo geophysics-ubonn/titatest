@@ -333,7 +333,12 @@ c Fehlerdatei loeschen
         close(10,status='delete')
 
         CALL SYSTEM_CLOCK (c2,i)
-        WRITE (*,'(a,I6,a)')' in ',((c2-c1)/(i)),' s'
+        k=(c2-c1)/j             ! Sekunden
+        c1=INT(k/60)           ! Minuten
+        c2=INT(k/60/60)        ! Stunden
+        l=k-c1*60-c2*60*60
+ 3      FORMAT(I2,1X,'h/',I2,1X,'m/',I2,1X,'s')
+        WRITE (*,3)MOD(k,60*60),MOD(k,60),l
 
         RETURN
 

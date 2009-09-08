@@ -59,12 +59,12 @@ c     Schalter ob mit K-Faktor modelliert werden soll (default ohne)
       logical         * 4     wkfak
 
 c     Indexvariablen
-      integer         * 4     j,k,l,count1,irate,count2
-      
+      integer         * 4     j,k,l,c1,c2
+
       character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      CALL SYSTEM_CLOCK (count1,irate)
+      CALL SYSTEM_CLOCK (c1,j)
 c     'crmod.cfg' oeffnen
       fetxt = 'crmod.cfg'
       errnr = 1
@@ -299,9 +299,14 @@ c     Kontrollausgabe
       write(*,*)
       write(*,'(a)',ADVANCE='no')' Modelling completed in'
 
-      CALL SYSTEM_CLOCK (count2,irate)
-      print*,((count2-count1)/(irate)),' seconds'
-      
+      CALL SYSTEM_CLOCK (c2,j)
+      k=(c2-c1)/j ! Sekunden
+      c1=INT(k/60) ! Minuten
+      c2=INT(k/60/60) ! Stunden
+      l=k-c1*60-c2*60*60
+ 110  FORMAT(I2,1X,'h/',I2,1X,'m/',I2,1X,'s')
+      WRITE (*,110)MOD(k,60*60),MOD(k,60),l
+
       RETURN
       
 c.....................................................................

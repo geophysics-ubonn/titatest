@@ -7,7 +7,6 @@ RM		= rm -f
 CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
-W2PATH		=  $(WPATH)
 
 F90		= gfortran
 F77		= gfortran
@@ -23,10 +22,12 @@ FLIB            = -lm
 FLIBF77         = -lm
 
 
+# name des Programms 
+PROG	        = CutMcK
+# target
+PR1		= ctm
 # default targets
-PROG	        = cutmck
-
-all:		$(PROG) linux
+all:		$(PR1) linux
 #
 OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o \
 		  get_error.o
@@ -54,15 +55,14 @@ get_error.o:	error.txt get_error.f90
 		$(F90) $(FFLAG90) -c get_error.f90
 
 # targets
-$(PROG):	$(OBJ) 
+ctm:		$(OBJ) 
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
 		$(OBJ) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)
 
 clean:		
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
-			$(PROG) $(MPR) $(MSG)
+			$(PROG)
 
 linux:		$(PROG)
 		$(CP) $(PROG) $(WPATH)
-		$(CP) $(PROG) $(W2PATH)
