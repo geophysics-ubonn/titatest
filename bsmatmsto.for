@@ -130,26 +130,19 @@ c     CovTT = var*exp(-CovTT)
 
       IF (exc) THEN
          IF (nx<0) THEN
+            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             PRINT*,''
             PRINT*,'   Cholesky factorization ... '
             PRINT*,''
-            CALL DPOTRF('U',manz,smatm,manz,errorflag)
+            CALL chold(smatm,covTT,manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..',errorflag
-               PRINT*,'Zeile::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
                STOP
             END IF
             PRINT*,''
             PRINT*,'   Invertiere smatm ... '
             PRINT*,''
-            CALL DPOTRI('U',manz,smatm,manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..'
-               PRINT*,'Zeile::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
-               STOP
-            END IF
+            CALL linv(covTT,smatm,manz)
          ELSE IF (nz<0) THEN        
             PRINT*,''
             PRINT*,'   Find inv ... '
