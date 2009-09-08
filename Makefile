@@ -22,19 +22,24 @@ FLIBLINBLAS     = -llapack -lblas
 FLIB            = -lm
 FLIBF77         = -lm
 
+# definition der default targets..
+# das hier chek obs ein bin im home gibt
 C1		= cbn
-
+# macht CRTomo
 PR1		= crt
-
+# macht CRMod
 PR2		= crm
+# macht CutMckee
+PR3		= ctm
+# kopiert die matlab tools
+PRM		= mtools
 
-PR3		= mtools
-
-f90crt		= get_unit.o make_noise.o alloci.o get_error.o
+f90crt		= alloci.o chold.o gauss.o get_error.o get_unit.o \
+		  linv.o make_noise.o 
 
 f90crm		= alloci.o
 
-all:		$(C1) $(PR1) $(PR2) $(PR3)
+all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM)
 
 # rules
 #.f90.mod:		
@@ -50,18 +55,21 @@ all:		$(C1) $(PR1) $(PR2) $(PR3)
 .SILENT:	cbn
 # default targets
 ################################## F90 targets..
-make_noise.o:	make_noise.f90
-		$(F90) $(FFLAG90) -c make_noise.f90
-
+alloci.o:	alloci.f90
+	        $(F90) $(FFLAG90) -c alloci.f90
+chold.o:	chold.f90
+	        $(F90) $(FFLAG90) -c chold.f90
+gauss.o:	gauss.f90
+	        $(F90) $(FFLAG90) -c gauss.f90
 get_error.o:	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
-
 get_unit.o:	get_unit.f90
 		$(F90) $(FFLAG90) -c get_unit.f90
-
-alloci.o:	alloci.f90
-	        $(F90) $(FFLAG90) -c alloci.f90
+linv.o:		linv.f90
+	        $(F90) $(FFLAG90) -c linv.f90
+make_noise.o:	make_noise.f90
+		$(F90) $(FFLAG90) -c make_noise.f90
 ###################################
 
 cbn:		
@@ -90,9 +98,13 @@ mtools:		$(C1)
 		$(CP) m_tools/plot_cur_crtomo $(WPATH)
 		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
+ctm:		
+		cd ./CutMcK ; make
+
 install:	$(C1)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o m_tools/*~
+		cd ./CutMcK ; make clean

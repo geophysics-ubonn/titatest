@@ -1,0 +1,65 @@
+c 'elem.fin'
+
+c Andreas Kemna                                            24-Nov-1993
+c                                       Letzte Aenderung   24-Oct-1996
+         
+c.....................................................................
+
+c COMMON
+
+c Anzahl der Knoten (bzw. Knotenvariablen)
+        integer         * 4     sanz
+
+c Anzahl der Elementtypen
+        integer         * 4     typanz
+
+c Bandbreite der Gesamtsteifigkeitsmatrix 'a'
+        integer         * 4     mb
+
+c Elementtypen
+c (Randelemente (ntyp > 10) am Schluss !)
+        integer         * 4     typ(typmax)
+
+c Anzahl der Elemente eines bestimmten Typs
+        integer         * 4     nelanz(typmax)
+
+c Anzahl der Knoten (bzw. Knotenvariablen) in einem Elementtyp
+        integer         * 4     selanz(typmax)
+
+c Zeiger auf Koordinaten der Knoten
+c (Inverser Permutationsvektor der Umnumerierung)
+        integer         * 4     snr(smax)
+
+c x-Koordinaten der Knoten
+        real            * 8     sx(smax)
+
+c y-Koordinaten der Knoten
+        real            * 8     sy(smax)
+
+c Knotennummern der Elemente (Reihenfolge !)
+        integer         * 4     nrel((elmax+relmax),selmax)
+
+c Anzahl der Elemente (ohne Randelemente)
+        integer         * 4     elanz
+
+c Anzahl der Randelemente
+        integer         * 4     relanz
+
+c Zeiger auf Werte der Randelemente
+        integer         * 4     rnr(relmax)
+
+c.....................................................................
+
+        common/celem/   sx,
+     1                  sy,
+     1                  sanz,
+     1                  typanz,
+     1                  mb,
+     1                  typ,
+     1                  nelanz,
+     1                  selanz,
+     1                  snr,
+     1                  nrel,
+     1                  elanz,
+     1                  relanz,
+     1                  rnr

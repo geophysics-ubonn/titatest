@@ -1,0 +1,37 @@
+c 'cutmck.fin'
+
+c Andreas Kemna                                            23-Sep-1994
+c                                       Letzte Aenderung   06-Feb-2003
+
+c.....................................................................
+
+c Maximale Anzahl vorgegebener Startpunkte im Cuthill-McKee-Algorithmus
+        integer         * 4     spmax
+
+c Maximaler Grad der Knotenpunkte
+        integer         * 4     grmax
+
+c Maximale Anzahl der Stufen im Cuthill-McKee-Algorithmus
+        integer         * 4     stmax
+
+c.....................................................................
+
+        parameter ( spmax  = 200000 ,
+     1              grmax  = 10000   ,
+     1              stmax  = 10000  )
+
+c.....................................................................
+
+c COMMON
+
+c Anzahl der Startpunkte
+c ( >0 : vorgegeben, <0 : automatisch bestimmt)
+        integer         * 4     spanz
+
+c Knotennummern der Startpunkte
+        integer         * 4     start(spmax)
+
+c.....................................................................
+
+        common/ccutmck/ spanz,
+     1                  start
