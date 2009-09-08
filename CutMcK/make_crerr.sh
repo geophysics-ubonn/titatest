@@ -29,3 +29,4 @@ while [ $i -ne $n ];do
 
     echo "   fetxt($i)='$bla'" >> $outp
 done
+rm tmp tmp2
