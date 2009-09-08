@@ -42,14 +42,14 @@ c Maximum of fixed potential nodes
 
 c.....................................................................
 
-        parameter ( mbmax  = 200   ,
-     1              smax   = 10000 ,
+        parameter ( mbmax  = 500   ,
+     1              smax   = 200000 ,
      1              typmax = 5     ,
      1              selmax = 4     ,
-     1              elmax  = 10000 ,
-     1              relmax = 800   ,
-     1              mmax   = 10000 ,
+     1              elmax  = 200000 ,
+     1              relmax = 10000   ,
+     1              mmax   = 200000 ,
      1              kwnmax = 30    ,
-     1              emax   = 200   ,
+     1              emax   = 500   ,
      1              nmax   = 10000 ,
-     1              rwdmax = 100   )
+     1              rwdmax = 500   )
