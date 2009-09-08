@@ -16,9 +16,9 @@ c Maximale Anzahl der Stufen im Cuthill-McKee-Algorithmus
 
 c.....................................................................
 
-        parameter ( spmax  = 200000 ,
-     1              grmax  = 10000   ,
-     1              stmax  = 10000  )
+        parameter ( spmax  = 10000 ,
+     1              grmax  = 1000   ,
+     1              stmax  = 100  )
 
 c.....................................................................
 

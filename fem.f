@@ -59,7 +59,7 @@ c     Schalter ob mit K-Faktor modelliert werden soll (default ohne)
       logical         * 4     wkfak
 
 c     Indexvariablen
-      integer         * 4     j,k,l,c1,c2
+      integer         * 4     j,k,l,c1,c2,se,mi,st,ta
 
       character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -300,12 +300,13 @@ c     Kontrollausgabe
       write(*,'(a)',ADVANCE='no')' Modelling completed in'
 
       CALL SYSTEM_CLOCK (c2,j)
-      k=(c2-c1)/j ! Sekunden
-      c1=INT(k/60) ! Minuten
-      c2=INT(k/60/60) ! Stunden
-      l=k-c1*60-c2*60*60
- 110  FORMAT(I2,1X,'h/',I2,1X,'m/',I2,1X,'s')
-      WRITE (*,110)MOD(k,60*60),MOD(k,60),l
+      k=(c2-c1)/j ! Gesamt Sekunden
+      mi=INT(k/60) ! Minuten
+      st=INT(k/60/60) ! Stunden
+      ta=INT(k/60/60/24) ! Tage
+      se=k-c1*60-c2*60*60-d1*60*60*24 ! Sekunden
+ 110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
+      WRITE (*,110)ta,st,mi,se
 
       RETURN
       

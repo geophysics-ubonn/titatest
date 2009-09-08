@@ -40,12 +40,12 @@ c Maximale Anzahl der Spannungsmessungen (aller Projektionen)
 c.....................................................................
 
         parameter ( mbmax  = 1000   ,
-     1              smax   = 200000 ,
+     1              smax   = 100000 ,
      1              typmax = 4     ,
      1              selmax = 4     ,
-     1              elmax  = 200000 ,
+     1              elmax  = 100000 ,
      1              relmax = 10000   ,
-     1              mmax   = 200000 ,
+     1              mmax   = 100000 ,
      1              kwnmax = 100    ,
      1              emax   = 1000   ,
      1              nmax   = 10000  )

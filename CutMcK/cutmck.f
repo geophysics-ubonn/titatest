@@ -47,7 +47,7 @@ c Hilfsvariablen
 
         logical         * 1     num(smax)
 
-        integer         * 4     c1,c2
+        integer         * 4     c1,c2,se,mi,st,ta
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         CALL SYSTEM_CLOCK (c1,i)
         kont   = .true.
@@ -334,12 +334,14 @@ c Fehlerdatei loeschen
 
         CALL SYSTEM_CLOCK (c2,i)
         k=(c2-c1)/j             ! Sekunden
-        c1=INT(k/60)           ! Minuten
-        c2=INT(k/60/60)        ! Stunden
-        l=k-c1*60-c2*60*60
- 3      FORMAT(I2,1X,'h/',I2,1X,'m/',I2,1X,'s')
-        WRITE (*,3)MOD(k,60*60),MOD(k,60),l
+        mi=INT(k/60)            ! Minuten
+        st=INT(k/60/60)         ! Stunden
+        ta=INT(k/60/60/24)      ! Tage
+        se=k-c1*60-c2*60*60-d1*60*60*24 ! Sekunden
+ 3      FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
+        WRITE (*,3)ta,st,mi,se
 
+        PRINT*,k,'seconds'
         RETURN
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
