@@ -77,18 +77,22 @@ c 'CutMck.cfg' einlesen
            IF (exi2.AND.exi3) THEN
               PRINT*,'trying default::',TRIM(delem),'  ',TRIM(delectr)
            ELSE
-              IF (.NOT.exi2)PRINT*,'no default grid file::',TRIM(delem)
-              IF (.NOT.exi3)PRINT*,'no default electrode file::',
-     1             TRIM(delectr)
+              IF (.NOT.exi2) THEN
+                 fetxt=TRIM(delem)
+                 PRINT*,'no default grid file::',TRIM(delem)
+              END IF
+              IF (.NOT.exi3)THEN
+                 fetxt=TRIM(fetxt)//' '//TRIM(delectr)
+                 PRINT*,'no default electrode file::',TRIM(delectr)
+              END IF
               errnr = 3
               GOTO 1000
            END IF
         END IF
-        print*,'read in elements'
+        print*,'read in elements...'
 c 'delem' einlesen
         call relem(11,delem)
         if (errnr.ne.0) goto 1000
-        print*,'ok'
         print*,'read in electrodes'
 c 'delectr' einlesen
         call relectr(11,delectr)
