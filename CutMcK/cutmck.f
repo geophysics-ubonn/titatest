@@ -75,7 +75,7 @@ c 'CutMck.cfg' einlesen
            INQUIRE (FILE=delem,EXIST=exi2)
            INQUIRE (FILE=delectr,EXIST=exi3)
            IF (exi2.AND.exi3) THEN
-              PRINT*,'trying default::',TRIM(delem),TRIM(delectr)
+              PRINT*,'trying default::',TRIM(delem),'  ',TRIM(delectr)
            ELSE
               errnr = 3
               GOTO 1000
