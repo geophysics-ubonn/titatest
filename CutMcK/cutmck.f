@@ -46,7 +46,7 @@ c Hilfsvariablen
      1                          levs,leve,nlev
 
         logical         * 1     num(smax)
-
+        logical         * 1     exi1,exi2,exi3
         integer         * 4     c1,c2,se,mi,st,ta
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
         CALL SYSTEM_CLOCK (c1,i)
@@ -60,15 +60,27 @@ c Fehlerflag setzen
 
 c 'CutMck.cfg' einlesen
         fetxt = 'cutmck.cfg'
-
-        errnr = 1
-        open(11,file=fetxt,status='old',err=1000)
-
-            errnr = 3
-            read(11,'(a,/,a)',end=1001,err=1000)
-     1              delem,delectr
-        close(11)
-
+        INQUIRE (FILE=fetxt,EXIST=exi1)
+        IF (exi1) THEN
+           errnr = 1
+           open(11,file=fetxt,status='old',err=1000)
+           
+           errnr = 3
+           read(11,'(a,/,a)',end=1001,err=1000)
+     1          delem,delectr
+           close(11)
+        ELSE !check for defaults
+           delem='elem.dat'
+           delectr='elec.dat'
+           INQUIRE (FILE=delem,EXIST=exi2)
+           INQUIRE (FILE=delectr,EXIST=exi3)
+           IF (exi2.AND.exi3) THEN
+              PRINT*,'trying default::',delem,delectr
+           ELSE
+              errnr = 3
+              GOTO 1000
+           END IF
+        END IF
         print*,'read in elements'
 c 'delem' einlesen
         call relem(11,delem)
