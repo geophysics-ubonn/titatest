@@ -77,6 +77,9 @@ c 'CutMck.cfg' einlesen
            IF (exi2.AND.exi3) THEN
               PRINT*,'trying default::',TRIM(delem),'  ',TRIM(delectr)
            ELSE
+              IF (.NOT.exi2)PRINT*,'no default grid file::',TRIM(delem)
+              IF (.NOT.exi3)PRINT*,'no default electrode file::',
+     1             TRIM(delectr)
               errnr = 3
               GOTO 1000
            END IF
