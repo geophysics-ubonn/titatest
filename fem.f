@@ -304,7 +304,7 @@ c     Kontrollausgabe
       mi=INT(k/60) ! Minuten
       st=INT(k/60/60) ! Stunden
       ta=INT(k/60/60/24) ! Tage
-      se=k-c1*60-c2*60*60-d1*60*60*24 ! Sekunden
+      se=k-mi*60-st*60*60-ta*60*60*24 ! Sekunden
  110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
       WRITE (*,110)ta,st,mi,se
 
