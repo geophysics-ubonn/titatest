@@ -97,17 +97,11 @@ c 'delem' einlesen
 c 'delectr' einlesen
         call relectr(11,delectr)
         if (errnr.ne.0) goto 1000
-        print*,'read in ok'
+        print*,'ok'
 c Aufbau des Graphen aufgrund der Knotennummern der Elemente
-        do i=1,sanz
-            grad(i) = 0
-            do j=1,grmax
-                graph(j,i) = 0
-            end do
-        end do
+        grad=0;graph=0
 
         idum = 0
-
 
         do l=1,typanz
             do m=1,nelanz(l)
@@ -149,7 +143,7 @@ c                     Fehlermeldung
             end do
             idum = idum+nelanz(l)
         end do
-
+        PRINT*,'graph erstellt'
         maxgd = grad(1)
         mingd = grad(1)
         do i=2,sanz
@@ -185,15 +179,13 @@ c Ggf. Kontrolldatei oeffnen
 cak
         spanz = sanz
         k = 0
-
+        spanz = MIN(sanz,spmax)
+        print*,'startpkte ',spanz
 110     do 120 i=1,sanz
             if (grad(i).eq.mingd) then
                 k = k+1
                 start(k) = i
-                if (k.ge.spanz) THEN
-                   PRINT*,k,spanz
-                   goto 130
-                ENDIF
+                if (k.ge.spanz) goto 130
             end if
 120     continue
 
@@ -214,6 +206,7 @@ c Neunumerierung der Knotenpunkte fuer alle Startpunkte
         kbdm = 0
 
         do is=1,spanz
+           WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'knoten',is
             nstart        = start(is)
             neu(1)        = nstart
             neuin(nstart) = 1
