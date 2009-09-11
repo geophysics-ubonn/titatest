@@ -150,7 +150,6 @@ c     Fehlermeldung
          maxgd = max0(maxgd,grad(i))
          mingd = min0(mingd,grad(i))
       end do
-
 c$$$  DO i=1,sanz
 c$$$  PRINT*,'Knoten ',i,'grad ',grad(i)
 c$$$  ENDDO
@@ -180,6 +179,7 @@ c     ak
       spanz = sanz
       k = 0
       spanz = MIN(sanz,spmax)
+      PRINT*,'mingd_1::',mingd
  110  do 120 i=1,sanz
          if (grad(i).eq.mingd) then
             k = k+1
@@ -189,13 +189,13 @@ c     ak
  120  continue
 
       mingd = mingd+1
+      PRINT*,'mingd::',mingd
       goto 110
 
  130  continue
 
-      spanz=k
+      spanz=k-1
       print*,'errechnete startpkte ',spanz
-
       if (kont) then
 
          errnr = 4
@@ -251,11 +251,11 @@ c     Neunumerierung der Knotenpunkte fuer alle Startpunkte
 
             goto 160
  180     continue
-
          levs        = levs+level(nlev)
          nlev        = nlev+1
          level(nlev) = l-levs+1
          leve        = leve+level(nlev)
+
 
          if (leve.lt.sanz) goto 150
 
