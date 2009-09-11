@@ -206,8 +206,9 @@ c Neunumerierung der Knotenpunkte fuer alle Startpunkte
         kbdm = 0
 
         do is=1,spanz
-           WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'knoten',is
             nstart        = start(is)
+            WRITE (*,'(a,1X,I6)',ADVANCE='no')
+     1           ACHAR(13)//'startknoten',nstart
             neu(1)        = nstart
             neuin(nstart) = 1
 
