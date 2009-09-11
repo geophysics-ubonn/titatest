@@ -180,7 +180,6 @@ cak
         spanz = sanz
         k = 0
         spanz = MIN(sanz,spmax)
-        print*,'startpkte ',spanz
 110     do 120 i=1,sanz
             if (grad(i).eq.mingd) then
                 k = k+1
@@ -193,6 +192,9 @@ cak
         goto 110
 
 130     continue
+
+        spanz=k
+        print*,'errechnete startpkte ',spanz
 
         if (kont) then
 
@@ -207,8 +209,10 @@ c Neunumerierung der Knotenpunkte fuer alle Startpunkte
 
         do is=1,spanz
             nstart        = start(is)
+
             WRITE (*,'(2(a,1X,I6,2X))',ADVANCE='no')
      1           ACHAR(13)//'startknoten',nstart,'bandbreite',mmin
+
             neu(1)        = nstart
             neuin(nstart) = 1
 
@@ -332,7 +336,7 @@ c Startwerte umspeichern (zur Kontrolle)
         do i=1,spanz
             start(i) = perm(start(i))
         end do
-
+        PRINT*,' writing out new values '
 c Elementeinteilung und Elektrodenverteilung schreiben
         delem=TRIM(ADJUSTL(delem))//'_ctm'
         call welem(11,delem)
@@ -354,7 +358,6 @@ c Fehlerdatei loeschen
  3      FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
         WRITE (*,3)ta,st,mi,se
 
-        PRINT*,k,'seconds'
         RETURN
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
