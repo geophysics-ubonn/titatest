@@ -207,7 +207,7 @@ c Neunumerierung der Knotenpunkte fuer alle Startpunkte
 
         do is=1,spanz
             nstart        = start(is)
-            WRITE (*,'(2(a,1X,I6))',ADVANCE='no')
+            WRITE (*,'(2(a,1X,I6,2X))',ADVANCE='no')
      1           ACHAR(13)//'startknoten',nstart,'bandbreite',mmin
             neu(1)        = nstart
             neuin(nstart) = 1
