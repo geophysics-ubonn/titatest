@@ -7,7 +7,7 @@ c     bestimmt. Andernfalls werden die vorgegebenen Nummern der Startpunkte
 c     aus 'dstart' gelesen.
 
 c     Andreas Kemna                                            11-Oct-1993
-c     Letzte Aenderung   21-Jan-2003
+c     Letzte Aenderung, RM   11-Sep-2009
 
 c     ( Vgl. entspr. Hauptprogramm in Schwarz (1991) )
 
