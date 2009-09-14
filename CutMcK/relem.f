@@ -103,7 +103,7 @@ c einlesen
         i = 0;j = 0
         DO k=1,sanz
            IF (sx(snr(k))==sx(snr(1))) j = j+1 !counts vertical grid nodes
-           IF (sx(snr(k))==sx(snr(1))) i = i+1 !counts horizontal grid nodes
+           IF (sy(snr(k))==sy(snr(1))) i = i+1 !counts horizontal grid nodes
         END DO
         WRITE (*,'(3(a,I6))')'Counted nx ',i,' ny',j,' nxy=',i*j
 c Knotennummern der Elemente einlesen
