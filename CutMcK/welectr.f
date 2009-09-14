@@ -34,7 +34,7 @@ c 'datei' oeffnen
         fetxt = datei
 
         errnr = 1
-        open(kanal,file=fetxt,status='unknown',err=1000)
+        open(kanal,file=fetxt,status='replace',err=1000)
 
         errnr = 4
 

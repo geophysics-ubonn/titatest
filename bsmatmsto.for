@@ -129,7 +129,7 @@ c     CovTT = var*exp(-CovTT)
       END IF
 
       IF (exc) THEN
-         IF (nx<0) THEN
+         IF (nx==-1) THEN
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             PRINT*,''
             PRINT*,'   Cholesky factorization ... '
@@ -143,7 +143,7 @@ c     CovTT = var*exp(-CovTT)
             PRINT*,'   Invertiere smatm ... '
             PRINT*,''
             CALL linv(covTT,smatm,manz)
-         ELSE IF (nz<0) THEN        
+         ELSE IF (nx==-2) THEN        
             PRINT*,''
             PRINT*,'   Find inv ... '
             PRINT*,''

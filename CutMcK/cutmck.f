@@ -338,11 +338,11 @@ c     Startwerte umspeichern (zur Kontrolle)
       end do
       PRINT*,' writing out new values '
 c     Elementeinteilung und Elektrodenverteilung schreiben
-      delem=TRIM(ADJUSTL(delem))//'_ctm'
+c      delem=TRIM(ADJUSTL(delem))//'_ctm'
       call welem(11,delem)
       if (errnr.ne.0) goto 1000
 
-      delectr=TRIM(ADJUSTL(delectr))//'_ctm'
+c      delectr=TRIM(ADJUSTL(delectr))//'_ctm'
       call welectr(11,delectr)
       if (errnr.ne.0) goto 1000
 

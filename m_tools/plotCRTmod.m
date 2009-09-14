@@ -1,14 +1,20 @@
 %%
 % Definitions
 
-modonly=0;
+modonly=1;
 
-close all
+%close all
 clear rho
+if modonly ~= 0
+    clear all
+   modonly = 1;
+end
+elecmark='bo';
+marksize=5;
 az=0; % Azimuth for the plot 
 el=90; % elongation for thew plot
 fns=14; % font size
-cmin=1;cmax=100; % plot range can be set here, 0 automatic choosed
+cmin=0;cmax=0; % plot range can be set here, 0 automatic choosed
 logme=0; % linear plots -> 0 logarithmic else
 saveplot=1; % if save the plot adjust and press space
 
@@ -42,7 +48,7 @@ for i=1:typanz
     selanz(i)  = fscanf (fp,'%d',1); % Anzahl der Elementknoten/Element
     nel        = nel+nelanz(i); % Gesamtzahl der Elemente
 end
-sprintf('Reading in %d Nodes and %d Elements',sanz,nel);
+disp(sprintf('Reading in %d Nodes and %d Elements',sanz,nel));
 % Knoten einlesen
 for i=1:sanz
     snr(i) = fscanf (fp,'%d',1); % Knotennummer..
@@ -52,9 +58,8 @@ end
 sxp=zeros(sanz,1);
 syp=zeros(sanz,1);
 snrp=zeros(sanz,1);
-if (snr(1)~=1)
 
-    sprintf('rearranging node numbers \n');
+    disp(sprintf('rearranging node numbers \n'));
 
     [snrs,perm]=sort(snr);
     for i=1:sanz
@@ -62,7 +67,6 @@ if (snr(1)~=1)
         syp(i)=sy(snr(i));
         snrp(i)=snr(snr(i));
     end
-end
 % Element Felder definieren
 msel=max(max(selanz));
 nrel=zeros(nel,msel);
@@ -85,6 +89,21 @@ end
 fclose (fp);
 vertices(:,1)=sxp;
 vertices(:,2)=syp;
+%%
+%%
+% Einlesen der Elektroden
+[elecfile,pdir] = uigetfile('*','Elektrodenpositionen (from CRTomo)');
+cd (pdir);
+fp=fopen(elecfile,'r');
+line=fgetl(fp);
+nelec=sscanf(line,'%d',1)
+elecpos=zeros(nelec,2)
+for i=1:nelec
+    ie=fscanf(fp,'%d',1)
+    elecpos(i,1)=sxp(ie);
+    elecpos(i,2)=syp(ie);
+end
+fclose(fp);
 end
 %%
 % Einlesen der Modellwerte (Knotenbasiert)
@@ -102,6 +121,7 @@ for i=1:nm
     rho(i)=fscanf(fp,'%f',1);
     phase(i)=fscanf(fp,'%f',1);
 end
+
 %%
 % open figure with name
 name=sprintf('CRTomo model');
@@ -111,6 +131,7 @@ fig=figure('Name',name,'Numbertitle','off');
 % Plotten der Potentiale mit fill(X,Y,Z,C)
 clf;
 % plot
+cmin=0;cmax=0;
 %trisurf(TRI,Vx,Vy,volt1,'edgecolor','none');
 title(name,'fontsize',fns);
 
@@ -137,15 +158,16 @@ end
 if (cmax==0)
     cmax=rolmax;
 end
-sprintf('Plot range:: %f\t%f\n',cmin,cmax)
-patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat')%,'Edgecolor','none')
+disp(sprintf('Plot range:: %f\t%f\n',cmin,cmax));
+
+patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat','Edgecolor','none')
 caxis([cmin cmax])
 
 %set(gca,'DataAspectRatio',[1 1 1],'fontsize',fns,'TickDir','out')
 set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
-
+axis tight
 if logme~=0
     % Colortable neu definieren
     ni=(rolmax-rolmin)/nd; %increment
@@ -171,7 +193,12 @@ set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
 set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
 view(az,el);
-
+hold on
+for i=1:nelec
+    plot(elecpos(i,1),elecpos(i,2),elecmark,...
+        'MarkerEdgeColor','k','MarkerFaceColor','k',...
+        'MarkerSize',marksize);
+end
 if (saveplot==1)
     %pause
     fls=modfile;

@@ -73,16 +73,13 @@ end
 sxp=zeros(sanz,1);
 syp=zeros(sanz,1);
 snrp=zeros(sanz,1);
-if (snr(1)~=1)
+sprintf('rearranging node numbers \n');
 
-    sprintf('rearranging node numbers \n');
-
-    [snrs,perm]=sort(snr);
-    for i=1:sanz
-        sxp(i)=sx(snr(i));
-        syp(i)=sy(snr(i));
-        snrp(i)=snr(snr(i));
-    end
+[snrs,perm]=sort(snr);
+for i=1:sanz
+    sxp(i)=sx(snr(i));
+    syp(i)=sy(snr(i));
+    snrp(i)=snr(snr(i));
 end
 % Element Felder definieren
 msel=max(max(selanz));
