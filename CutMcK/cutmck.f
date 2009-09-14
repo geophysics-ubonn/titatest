@@ -176,9 +176,9 @@ c     Ggf. Kontrolldatei oeffnen
       end if
 
 c     ak
-      spanz = sanz
+      spanz = INT(elanz / 10)
       k = 0
-      spanz = MIN(sanz,spmax)
+      spanz = MIN(spanz,spmax)
       PRINT*,'mingd_1::',mingd
  110  do 120 i=1,sanz
          if (grad(i).eq.mingd) then
