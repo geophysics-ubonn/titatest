@@ -100,6 +100,12 @@ c Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
 c einlesen
         print*,'knoten::',sanz
         read(kanal,*,end=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
+        i = 0;j = 0
+        DO k=1,sanz
+           IF (sx(snr(k))==sx(snr(1))) j = j+1 !counts vertical grid nodes
+           IF (sx(snr(k))==sx(snr(1))) i = i+1 !counts horizontal grid nodes
+        END DO
+        WRITE (*,'(3(a,I6))')'Counted nx ',i,' ny',j,' nxy=',i*j
 c Knotennummern der Elemente einlesen
         print*,'post knoten position',4+sanz
         idum = 0
