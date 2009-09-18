@@ -147,7 +147,9 @@ name=sprintf('CRTomo model');
 if checkme ~= 0
     name = sprintf('%s %s',name,fenster);
 end
-fig=figure('Name',name,'Numbertitle','off');
+
+scrsz = get(0,'ScreenSize');
+fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
 
 %%
 % Plotten der Potentiale mit fill(X,Y,Z,C)
@@ -229,7 +231,7 @@ if (saveplot==1)
     %pause
     [p,fls,app,m]=fileparts(modfile);
     fleps=strcat(fls,app,'.eps');
-    set(gcf,'PaperPositionMode','auto');
+    set(fig,'PaperPositionMode','auto');
     print('-depsc2','-r400',fleps)
 %    print('-dpdf','-r400',flpdf) %%%geht nicht
     %print('-depsc2','-r600',file_save)
