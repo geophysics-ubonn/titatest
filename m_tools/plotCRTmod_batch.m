@@ -36,10 +36,10 @@ end
 checkme = exist ('tmp.range','file');
 if checkme~=0
     fp=fopen('tmp.range','r');
-    [cmin cmax]=fscanf(fp,'%f',2);
+    cmin=fscanf(fp,'%f',1);
+    cmax=fscanf(fp,'%f',1);
     fclose(fp);
 end
-
 %%
 % Knoten und Elemente einlesen 
 % Filenamen bestimmen
@@ -162,7 +162,7 @@ if (romin==romax)
     rho(round(nm/4))=1;(romin+romax)/2;
     rho(round(nm/2))=100;(romin+romax)/2;
 end
-if (logme~=0)
+if logme~=0
     rolog=log10(rho); % log trafo
 else
     rolog=rho;
@@ -178,7 +178,7 @@ if (cmax==0)
     cmax=rolmax;
 end
 sprintf('Plot range:: %f\t%f\n',cmin,cmax);
-patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat')%,'Edgecolor','none')
+patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat','Edgecolor','none')
 caxis([cmin cmax])
 
 %set(gca,'DataAspectRatio',[1 1 1],'fontsize',fns,'TickDir','out')
@@ -203,21 +203,21 @@ axis tight
 
 %colormap(jet(2*nd+1));
 h=colorbar('vert');
-if (logme~=0)
+
+set(h,'fontsize',fns)
+set(h,'XaxisLocation','top')
+if logme~=0
 %    set(h,'YlimMode','manual');
 %    set(h,'Ylim',[10^cmin 10^cmax]);
 %    set(h,'Ytick','log')
 %    set(h,'Yscale','log')
 %    set(h,'YTickLabelMode','manual')
 %    set(h,'YTickLabel',ct)
-           
   set(get(h,'xlabel'),'String','log_{10}(\rho) [\Omega m]','fontsize',fns)
 else
   set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
 end
-set(h,'fontsize',fns)
-set(h,'XaxisLocation','top')
-set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
+
 view(az,el);
 hold on
 for i=1:nelec
