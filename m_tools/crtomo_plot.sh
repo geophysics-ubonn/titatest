@@ -63,8 +63,8 @@ else
 	echo no range
 fi
 
-#$crt >& $1'.crtrun'
-#$mtlb < $plotmod >& /dev/null
+$crt >& $1'.crtrun'
+$mtlb < $plotmod >& /dev/null
 
 tmp=`cat tmp.lastmod`
 myeps=`basename $tmp`'.eps'
