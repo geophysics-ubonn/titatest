@@ -26,8 +26,9 @@ FLIBF77         = -lm
 PROG	        = CutMcK
 # target
 PR1		= ctm
+
 # default targets
-all:		$(PR1) linux
+all:		$(PR1)
 #
 OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o \
 		  get_error.o
@@ -64,5 +65,5 @@ clean:
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
 			$(PROG)
 
-linux:		$(PROG)
+install:	$(PROG)
 		$(CP) $(PROG) $(WPATH)

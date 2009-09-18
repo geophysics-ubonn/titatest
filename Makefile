@@ -104,6 +104,7 @@ ctm:
 install:	$(C1)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
+		$(PRM)
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o m_tools/*~
