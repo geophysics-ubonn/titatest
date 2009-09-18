@@ -177,6 +177,7 @@ c     Ggf. Kontrolldatei oeffnen
 
 c     ak
       spanz = INT(elanz / 10)
+      spanz = MAX(spanz,1000)
       k = 0
       spanz = MIN(spanz,spmax)
       PRINT*,'mingd_1::',mingd
