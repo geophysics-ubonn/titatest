@@ -46,11 +46,11 @@ awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
 echo $1 > tmp.fenster
 
-mcase=`pwd|awk '/2_decades/{printf("%.1f\t%.1f",1.0,3.0)}'` 
-mcase=`pwd|awk -v s=$mcase '/3_decades/{printf("%s%.1f\t%.1f",s,0.5,3.5)}'` 
-mcase=`pwd|awk -v s=$mcase '/4_decades/{printf("%s%.1f\t%.1f",s,0.0,4.0)}'` 
-echo $mcase
-echo $mcase > tmp.range
+c1=`pwd|awk '/2_decades/{printf("%.1f\t%.1f",1.0,3.0)}'` 
+c2=`pwd|awk '/3_decades/{printf("%.1f\t%.1f",0.5,3.5)}'` 
+c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'` 
+echo range check: $c1 $c2 $c3
+echo $c1 $c2 $c3 > tmp.range
 
 $crt >& $1'.crtrun'
 $mtlb < $plotmod >& /dev/null
