@@ -5,6 +5,16 @@
 close all
 clear all
 
+
+elecmark='bo';
+marksize=5;
+az=0; % Azimuth for the plot 
+el=90; % elongation for thew plot
+fns=14; % font size
+cmin=0;cmax=0; % plot range can be set here, 0 automatic choosed
+logme=1; % linear plots -> 0 logarithmic else
+saveplot=1; % if save the plot adjust and press space
+
 fp=fopen('tmp.meshname','r');
 gridelem=fscanf(fp,'%s',1);
 fclose(fp);
@@ -23,15 +33,12 @@ if checkme~=0
     fenster=fscanf(fp,'%s',1);
     fclose(fp);
 end
-
-elecmark='bo';
-marksize=5;
-az=0; % Azimuth for the plot 
-el=90; % elongation for thew plot
-fns=14; % font size
-cmin=1;cmax=100; % plot range can be set here, 0 automatic choosed
-logme=0; % linear plots -> 0 logarithmic else
-saveplot=1; % if save the plot adjust and press space
+checkme = exist ('tmp.range','file');
+if checkme~=0
+    fp=fopen('tmp.range','r');
+    [cmin cmax]=fscanf(fp,'%f',2);
+    fclose(fp);
+end
 
 %%
 % Knoten und Elemente einlesen 
@@ -156,10 +163,8 @@ if (romin==romax)
     rho(round(nm/2))=100;(romin+romax)/2;
 end
 if (logme~=0)
-    nd=8; %Anzahl der Ticks
     rolog=log10(rho); % log trafo
 else
-    nd=10; %Anzahl der Ticks
     rolog=rho;
 end
 
@@ -181,26 +186,34 @@ set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
 axis tight
-if logme~=0
-    % Colortable neu definieren
-    ni=(rolmax-rolmin)/nd; %increment
-    
-    S=char(ones(nd+1,5));
-    for i=1:nd+1
-        if (logme~=0)
-            S(i,:)=sprintf('%5.f',10^(rolmin+(i-1)*ni));
-        else
-            S(i,:)=sprintf('%5.f',rolmin+(i-1)*ni);
-        end
-    end 
-    ct=cellstr(S);
-end
+%if logme~=0
+%    % Colortable neu definieren
+%    ni=(rolmax-rolmin)/nd; %increment
+%    
+%    S=char(ones(nd+1,5));
+%    for i=1:nd+1
+%        if (logme~=0)
+%            S(i,:)=sprintf('%5.f',10^(rolmin+(i-1)*ni));
+%        else
+%            S(i,:)=sprintf('%5.f',rolmin+(i-1)*ni);
+%        end
+%    end 
+%    ct=cellstr(S);
+%end
 
 %colormap(jet(2*nd+1));
 h=colorbar('vert');
 if (logme~=0)
-    set(h,'YtickMode','manual')
-    set(h,'YTickLabel',ct)
+%    set(h,'YlimMode','manual');
+%    set(h,'Ylim',[10^cmin 10^cmax]);
+%    set(h,'Ytick','log')
+%    set(h,'Yscale','log')
+%    set(h,'YTickLabelMode','manual')
+%    set(h,'YTickLabel',ct)
+           
+  set(get(h,'xlabel'),'String','log_{10}(\rho) [\Omega m]','fontsize',fns)
+else
+  set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
 end
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
