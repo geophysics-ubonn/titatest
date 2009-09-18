@@ -33,8 +33,8 @@ c Start-Regularisierungsparameter bestimmen
         lammax = 0d0
 
         if (ldc) then
-
             do j=1,manz
+                write(*,'(a,1X,I6)',advance='no')achar(13)//'blam0 j',j
                 dum = 0d0
 
                 do i=1,nanz
@@ -81,10 +81,10 @@ c Start-Regularisierungsparameter bestimmen
 
         IF (ltri/=2) lammax = lammax/dble(manz)
         lammax = lammax * 2d0/(alfx+alfz)
-
 cak Default
         lammax = lammax * 5d0
 
+        print*,'lammax',lammax
 cak Synthetic Example (JoH)
 cak        lammax = lammax * 1d1
 
