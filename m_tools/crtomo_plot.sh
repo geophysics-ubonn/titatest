@@ -46,22 +46,11 @@ awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
 echo $1 > tmp.fenster
 
-mcase2=`pwd|awk '/2_decades/{print 2}'` 
-mcase3=`pwd|awk '/3_decades/{print 2}'` 
-mcase4=`pwd|awk '/4_decades/{print 2}'` 
-
-if [ -n $mcase2 ];then
-	echo "range check 1.0 3.0"
-	echo "1.0 3.0" > tmp.range
-elif [ -n $mcase3 ];then
-	echo "range check 0.5 3.5"
-	echo "0.5 3.5" > tmp.range
-elif [ -n $mcase4 ];then
-	echo "range check 0.0 4.0"
-	echo "0.0 4.0" > tmp.range
-else
-	echo no range
-fi
+mcase=`pwd|awk '/2_decades/{printf("%.1f\t%.1f",1.0,3.0)}'` 
+mcase=`pwd|awk -v s=$mcase '/3_decades/{printf("%s%.1f\t%.1f",s,0.5,3.5)}'` 
+mcase=`pwd|awk -v s=$mcase '/4_decades/{printf("%s%.1f\t%.1f",s,0.0,4.0)}'` 
+echo $mcase
+echo $mcase > tmp.range
 
 $crt >& $1'.crtrun'
 $mtlb < $plotmod >& /dev/null
