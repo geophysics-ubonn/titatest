@@ -133,7 +133,7 @@ c     CovTT = var*exp(-CovTT)
          CLOSE (ifp)
       ELSE
          WRITE (*,'(A,I6,A)')ACHAR(13)//'inverting mod cov (',
-     1        manz**2/(1024**3),' GB)'
+     1        (manz**2*16)/(1024**3),' GB)'
       END IF
 
       IF (exc) THEN
