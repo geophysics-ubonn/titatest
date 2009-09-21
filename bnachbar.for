@@ -38,6 +38,9 @@ c-----------------------------------------------------------------------
       nachbar = 0
 
       DO i=1,elanz
+         
+         WRITE (*,'(a,1X,F6.2,a)',ADVANCE='no')ACHAR(13)//
+     1        'bnachbar/ ',REAL (i * (100./elanz)),'%'
 
          DO ik=1,smaxs
 

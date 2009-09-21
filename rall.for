@@ -305,6 +305,7 @@ c     Dateien
       dsens  = ramd(1:lnramd)//slash(1:1)//'sens.dat'
 
 c     Elementeinteilung einlesen
+      WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
       call relem(kanal,delem)
       if (errnr.ne.0) goto 999
 
