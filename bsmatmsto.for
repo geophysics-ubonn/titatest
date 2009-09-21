@@ -132,7 +132,7 @@ c     CovTT = var*exp(-CovTT)
          exc=.FALSE.
          CLOSE (ifp)
       ELSE
-         WRITE (*,'(A,I6,A)')ACHAR(13)//'inverting mod cov (',
+         WRITE (*,'(A,F8.2,A)')ACHAR(13)//'inverting mod cov (',
      1        (manz**2*16)/(1024**3),' GB)'
       END IF
 
