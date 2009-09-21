@@ -309,7 +309,7 @@ c     Elementeinteilung einlesen
       if (errnr.ne.0) goto 999
 
       IF (ltri/=0) THEN
-         manz=elanz ! wichtig an dieser stelle..
+         manz = elanz ! wichtig an dieser stelle..
          CALL bnachbar
          CALL besp_elem
       ELSE

@@ -1,14 +1,27 @@
-SUBROUTINE Gauss (a,n,e_flag)    ! Invert matrix by Gauss method
+SUBROUTINE Gauss (n,e_flag)    ! Invert matrix by Gauss method
+
+  USE alloci,only:smatm
+
   IMPLICIT NONE
-  INTEGER,INTENT (IN)            :: n
-  REAL(KIND(0D0)),DIMENSION(n,n) :: a,b
-  REAL(KIND(0D0)),DIMENSION(n)   :: temp
-  REAL(KIND(0D0))                :: c,d 
-  INTEGER                        :: j,k,m,imax(1),e_flag
-  INTEGER,DIMENSION (n)          :: ipvt
+  INTEGER(KIND(4))                             :: n
+  REAL(KIND(0D0)),DIMENSION(:,:), ALLOCATABLE  :: dump
+  REAL(KIND(0D0)),DIMENSION(:), ALLOCATABLE    :: temp
+  REAL(KIND(0D0))                              :: c,d 
+  INTEGER                                      :: j,k,m,imax(1),e_flag
+  INTEGER,DIMENSION (:), ALLOCATABLE           :: ipvt
   
-  b = a
+
+  ALLOCATE (dump(n,n),STAT=e_flag)
   
+  IF (e_flag/=0) THEN
+     print*,'error alllocating dump(',n,',',n,')=',n*n*16/(1024**3),' GB'
+     STOP
+  END IF
+  
+  dump = smatm
+
+  ALLOCATE (temp(n),ipvt(n),STAT=e_flag)
+
   e_flag=-1
   
   DO j=1,n
@@ -16,25 +29,32 @@ SUBROUTINE Gauss (a,n,e_flag)    ! Invert matrix by Gauss method
   END DO
   
   DO k = 1,n
-     imax = MAXLOC(ABS(b(k:n,k)))
+     WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'gauss/ ',k
+     imax = MAXLOC(ABS(dump(k:n,k)))
      m = k-1+imax(1)
+
      IF (m /= k) THEN
         PRINT*,'Pivoting:: ',ipvt( [m,k] )
         ipvt( [m,k] ) = ipvt( [k,m] )
-        b( [m,k],:) = b( [k,m],:)
+        dump( [m,k],:) = dump( [k,m],:)
      END IF
-     d = 1/b(k,k)
-     temp = b(:,k)
+
+     d = 1/dump(k,k)
+     temp = dump(:,k)
      DO j = 1, n
-        c = b(k,j)*d
-        b(:,j) = b(:,j)-temp*c
-        b(k,j) = c
+        c = dump(k,j)*d
+        dump(:,j) = dump(:,j)-temp*c
+        dump(k,j) = c
      END DO
-     b(:,k) = temp*(-d)
-     b(k,k) = d
+     dump(:,k) = temp*(-d)
+     dump(k,k) = d
+
   END DO
-  a(:,ipvt) = b
-  
+
+  smatm = dump
+
+  DEALLOCATE (dump,temp,ipvt)
+
   e_flag=0
   
 END SUBROUTINE Gauss

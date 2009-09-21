@@ -7,8 +7,10 @@ c     Andreas Kemna                                            29-Feb-1996
 c     Letzte Aenderung   03-Apr-2009
 
 c.....................................................................
-
+      
       USE alloci
+      
+      IMPLICIT none
       
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
@@ -28,7 +30,7 @@ c     integral scale
       real :: Ix,Iz
 
 c     Kovarianzmatrix
-      real*8,dimension(:,:),ALLOCATABLE  :: CovTT 
+      REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE  :: CovTT 
       
 c     inverse Kovarianzmatrix -> smatm
       integer*4 :: ErrorFlag
@@ -68,13 +70,14 @@ c     covTT=0
 
       smatm=0.
       do i = 1,manz
+         WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'cov/',i
          xmeani=0.
          do l=1,smaxs
             xmeani = xmeani + sx(snr(nrel(i,l)))
          end do
          xmeani = xmeani/smaxs  ! x- schwerpunkt
 
-         zmeani=0
+         zmeani = 0
          do l=1,smaxs
             zmeani = zmeani + sy(snr(nrel(i,l)))
          end do
@@ -82,13 +85,13 @@ c     covTT=0
 
          do j = 1,manz
             
-            xmeanj=0
+            xmeanj = 0.
             do l=1,smaxs
                xmeanj = xmeanj + sx(snr(nrel(j,l)))
             end do
             xmeanj = xmeanj/smaxs ! x- schwerpunkt
 
-            zmeanj=0
+            zmeanj = 0.
             do l=1,smaxs
                zmeanj = zmeanj + sy(snr(nrel(j,l)))
             end do
@@ -114,6 +117,8 @@ c     CovTT = var*exp(-CovTT)
       exc=.TRUE.
       INQUIRE(FILE='tmp.smatmi',EXIST=ex)
 
+      print*,ex
+
       IF (ex) THEN
          PRINT*,'found tmp.smatmi'
          CALL get_unit(ifp)
@@ -126,6 +131,9 @@ c     CovTT = var*exp(-CovTT)
          END IF
          exc=.FALSE.
          CLOSE (ifp)
+      ELSE
+         WRITE (*,'(A,I6,A)')ACHAR(13)//'inverting mod cov (',
+     1        manz**2/(1024**3),' GB)'
       END IF
 
       IF (exc) THEN
@@ -155,7 +163,7 @@ c     CovTT = var*exp(-CovTT)
             PRINT*,'   Gauss elemination ... '
             PRINT*,''
 c     Berechne nun die Inierse der Covarianzmatrix!!!
-            CALL gauss(smatm,manz,errorflag)
+            CALL gauss(manz,errorflag)
          END IF
          IF (errorflag==0) THEN
             PRINT*,'got inverse and write out'
