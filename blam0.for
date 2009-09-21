@@ -32,7 +32,7 @@ c.....................................................................
 c Start-Regularisierungsparameter bestimmen
         lammax = 0d0
         IF (nz<0) THEN
-           lammax = manz
+           lammax = -nz
            GOTO 10
         END IF
         if (ldc) then
