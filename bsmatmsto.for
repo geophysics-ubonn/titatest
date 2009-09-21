@@ -33,7 +33,7 @@ c     Kovarianzmatrix
       REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE  :: CovTT 
       
 c     inverse Kovarianzmatrix -> smatm
-      integer*4 :: ErrorFlag
+      integer*4            :: ErrorFlag
 
 c     PROGRAMMINTERNE PARAMETER:
 c     Schwerpunktvektoren
@@ -44,12 +44,16 @@ c     !!
 ! gibt es evtl schon eine inverse?
       logical              :: ex,exc         
 c     Hilfsvariablen
-      integer              :: i,j,l,smaxs,ifp,c1,c2
+      integer              :: i,j,l,smaxs,ifp,c1,c2,se,mi,st,ta
 c clearscreen
       CHARACTER(80)        :: csz
 
       CALL SYSTEM_CLOCK (c1,i)
 
+      WRITE (*,'(A,1X,F6.2,1X,A)')ACHAR(13)//
+     1     'Speicher fuer model covariance: ',
+     1     REAL ((manz**2*8.)/(1024.**3)),'GB'
+      
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
       DO i=1,79
@@ -140,24 +144,18 @@ c     CovTT = var*exp(-CovTT)
          exc=.FALSE.
          CLOSE (ifp)
       ELSE
-         WRITE (*,'(A,1X,F6.2,1X,A)',ADVANCE='no')ACHAR(13)//
-     1        'inverting mod cov (',
-     1        REAL ((manz**2*16.)/(1024.**3)),'GB)'
       END IF
 
       IF (exc) THEN
+         PRINT*,'bestimme nun inv{C_m}'
          IF (nx==-1) THEN
-            PRINT*,''
             PRINT*,'   Cholesky factorization (LAPACK)... '
-            PRINT*,''
             CALL MDPOTRF('U',manz,smatm,manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..',errorflag
                STOP
             END IF
-            PRINT*,''
             PRINT*,'   Invertiere smatm ... '
-            PRINT*,''
             CALL MDPOTRI('U',manz,smatm,manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..'
@@ -167,34 +165,27 @@ c     CovTT = var*exp(-CovTT)
             END IF
          ELSE IF (nx==-2) THEN        
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-            PRINT*,''
             PRINT*,'   Cholesky factorization (Schwarz)... '
-            PRINT*,''
             CALL chold(smatm,covTT,manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..',errorflag
                STOP
             END IF
-            PRINT*,''
             PRINT*,'   Invertiere smatm ... '
-            PRINT*,''
             CALL linv(covTT,smatm,manz)
          ELSE IF (nx==-3) THEN        
-            PRINT*,''
             PRINT*,'   Find inv ... '
-            PRINT*,''
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             covTT=smatm
             CALL findinv(CovTT,smatm,manz,ErrorFlag)
          ELSE
-            PRINT*,''
             PRINT*,'   Gauss elemination ... '
-            PRINT*,''
 c     Berechne nun die Inierse der Covarianzmatrix!!!
             CALL gauss(manz,errorflag)
          END IF
          IF (errorflag==0) THEN
-            PRINT*,'got inverse and write out'
+            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1           'got inverse and write out'
             CALL get_unit(ifp)
             OPEN (ifp,FILE='tmp.smatmi',STATUS='replace',
      1           ACCESS='sequential',FORM='unformatted')
@@ -219,6 +210,14 @@ c$$$      END DO
       IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
 
       CALL SYSTEM_CLOCK (c2,i)
-      WRITE (*,'(a,I6,a)')' in ',((c2-c1)/(i)),' s'
+
+      l = (c2-c1)/i ! Gesamt Sekunden
+      mi=INT(l/60) ! Minuten
+      st=INT(l/60/60) ! Stunden
+      ta=INT(l/60/60/24) ! Tage
+      se=l-mi*60-st*60*60-ta*60*60*24 ! Sekunden
+
+ 110  FORMAT(I3,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
+      WRITE (*,110)ta,st,mi,se
 
       end
