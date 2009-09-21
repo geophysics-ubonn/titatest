@@ -35,7 +35,7 @@ PR3		= ctm
 PRM		= mtools
 
 f90crt		= alloci.o chold.o gauss.o get_error.o get_unit.o \
-		  linv.o make_noise.o 
+		  linv.o make_noise.o mdpotri.o mdpotrf.o
 
 f90crm		= alloci.o
 
@@ -70,6 +70,10 @@ linv.o:		linv.f90
 	        $(F90) $(FFLAG90) -c linv.f90
 make_noise.o:	make_noise.f90
 		$(F90) $(FFLAG90) -c make_noise.f90
+mdpotri.o:	mdpotri.f
+		$(F90) $(FFLAG90) -c mdpotri.f
+mdpotrf.o:	mdpotrf.f
+		$(F90) $(FFLAG90) -c mdpotrf.f
 ###################################
 
 cbn:		
