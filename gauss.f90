@@ -29,7 +29,8 @@ SUBROUTINE Gauss (n,e_flag)    ! Invert matrix by Gauss method
   END DO
   
   DO k = 1,n
-     WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'gauss/ ',k
+     WRITE (*,'(A,1X,F5.2,A)',ADVANCE='no')ACHAR(13)//'gauss/ ',&
+          REAL( k * (100/n)),'%'
      imax = MAXLOC(ABS(dump(k:n,k)))
      m = k-1+imax(1)
 

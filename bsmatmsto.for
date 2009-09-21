@@ -70,7 +70,8 @@ c     covTT=0
 
       smatm=0.
       do i = 1,manz
-         WRITE (*,'(a,1X,I6)',ADVANCE='no')ACHAR(13)//'cov/',i
+         WRITE (*,'(a,1X,F5.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
+     1        REAL(i*(100./manz)),'%'
          xmeani=0.
          do l=1,smaxs
             xmeani = xmeani + sx(snr(nrel(i,l)))

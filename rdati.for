@@ -77,7 +77,8 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
 
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
-         WRITE (*,'(A,I9)',advance='no')'data set '//ACHAR(13),i
+         WRITE (*,'(A,1X,F5.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
+     1        REAL( i * (100/nanz) ),'%'
          if (lindiv) then
             if (ldc) then
                read(kanal,*,end=1001,err=1000)
