@@ -34,7 +34,8 @@ c Start-Regularisierungsparameter bestimmen
 
         if (ldc) then
             do j=1,manz
-                write(*,'(a,1X,I6)',advance='no')achar(13)//'blam0 j',j
+                write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
+     1              'blam0/ ',REAL( j * (100./manz)),'%'
                 dum = 0d0
 
                 do i=1,nanz

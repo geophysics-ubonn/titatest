@@ -51,10 +51,13 @@ c     Pi
       real            * 8     pi
 c    dummi
       REAL            * 8     rdum,rlev
-
+      CHARACTER(80)     ::    csz
 c.....................................................................
 
       pi = dacos(-1d0)
+      DO i=1,79
+         csz(i:i+1)=' '
+      END DO
 
 c     'datei' oeffnen
       fetxt = datei
@@ -75,10 +78,12 @@ c     Ggf. Fehlermeldung
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
 
+      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
+     1     ACHAR(9)//ACHAR(9)//ACHAR(9)
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
-         WRITE (*,'(A,1X,F5.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
-     1        REAL( i * (100/nanz) ),'%'
+         WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
+     1        REAL( i * (100./nanz) ),'%'
          if (lindiv) then
             if (ldc) then
                read(kanal,*,end=1001,err=1000)

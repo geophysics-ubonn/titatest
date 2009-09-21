@@ -41,14 +41,22 @@ c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj,
      1     dump,sd_el
       
-      logical :: ex,exc         ! gibt es evtl schon eine inverse?
-
+! gibt es evtl schon eine inverse?
+      logical              :: ex,exc         
 c     Hilfsvariablen
-      integer :: i,j,l,smaxs,ifp,c1,c2
+      integer              :: i,j,l,smaxs,ifp,c1,c2
+c clearscreen
+      CHARACTER(80)        :: csz
 
       CALL SYSTEM_CLOCK (c1,i)
 
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
+
+      DO i=1,79
+         csz(i:i+1)=' '
+      END DO
+
+      WRITE (*,'(A80)',ADVANCE='no')ACHAR(13)//csz
 
       IF (alfx==0.) THEN
          Ix=esp_mit
@@ -63,6 +71,7 @@ c     Hilfsvariablen
          Iz=alfz
       END IF
 
+
       smaxs=MAXVAL(selanz)
       
 c     Belege die Matrix
@@ -70,7 +79,7 @@ c     covTT=0
 
       smatm=0.
       do i = 1,manz
-         WRITE (*,'(a,1X,F5.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
+         WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
      1        REAL(i*(100./manz)),'%'
          xmeani=0.
          do l=1,smaxs
@@ -118,8 +127,6 @@ c     CovTT = var*exp(-CovTT)
       exc=.TRUE.
       INQUIRE(FILE='tmp.smatmi',EXIST=ex)
 
-      print*,ex
-
       IF (ex) THEN
          PRINT*,'found tmp.smatmi'
          CALL get_unit(ifp)
@@ -133,15 +140,35 @@ c     CovTT = var*exp(-CovTT)
          exc=.FALSE.
          CLOSE (ifp)
       ELSE
-         WRITE (*,'(A,F8.2,A)')ACHAR(13)//'inverting mod cov (',
-     1        (manz**2*16)/(1024**3),' GB)'
+         WRITE (*,'(A,1X,F8.2,A)',ADVANCE='no')ACHAR(13)//
+     1        'inverting mod cov (',
+     1        REAL ((manz**2*16.)/(1024.**3)),'GB)'
       END IF
 
       IF (exc) THEN
          IF (nx==-1) THEN
+            PRINT*,''
+            PRINT*,'   Cholesky factorization (LAPACK)... '
+            PRINT*,''
+            CALL MDPOTRF('U',manz,smatm,manz,errorflag)
+            IF (errorflag/=0) THEN
+               PRINT*,'there was something wrong..',errorflag
+               STOP
+            END IF
+            PRINT*,''
+            PRINT*,'   Invertiere smatm ... '
+            PRINT*,''
+            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
+            IF (errorflag/=0) THEN
+               PRINT*,'there was something wrong..'
+               PRINT*,'Zeile::',smatm(abs(errorflag),:)
+               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               STOP
+            END IF
+         ELSE IF (nx==-2) THEN        
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             PRINT*,''
-            PRINT*,'   Cholesky factorization ... '
+            PRINT*,'   Cholesky factorization (Schwarz)... '
             PRINT*,''
             CALL chold(smatm,covTT,manz,errorflag)
             IF (errorflag/=0) THEN
@@ -152,7 +179,7 @@ c     CovTT = var*exp(-CovTT)
             PRINT*,'   Invertiere smatm ... '
             PRINT*,''
             CALL linv(covTT,smatm,manz)
-         ELSE IF (nx==-2) THEN        
+         ELSE IF (nx==-3) THEN        
             PRINT*,''
             PRINT*,'   Find inv ... '
             PRINT*,''
