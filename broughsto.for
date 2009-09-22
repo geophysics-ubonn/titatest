@@ -7,6 +7,7 @@ c     Andreas Kemna                                            12-Apr-1996
 c     Letzte Aenderung   30-Jun-2009
 
 c.....................................................................
+      USE alloci,only:smatm
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
@@ -38,8 +39,7 @@ c     diff+<
       if (.not.ldiff) then
 c     diff+>
 
-         parh=dcmplx(smatm)*par(1:manz)
-
+         parh(1:manz)=MATMUL(DCMPLX(smatm),par(1:manz))
 
          if (lip) then
             do i=1,manz
@@ -53,7 +53,7 @@ c     diff+>
 c     diff+<
       else
 
-         parh=dcmplx(smatm)*(par(1:manz)-m0(i:manz))
+         parh=MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
 
          if (lip) then
             do i=1,manz
