@@ -40,7 +40,8 @@ c     Ggf. Ausgabe
       if ((llam.and..not.lstep).or.lsetup) then
          fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
          errnr = 4
-         write(15,*,err=1000)
+         write(15,*,err=1000)'eps      '//
+     1        'psi     '//'pol      '//'d        '//'f'
          write(15,*,err=1000) it
       end if
 
