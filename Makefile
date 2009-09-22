@@ -108,7 +108,11 @@ ctm:
 install:	$(C1)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
-		$(PRM)
+		$(CP) m_tools/crtomo_plot.sh $(WPATH)
+		$(CP) m_tools/crtomo_run.sh $(WPATH)
+		$(CP) m_tools/plot_cur_crmod $(WPATH)
+		$(CP) m_tools/plot_cur_crtomo $(WPATH)
+		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o m_tools/*~
