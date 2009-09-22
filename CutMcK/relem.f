@@ -105,8 +105,9 @@ c einlesen
            IF (sx(snr(k))==sx(snr(1))) j = j+1 !counts vertical grid nodes
            IF (sy(snr(k))==sy(snr(1))) i = i+1 !counts horizontal grid nodes
         END DO
-        WRITE (*,'(3(a,I6))')'Counted nx ',i,' ny',j,' nxy=',i*j
-c Knotennummern der Elemente einlesen
+        WRITE (*,'(3(a,1X,I4))')'Counted elements nx=',i-1,
+     1       ' ny',j-1,' nxy=',(i-1)*(j-1)
+c     Knotennummern der Elemente einlesen
         print*,'post knoten position',4+sanz
         idum = 0
         print*,'elemente::',elanz,relanz
