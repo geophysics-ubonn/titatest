@@ -52,7 +52,16 @@ c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'`
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.range
 
-$crt >& $1'.crtrun'
+wdir=`pwd|xargs basename`
+
+if [ -n $1 ];then
+    wdir=$1
+fi
+
+cp $crt crtomo.$wdir
+
+./crtomo.$wdir >& $wdir'.crtrun'
+
 $mtlb < $plotmod >& /dev/null
 
 tmp=`cat tmp.lastmod`
