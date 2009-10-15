@@ -38,6 +38,7 @@ if checkme~=0
     fp=fopen('tmp.range','r');
     cmin=fscanf(fp,'%f',1);
     cmax=fscanf(fp,'%f',1);
+    logme=fscanf(fp,'%d',1);
     fclose(fp);
 end
 %%
@@ -149,7 +150,8 @@ if checkme ~= 0
 end
 
 scrsz = get(0,'ScreenSize');
-fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
+fig=figure('Name',name,'Numbertitle','off');
+%fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
 
 %%
 % Plotten der Potentiale mit fill(X,Y,Z,C)

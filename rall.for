@@ -133,7 +133,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
 
  100  lsto=.false.           !dfault wert
 
- 101  IF (lsto) PRINT*,'Stochastische Regualrisierung'
+ 101  IF (lsto) PRINT*,'Stochastische Regularisierung'
 
 
       lnse = ( stabw0 < 0 ) 
@@ -141,9 +141,6 @@ c     ak        read(12,*,end=1001,err=999) lindiv
          stabw0 = -stabw0
          WRITE (*,'(a,F4.1,a)',ADVANCE='no')
      1        'Verrausche Daten mit RMS ::',stabw0,' /%'
-         i=initrand()
-         dum3=ran1(i)
-         WRITE (*,'(a,I6,a,G12.3)')'  Seed / ran ::',i,'/',dum3
       END IF
 
 c     ro        lsr    = .false.
@@ -168,10 +165,10 @@ c     Ggf. Fehlermeldungen
          fetxt = ' '
          errnr = 89
          goto 999
-      else if (alfx.le.0d0.or.alfz.le.0d0) then
-         fetxt = ' '
-         errnr = 96
-         goto 999
+c$$$      else if (alfx.le.0d0.or.alfz.le.0d0) then
+c$$$         fetxt = ' '
+c$$$         errnr = 96
+c$$$         goto 999
       else if (itmax.lt.1.or.itmax.ge.100) then
          fetxt = ' '
          errnr = 61
@@ -344,7 +341,7 @@ c     bestimmen
       IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
      1     nsink,sx(snr(nsink)),sy(snr(nsink))
 
-      call rdati(kanal,dstrom)
+      call rdati (kanal,dstrom)
 c      PRINT*,'data in'
       if (errnr.ne.0) goto 999
 

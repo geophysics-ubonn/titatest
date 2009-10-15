@@ -39,7 +39,8 @@ c     diff+<
       if (.not.ldiff) then
 c     diff+>
 
-         parh(1:manz)=MATMUL(DCMPLX(smatm),par(1:manz))
+
+         parh=MATMUL(DCMPLX(smatm),par(1:manz))
 
          if (lip) then
             do i=1,manz

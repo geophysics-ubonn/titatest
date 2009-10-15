@@ -39,7 +39,7 @@ c     PROGRAMMINTERNE PARAMETER:
 c     Schwerpunktvektoren
 c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj,
-     1     dump,sd_el
+     1     dump,sd_el,gamma
       
 ! gibt es evtl schon eine inverse?
       logical              :: ex,exc         
@@ -50,15 +50,28 @@ c clearscreen
 
       CALL SYSTEM_CLOCK (c1,i)
 
+      DO i=1,79
+         csz(i:i+1)=' '
+      END DO
+
+      IF (nz==1) THEN           !spherical
+         WRITE (csz,'(a)')'Spherical model(va*(1- h*(1.5-.5*h**2)))'
+      ELSE IF (nz==2) THEN      ! Gaussian
+         WRITE (csz,'(a)')'Gaussian model(va*EXP(-3*h**2))'
+      ELSE IF (nz==3) THEN      ! power
+         WRITE (csz,'(a)')'Power model(va*dump**gamma)'
+      ELSE                      ! exponential (default)
+         WRITE (csz,'(a)')'Exponential model(va*EXP(-3*h))'
+      END IF
+
+      WRITE (*,'(A80)')ACHAR(13)//csz
+
       WRITE (*,'(A,1X,F6.2,1X,A)')ACHAR(13)//
      1     'Speicher fuer model covariance: ',
      1     REAL ((manz**2*8.)/(1024.**3)),'GB'
       
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
-      DO i=1,79
-         csz(i:i+1)=' '
-      END DO
 
       WRITE (*,'(A80)',ADVANCE='no')ACHAR(13)//csz
 
@@ -80,7 +93,7 @@ c clearscreen
       
 c     Belege die Matrix
 c     covTT=0
-
+      gamma = 2.
       smatm=0.
       do i = 1,manz
          WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
@@ -116,8 +129,15 @@ c     covTT=0
             
             dump=sqrt(dump)
             
-            smatm(i,j) = var*EXP(-dump) 
-
+            IF (nz==1) THEN !spherical
+               smatm(i,j) = var*(1. - dump*(1.5 - .5*dump**2.))
+            ELSE IF (nz==2) THEN ! Gaussian
+               smatm(i,j) = var*EXP(-dump*dump*3.)
+            ELSE IF (nz==3) THEN ! power
+               smatm(i,j) = var*dump**gamma
+            ELSE ! exponential (default)
+               smatm(i,j) = var*EXP(-dump*3.)
+            END IF
          end do
       end do
 

@@ -262,7 +262,7 @@ c     Felder zuruecksetzen
          end do
          
       end if
-
+      
       do j=1,manz
          
 c     Verbesserung anbringen        

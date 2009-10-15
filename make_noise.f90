@@ -3,6 +3,8 @@ MODULE make_noise
 
   IMPLICIT none
 
+  LOGICAL, PRIVATE :: my_noise
+
   PUBLIC :: dp_noise
   PUBLIC :: initrand
   PUBLIC :: ran1
@@ -16,10 +18,16 @@ CONTAINS
     REAL (KIND(0D0)) :: v1,v2,r,fact
     REAL (KIND(0D0)), SAVE :: gset
 
+
     IF ( .not. done ) THEN
        DO WHILE ( .not. done )
-          v1 = 2.*RAN1(idum) - 1.
-          v2 = 2.*RAN1(idum) - 1.
+          IF (my_noise) THEN
+             v1 = 2.*RAN1(idum) - 1.
+             v2 = 2.*RAN1(idum) - 1.
+          ELSE 
+             v1 = 2.*RAN0(idum) - 1.
+             v2 = 2.*RAN0(idum) - 1.
+          END IF
           r = v1**2 + v2**2
           IF( r >= 1 ) CYCLE
           fact = SQRT( -2.*LOG( r ) / r )
@@ -105,24 +113,24 @@ CONTAINS
     END DO
   END FUNCTION RAN1
 
-  INTEGER ( KIND = 4 ) FUNCTION INITRAND()
+  INTEGER ( KIND = 4 ) FUNCTION INITRAND(switch)
     INTEGER ( KIND = 4 ) :: count_,c_max,rate
+    LOGICAL, OPTIONAL :: switch
+    
+    my_noise = .FALSE.
+
+    IF (switch) my_noise = .TRUE.
+
 
     CALL SYSTEM_CLOCK(count_,rate,c_max)
     initrand=-ABS(MOD(count_,rate)+1)
 
+    WRITE (*,'(a,I6)',ADVANCE='no')'  Iseed / ',initrand
+    IF (my_noise ) THEN
+       PRINT*,' portable random numbers'       
+    ELSE
+       PRINT*,' non portable random numbers'       
+    END IF
+
   END FUNCTION INITRAND
 END MODULE make_noise
-
-
-
-
-
-
-
-
-
-
-
- 
- 

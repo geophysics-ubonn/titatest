@@ -1,4 +1,4 @@
-      subroutine rdati(kanal,datei)
+      subroutine rdati(kanal,datei,seed)
 
 c     Unterprogramm zum Einlesen der Elektrodenkennungen und der Daten
 c     inkl. Standardabweichungen aus 'datei'.
@@ -32,7 +32,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,idum
+      integer         * 4     i,iseed,ifp
 
 c     Elektrodennummern
       integer         * 4     elec1,elec2,
@@ -43,9 +43,13 @@ c     Betrag und Phase (in mrad) der Daten
 
 c     Standardabweichung eines logarithmierten (!) Datums
       real            * 8     stabw
-
+c     Error of the resistance
+      real            * 8     eps_r
 c     Standardabweichung der Phase
       real            * 8     stabwp
+c     Error of the phase
+      real            * 8     eps_p
+
 
 c     Pi
       real            * 8     pi
@@ -77,6 +81,11 @@ c     Ggf. Fehlermeldung
 
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
+      IF ( lnse ) THEN
+         CALL get_unit(ifp)
+         OPEN (ifp,FILE='tmp.mynoise',STATUS='replace')
+         iseed = initrand(.TRUE.)
+      END IF
 
       WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
      1     ACHAR(9)//ACHAR(9)//ACHAR(9)
@@ -159,8 +168,16 @@ c     ak                    write(*,*) i
 
             IF ( lnse ) THEN
                WRITE (*,'(A)',advance='no')' adding noise '
-               bet = bet*(1.+dp_noise(idum)*stabw)
-               pha = pha*(1.+dp_noise(idum)*stabwp)
+	       eps_r = 1d-2*stabw0 * bet + stabm0
+               WRITE (*,'(2(G10.3,2X))',advance='no')bet,eps_r
+               WRITE (ifp,'(I6,2X,2(G12.3,2X))',advance='no')
+     1              i,bet,eps_r
+               bet = bet + dp_noise(iseed) * eps_r
+               WRITE (*,'(G10.3)',advance='no')bet
+               WRITE (ifp,'(G12.3)')bet
+	       eps_p = (stabpA1*eps_r**stabpB + 
+     1              1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
+               pha = pha + dp_noise(iseed) * eps_p
             END IF
 
          end if
@@ -230,7 +247,7 @@ c     ak
 
 c     'datei' schliessen
       close(kanal)
-
+      CLOSE (ifp)
       errnr = 0
       return
 

@@ -95,12 +95,8 @@ crm:		$(C1) *.for fem.f $(f90crt)
 		*.for fem.f $(f90crt)
 		$(CP) CRMod $(WPATH)
 
-mtools:		$(C1)		
-		$(CP) m_tools/crtomo_plot.sh $(WPATH)
-		$(CP) m_tools/crtomo_run.sh $(WPATH)
-		$(CP) m_tools/plot_cur_crmod $(WPATH)
-		$(CP) m_tools/plot_cur_crtomo $(WPATH)
-		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
+mtools:
+		cd ./m_tools ; make
 
 ctm:		
 		cd ./CutMcK ; make
@@ -108,12 +104,10 @@ ctm:
 install:	$(C1)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
-		$(CP) m_tools/crtomo_plot.sh $(WPATH)
-		$(CP) m_tools/crtomo_run.sh $(WPATH)
-		$(CP) m_tools/plot_cur_crmod $(WPATH)
-		$(CP) m_tools/plot_cur_crtomo $(WPATH)
-		$(CP) m_tools/plotCRTmod_batch.m $(WPATH)
+		cd ./m_tools ; make install
+		cd ./CutMcK ; make install
 
 clean:		
-		$(RM) CRTomo CRMod *~ *.mod *.o m_tools/*~
+		$(RM) CRTomo CRMod *~ *.mod *.o
+		cd ./m_tools ; make clean
 		cd ./CutMcK ; make clean

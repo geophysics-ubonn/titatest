@@ -1,6 +1,6 @@
 # $Id: Makefile,v 1.0 2009/07/02 12:43:39 roland Exp $
 #
-#      Makefile for my_elec (default)
+#      Makefile for CutMck (default)
 #       
 
 RM		= rm -f
@@ -21,7 +21,8 @@ FLIBLINBLAS     =
 FLIB            = -lm
 FLIBF77         = -lm
 
-
+# das hier chek obs ein bin im home gibt
+C1		= cbn
 # name des Programms 
 PROG	        = CutMcK
 # target
@@ -29,6 +30,9 @@ PR1		= ctm
 
 # default targets
 all:		$(PR1)
+
+.SILENT:	cbn
+#################################################
 #
 OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o \
 		  get_error.o
@@ -56,6 +60,16 @@ get_error.o:	error.txt get_error.f90
 		$(F90) $(FFLAG90) -c get_error.f90
 
 # targets
+
+cbn:		
+		echo "Pruefe ~/bin"
+		if [ -d ~/bin ]; then \
+			echo "ok"; \
+		else \
+			echo "Du hast kein bin in deinem home.--"; \
+			mkdir ~/bin; \
+		fi
+
 ctm:		$(OBJ) 
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
 		$(OBJ) \
