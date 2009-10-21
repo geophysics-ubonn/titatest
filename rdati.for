@@ -243,7 +243,6 @@ c     ak
             goto 1000
          end if
       end do
-
 c     ak
       if (lindiv) then
          read(kanal,*,end=1001,err=1000) stabw
@@ -261,6 +260,8 @@ c     'datei' schliessen
       close(kanal)
       CLOSE (ifp)
       errnr = 0
+      IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
+      IF (ALLOCATED (rnd_p)) DEALLOCATE (rnd_p)
       return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
