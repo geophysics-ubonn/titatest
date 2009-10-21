@@ -39,7 +39,7 @@ c     PROGRAMMINTERNE PARAMETER:
 c     Schwerpunktvektoren
 c     !!
       real                * 8    xmeani, zmeani,xmeanj,zmeanj,
-     1     dump,sd_el,gamma
+     1     h,sd_el,gamma
       
 ! gibt es evtl schon eine inverse?
       logical              :: ex,exc         
@@ -49,6 +49,8 @@ c clearscreen
       CHARACTER(80)        :: csz
 
       CALL SYSTEM_CLOCK (c1,i)
+
+      gamma = 2.
 
       DO i=1,79
          csz(i:i+1)=' '
@@ -72,9 +74,6 @@ c clearscreen
       
       IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
 
-
-      WRITE (*,'(A80)',ADVANCE='no')ACHAR(13)//csz
-
       IF (alfx==0.) THEN
          Ix=esp_mit
          Iz=esp_mit
@@ -93,7 +92,7 @@ c clearscreen
       
 c     Belege die Matrix
 c     covTT=0
-      gamma = 2.
+
       smatm=0.
       do i = 1,manz
          WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
@@ -124,19 +123,19 @@ c     covTT=0
             end do
             zmeanj = zmeanj/smaxs ! y- schwerpunkt
             
-            dump = ((xmeani-xmeanj)/Ix)**2
+            h = ((xmeani-xmeanj)/Ix)**2
      1           + ((zmeani-zmeanj)/Iz)**2
             
-            dump=sqrt(dump)
+            h=sqrt(h)
             
-            IF (nz==1) THEN !spherical
-               smatm(i,j) = var*(1. - dump*(1.5 - .5*dump**2.))
+            IF (nz==1) THEN     !spherical
+               smatm(i,j) = var*(1. - h*(1.5 - .5*h**2.))
             ELSE IF (nz==2) THEN ! Gaussian
-               smatm(i,j) = var*EXP(-dump*dump*3.)
+               smatm(i,j) = var*EXP(-3.*h**2.)
             ELSE IF (nz==3) THEN ! power
-               smatm(i,j) = var*dump**gamma
-            ELSE ! exponential (default)
-               smatm(i,j) = var*EXP(-dump*3.)
+               smatm(i,j) = var*h**gamma
+            ELSE                ! exponential (default)
+               smatm(i,j) = var*EXP(-3.*h)
             END IF
          end do
       end do

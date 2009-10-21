@@ -8,6 +8,7 @@ c     Letzte Aenderung   20-Aug-2007
       
 c.....................................................................
       USE make_noise
+      USE alloci, only:rnd_r,rnd_p
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
@@ -32,7 +33,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,iseed,ifp
+      integer         * 4     i,ifp
 
 c     Elektrodennummern
       integer         * 4     elec1,elec2,
@@ -57,7 +58,6 @@ c    dummi
       REAL            * 8     rdum,rlev
       CHARACTER(80)     ::    csz
 c.....................................................................
-
       pi = dacos(-1d0)
       DO i=1,79
          csz(i:i+1)=' '
@@ -83,8 +83,24 @@ c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
       IF ( lnse ) THEN
          CALL get_unit(ifp)
-         OPEN (ifp,FILE='tmp.mynoise',STATUS='replace')
-         iseed = initrand(.TRUE.)
+         OPEN (ifp,FILE='tmp.mynoise_rho',STATUS='replace')
+         WRITE (*,'(A)',advance='no')' Initializing noise '
+         ALLOCATE (rnd_r(nanz))
+         CALL Random_Init(iseed)
+         DO i=1,nanz
+            rnd_r(i) = Random_Gauss()
+            WRITE (ifp,'(G10.3)')rnd_r(i)
+         END DO
+         IF (.NOT.ldc) THEN
+            OPEN (ifp,FILE='tmp.mynoise_phase',STATUS='replace')
+            ALLOCATE (rnd_p(nanz))
+            CALL Random_Init(-iseed)
+            DO i=1,nanz
+               rnd_p(i) = Random_Gauss()
+               WRITE (ifp,'(G10.3)')rnd_p(i)
+            END DO
+            CLOSE (ifp)
+         END IF
       END IF
 
       WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
@@ -167,17 +183,13 @@ c     ak                    write(*,*) i
             stabw = 1d-2*stabw0 + stabm0/bet
 
             IF ( lnse ) THEN
-               WRITE (*,'(A)',advance='no')' adding noise '
-	       eps_r = 1d-2*stabw0 * bet + stabm0
-               WRITE (*,'(2(G10.3,2X))',advance='no')bet,eps_r
-               WRITE (ifp,'(I6,2X,2(G12.3,2X))',advance='no')
-     1              i,bet,eps_r
-               bet = bet + dp_noise(iseed) * eps_r
-               WRITE (*,'(G10.3)',advance='no')bet
-               WRITE (ifp,'(G12.3)')bet
-	       eps_p = (stabpA1*eps_r**stabpB + 
-     1              1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
-               pha = pha + dp_noise(iseed) * eps_p
+               eps_r = 1d-2*stabw0 * bet + stabm0
+               bet = bet + rnd_r(i) * eps_r
+               IF (.NOT. ldc) THEN
+                  eps_p = (stabpA1*eps_r**stabpB + 
+     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
+                  pha = pha + rnd_p(i) * eps_p
+               END IF
             END IF
 
          end if

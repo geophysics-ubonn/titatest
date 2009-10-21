@@ -139,10 +139,13 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
-         WRITE (*,'(a,F4.1,a)',ADVANCE='no')
-     1        'Verrausche Daten mit RMS ::',stabw0,' /%'
+         READ(12,*,end=110,err=999) iseed
+	 GOTO 111
+ 110     iseed = 1 ! default value for PRS
+ 111     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
+     1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
+     1        iseed
       END IF
-
 c     ro        lsr    = .false.
 c     ro        lpol   = .true.
 c     ro        lfphai = .true.

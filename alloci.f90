@@ -23,4 +23,6 @@ MODULE alloci
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: sensdc
 !!$Regularisierungsmatrix
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: smatm
+!!$ PSR felder fuer widerstand (r) und phase (p)
+  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC :: rnd_r,rnd_p
 END MODULE alloci

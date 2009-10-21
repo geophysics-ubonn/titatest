@@ -20,7 +20,7 @@ c.....................................................................
         INCLUDE 'fem.fin'
         INCLUDE 'konv.fin'
         INCLUDE 'randb.fin'
-
+        INCLUDE 'model.fin'
 c.....................................................................
 
 c EIN-/AUSGABEPARAMETER:
@@ -115,7 +115,15 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
         write(13,'(l1,t18,a19)',err=999) lrandb2,
      1           '! boundary values ?'
         write(13,'(a80)',err=999) drandb
-        write(13,'(a11)',err=999) '***FIXED***'
+        write(13,'(a)',err=999) '***Model stats***'
+        write(13,'(a,I10)',err=999)'# Model parameters : ',manz
+        write(13,'(a,I10)',err=999)'# Data points      : ',nanz
+        write(13,'(a,L)',err=999)  'Add noise ?        : ',lnse
+        write(13,'(a,L)',err=999)  'Regular grid       : ',(ltri==0)
+        write(13,'(a,L)',err=999)  'Triangular regu    : ',(ltri==1)
+        write(13,'(a,L)',err=999)  'Stochastic regu    : ',(ltri==2)
+
+        write(13,'(a)',err=999) '***FIXED***'
         if (swrtr.eq.1) then
             write(13,'(a16,t50,i2)',err=999) ' # wavenumbers :',kwnanz
             write(13,'(a34,t50,g11.5,t62,a1)',err=999)
