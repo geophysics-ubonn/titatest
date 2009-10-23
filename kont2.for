@@ -62,17 +62,17 @@ c$$$2       backspace(13)
             if (llam.and..not.lstep) then
                 write(13,'(a)',err=1000)cdump
                 if (lrobust) then
-                    write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1                         t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1                         t89,i4,t101,g9.3)',err=1000)
-     1                       it,nrmsd,step,lam,rough,ncg,betrms,
-     1                       pharms,npol,l1rat
+                   write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
+     1                  t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
+     1                  t89,i4,t101,g9.3)',err=1000)
+     1                  it,nrmsd,step,lam,rough,ncg,betrms,
+     1                  pharms,npol,l1rat,bdpar
                 else
-                    write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1                         t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1                         t89,i4)',err=1000)
-     1                       it,nrmsd,step,lam,rough,ncg,betrms,
-     1                       pharms,npol
+                   write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
+     1                  t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
+     1                  t89,i4,t95,g9.3)',err=1000)
+     1                  it,nrmsd,step,lam,rough,ncg,betrms,
+     1                  pharms,npol,bdpar
                 end if
                 write(13,'(a)',err=1000)cdump
 

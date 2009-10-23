@@ -61,6 +61,8 @@ cdiff+<
         write(13,'(l1,t18,a24)',err=999) ldiff,
      1           '! difference inversion ?'
         write(13,'(a80)',err=999) dd0
+        write(13,'(l1,t18,a24)',err=999) lprior,
+     1           '! prior model ?'
         write(13,'(a80)',err=999) dm0
         write(13,'(a80)',err=999) dfm0
 cdiff+>
@@ -122,6 +124,7 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
         write(13,'(a,L)',err=999)  'Regular grid       : ',(ltri==0)
         write(13,'(a,L)',err=999)  'Triangular regu    : ',(ltri==1)
         write(13,'(a,L)',err=999)  'Stochastic regu    : ',(ltri==2)
+        write(13,'(a,L)',err=999)  'Read prior model   : ',lstart
 
         write(13,'(a)',err=999) '***FIXED***'
         if (swrtr.eq.1) then
@@ -165,16 +168,17 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
      1           '------------'
         write(13,*,err=999)
         if (lrobust.or.lfphai) then
-            write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1                 t77,a8,t89,a8,t101,a8)',err=999)
-     1               'it.','data RMS','stepsize',' lambda ',' roughn.',
-     1               'CG-steps',' mag RMS',' pha RMS','- # data',
-     1               'L1-ratio'
+           write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
+     1           t77,a8,t89,a8,t101,a8)',err=999)
+     1          'it.','data RMS','steplength',' lambda ',' roughn.',
+     1          'CG-steps',' mag RMS',' pha RMS','- # data',
+     1          'L1-ratio','stepsize'
         else
-            write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1                 t77,a8,t89,a8)',err=999)
-     1               'it.','data RMS','stepsize',' lambda ',' roughn.',
-     1               'CG-steps',' mag RMS',' pha RMS','- # data'
+           write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
+     1          t77,a8,t89,a8)',err=999)
+     1          'it.','data RMS','steplength',' lambda ',' roughn.',
+     1          'CG-steps',' mag RMS',' pha RMS','- # data',
+     1          'stepsize'
         end if
         write(13,*,err=999)
 
