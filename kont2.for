@@ -27,7 +27,7 @@ c PROGRAMMINTERNE PARAMETER:
 c Indexvariable
         integer         * 4     k
 c Platzhalter
-        INTEGER,PARAMETER :: ncdump=97
+        INTEGER,PARAMETER :: ncdump=110
         CHARACTER(ncdump) :: cdump
 c.....................................................................
 
@@ -64,15 +64,15 @@ c$$$2       backspace(13)
                 if (lrobust) then
                    write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1                  t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1                  t89,i4,t101,g9.3)',err=1000)
-     1                  it,nrmsd,step,lam,rough,ncg,betrms,
-     1                  pharms,npol,l1rat,bdpar
+     1                  t89,i4,t101,g9.3,t113,f5.3)',err=1000)
+     1                  it,nrmsd,bdpar,lam,rough,ncg,betrms,
+     1                  pharms,npol,l1rat,step
                 else
                    write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1                  t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1                  t89,i4,t95,g9.3)',err=1000)
-     1                  it,nrmsd,step,lam,rough,ncg,betrms,
-     1                  pharms,npol,bdpar
+     1                  t89,i4,t101,f5.3)',err=1000)
+     1                  it,nrmsd,bdpar,lam,rough,ncg,betrms,
+     1                  pharms,npol,step
                 end if
                 write(13,'(a)',err=1000)cdump
 
@@ -83,9 +83,10 @@ c$$$2       backspace(13)
                     write(14,*,err=1000) cgres(k+1)
                 end do
             else
+
                 write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1                     t42,g10.4,t54,i4)',err=1000)
-     1                   it,nrmsd,step,lam,rough,ncg
+     1                     t42,g10.4,t54,i4,t101,f5.3)',err=1000)
+     1                   it,nrmsd,bdpar,lam,rough,ncg,step
             end if
         end if
 

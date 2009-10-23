@@ -162,23 +162,23 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
         write(13,'(a22,t50,g11.5)',err=999)
      1           ' Final   step factor :',fstop
         write(13,*,err=999)
-        write(13,'(a48,a48,a12)',err=999)
+        write(13,'(a48,a48,a13)',err=999)
      1           '------------------------------------------------',
      1           '------------------------------------------------',
-     1           '------------'
+     1           '-------------'
         write(13,*,err=999)
         if (lrobust.or.lfphai) then
            write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1           t77,a8,t89,a8,t101,a8)',err=999)
-     1          'it.','data RMS','steplength',' lambda ',' roughn.',
+     1           t77,a8,t89,a8,t101,a8,t113,a10)',err=999)
+     1          'it.','data RMS','stepsize',' lambda ',' roughn.',
      1          'CG-steps',' mag RMS',' pha RMS','- # data',
-     1          'L1-ratio','stepsize'
+     1          'L1-ratio','steplength'
         else
            write(13,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1          t77,a8,t89,a8)',err=999)
-     1          'it.','data RMS','steplength',' lambda ',' roughn.',
+     1          t77,a8,t89,a8,t101,a10)',err=999)
+     1          'it.','data RMS','stepsize',' lambda ',' roughn.',
      1          'CG-steps',' mag RMS',' pha RMS','- # data',
-     1          'stepsize'
+     1          'steplength'
         end if
         write(13,*,err=999)
 

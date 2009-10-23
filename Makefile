@@ -12,7 +12,7 @@ WPATH 		= ~/bin
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -mcmodel=medium
-FFLAG90         = -C -mcmodel=medium
+#FFLAG90         = -C -mcmodel=medium
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
@@ -33,47 +33,66 @@ PR2		= crm
 PR3		= ctm
 # kopiert die matlab tools
 PRM		= mtools
-
-f90crt		= alloci.o chold.o gauss.o get_error.o get_unit.o \
-		  linv.o make_noise.o mdpotri.o mdpotrf.o
-
-f90crm		= alloci.o
-
+################################################################
+# default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM)
-
+################################################################
+f90crt		= alloci.o chold.o gauss.o get_error.o get_unit.o \
+		  linv.o make_noise.o
+fcrt		= mdpotri.o mdpotrf.o inv.o
+forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
+		  bessk0.o bessk1.o beta.o bkfak.o blam0.o bnachbar.o \
+		  bpdc.o bpdcsto.o bpdctri.o bp.o bpot.o bpsto.o \
+		  bptri.o brough.o broughsto.o broughtri.o bsendc.o \
+		  bsens.o bsensi.o bsigm0.o bsmatm.o bsmatmsto.o \
+		  bsmatmtri.o bvolt.o bvolti.o chareal.o chkpol.o \
+		  choldc.o chol.o cjggdc.o cjggra.o dmisft.o elem1.o \
+		  elem3.o elem4.o elem5.o elem8.o filpat.o findinv.o \
+		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
+		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
+		  mdian1.o parfit.o potana.o precal.o rall.o \
+		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
+		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
+		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
+		  wpot.o wsens.o 
+f90crm		= alloci.o
+fcrm		= fem.o
+forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
+		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \
+		  bsendc.o bsens.o bsensi.o \
+		  bvolt.o bvolti.o chareal.o chkpol.o \
+		  choldc.o chol.o elem1.o \
+		  elem3.o elem4.o elem5.o elem8.o filpat.o \
+		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
+		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
+		  mdian1.o parfit.o potana.o precal.o \
+		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
+		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
+		  vredc.o vre.o wdatm.o wkpot.o wout.o \
+		  wpot.o wsens.o
+################################################################
 # rules
-#.f90.mod:		
-#		$(F90) $(FFLAG90) -c $<
-#
-#.mod.o:		
-#		$(F90) $(FFLAG90) -c $<
-#
-
-#.f90.o:		
-#		$(F90) $(FFLAG90) -c $<
-
+$(forcrt):	%.o : %.for
+		$(F90) $(FFLAG90) -c $<
+$(fcrt):	%.o : %.f
+		$(F90) $(FFLAG90) -c $<
+$(f90crt):	%.o : %.f90		
+		$(F90) $(FFLAG90) -c $<
+$(forcrm):	%.o : %.for
+		$(F90) $(FFLAG90) -c $<
+$(fcrm):	%.o : %.f
+		$(F90) $(FFLAG90) -c $<
+$(f90crm):	%.o : %.f90		
+		$(F90) $(FFLAG90) -c $<
+###############################################################
 .SILENT:	cbn
 # default targets
 ################################## F90 targets..
-alloci.o:	alloci.f90
-	        $(F90) $(FFLAG90) -c alloci.f90
-chold.o:	chold.f90
-	        $(F90) $(FFLAG90) -c chold.f90
-gauss.o:	gauss.f90
-	        $(F90) $(FFLAG90) -c gauss.f90
 get_error.o:	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
-get_unit.o:	get_unit.f90
-		$(F90) $(FFLAG90) -c get_unit.f90
-linv.o:		linv.f90
-	        $(F90) $(FFLAG90) -c linv.f90
-make_noise.o:	make_noise.f90
-		$(F90) $(FFLAG90) -c make_noise.f90
-mdpotri.o:	mdpotri.f
-		$(F90) $(FFLAG90) -c mdpotri.f
-mdpotrf.o:	mdpotrf.f
-		$(F90) $(FFLAG90) -c mdpotrf.f
 ###################################
 
 cbn:		
@@ -85,14 +104,14 @@ cbn:
 			mkdir ~/bin; \
 		fi
 
-crt:		$(C1) *.for inv.f $(f90crt)
+crt:		$(C1) $(f90crt) $(forcrt) $(fcrt)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
-		*.for inv.f $(f90crt)
+		$(f90crt) $(forcrt) $(fcrt)
 		$(CP) CRTomo $(WPATH)
 
-crm:		$(C1) *.for fem.f $(f90crt)
+crm:		$(C1) $(f90crt) $(forcrm) $(fcrm)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
-		*.for fem.f $(f90crt)
+		$(f90crt) $(forcrm) $(fcrm)
 		$(CP) CRMod $(WPATH)
 
 mtools:
