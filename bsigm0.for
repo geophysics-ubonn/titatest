@@ -58,11 +58,10 @@ cdiff+<
             end do
         else if (lstart) then
 cdiff+>
-
 c 'sigma' aus 'dstart' einlesen
             call rsigma(kanal,dstart)
             if (errnr.ne.0) goto 999
-            
+
         else if (lrho0) then
 
 c 'sigma' gemaess 'bet0', 'pha0' belegen
@@ -125,7 +124,10 @@ c Fehlermeldung
             goto 999
             
         end if
-
+        
+c$$$        do i=1,elanz
+c$$$            print*,sigma(i),m0(i),cdexp(m0(i))
+c$$$        END DO
 c Referenzleitfaehigkeit 'sigma0' bestimmen
         call refsig()
 

@@ -12,7 +12,7 @@ c     Letzte Aenderung   20-Aug-2007
 
 c.....................................................................
       USE make_noise
-
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
@@ -75,7 +75,6 @@ c     diff+>
 c     ak Inga
       integer         * 4     elec1,elec2,
      1     elec3,elec4
-
 c.....................................................................
 
       pi = dacos(-1d0)
@@ -222,6 +221,7 @@ c     ak
 c     'dstart'
       lstart = .false.
       dstart = ' '
+
 c     ak        lstart = .true.
 c     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
 
@@ -285,6 +285,14 @@ c     Sonstiges
          lphi0  = .false.
          lpol   = .false.
       end if
+
+      IF (ldiff) THEN
+         lprior=.TRUE.
+         lstart=(dd0 == ''.AND.dfm0 == '')
+         IF (lstart) dstart = dm0
+         ldiff=.NOT.lstart
+      END IF
+
 
 c     diff-        if (lstart) lrho0=.false.
 c     diff+<

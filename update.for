@@ -1,18 +1,18 @@
       subroutine update(dpar2,cgres2)
-c
+c     
 c     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
 c     mittels 'Smoothness Least Squares Method' und konjugierten
 c     Gradienten.
 c     Fuer beliebige Triangulierung und Stochastische Regularisierung
-c
+c     
 c     Andreas Kemna                                            01-Mar-1996
-c
+c     
 c     Letzte Aenderung                                         03-Aug-2009
-c      
+c     
 c.....................................................................
 
       USE alloci
-
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
@@ -78,7 +78,7 @@ c     triang<
             do i=1,manz
                cdum = dcmplx(0d0)
 c     diff+<
-               if (.not.ldiff) then
+               if (.not.lprior) then
 c     diff+>
                   if (i.gt.1) cdum =
      1                 dcmplx(smatm(i-1,2))*par(i-1)
@@ -112,32 +112,32 @@ c     triang>
                DO ij=1,smaxs
                   in=nachbar(i,ij)
                   IF (in/=0) then
-                     if (.not.ldiff) then
+                     if (.not.lprior) then
                         cdum = cdum + DCMPLX(smatm(i,ij))*
      1                       par(in)
                      else
                         cdum = cdum + DCMPLX(smatm(i,ij))* 
-     1                       (par(in)-m0(in))
+     1                       (par(in) - m0(in))
                      end if
                   end if
                END DO 
-               if (.not.ldiff) then
+               if (.not.lprior) then
                   bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
      1                 par(i)
                else
                   bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
-     1                 (par(i)-m0(i))
+     1                 (par(i) - m0(i))
                end if
             end do
 
          else if (ltri==2) then
             
-            if (.not.ldiff) then
+            if (.not.lprior) then
                bvec(1:manz) = 
      1              MATMUL(DCMPLX(smatm),par(1:manz))
             else
                bvec(1:manz) = 
-     1              MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
+     1              MATMUL(dcmplx(smatm),(par(1:manz) - m0(1:manz)))
             end if
          END IF
 c     triang<
@@ -247,7 +247,7 @@ c     Verbesserung skalieren
             dpar(j) = dpar(j)*dcmplx(fak(j))
          end do
 
-      else !(llam)
+      else                      !(llam)
 
 
 c     Felder zuruecksetzen
@@ -262,12 +262,10 @@ c     Felder zuruecksetzen
          end do
          
       end if
-      
       do j=1,manz
          
-c     Verbesserung anbringen        
+c     Verbesserung anbringen
          par(j) = par(j) + dpar(j)*dcmplx(step)
-
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 c     if (lphi0.and.dimag(par(j)).lt.0d0)
 c     1        par(j) = dcmplx(dble(par(j)))
@@ -276,14 +274,14 @@ c     ak            if (lphi0.and.dimag(par(j)).lt.1d-3)
 c     ak     1          par(j) = dcmplx(dble(par(j)),1d-3)
       end do
 
-c     Betrag des Verbesserungsvektors bestimmen
+c     i.e Stepsize = ||\delta m||
       bdpar = 0d0
 
       do j=1,manz
          bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
       end do
 
-      bdpar = dsqrt(bdpar/dble(manz))
+!!$      bdpar = dsqrt(bdpar/dble(manz))
 
       return
       end

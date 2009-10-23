@@ -8,7 +8,7 @@ c     Letzte Aenderung   30-Jun-2009
 
 c.....................................................................
       USE alloci,only:smatm
-
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
@@ -25,7 +25,7 @@ c     Hilfsvariablen
       complex         * 16    cdum
       complex	      * 16    parh(manz)  
 
-c     parh: Parameter-Hilfsvektor
+c     parh: Parameter-Hilfsvektor (R^TR)m bzw (C_m^-1)m
 
 c.....................................................................
 
@@ -36,12 +36,9 @@ caa   do i=1,manz
 caa   cdum = dcmplx(0d0)
 
 c     diff+<
-      if (.not.ldiff) then
+      if (.not.lprior) then
 c     diff+>
-
-
          parh=MATMUL(DCMPLX(smatm),par(1:manz))
-
          if (lip) then
             do i=1,manz
                rough = rough + dimag(parh(i))*dimag(par(i))
@@ -53,9 +50,7 @@ c     diff+>
          end if
 c     diff+<
       else
-
          parh=MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
-
          if (lip) then
             do i=1,manz
                rough = rough + dimag(parh(i))*dimag(par(i)-m0(i))
