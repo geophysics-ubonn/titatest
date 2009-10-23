@@ -83,6 +83,7 @@ c     'crtomo.cfg' EINLESEN
       fetxt = 'crtomo.cfg'
       errnr = 3
       ltri   = 0
+      lsto = .false. !default--
 
       read(12,*,end=1001,err=999)
       read(12,'(a80)',end=1001,err=999) delem
@@ -123,7 +124,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
-      read(12,'(L)',end=100,err=999) lsto
+      IF (.not.lagain)read(12,'(L)',end=100,err=999) lsto
 
       IF ( lsto ) THEN
          ltri = 2
