@@ -6,6 +6,8 @@ c     Andreas Kemna                                            20-Dec-1993
 c     Letzte Aenderung   07-Nov-1997
       
 c.....................................................................
+      USE make_noise
+      USE alloci,only:rnd_r,rnd_p
       IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
@@ -30,8 +32,9 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      integer         * 4     i,idum
-      real            * 8     bet,pha
+      integer         * 4     i,idum,ifp
+      real            * 8     bet,pha,eps_r,eps_p
+      
 c Pi
       real            * 8     pi
 c.....................................................................
@@ -44,6 +47,31 @@ c     'datei' oeffnen
       open(kanal,file=fetxt,status='old',err=999)
 
       errnr = 3
+      IF (imonte /= 0) THEN
+         PRINT*,''
+         PRINT*,'iMonte::',imonte,stabmp
+         CALL get_unit(ifp)
+         OPEN (ifp,FILE='tmp.mynoise_mprior_rho',STATUS='replace')
+         WRITE (*,'(A)',advance='no')' Initializing noise '
+         ALLOCATE (rnd_r(elanz))
+         CALL Random_Init(imonte)
+         DO i=1,elanz
+            rnd_r(i) = Random_Gauss()
+            WRITE (ifp,'(G10.3)')rnd_r(i)
+         END DO
+         CLOSE (ifp)
+         IF (.NOT.ldc) THEN
+            OPEN (ifp,FILE='tmp.mynoise_mprior_phase',STATUS='replace')
+            ALLOCATE (rnd_p(elanz))
+            CALL Random_Init(-imonte)
+            DO i=1,elanz
+               rnd_p(i) = Random_Gauss()
+               WRITE (ifp,'(G10.3)')rnd_p(i)
+            END DO
+            CLOSE (ifp)
+         END IF
+         PRINT*,''
+      END IF
 
 c     Anzahl der Elemente (ohne Randelemente) einlesen
       read(kanal,*,end=1001,err=1000) idum
@@ -72,6 +100,14 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
             
             IF (bet > 0.) THEN  
 !     TODO: meaningful phase check.. 
+               IF (imonte /= 0 ) THEN
+                  eps_r = 1d-2*stabmp * bet
+                  bet = bet + rnd_r(i) * eps_r
+                  IF (.NOT. ldc) THEN
+                     eps_p = 1d-2*stabmp*dabs(pha)
+                     pha = pha + rnd_p(i) * eps_p
+                  END IF
+               END IF
                sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
                m0(mnr(i)) = cdlog(sigma(i))
             ELSE                

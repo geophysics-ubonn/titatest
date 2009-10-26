@@ -21,7 +21,8 @@ c Schalter ob "background" Werte eingelesen werden sollen
         
 c Schalter ob "starting model" eingelesen werden soll
         logical         * 4     lstart
-
+c Rauschen fürs startmodell
+        real            * 8     stabmp
 c.....................................................................
 
         common/csigma/  sigma0,
@@ -29,4 +30,5 @@ c.....................................................................
      1                  bet0,
      1                  pha0,
      1                  lrho0,
-     1                  lstart
+     1                  lstart,
+     1			stabmp

@@ -82,8 +82,78 @@ c.....................................................................
 c     'crtomo.cfg' EINLESEN
       fetxt = 'crtomo.cfg'
       errnr = 3
+c################# DEFAULTS ########################
+c### switches 
+c     ro        lsr    = .false.
+c     ro        lpol   = .true.
+c     ro        lfphai = .true.
+c     ro        lrho0  = .false.
+c     akERT2003
+c     ak        ldc    = .true.
+c     ak        lsr    = .false.
+c     ak        lpol   = .false.
+c     Ueberdeckung schreiben ?
+c     2d        lsens = .true.
+      lsens = .false.
+c     Sonstiges
+c     diff+<
+      lsr    = .false.
+      lpol   = .false.
+      lindiv = .false.
+c     ak
+c     'dstart'
+      lstart = .false.
+      dstart = ' '
+c     ak        lstart = .true.
+c     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
       ltri   = 0
       lsto = .false. !default--
+c     "Force negative phase" ?
+c     sandra        lphi0 = .true.
+      lphi0 = .FALSE.
+c     ak        lphi0 = .false.
+c     "ratio-dataset" ?
+      lratio = .false.
+c     ak        lratio = .true.
+c###### values..
+c     FIXED PARAMETER
+c     Slash
+      slash = '/'
+c     Minimale "L1-ratio" (Grenze der "robust inversion")
+      l1min = 1d0
+c     ak        l1min = 1.2d0
+      nrmsdm = 1d0
+c     Art der Ruecktransformation
+c     ak        swrtr = 1
+c     Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
+c     ak Default
+c     ak        mqrms = 1d-2
+c     ak ERT 2002-2003 synth
+      mqrms = 2d-2
+c     ak        mqrms = 2d-2
+c     ak Tank
+c     ak        mqrms = 2d-2
+c     ak MMAJ
+c     ak        mqrms = 5d-2
+c     CG-Epsilon
+      eps = 1d-4
+c     Mindest-step-length
+      stpmin = 1d-3
+c     Regularisierungsparameter
+c     ak Default
+      nlam   = 50
+c     ak Default
+      fstart = 0.5d0
+      fstop  = 0.9d0
+c     ak MMAJ
+c     ak        fstart = 0.2d0
+c     ak        fstop  = 0.8d0
+c     ak Strasbrg/Werne/Grimberg
+c     ak        fstart = 0.5d0
+c     ak        fstop  = 0.8d0
+      imonte = 0;stabmp = 0.
+c#########################################################
+c Read in input values..
 
       read(12,*,end=1001,err=999)
       read(12,'(a80)',end=1001,err=999) delem
@@ -95,8 +165,15 @@ c     diff+<
       read(12,'(a80)',end=1001,err=999) dd0
       read(12,'(a80)',end=1001,err=999) dm0
       read(12,'(a80)',end=1001,err=999) dfm0
+
+      IF (ldiff) THEN
+         lprior=.TRUE.
+         lstart=(dd0 == ''.AND.dfm0 == '')
+         IF (lstart) dstart = dm0
+         ldiff=.NOT.lstart
+      END IF
 c     diff+>
-      read(12,*,end=1001,err=999)
+      IF (lprior) read(12,*,end=1001,err=999) imonte,stabmp
       read(12,*,end=1001,err=999) nx
       read(12,*,end=1001,err=999) nz
       read(12,*,end=1001,err=999) alfx
@@ -146,21 +223,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
      1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
      1        iseed
       END IF
-c     ro        lsr    = .false.
-c     ro        lpol   = .true.
-c     ro        lfphai = .true.
-c     ro        lrho0  = .false.
 
-c     akERT2003
-c     ak        ldc    = .true.
-c     ak        lsr    = .false.
-c     ak        lpol   = .false.
-
-      nrmsdm = 1d0
-      lsr    = .false.
-      lpol   = .false.
-      lindiv = .false.
-      
       IF ((nx==0.OR.nz==0).AND..NOT.lsto) ltri=1
       
 c     Ggf. Fehlermeldungen
@@ -214,89 +277,14 @@ c     errnr = 90
 c     goto 999
       end if
       
-c     FIXED PARAMETER
-c     Slash
-      slash = '/'
-
-c     ak
-c     'dstart'
-      lstart = .false.
-      dstart = ' '
-
-c     ak        lstart = .true.
-c     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
-
-c     "Force negative phase" ?
-c     sandra        lphi0 = .true.
-      lphi0 = .FALSE.
-c     ak        lphi0 = .false.
-
-c     "ratio-dataset" ?
-      lratio = .false.
-c     ak        lratio = .true.
-
-c     Minimale "L1-ratio" (Grenze der "robust inversion")
-      l1min = 1d0
-c     ak        l1min = 1.2d0
-
-c     Ueberdeckung schreiben ?
-c     2d        lsens = .true.
-      lsens = .false.
-
-c     Art der Ruecktransformation
-c     ak        swrtr = 1
-
-c     Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
-c     ak Default
-c     ak        mqrms = 1d-2
-c     ak ERT 2002-2003 synth
-      mqrms = 2d-2
-
-c     ak        mqrms = 2d-2
-c     ak Tank
-c     ak        mqrms = 2d-2
-c     ak MMAJ
-c     ak        mqrms = 5d-2
-
-c     CG-Epsilon
-      eps = 1d-4
-
-c     Mindest-step-length
-      stpmin = 1d-3
-
-c     Regularisierungsparameter
-c     ak Default
-      nlam   = 50
-
-c     ak Default
-      fstart = 0.5d0
-      fstop  = 0.9d0
-
-c     ak MMAJ
-c     ak        fstart = 0.2d0
-c     ak        fstop  = 0.8d0
-c     ak Strasbrg/Werne/Grimberg
-c     ak        fstart = 0.5d0
-c     ak        fstop  = 0.8d0
-
-c     Sonstiges
       if (lratio) then
          lrho0  = .true.
          lstart = .false.
          lphi0  = .false.
          lpol   = .false.
       end if
-
-      IF (ldiff) THEN
-         lprior=.TRUE.
-         lstart=(dd0 == ''.AND.dfm0 == '')
-         IF (lstart) dstart = dm0
-         ldiff=.NOT.lstart
-      END IF
-
-
 c     diff-        if (lstart) lrho0=.false.
-c     diff+<
+
       if (lstart.or.ldiff) lrho0=.false.
 c     ak
       if (ldiff) then
@@ -344,7 +332,6 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
       ncgmax = manz/10
-
 c     Elektrodenverteilung und Daten einlesen sowie Wellenzahlwerte
 c     bestimmen
       call relectr(kanal,delectr)
