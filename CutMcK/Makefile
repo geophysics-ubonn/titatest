@@ -11,7 +11,7 @@ WPATH 		= ~/bin
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
-FFLAG90         = -C -Wall -mcmodel=medium
+#FFLAG90         = -C -Wall -mcmodel=medium
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
