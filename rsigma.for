@@ -47,7 +47,7 @@ c     'datei' oeffnen
       open(kanal,file=fetxt,status='old',err=999)
 
       errnr = 3
-      IF (imonte /= 0) THEN
+      IF (lnsepri) THEN
          PRINT*,''
          PRINT*,'iMonte::',imonte,stabmp
          CALL get_unit(ifp)
@@ -100,7 +100,7 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
             
             IF (bet > 0.) THEN  
 !     TODO: meaningful phase check.. 
-               IF (imonte /= 0 ) THEN
+               IF (lnsepri) THEN
                   eps_r = 1d-2*stabmp * bet
                   bet = bet + rnd_r(i) * eps_r
                   IF (.NOT. ldc) THEN

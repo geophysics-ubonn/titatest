@@ -173,8 +173,9 @@ c     diff+<
          ldiff=.NOT.lstart
       END IF
 c     diff+>
-      IF (lprior) read(12,*,end=1001,err=999) imonte,stabmp
-      read(12,*,end=1001,err=999) nx
+      read(12,*,end=1001,err=99) imonte,stabmp
+      lnsepri=.TRUE.
+ 99   read(12,*,end=1001,err=999) nx
       read(12,*,end=1001,err=999) nz
       read(12,*,end=1001,err=999) alfx
       read(12,*,end=1001,err=999) alfz
