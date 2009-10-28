@@ -1,4 +1,4 @@
-      subroutine rdati(kanal,datei,seed)
+      subroutine rdati(kanal,datei)
 
 c     Unterprogramm zum Einlesen der Elektrodenkennungen und der Daten
 c     inkl. Standardabweichungen aus 'datei'.
@@ -9,7 +9,7 @@ c     Letzte Aenderung   20-Aug-2007
 c.....................................................................
       USE make_noise
       USE alloci, only:rnd_r,rnd_p
-
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'dat.fin'
@@ -47,7 +47,7 @@ c     Standardabweichung eines logarithmierten (!) Datums
 c     Error of the resistance
       real            * 8     eps_r
 c     Standardabweichung der Phase
-      real            * 8     stabwp
+      real            * 8     stabwp,stabwb
 c     Error of the phase
       real            * 8     eps_p
 
@@ -91,6 +91,7 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
             rnd_r(i) = Random_Gauss()
             WRITE (ifp,'(G10.3)')rnd_r(i)
          END DO
+         CLOSE (ifp)
          IF (.NOT.ldc) THEN
             OPEN (ifp,FILE='tmp.mynoise_phase',STATUS='replace')
             ALLOCATE (rnd_p(nanz))

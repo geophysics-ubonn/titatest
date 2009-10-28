@@ -92,7 +92,7 @@ c$$$        IF (ltri/=2) lammax = lammax/dble(manz)
 cak Default
         lammax = lammax * 5d0
 
-        WRITE (*,'(a,G10.2)')'lam_0 ',lammax
+        WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0 ',lammax
 cak Synthetic Example (JoH)
 cak        lammax = lammax * 1d1
 
