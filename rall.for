@@ -138,7 +138,7 @@ c     ak MMAJ
 c     ak        mqrms = 5d-2
 c     CG-Epsilon
       eps = 1d-4
-c     Mindest-step-length
+c     Mindest-step-size
       stpmin = 1d-3
 c     Regularisierungsparameter
 c     ak Default

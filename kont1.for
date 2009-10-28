@@ -154,7 +154,7 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
         write(13,'(a33,t50,g11.5)',err=999)
      1           ' Min. rel. decrease of data RMS :',mqrms
         write(13,'(a19,t50,g11.5)',err=999)
-     1           ' Min. step-length :',stpmin
+     1           ' Min. stepsize (||\delta m||) :',stpmin
         write(13,'(a27,t50,g11.5)',err=999)
      1           ' Min. error in relaxation :',eps
         write(13,'(a31,t50,i5)',err=999)
