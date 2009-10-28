@@ -10,7 +10,7 @@ elecmark='bo';
 marksize=5;
 az=0; % Azimuth for the plot 
 el=90; % elongation for thew plot
-fns=14; % font size
+fns=16; % font size
 cmin=0;cmax=0; % plot range can be set here, 0 automatic choosed
 logme=1; % linear plots -> 0 logarithmic else
 saveplot=1; % if save the plot adjust and press space
@@ -26,11 +26,11 @@ fclose(fp);
 fp=fopen('tmp.lastmod','r');
 modfile=fscanf(fp,'%s',1);
 fclose(fp);
-
+fenster='';
 checkme = exist ('tmp.fenster','file');
 if checkme~=0
     fp=fopen('tmp.fenster','r');
-    fenster=fscanf(fp,'%s',1);
+    fenster=fgetl(fp);
     fclose(fp);
 end
 checkme = exist ('tmp.range','file');
@@ -38,15 +38,20 @@ if checkme~=0
     fp=fopen('tmp.range','r');
     cmin=fscanf(fp,'%f',1);
     cmax=fscanf(fp,'%f',1);
-    logme=fscanf(fp,'%d',1);
+    fclose(fp);
+end
+scrsz=[];
+cbarn='';
+checkme = exist ('tmp.cbarn','file');
+if checkme~=0
+    fp=fopen('tmp.cbarn','r');
+    cbarn=fgetl(fp);
+    scrsz=fscanf(fp,'%d',1);
     fclose(fp);
 end
 %%
 % Knoten und Elemente einlesen 
 % Filenamen bestimmen
-
-% [gridelem,wdir] = uigetfile('*','Grid/element file (from CRTomo)');
-% ex     = cd (wdir);
 fp     = fopen(gridelem,'r'); % Standard file handler
 
 % Knoten und Elementtypen bestimmen
@@ -115,8 +120,7 @@ vertices(:,2)=syp;
 %%
 % Einlesen der Modellwerte (Knotenbasiert)
 
-% [modfile,pdir] = uigetfile('*','Model file (from CRTomo)');
-% cd (pdir);
+[p,fls,appi,m]=fileparts(modfile);
 fp=fopen(modfile,'r');
 line=fgetl(fp);
 nm=sscanf(line,'%d',1);
@@ -124,12 +128,37 @@ if (nm~=nelem)
     sprintf('There seems something wrong since the Element numbers %d \n',nelem);
     sprintf('do not match the number of Model cells %d !!!\n',nm); 
 end
-rho(1:nm)=0;phase(1:nm)=0;
-for i=1:nm
-    rho(i)=fscanf(fp,'%f',1);
-    phase(i)=fscanf(fp,'%f',1);
+pha=strmatch(appi,'.pha');
+mag=strmatch(appi,'.mag');
+modl=strmatch(appi,'.modl');
+
+if length(pha) ~= 0 | length(mag) ~= 0
+    rho(1:nm)=0;
+    for i=1:nm
+        a=fscanf(fp,'%f',2);
+        rho(i)=fscanf(fp,'%f',1);
+    end
+else
+    rho(1:nm)=0;
+    for i=1:nm
+        rho(i)=fscanf(fp,'%f',1);
+        a=fscanf(fp,'%f',1);
+    end
 end
 fclose(fp);
+%%
+if length(cbarn) == 0
+    if length(mag) ~= 0
+        cbarn='Phase [mRad]';
+    elseif length(pha) ~= 0
+        cbarn='log_{10}(\rho) [\Omega m]';
+    elseif length(modl) ~= 0
+        cbarn='\rho [\Omega m]';        
+    else
+        cbarn='Parameter [Units]';
+    end
+end
+
 %%
 % Einlesen der Elektroden
 fp=fopen(elecfile,'r');
@@ -145,83 +174,45 @@ fclose(fp);
 %%
 % open figure with name
 name=sprintf('CRTomo model');
-if checkme ~= 0
-    name = sprintf('%s %s',name,fenster);
+if length(fenster) ~= 0
+    name = fenster;
 end
 
-scrsz = get(0,'ScreenSize');
-fig=figure('Name',name,'Numbertitle','off');
-%fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
-
+if scrsz ~= 0
+    scrsz = get(0,'ScreenSize');
+    fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
+else
+    fig=figure('Name',name,'Numbertitle','off');
+end
 %%
-% Plotten der Potentiale mit fill(X,Y,Z,C)
+% Plotten
 clf;
-% plot
-%trisurf(TRI,Vx,Vy,volt1,'edgecolor','none');
 title(name,'fontsize',fns);
 
 romin=min(rho); % absolutes minimum
 romax=max(rho); % absolutes maximum
-if (romin==romax)
-    rho(round(nm/4))=1;(romin+romax)/2;
-    rho(round(nm/2))=100;(romin+romax)/2;
-end
-if logme~=0
-    rolog=log10(rho); % log trafo
-else
-    rolog=rho;
-end
-
-rolmin=min(rolog); % absolutes minimum
-rolmax=max(rolog); % absolutes maximum
 
 if (cmin==0)
-    cmin=rolmin;
+    cmin=romin;
 end
 if (cmax==0)
-    cmax=rolmax;
+    cmax=romax;
 end
 sprintf('Plot range:: %f\t%f\n',cmin,cmax);
-patch('Faces',TRI,'Vertices',vertices,'CData',rolog','FaceColor','flat','Edgecolor','none')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
 caxis([cmin cmax])
 
-%set(gca,'DataAspectRatio',[1 1 1],'fontsize',fns,'TickDir','out')
 set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
 axis tight
-%if logme~=0
-%    % Colortable neu definieren
-%    ni=(rolmax-rolmin)/nd; %increment
-%    
-%    S=char(ones(nd+1,5));
-%    for i=1:nd+1
-%        if (logme~=0)
-%            S(i,:)=sprintf('%5.f',10^(rolmin+(i-1)*ni));
-%        else
-%            S(i,:)=sprintf('%5.f',rolmin+(i-1)*ni);
-%        end
-%    end 
-%    ct=cellstr(S);
-%end
 
-%colormap(jet(2*nd+1));
 h=colorbar('vert');
 
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
-if logme~=0
-%    set(h,'YlimMode','manual');
-%    set(h,'Ylim',[10^cmin 10^cmax]);
-%    set(h,'Ytick','log')
-%    set(h,'Yscale','log')
-%    set(h,'YTickLabelMode','manual')
-%    set(h,'YTickLabel',ct)
-  set(get(h,'xlabel'),'String','log_{10}(\rho) [\Omega m]','fontsize',fns)
-else
-  set(get(h,'xlabel'),'String','\rho [\Omega m]','fontsize',fns)
-end
 
+set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);
 hold on
 for i=1:nelec
@@ -230,13 +221,8 @@ for i=1:nelec
         'MarkerSize',marksize);
 end
 if (saveplot==1)
-    %pause
     [p,fls,app,m]=fileparts(modfile);
     fleps=strcat(fls,app,'.eps');
     set(fig,'PaperPositionMode','auto');
     print('-depsc2','-r400',fleps)
-%    print('-dpdf','-r400',flpdf) %%%geht nicht
-    %print('-depsc2','-r600',file_save)
 end
-close all
-clear all
