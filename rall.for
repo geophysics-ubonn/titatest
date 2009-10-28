@@ -75,6 +75,7 @@ c     diff+>
 c     ak Inga
       integer         * 4     elec1,elec2,
      1     elec3,elec4
+      character(120) :: buff
 c.....................................................................
 
       pi = dacos(-1d0)
@@ -204,16 +205,12 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,'(a80)',end=1001,err=999) drandb
       read(12,'(L)',end=100,err=100) lsto
 
-      IF ( lsto ) THEN
-         ltri = 2
-         GOTO 101
-      END IF
+      IF ( lsto ) ltri = 2
+      GOTO 101
 
- 100  lsto=.false.           !dfault wert
-      BACKSPACE(12)
+ 100  BACKSPACE(12)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
-
 
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
