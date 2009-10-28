@@ -202,7 +202,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
-      IF (.not.lagain)read(12,'(L)',end=100,err=100) lsto
+      read(12,'(L)',end=100,err=100) lsto
 
       IF ( lsto ) THEN
          ltri = 2
@@ -210,6 +210,7 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       END IF
 
  100  lsto=.false.           !dfault wert
+      BACKSPACE(12)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
 
@@ -219,7 +220,8 @@ c     ak        read(12,*,end=1001,err=999) lindiv
          stabw0 = -stabw0
          READ(12,*,end=110,err=110) iseed
 	 GOTO 111
- 110     iseed = 1 ! default value for PRS
+ 110     iseed = 1              ! default value for PRS
+         BACKSPACE(12)
  111     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
      1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
      1        iseed
