@@ -145,10 +145,8 @@ c     Kontrollausgaben
 
       errnr = 1
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='unknown',err=999)
- 11   read(10,*,end=12)
-      goto 11
- 12   backspace(10)
+      open(10,file=fetxt,status='unknown',err=999,
+     1	POSITION='append')
       errnr = 4
 
       write(10,'(a,i3,a,i3,a)',ADVANCE='no')
@@ -327,26 +325,22 @@ c     Kontrollausgaben
 
                errnr = 1
                fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-               open(10,file=fetxt,status='old',err=999)
- 13            read(10,*,end=14)
-               goto 13
- 14            backspace(10)
+               open(10,file=fetxt,status='old',err=999,
+     1              POSITION='append')
                errnr = 4
                write(10,'(a24)',err=999)
      1              ' Final phase improvement'
                close(10)
-
+               
                errnr = 1
                fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-               open(13,file=fetxt,status='old',err=999)
- 15            read(13,*,end=16)
-               goto 15
- 16            backspace(13)
+               open(13,file=fetxt,status='old',err=999,
+     1              POSITION='append')
                errnr = 4
-               write(13,'(a48,a48,a12)',err=999)
+               write(13,'(a,a,a)',err=999)
      1              '------------------------------------------------',
      1              '------------------------------------------------',
-     1              '------------'
+     1              '-----------------'
                write(13,*,err=999)
                close(13)
 
@@ -414,21 +408,17 @@ c     Felder speichern
          end do
 
 c     Kontrollausgaben
-         WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
-         write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+         write (*,'(a,i3,a,i3,a)',ADVANCE='no')
      1        ACHAR(13)//' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
-
+         
          errnr = 1
          fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-         open(10,file=fetxt,status='old',err=999)
- 17      read(10,*,end=18)
-         goto 17
- 18      backspace(10)
+         open(10,file=fetxt,status='old',err=999,
+     1        POSITION='append')
          errnr = 4
-
-         write(10,'(a,i3,a,i3,a)',ADVANCE='no')
-     1        ACHAR(13)//' Iteration ',it,', ',itr,
+         
+         write(10,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
          close(10)
 
@@ -452,17 +442,14 @@ c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
             IF (ltri==0) THEN
-               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
                WRITE (*,'(a)',ADVANCE='no')
      1              'Here:: Old regularization'
                call bsmatm()
             ELSE IF (ltri==1) THEN
-               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
                WRITE (*,'(a)',ADVANCE='no')
      1              'Here:: Triangulation regularization'
                CALL bsmatmtri
             ELSE IF (ltri==2) THEN
-               WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
                WRITE (*,'(a)',ADVANCE='no')
      1              'Here:: Stochastic regularization'
                CALL bsmatmsto
@@ -509,7 +496,6 @@ c     Regularisierungsparameter bestimmen
                   if (lsetup.or.lsetip) then
 
 c     Kontrollausgabe
-                     WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
                      write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1                    ACHAR(13)//' Iteration ',it,', ',itr,
      1                    ' : Calculating 1st regularization parameter'
@@ -579,21 +565,16 @@ c     Step-length speichern
          end if
       END IF
 c     Kontrollausgaben
-      WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
       write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
 
       errnr = 1
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='old',err=999)
- 19   read(10,*,end=20)
-      goto 19
- 20   backspace(10)
+      open(10,file=fetxt,status='old',err=999,
+     1     POSITION='append')
       errnr = 4
-
-      write(10,'(a,i3,a,i3,a)',ADVANCE='no')
-     1     ACHAR(13)//' Iteration ',it,', ',itr,
+      write(10,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
      1     ' : Updating'
       close(10)
 
@@ -634,10 +615,8 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     Kontrollausgaben
       errnr = 1
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='old',err=999)
- 31   read(10,*,end=32)
-      goto 31
- 32   backspace(10)
+      open(10,file=fetxt,status='old',err=999,
+     1     POSITION='append')
       errnr = 4
 
       if (errnr2.eq.92) then
@@ -649,39 +628,39 @@ c     Kontrollausgaben
       else if (errnr2.eq.80) then
          write(*,'(a22,a10)') ' Iteration terminated:',
      1        ' Min. RMS.'
-
+         
          write(10,'(a22,a10)',err=999) ' Iteration terminated:',
      1        ' Min. RMS.'
       else if (errnr2.eq.81) then
          write(*,'(a22,a24)') ' Iteration terminated:',
      1        ' Min. rel. RMS decrease.'
-
+         
          write(10,'(a22,a24)',err=999) ' Iteration terminated:',
      1        ' Min. rel. RMS decrease.'
       else if (errnr2.eq.79) then
          write(*,'(a22,a19)') ' Iteration terminated:',
      1        ' Max. # iterations.'
-
+         
          write(10,'(a22,a19)',err=999) ' Iteration terminated:',
      1        ' Max. # iterations.'
       end if
-
+      
 c     Run-time abfragen und ausgeben
       izeit     = etime(tazeit)
       izeit     = izeit/60.
       tazeit(2) = amod(izeit,60.)
       tazeit(1) = (izeit-tazeit(2))/60.
-
+      
       write(*,'(a10,i3,a3,i3,a3)')
      1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
       write(10,'(a10,i3,a3,i3,a3)',err=999)
      1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
       close(10)
-
+      
 c     Kontrolldateien schliessen
       close(14)
       close(15)
-
+      
 c     'sens' und 'kpot' freigeben
       if (ldc) then
          DEALLOCATE(sensdc,kpotdc)

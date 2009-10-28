@@ -156,8 +156,8 @@ c     ak        fstop  = 0.8d0
 c#########################################################
 c Read in input values..
 
-      read(12,*,end=1001,err=999)
-      read(12,'(a80)',end=1001,err=999) delem
+      read(12,*,end=1001,err=98) mswitch
+ 98   read(12,'(a80)',end=1001,err=999) delem
       read(12,'(a80)',end=1001,err=999) delectr
       read(12,'(a80)',end=1001,err=999) dstrom
       read(12,'(a60)',end=1001,err=999) ramd
