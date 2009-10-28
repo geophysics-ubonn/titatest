@@ -132,8 +132,8 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
 
         write(13,'(a)',err=999) '***FIXED***'
         if (swrtr.eq.1) then
-            write(13,'(a16,t50,i2)',err=999) ' # wavenumbers :',kwnanz
-            write(13,'(a34,t50,g11.5,t62,a1)',err=999)
+            write(13,'(a,t50,i2)',err=999) ' # wavenumbers :',kwnanz
+            write(13,'(a,t50,g11.5,t62,a1)',err=999)
      1               ' Inverse Fourier transform range :',amin,'m'
             write(13,'(t50,g11.5,t62,a1)',err=999) amax,'m'
         end if
@@ -141,29 +141,29 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
             bet0 = cdabs(dcmplx(1d0)/sigma0)
             pha0 = 1d3*datan2(dimag(dcmplx(1d0)/sigma0),
      1                         dble(dcmplx(1d0)/sigma0))
-            write(13,'(a25,t50,g11.5,t62,a5)',err=999)
+            write(13,'(a,t50,g11.5,t62,a5)',err=999)
      1               ' Background resistivity :',bet0,'ohm*m'
             write(13,'(t50,g11.5,t62,a4)',err=999)
      1               pha0,'mrad'
         end if
-        write(13,'(a23,t50,l1)',err=999)
+        write(13,'(a,t50,l1)',err=999)
      1           ' Force negative phase ?',lphi0
         write(13,'(a16,t50,l1)',err=999) ' Ratio dataset ?',lratio
         if (lrobust.or.lfphai) write(13,'(a13,t50,g11.5)',err=999)
      1                                  ' Min. L1 norm',l1min
-        write(13,'(a33,t50,g11.5)',err=999)
+        write(13,'(a,t50,g11.5)',err=999)
      1           ' Min. rel. decrease of data RMS :',mqrms
-        write(13,'(a19,t50,g11.5)',err=999)
+        write(13,'(a,t50,g11.5)',err=999)
      1           ' Min. stepsize (||\delta m||) :',stpmin
-        write(13,'(a27,t50,g11.5)',err=999)
+        write(13,'(a,t50,g11.5)',err=999)
      1           ' Min. error in relaxation :',eps
-        write(13,'(a31,t50,i5)',err=999)
+        write(13,'(a,t50,i5)',err=999)
      1           ' Max. # relaxation iterations :',ncgmax
-        write(13,'(a30,t50,i3)',err=999)
+        write(13,'(a,t50,i3)',err=999)
      1           ' Max. # regularization steps :',nlam
-        write(13,'(a22,t50,g11.5)',err=999)
+        write(13,'(a,t50,g11.5)',err=999)
      1           ' Initial step factor :',fstart
-        write(13,'(a22,t50,g11.5)',err=999)
+        write(13,'(a,t50,g11.5)',err=999)
      1           ' Final   step factor :',fstop
         write(13,*,err=999)
         write(13,'(a48,a48,a13)',err=999)
