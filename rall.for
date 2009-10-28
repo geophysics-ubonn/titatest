@@ -151,7 +151,7 @@ c     ak        fstop  = 0.8d0
 c     ak Strasbrg/Werne/Grimberg
 c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
-      imonte = 0;stabmp = 0.
+      iseedpri = 0; stabmpri = 0.
 c#########################################################
 c Read in input values..
 
@@ -167,14 +167,14 @@ c     diff+<
       read(12,'(a80)',end=1001,err=999) dfm0
 
       IF (ldiff) THEN
-         lprior=.TRUE.
-         lstart=(dd0 == ''.AND.dfm0 == '')
+         lprior = .TRUE.
+         lstart = (dd0 == ''.AND.dfm0 == '')
          IF (lstart) dstart = dm0
-         ldiff=.NOT.lstart
+         ldiff = .NOT.lstart
       END IF
 c     diff+>
-      read(12,*,end=1001,err=99) imonte,stabmp
-      lnsepri=.TRUE.
+      read(12,*,end=1001,err=99) iseedpri,stabmpri
+      lnsepri = lprior
  99   read(12,*,end=1001,err=999) nx
       read(12,*,end=1001,err=999) nz
       read(12,*,end=1001,err=999) alfx

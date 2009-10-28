@@ -120,11 +120,15 @@ cak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
         write(13,'(a)',err=999) '***Model stats***'
         write(13,'(a,I10)',err=999)'# Model parameters : ',manz
         write(13,'(a,I10)',err=999)'# Data points      : ',nanz
-        write(13,'(a,L)',err=999)  'Add noise ?        : ',lnse
+        write(13,'(a,L)',err=999)  'Add data noise ?   : ',lnse
+        write(13,'(a,L)',err=999)  '    seed           : ',iseed
+        write(13,'(a,L)',err=999)  'Add model noise ?  : ',lnsepri
+        write(13,'(a,L)',err=999)  '    seed           : ',iseedpri
+        write(13,'(a,L)',err=999)  '    Variance       : ',stabmpri
         write(13,'(a,L)',err=999)  'Regular grid       : ',(ltri==0)
         write(13,'(a,L)',err=999)  'Triangular regu    : ',(ltri==1)
         write(13,'(a,L)',err=999)  'Stochastic regu    : ',(ltri==2)
-        write(13,'(a,L)',err=999)  'Read prior model   : ',lstart
+        write(13,'(a,L)',err=999)  'Read start model   : ',lstart
 
         write(13,'(a)',err=999) '***FIXED***'
         if (swrtr.eq.1) then

@@ -49,12 +49,12 @@ c     'datei' oeffnen
       errnr = 3
       IF (lnsepri) THEN
          PRINT*,''
-         PRINT*,'iMonte::',imonte,stabmp
+         PRINT*,'iseedpri / std. err.',iseedpri,stabmpri
          CALL get_unit(ifp)
          OPEN (ifp,FILE='tmp.mynoise_mprior_rho',STATUS='replace')
          WRITE (*,'(A)',advance='no')' Initializing noise '
          ALLOCATE (rnd_r(elanz))
-         CALL Random_Init(imonte)
+         CALL Random_Init(iseedpri)
          DO i=1,elanz
             rnd_r(i) = Random_Gauss()
             WRITE (ifp,'(G10.3)')rnd_r(i)
@@ -63,7 +63,7 @@ c     'datei' oeffnen
          IF (.NOT.ldc) THEN
             OPEN (ifp,FILE='tmp.mynoise_mprior_phase',STATUS='replace')
             ALLOCATE (rnd_p(elanz))
-            CALL Random_Init(-imonte)
+            CALL Random_Init(-iseedpri)
             DO i=1,elanz
                rnd_p(i) = Random_Gauss()
                WRITE (ifp,'(G10.3)')rnd_p(i)
@@ -101,10 +101,10 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
             IF (bet > 0.) THEN  
 !     TODO: meaningful phase check.. 
                IF (lnsepri) THEN
-                  eps_r = 1d-2*stabmp * bet
+                  eps_r = 1d-2*stabmpri * bet
                   bet = bet + rnd_r(i) * eps_r
                   IF (.NOT. ldc) THEN
-                     eps_p = 1d-2*stabmp*dabs(pha)
+                     eps_p = 1d-2*stabmpri*dabs(pha)
                      pha = pha + rnd_p(i) * eps_p
                   END IF
                END IF
