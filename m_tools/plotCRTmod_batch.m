@@ -148,14 +148,17 @@ end
 fclose(fp);
 %%
 if length(cbarn) == 0
-    if length(mag) ~= 0
+    if length(pha) ~= 0
         cbarn='Phase [mRad]';
-    elseif length(pha) ~= 0
+    elseif length(mag) ~= 0
         cbarn='log_{10}(\rho) [\Omega m]';
     elseif length(modl) ~= 0
         cbarn='\rho [\Omega m]';        
     else
-        cbarn='Parameter [Units]';
+        cbarn='Parameter [Units] (check tmp.cbarn)';
+        fp=fopen('tmp.cbarn','w');
+        fprintf(fp,'Parameter [Units]\n');
+	fclose(fp);
     end
 end
 
