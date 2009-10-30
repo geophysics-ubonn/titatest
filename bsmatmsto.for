@@ -31,7 +31,7 @@ c     integral scale
 
 c     Kovarianzmatrix
       REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE  :: CovTT 
-      
+      INTEGER,DIMENSION(:) :: IPIV
 c     inverse Kovarianzmatrix -> smatm
       integer*4            :: ErrorFlag
 
@@ -168,20 +168,24 @@ c     CovTT = var*exp(-CovTT)
       IF (exc) THEN
          PRINT*,'bestimme nun inv{C_m}'
          IF (nx==-1) THEN
-            PRINT*,'   Cholesky factorization (LAPACK)... '
+            PRINT*,'   DGESV (LAPACK)... '
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+            IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
+            covTT=0.0
             DO i=1,manz
                covTT(i,i)=1.0
             END DO
-            CALL DPOTRF('U',manz,smatm,manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..',errorflag
-               STOP
-            END IF
+c$$$            CALL DPOTRF('U',manz,smatm,manz,errorflag)
+c$$$            IF (errorflag/=0) THEN
+c$$$               PRINT*,'there was something wrong..',errorflag
+c$$$               STOP
+c$$$            END IF
             PRINT*,'   Invertiere smatm ... '
 c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
-            
-            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
+c$$$            
+c$$$            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
+c$$$     1           manz,errorflag)
+            CALL DGESV(manz,manz,smatm,manz,IPIV,covTT,
      1           manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..'
