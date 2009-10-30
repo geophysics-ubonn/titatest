@@ -169,13 +169,20 @@ c     CovTT = var*exp(-CovTT)
          PRINT*,'bestimme nun inv{C_m}'
          IF (nx==-1) THEN
             PRINT*,'   Cholesky factorization (LAPACK)... '
-            CALL MDPOTRF('U',manz,smatm,manz,errorflag)
+            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+            DO i=1,manz
+               covTT(i,i)=1.0
+            END DO
+            CALL DPOTRF('U',manz,smatm,manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..',errorflag
                STOP
             END IF
             PRINT*,'   Invertiere smatm ... '
-            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
+c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
+            
+            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
+     1           manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..'
                PRINT*,'Zeile::',smatm(abs(errorflag),:)
