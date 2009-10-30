@@ -180,6 +180,9 @@ name=sprintf('CRTomo model');
 if length(fenster) ~= 0
     name = fenster;
 end
+fp=fopen('tmp.fenster','w');
+fprintf(fp,'%s \n',name);
+fclose(fp);
 
 if scrsz ~= 0
     scrsz = get(0,'ScreenSize');
