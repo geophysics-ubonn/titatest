@@ -209,6 +209,31 @@ c$$$     1           manz,errorflag)
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             covTT=smatm
             CALL findinv(CovTT,smatm,manz,ErrorFlag)
+         ELSE IF (nx==-3) THEN
+            PRINT*,'   DGESV (LAPACK)... '
+            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+            IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
+            covTT=0.0
+            DO i=1,manz
+               covTT(i,i)=1.0
+            END DO
+            CALL DPOTRF('U',manz,smatm,manz,errorflag)
+            IF (errorflag/=0) THEN
+               PRINT*,'there was something wrong..',errorflag
+               STOP
+            END IF
+            PRINT*,'   Invertiere smatm ... '
+c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
+c$$$            
+            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
+     1           manz,errorflag)
+            IF (errorflag/=0) THEN
+               PRINT*,'there was something wrong..'
+               PRINT*,'Zeile::',covTT(abs(errorflag),:)
+               PRINT*,'Spalte::',covTT(:,abs(errorflag))
+               STOP
+            END IF
+            smatm=covTT
          ELSE
             PRINT*,'   Gauss elemination ... '
 c     Berechne nun die Inverse der Covarianzmatrix!!!
