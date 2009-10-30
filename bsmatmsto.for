@@ -189,10 +189,11 @@ c$$$     1           manz,errorflag)
      1           manz,errorflag)
             IF (errorflag/=0) THEN
                PRINT*,'there was something wrong..'
-               PRINT*,'Zeile::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               PRINT*,'Zeile::',covTT(abs(errorflag),:)
+               PRINT*,'Spalte::',covTT(:,abs(errorflag))
                STOP
             END IF
+            smatm=covTT
          ELSE IF (nx==-2) THEN        
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             PRINT*,'   Cholesky factorization (Schwarz)... '
@@ -210,7 +211,7 @@ c$$$     1           manz,errorflag)
             CALL findinv(CovTT,smatm,manz,ErrorFlag)
          ELSE
             PRINT*,'   Gauss elemination ... '
-c     Berechne nun die Inierse der Covarianzmatrix!!!
+c     Berechne nun die Inverse der Covarianzmatrix!!!
             CALL gauss(manz,errorflag)
          END IF
          IF (errorflag==0) THEN
