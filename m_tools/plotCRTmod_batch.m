@@ -155,12 +155,12 @@ if length(cbarn) == 0
     elseif length(modl) ~= 0
         cbarn='\rho [\Omega m]';        
     else
-        cbarn='Parameter [Units] (check tmp.cbarn)';
-        fp=fopen('tmp.cbarn','w');
-        fprintf(fp,'Parameter [Units]\n');
-	fclose(fp);
+        cbarn='Parameter [Units]';
     end
 end
+fp=fopen('tmp.cbarn','w');
+fprintf(fp,'%s \n',cbarn);
+fclose(fp);
 
 %%
 % Einlesen der Elektroden
