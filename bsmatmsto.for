@@ -31,7 +31,7 @@ c     integral scale
 
 c     Kovarianzmatrix
       REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE  :: CovTT 
-      INTEGER,DIMENSION(:) :: IPIV
+      INTEGER,DIMENSION(:),ALLOCATABLE              :: IPIV
 c     inverse Kovarianzmatrix -> smatm
       integer*4            :: ErrorFlag
 
