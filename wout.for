@@ -107,6 +107,9 @@ c     'dsigma' modifizieren
 c     Betraege ausgeben
       idum  = index(htxt,' ')
       fetxt = htxt(1:idum-4)//'mag'
+      OPEN (kanal,FILE='tmp.lastmod',STATUS='replace')
+      WRITE (kanal,*)TRIM(fetxt)
+      CLOSE (kanal)
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
@@ -140,9 +143,6 @@ c     diff+>
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
 
-      OPEN (kanal,FILE='tmp.lastmod',STATUS='replace')
-      WRITE (kanal,*)TRIM(fetxt)
-      CLOSE (kanal)
 c$$$  
 c$$$  INQUIRE (FILE='tmp.matinfo',EXIST=exi)
 c$$$  IF (exi) THEN
