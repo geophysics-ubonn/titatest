@@ -210,7 +210,7 @@ c$$$     1           manz,errorflag)
             covTT=smatm
             CALL findinv(CovTT,smatm,manz,ErrorFlag)
          ELSE IF (nx==-4) THEN
-            PRINT*,'   DGESV (LAPACK)... '
+            PRINT*,'   Cholesky dec (LAPACK)... '
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
             covTT=0.0
@@ -222,7 +222,7 @@ c$$$     1           manz,errorflag)
                PRINT*,'there was something wrong..',errorflag
                STOP
             END IF
-            PRINT*,'   Invertiere smatm ... '
+            PRINT*,'   solving linear system.. '
 c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
 c$$$            
             CALL DPOTRS('U',manz,manz,smatm,manz,covTT,

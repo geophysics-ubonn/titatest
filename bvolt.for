@@ -10,6 +10,7 @@ c     Letzte Aenderung   06-Nov-1997
 c.....................................................................
 
       USE alloci
+      IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'

@@ -1,106 +1,107 @@
-        subroutine cjggra(bvec)
+      subroutine cjggra(bvec)
 
-c Unterprogramm berechnet Modellverbesserung mittels konjugierter
-c Gradienten.
+c     Unterprogramm berechnet Modellverbesserung mittels konjugierter
+c     Gradienten.
 
-c Andreas Kemna                                            01-Mar-1996
-c                                       Letzte Aenderung   04-Jul-2009
+c     Andreas Kemna                                            01-Mar-1996
+c     Letzte Aenderung   04-Jul-2009
 c.....................................................................
 
-        INCLUDE 'parmax.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'inv.fin'
-        INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c EIN-/AUSGABEPARAMETER:
-
-c Konstantenvektor
-        complex         * 16    bvec(mmax)
+      IMPLICIT none
+      INCLUDE 'parmax.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'inv.fin'
+      INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c PROGRAMMINTERNE PARAMETER:
+c     EIN-/AUSGABEPARAMETER:
 
-c Vektoren
-        complex         * 16    rvec(mmax),pvec(mmax)
-
-c Skalare
-        complex         * 16    beta
-        real            * 8     alpha,
-     1                          dr,dr0,dr1
-
-c Hilfsvariablen
-        integer         * 4     j,k
+c     Konstantenvektor
+      complex         * 16    bvec(mmax)
 
 c.....................................................................
 
-        do j=1,manz
-            dpar(j) = dcmplx(0d0)
-            rvec(j) = bvec(j)
-            pvec(j) = dcmplx(0d0)
-        end do
+c     PROGRAMMINTERNE PARAMETER:
 
-        do k=1,ncgmax
-            ncg = k-1
+c     Vektoren
+      complex         * 16    rvec(mmax),pvec(mmax)
 
-            dr = 0d0
-            do j=1,manz
-                dr = dr + dble(dconjg(rvec(j))*rvec(j))
-            end do
+c     Skalare
+      complex         * 16    beta
+      real            * 8     alpha,
+     1     dr,dr0,dr1
 
-            if (k.eq.1) then
-                dr0  = dr*eps
-                beta = dcmplx(0d0)
-            else
-                if (dr.le.dr0) goto 10
+c     Hilfsvariablen
+      integer         * 4     j,k
 
-c Fletcher-Reeves-Version
-                beta = dcmplx(dr/dr1)
+c.....................................................................
 
-cakc Polak-Ribiere-Version
-cak                beta = dcmplx(0d0)
-cak                do j=1,manz
-cak                    beta = beta + dconjg(bvec(j))*rvec(j)
-cak                end do
-cak                beta = beta*dcmplx(-alpha/dr1)
-            end if
+      do j=1,manz
+         dpar(j) = dcmplx(0d0)
+         rvec(j) = bvec(j)
+         pvec(j) = dcmplx(0d0)
+      end do
 
-            do j=1,manz
-                pvec(j) = rvec(j) + beta*pvec(j)
-            end do
-            
-            IF (ltri==0) THEN
-               CALL bp(bvec,pvec)
-            ELSE IF (ltri==1) THEN
-               call bptri(bvec,pvec)
-            ELSE IF (ltri==2) THEN
-               call bpsto(bvec,pvec)
-            END IF
+      do k=1,ncgmax
+         ncg = k-1
 
-            dr1 = 0d0
-            do j=1,manz
-                dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
-            end do
+         dr = 0d0
+         do j=1,manz
+            dr = dr + dble(dconjg(rvec(j))*rvec(j))
+         end do
 
-            alpha = dr/dr1
+         if (k.eq.1) then
+            dr0  = dr*eps
+            beta = dcmplx(0d0)
+         else
+            if (dr.le.dr0) goto 10
 
-            do j=1,manz
-                dpar(j) = dpar(j) + dcmplx(alpha)*pvec(j)
-                rvec(j) = rvec(j) - dcmplx(alpha)*bvec(j)
-            end do
+c     Fletcher-Reeves-Version
+            beta = dcmplx(dr/dr1)
 
-            dr1 = dr
+c     akc Polak-Ribiere-Version
+c     ak                beta = dcmplx(0d0)
+c     ak                do j=1,manz
+c     ak                    beta = beta + dconjg(bvec(j))*rvec(j)
+c     ak                end do
+c     ak                beta = beta*dcmplx(-alpha/dr1)
+         end if
 
-c Residuum speichern
-            cgres(k+1) = real(eps*dr/dr0)
-        end do
+         do j=1,manz
+            pvec(j) = rvec(j) + beta*pvec(j)
+         end do
+         
+         IF (ltri==0) THEN
+            CALL bp(bvec,pvec)
+         ELSE IF (ltri==1) THEN
+            call bptri(bvec,pvec)
+         ELSE IF (ltri==2) THEN
+            call bpsto(bvec,pvec)
+         END IF
 
-        ncg = ncgmax
+         dr1 = 0d0
+         do j=1,manz
+            dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
+         end do
 
-c Anzahl an CG-steps speichern
-10      cgres(1) = real(ncg)
+         alpha = dr/dr1
 
-        return
-        end
+         do j=1,manz
+            dpar(j) = dpar(j) + dcmplx(alpha)*pvec(j)
+            rvec(j) = rvec(j) - dcmplx(alpha)*bvec(j)
+         end do
+
+         dr1 = dr
+
+c     Residuum speichern
+         cgres(k+1) = real(eps*dr/dr0)
+      end do
+
+      ncg = ncgmax
+
+c     Anzahl an CG-steps speichern
+ 10   cgres(1) = real(ncg)
+
+      return
+      end

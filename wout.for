@@ -7,7 +7,8 @@ c     Andreas Kemna                                            28-Sep-1994
 c     Letzte Aenderung   10-Mar-2007
       
 c.....................................................................
-
+      
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'

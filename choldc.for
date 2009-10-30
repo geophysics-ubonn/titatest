@@ -1,81 +1,82 @@
-        subroutine choldc()
- 
-c Cholesky-Zerlegung der positiv definiten Matrix 'adc'; erfolgt auf dem
-c Platz von 'adc', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
-c 'adc' zerstoert.
+      subroutine choldc()
+      
+c     Cholesky-Zerlegung der positiv definiten Matrix 'adc'; erfolgt auf dem
+c     Platz von 'adc', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
+c     'adc' zerstoert.
 
-c ( Vgl. Subroutine 'CHOBNDN' in Schwarz (1991) )
+c     ( Vgl. Subroutine 'CHOBNDN' in Schwarz (1991) )
 
-c Andreas Kemna                                            11-Oct-1993
-c                                       Letzte Aenderung   07-Mar-2003
-
-c.....................................................................
-
-        USE alloci
-
-        INCLUDE 'parmax.fin'
-        INCLUDE 'err.fin'
-        INCLUDE 'elem.fin'
+c     Andreas Kemna                                            11-Oct-1993
+c     Letzte Aenderung   07-Mar-2003
 
 c.....................................................................
 
-c PROGRAMMINTERNE PARAMETER:
+      USE alloci
 
-c Hilfsvariablen
-        integer         * 4     idi,i0,ij,j0
-        integer         * 4     m1,fi
-        real            * 8     s
-
-c Indexvariablen
-        integer         * 4     i,j,k
+      IMPLICIT none
+      INCLUDE 'parmax.fin'
+      INCLUDE 'err.fin'
+      INCLUDE 'elem.fin'
 
 c.....................................................................
 
-        m1 = mb+1
+c     PROGRAMMINTERNE PARAMETER:
 
-        do 30 i=1,sanz
+c     Hilfsvariablen
+      integer         * 4     idi,i0,ij,j0
+      integer         * 4     m1,fi
+      real            * 8     s
 
-            idi = i*m1
-            fi  = max0(1,i-mb)
-            i0  = idi-i
+c     Indexvariablen
+      integer         * 4     i,j,k
 
-            do 20 j=fi,i
+c.....................................................................
 
-                ij = i0+j
-                j0 = j*mb
-                s  = adc(ij)
+      m1 = mb+1
 
-                do 10 k=fi,j-1
-                    s = s - adc(i0+k)*adc(j0+k)
-10              continue
+      do 30 i=1,sanz
 
-                if (j.lt.i) then
+         idi = i*m1
+         fi  = max0(1,i-mb)
+         i0  = idi-i
 
-                    adc(ij) = s / adc(j*m1)
+         do 20 j=fi,i
 
-                else
+            ij = i0+j
+            j0 = j*mb
+            s  = adc(ij)
 
-                    if (s.le.0d0) then
-                        fetxt = ' '
-                        errnr = 28
-                        goto 1000
-                    end if
+            do 10 k=fi,j-1
+               s = s - adc(i0+k)*adc(j0+k)
+ 10         continue
 
-                    adc(idi) = dsqrt(s)
+            if (j.lt.i) then
 
-                end if
+               adc(ij) = s / adc(j*m1)
 
-20          continue
+            else
 
-30      continue
+               if (s.le.0d0) then
+                  fetxt = ' '
+                  errnr = 28
+                  goto 1000
+               end if
 
-        errnr = 0
-        return
+               adc(idi) = dsqrt(s)
+
+            end if
+
+ 20      continue
+
+ 30   continue
+
+      errnr = 0
+      return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-c Fehlermeldungen
+c     Fehlermeldungen
 
-1000    return
+ 1000 return
 
-        end
+      end

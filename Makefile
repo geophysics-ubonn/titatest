@@ -55,7 +55,7 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o 
+		  wpot.o wsens.o bres_matdc.o bres_mat.o
 f90crm		= alloci.o
 fcrm		= fem.o
 forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \

@@ -121,6 +121,10 @@ c Schalter ob prior model vorhanden
         logical         * 4	lprior
 c Schalter ob prior model verrauschen
         logical         * 4	lnsepri
+c Schalter fuer Resolution matrix
+        logical         * 4	lres
+c Schalter fuer posterior cov
+        logical         * 4	lcov
 c Mega schalter, wird binaer getestet
         integer         * 4	mswitch
 c.....................................................................
@@ -172,4 +176,6 @@ cdiff+>
      1			ltri,
      1			lprior,
      1 			lnsepri,
+     1 			lres,
+     1 			lcov,
      1 			mswitch

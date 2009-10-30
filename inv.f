@@ -18,6 +18,7 @@ c.....................................................................
       USE alloci
 c     USE portlib
 
+      IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
@@ -33,7 +34,7 @@ c     USE portlib
       INCLUDE 'konv.fin'
 
       CHARACTER(256)  :: ftext
-
+      INTEGER :: i
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
@@ -146,7 +147,7 @@ c     Kontrollausgaben
       errnr = 1
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
       open(10,file=fetxt,status='unknown',err=999,
-     1	POSITION='append')
+     1     POSITION='append')
       errnr = 4
 
       write(10,'(a,i3,a,i3,a)',ADVANCE='no')
@@ -611,6 +612,36 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          end if
          if (errnr.ne.0) goto 999
       end if
+      PRINT*,'calculating wsens'
+      IF (ldc) THEN ! sens -> wsens...
+         DO i=1,nanz
+            sensdc(i,:)=wmatd(i)*sensdc(i,:)*DBLE(wdfak(i))
+         END DO
+      ELSE
+         DO i=1,nanz
+            sens(i,:)=wmatd(i)*sens(i,:)*DBLE(wdfak(i))
+         END DO
+      END IF
+
+      IF (lres) THEN
+         PRINT*,'calculating resolution matrix'
+         fetxt = ramd(1:lnramd)//slash(1:1)//'res_diag.ctr'
+         open(10,file=fetxt,status='replace',err=999)
+         errnr = 4
+         IF (ldc) THEN
+            CALL bres_matdc
+            DO i=1,manz
+               WRITE (10,*)inv_atadc(i,i)
+            END DO
+
+         ELSE
+            CALL bres_mat
+            DO i=1,manz
+               WRITE (10,*)inv_ata(i,i)
+            END DO
+         END IF
+         
+      END IF
 
 c     Kontrollausgaben
       errnr = 1

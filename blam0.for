@@ -1,109 +1,110 @@
-        subroutine blam0()
+      subroutine blam0()
 
-c Unterprogramm zum Bestimmen des Start-Regularisierungsparameters.
+c     Unterprogramm zum Bestimmen des Start-Regularisierungsparameters.
 
-c Andreas Kemna                                            20-Feb-1997
-c                                       Letzte Aenderung   07-Mar-2003
-       
+c     Andreas Kemna                                            20-Feb-1997
+c     Letzte Aenderung   07-Mar-2003
+      
 c.....................................................................
 
-        USE alloci
+      USE alloci
+      IMPLICIT none
 
-        INCLUDE 'parmax.fin'
-        INCLUDE 'dat.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'inv.fin'
-        INCLUDE 'fem.fin'
-        INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c PROGRAMMINTERNE PARAMETER:
-
-c Hilfsvariablen
-        complex         * 16    cdum
-        real            * 8     dum
-
-c Indexvariablen
-        integer         * 4     i,j,k
+      INCLUDE 'parmax.fin'
+      INCLUDE 'dat.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'inv.fin'
+      INCLUDE 'fem.fin'
+      INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c Start-Regularisierungsparameter bestimmen
-        lammax = 0d0
-        IF (nz<0) THEN
-           IF (nz<-1) lammax = -REAL(nz)
-           IF (nz==-1) lammax = REAL(manz)
-           WRITE (*,'(a,G10.2)')'taking easy lam_0 ',lammax
-           return
-        END IF
-        if (ldc) then
-            do j=1,manz
-                write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
-     1              'blam0/ ',REAL( j * (100./manz)),'%'
-                dum = 0d0
+c     PROGRAMMINTERNE PARAMETER:
 
-                do i=1,nanz
-                    do k=1,manz
-                        dum = dum + sensdc(i,j)*sensdc(i,k)*
-     1                              wmatd(i)*dble(wdfak(i))
-                    end do
-                end do
+c     Hilfsvariablen
+      complex         * 16    cdum
+      real            * 8     dum
 
-                lammax = lammax + dabs(dum)
+c     Indexvariablen
+      integer         * 4     i,j,k
+
+c.....................................................................
+
+c     Start-Regularisierungsparameter bestimmen
+      lammax = 0d0
+      IF (nz<0) THEN
+         IF (nz<-1) lammax = -REAL(nz)
+         IF (nz==-1) lammax = REAL(manz)
+         WRITE (*,'(a,G10.2)')'taking easy lam_0 ',lammax
+         return
+      END IF
+      if (ldc) then
+         do j=1,manz
+            write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
+     1           'blam0/ ',REAL( j * (100./manz)),'%'
+            dum = 0d0
+
+            do i=1,nanz
+               do k=1,manz
+                  dum = dum + sensdc(i,j)*sensdc(i,k)*
+     1                 wmatd(i)*dble(wdfak(i))
+               end do
             end do
 
-        else if (lip) then
+            lammax = lammax + dabs(dum)
+         end do
 
-            do j=1,manz
-                dum = 0d0
+      else if (lip) then
 
-                do i=1,nanz
-                    do k=1,manz
-                        dum = dum + dble(sens(i,j))*dble(sens(i,k))*
-     1                              wmatd(i)*dble(wdfak(i))
-                    end do
-                end do
+         do j=1,manz
+            dum = 0d0
 
-                lammax = lammax + dabs(dum)
+            do i=1,nanz
+               do k=1,manz
+                  dum = dum + dble(sens(i,j))*dble(sens(i,k))*
+     1                 wmatd(i)*dble(wdfak(i))
+               end do
             end do
 
-        else
+            lammax = lammax + dabs(dum)
+         end do
 
-            do j=1,manz
-                cdum = dcmplx(0d0)
+      else
 
-                do i=1,nanz
-                    do k=1,manz
-                        cdum = cdum + dconjg(sens(i,j))*sens(i,k)*
-     1                                dcmplx(wmatd(i)*dble(wdfak(i)))
-                    end do
-                end do
+         do j=1,manz
+            cdum = dcmplx(0d0)
 
-                lammax = lammax + cdabs(cdum)
+            do i=1,nanz
+               do k=1,manz
+                  cdum = cdum + dconjg(sens(i,j))*sens(i,k)*
+     1                 dcmplx(wmatd(i)*dble(wdfak(i)))
+               end do
             end do
 
-        end if
+            lammax = lammax + cdabs(cdum)
+         end do
 
-c$$$        IF (ltri/=2) lammax = lammax/dble(manz)
-        lammax = lammax/dble(manz)
+      end if
 
-        lammax = lammax * 2d0/(alfx+alfz)
-cak Default
-        lammax = lammax * 5d0
+c$$$  IF (ltri/=2) lammax = lammax/dble(manz)
+      lammax = lammax/dble(manz)
 
-        WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0 ',lammax
-cak Synthetic Example (JoH)
-cak        lammax = lammax * 1d1
+      lammax = lammax * 2d0/(alfx+alfz)
+c     ak Default
+      lammax = lammax * 5d0
 
-cak MinFrac
-cak        lammax = lammax * 5d1
+      WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0 ',lammax
+c     ak Synthetic Example (JoH)
+c     ak        lammax = lammax * 1d1
 
-cak Test
-cak        lammax = lammax * 1d1
+c     ak MinFrac
+c     ak        lammax = lammax * 5d1
 
-cak AAC
-cak        lammax = lammax * 5d0
+c     ak Test
+c     ak        lammax = lammax * 1d1
 
-        return
-        end
+c     ak AAC
+c     ak        lammax = lammax * 5d0
+
+      return
+      end

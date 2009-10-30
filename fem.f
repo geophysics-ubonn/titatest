@@ -12,6 +12,7 @@ c     Letzte Aenderung   02-May-2008
 c.....................................................................
 
       USE alloci
+      IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
@@ -114,7 +115,7 @@ c     'crmod.cfg' einlesen
 
       IF ( wkfak ) GOTO 101
 
- 100  wkfak=.false.           !dfault wert
+ 100  wkfak=.false.             !dfault wert
       PRINT*,'Modelling without K-Faktor!'
  101  IF (wkfak) PRINT*,'Modelling with K-Faktor!'
 
@@ -240,7 +241,7 @@ c     (bzw. scheinbaren Widerstandswerte)
             call bkfak()
             if (errnr.ne.0) goto 999
          else
-c nur echte Spannungen ausgeben...
+c     nur echte Spannungen ausgeben...
             kfak=1.0 
          end if
 
@@ -300,10 +301,10 @@ c     Kontrollausgabe
       write(*,'(a)',ADVANCE='no')' Modelling completed in'
 
       CALL SYSTEM_CLOCK (c2,j)
-      k=(c2-c1)/j ! Gesamt Sekunden
-      mi=INT(k/60) ! Minuten
-      st=INT(k/60/60) ! Stunden
-      ta=INT(k/60/60/24) ! Tage
+      k=(c2-c1)/j               ! Gesamt Sekunden
+      mi=INT(k/60)              ! Minuten
+      st=INT(k/60/60)           ! Stunden
+      ta=INT(k/60/60/24)        ! Tage
       se=k-mi*60-st*60*60-ta*60*60*24 ! Sekunden
  110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
       WRITE (*,110)ta,st,mi,se

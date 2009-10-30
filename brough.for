@@ -23,7 +23,7 @@ c     PROGRAMMINTERNE PARAMETER:
 c     Hilfsvariablen
       integer         * 4     i,j,k
       complex         * 16    cdum
-c cdum describes (R^TR)m
+c     cdum describes (R^TR)m
 c.....................................................................
 
 c     Roughness bestimmen

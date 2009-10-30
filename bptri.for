@@ -1,15 +1,16 @@
       subroutine bptri(bvec,pvec)
-c
+c     
 c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
-c
+c     
 c     Andreas Kemna                                            29-Feb-1996
-c
+c     
 c     Letzte Aenderung                                         29-Jul-2009
-c
+c     
 c...................................................................
 
       USE alloci
+      IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'dat.fin'

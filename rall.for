@@ -93,9 +93,6 @@ c     akERT2003
 c     ak        ldc    = .true.
 c     ak        lsr    = .false.
 c     ak        lpol   = .false.
-c     Ueberdeckung schreiben ?
-c     2d        lsens = .true.
-      lsens = .false.
 c     Sonstiges
 c     diff+<
       lsr    = .false.
@@ -153,6 +150,7 @@ c     ak Strasbrg/Werne/Grimberg
 c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
       iseedpri = 0; stabmpri = 0.
+      mswitch = 0
 c#########################################################
 c Read in input values..
 
@@ -277,6 +275,11 @@ c     errnr = 90
 c     goto 999
       end if
       
+c Mega switch testing..
+      lsens=BTEST(mswitch,0) !ueberdeckung schreiben
+      lres=BTEST(mswitch,1) ! rsolution matrix berechnen
+      lcov=BTEST(mswitch,2) ! posterior modell covariance
+c
       if (lratio) then
          lrho0  = .true.
          lstart = .false.

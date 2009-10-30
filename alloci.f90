@@ -11,7 +11,11 @@ MODULE alloci
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: hpot
 !!$Sensitivitaeten
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: sens
-!!$D!!$CASE
+!!$general symmetric transpose matrix to compute general inverse
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata
+!!$inverse matrix (may be resolution matrix or the MCM)
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: inv_ata
+!!$DC-CASE
 !!$Gesamtsteifigkeitsmatrix
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC :: adc
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen
@@ -21,6 +25,10 @@ MODULE alloci
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: hpotdc
 !!$Sensitivitaeten
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: sensdc
+!!$real symmetric transpose matrix to compute general inverse
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadc
+!!$real inverse matrix (may be resolution matrix or the MCM)
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: inv_atadc
 !!$Regularisierungsmatrix
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: smatm
 !!$ PSR felder fuer widerstand (r) und phase (p)

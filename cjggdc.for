@@ -1,103 +1,104 @@
-        subroutine cjggdc(bvec)
+      subroutine cjggdc(bvec)
 
-c Unterprogramm berechnet Modellverbesserung mittels konjugierter
-c Gradienten.
+c     Unterprogramm berechnet Modellverbesserung mittels konjugierter
+c     Gradienten.
 
-c Andreas Kemna                                            01-Mar-1996
-c Letzte Aenderung                                         29-Jul-2009
+c     Andreas Kemna                                            01-Mar-1996
+c     Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
 
-        INCLUDE 'parmax.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'inv.fin'
-        INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c EIN-/AUSGABEPARAMETER:
-
-c Konstantenvektor
-        complex         * 16    bvec(mmax)
+      IMPLICIT none
+      INCLUDE 'parmax.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'inv.fin'
+      INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c PROGRAMMINTERNE PARAMETER:
+c     EIN-/AUSGABEPARAMETER:
 
-c Vektoren
-        real            * 8     rvec(mmax),pvec(mmax)
-        real            * 8     bvecdc(mmax)
-
-c Skalare
-        real            * 8     beta,alpha,
-     1                          dr,dr0,dr1
-
-c Hilfsvariablen
-        integer         * 4     j,k
+c     Konstantenvektor
+      complex         * 16    bvec(mmax)
 
 c.....................................................................
 
-        do j=1,manz
-            if (lip) then
-                bvecdc(j) = dimag(bvec(j))
-            else
-                bvecdc(j) = dble(bvec(j))
-            end if
-            dpar(j) = dcmplx(0d0)
-            rvec(j) = bvecdc(j)
-            pvec(j) = 0d0
-        end do
+c     PROGRAMMINTERNE PARAMETER:
 
-        do k=1,ncgmax
-            ncg = k-1
+c     Vektoren
+      real            * 8     rvec(mmax),pvec(mmax)
+      real            * 8     bvecdc(mmax)
 
-            dr = 0d0
-            do j=1,manz
-                dr = dr + rvec(j)*rvec(j)
-            end do
+c     Skalare
+      real            * 8     beta,alpha,
+     1     dr,dr0,dr1
 
-            if (k.eq.1) then
-                dr0  = dr*eps
-                beta = 0d0
-            else
-                beta = dr/dr1
-            end if
+c     Hilfsvariablen
+      integer         * 4     j,k
 
-            if (dr.le.dr0) goto 10
+c.....................................................................
 
-            do j=1,manz
-                pvec(j) = rvec(j) + beta*pvec(j)
-            end do
+      do j=1,manz
+         if (lip) then
+            bvecdc(j) = dimag(bvec(j))
+         else
+            bvecdc(j) = dble(bvec(j))
+         end if
+         dpar(j) = dcmplx(0d0)
+         rvec(j) = bvecdc(j)
+         pvec(j) = 0d0
+      end do
 
-            IF (ltri==0) THEN
-               CALL bpdc(bvecdc,pvec)
-            ELSE IF (ltri==1) THEN
-               call bpdctri(bvecdc,pvec)
-            ELSE IF (ltri==2) THEN
-               call bpdcsto(bvecdc,pvec)
-            END IF
+      do k=1,ncgmax
+         ncg = k-1
 
-            dr1 = 0d0
-            do j=1,manz
-                dr1 = dr1 + pvec(j)*bvecdc(j)
-            end do
+         dr = 0d0
+         do j=1,manz
+            dr = dr + rvec(j)*rvec(j)
+         end do
 
-            alpha = dr/dr1
+         if (k.eq.1) then
+            dr0  = dr*eps
+            beta = 0d0
+         else
+            beta = dr/dr1
+         end if
 
-            do j=1,manz
-                dpar(j) = dpar(j) + dcmplx(alpha*pvec(j))
-                rvec(j) = rvec(j) - alpha*bvecdc(j)
-            end do
+         if (dr.le.dr0) goto 10
 
-            dr1 = dr
+         do j=1,manz
+            pvec(j) = rvec(j) + beta*pvec(j)
+         end do
 
-c Residuum speichern
-            cgres(k+1) = real(eps*dr/dr0)
-        end do
+         IF (ltri==0) THEN
+            CALL bpdc(bvecdc,pvec)
+         ELSE IF (ltri==1) THEN
+            call bpdctri(bvecdc,pvec)
+         ELSE IF (ltri==2) THEN
+            call bpdcsto(bvecdc,pvec)
+         END IF
 
-        ncg = ncgmax
+         dr1 = 0d0
+         do j=1,manz
+            dr1 = dr1 + pvec(j)*bvecdc(j)
+         end do
 
-c Anzahl an CG-steps speichern
-10      cgres(1) = real(ncg)
+         alpha = dr/dr1
 
-        return
-        end
+         do j=1,manz
+            dpar(j) = dpar(j) + dcmplx(alpha*pvec(j))
+            rvec(j) = rvec(j) - alpha*bvecdc(j)
+         end do
+
+         dr1 = dr
+
+c     Residuum speichern
+         cgres(k+1) = real(eps*dr/dr0)
+      end do
+
+      ncg = ncgmax
+
+c     Anzahl an CG-steps speichern
+ 10   cgres(1) = real(ncg)
+
+      return
+      end
