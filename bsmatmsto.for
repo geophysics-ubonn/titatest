@@ -209,7 +209,7 @@ c$$$     1           manz,errorflag)
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             covTT=smatm
             CALL findinv(CovTT,smatm,manz,ErrorFlag)
-         ELSE IF (nx==-3) THEN
+         ELSE IF (nx==-4) THEN
             PRINT*,'   DGESV (LAPACK)... '
             IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
             IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
