@@ -57,7 +57,7 @@ else
     c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'` 
 fi
 echo range check: $c1 $c2 $c3 $2
-echo $c1 $c2 $c3 $2 > tmp.range
+echo $c1 $c2 $c3 $2 > tmp.crange
 
 $mtlb < $plotmod >& /dev/null
 

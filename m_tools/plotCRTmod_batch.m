@@ -11,8 +11,6 @@ marksize=5;
 az=0; % Azimuth for the plot 
 el=90; % elongation for thew plot
 fns=16; % font size
-cmin=0;cmax=0; % plot range can be set here, 0 automatic choosed
-logme=1; % linear plots -> 0 logarithmic else
 saveplot=1; % if save the plot adjust and press space
 
 fp=fopen('tmp.meshname','r');
@@ -33,11 +31,28 @@ if checkme~=0
     fenster=fgetl(fp);
     fclose(fp);
 end
-checkme = exist ('tmp.range','file');
+cmin=0;camx=0;
+checkme = exist ('tmp.crange','file');
 if checkme~=0
-    fp=fopen('tmp.range','r');
+    fp=fopen('tmp.crange','r');
     cmin=fscanf(fp,'%f',1);
     cmax=fscanf(fp,'%f',1);
+    fclose(fp);
+end
+xmin=0;xmax=0;
+checkme = exist ('tmp.xrange','file');
+if checkme~=0
+    fp=fopen('tmp.xrange','r');
+    xmin=fscanf(fp,'%f',1);
+    xmax=fscanf(fp,'%f',1);
+    fclose(fp);
+end
+ymin=0;ymax=0;
+checkme = exist ('tmp.yrange','file');
+if checkme~=0
+    fp=fopen('tmp.yrange','r');
+    ymin=fscanf(fp,'%f',1);
+    ymax=fscanf(fp,'%f',1);
     fclose(fp);
 end
 scrsz=[];
@@ -212,6 +227,13 @@ set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
 axis tight
+
+if xmin~=xmax
+    xlim([xmin xmax])
+end
+if ymin~=ymax
+    ylim([ymin ymax])
+end
 
 h=colorbar('vert');
 
