@@ -28,13 +28,14 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i
+      integer         * 4     i,ifp
 
 c.....................................................................
 
 c     'datei' oeffnen
       fetxt = datei
-
+      CALL get_unit(ifp)
+      OPEN (ifp,FILE='tmp.elecpositions',STATUS='replace')
       errnr = 1
       open(kanal,file=fetxt,status='old',err=999)
 
@@ -42,7 +43,7 @@ c     'datei' oeffnen
 
 c     Anzahl der Elektroden einlesen
       read(kanal,*,end=1001,err=1000) eanz
-
+      WRITE (ifp,*)eanz
 c     Ggf. Fehlermeldung
       if (eanz.gt.emax) then
          fetxt = ' '
@@ -53,7 +54,7 @@ c     Ggf. Fehlermeldung
 c     Knotennummern der Elektroden einlesen
       do i=1,eanz
          read(kanal,*,end=1001,err=1000) enr(i)
-
+         WRITE (ifp,*)sx(snr(enr(i))),sy(snr(enr(i)))
 c     Ggf. Fehlermeldung
          if (enr(i).gt.sanz) then
             fetxt = ' '
@@ -63,6 +64,7 @@ c     Ggf. Fehlermeldung
       end do
 
 c     'datei' schliessen
+      CLOSE (ifp)
       close(kanal)
 
       errnr = 0
