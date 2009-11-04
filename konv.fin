@@ -101,6 +101,8 @@ c CG-Index
 c Parameter zur Glaettung in x- und z-Richtung
 c (=0 bedeutet keine Glaettung in der jeweiligen Richtung)
         real            * 8     alfx,alfz
+c MGS beta
+        real            * 8     betamgs
 
 c Schalter ob "robust inversion" durchgefuehrt werden soll
         logical         * 4     lrobust
@@ -152,6 +154,7 @@ c.....................................................................
      1                  eps,
      1                  alfx,
      1                  alfz,
+     1			betamgs,
      1                  l1min,
      1                  l1rat,
      1                  cgres,

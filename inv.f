@@ -430,7 +430,7 @@ c     SENSITIVITAETEN berechnen
             call bsensi()
          end if
 
-         if (lsetup) then
+         if (lsetup.OR.ltri == 2) then
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -442,17 +442,18 @@ c     if (errnr.ne.0) goto 999
 c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
-            IF (ltri==0) THEN
-               WRITE (*,'(a)',ADVANCE='no')
-     1              'Here:: Old regularization'
-               call bsmatm()
-            ELSE IF (ltri==1) THEN
-               WRITE (*,'(a)',ADVANCE='no')
-     1              'Here:: Triangulation regularization'
+            WRITE (*,'(/a)',ADVANCE='no')'Regularization::'
+            IF (ltri == 0) THEN
+               WRITE (*,'(a)')' Rectangular smooth'
+               call bsmatm
+            ELSE IF (ltri == 1) THEN
+               WRITE (*,'(a)')' Triangular smooth'
                CALL bsmatmtri
-            ELSE IF (ltri==2) THEN
-               WRITE (*,'(a)',ADVANCE='no')
-     1              'Here:: Stochastic regularization'
+            ELSE IF (ltri == 2) THEN
+               WRITE (*,'(a)')' Triangular MGS'
+               CALL bsmatmmgs
+            ELSE IF (ltri == 3) THEN
+               WRITE (*,'(a)')' Triangular Stochastic'
                CALL bsmatmsto
             END IF 
          end if
@@ -583,11 +584,11 @@ c     UPDATE anbringen
       call update(dpar2,cgres2)
 
 c     Leitfaehigkeiten belegen und Roughness bestimmen
-      IF (ltri==0) THEN
+      IF (ltri == 0) THEN
          call brough()
-      ELSE IF (ltri==1) THEN
+      ELSE IF (ltri < 3) THEN
          CALL broughtri
-      ELSE IF (ltri==2) THEN
+      ELSE IF (ltri == 3) THEN
          CALL broughsto
       END IF
 

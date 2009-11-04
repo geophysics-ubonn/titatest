@@ -62,7 +62,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i
+      integer         * 4     i,iregus
 
 c     Pi
       real            * 8     pi
@@ -151,6 +151,7 @@ c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
       iseedpri = 0; stabmpri = 0.
       mswitch = 0
+      iregus = 0
 c#########################################################
 c Read in input values..
 
@@ -201,15 +202,25 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
-      read(12,'(L)',end=100,err=100) lsto
-
-      IF ( lsto ) ltri = 2
+      read(12,'(I2)',end=100,err=100) ltri
+      
+      lsto = (ltri==3)
       GOTO 101
 
  100  BACKSPACE(12)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
+      
+      IF ( ltri==2 ) THEN
+         READ(12,*,end=105,err=105) betamgs
+	 GOTO 106
+ 105     betamgs = 0.5          ! default value for MGS
+         BACKSPACE(12)
 
+ 106     PRINT*,'Minimum gradient support regularisierung beta =',
+     1        betamgs
+      END IF
+      
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
@@ -222,7 +233,8 @@ c     ak        read(12,*,end=1001,err=999) lindiv
      1        iseed
       END IF
 
-      IF ((nx==0.OR.nz==0).AND..NOT.lsto) ltri=1
+      IF ((nx==0.OR.nz==0).AND.ltri==0) ltri=1 ! at least smoothness
+       
       
 c     Ggf. Fehlermeldungen
       if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then

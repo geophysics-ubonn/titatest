@@ -57,11 +57,10 @@ c     Pi
 c    dummi
       REAL            * 8     rdum,rlev
       CHARACTER(80)     ::    csz
+c check whether the file format is crtomo konform or not..
+      logical           ::    crtf
 c.....................................................................
       pi = dacos(-1d0)
-      DO i=1,79
-         csz(i:i+1)=' '
-      END DO
 
 c     'datei' oeffnen
       fetxt = datei
@@ -71,6 +70,13 @@ c     'datei' oeffnen
 
 c     Anzahl der Messwerte lesen
       read(kanal,*,end=1001,err=1000) nanz
+c check if data file format is CRTOmo konform..
+      read(kanal,*,end=1001,err=1000) elec1
+      BACKSPACE(kanal)
+
+      elec3=elec1-10000 ! are we still positive?
+
+      crtf=(elec3 > 0) ! crtomo konform?
 
 c     Ggf. Fehlermeldung
       if (nanz.gt.nmax) then
@@ -112,15 +118,26 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
      1        REAL( i * (100./nanz) ),'%'
          if (lindiv) then
             if (ldc) then
-               read(kanal,*,end=1001,err=1000)
-c     ro,ERT2003
-     1              strnr(i),vnr(i),bet,stabw
-c     ro,ERT2003     1                         strnr(i),vnr(i),bet,pha,stabw
+               IF (crtf) THEN
+                  read(kanal,*,end=1001,err=1000)
+     1                 strnr(i),vnr(i),bet,stabw
+               ELSE
+                  read(kanal,*,end=1001,err=1000)
+     1                 elec1,elec2,elec3,elec4,bet,stabw
+                  strnr(i) = elec1*10000 + elec2
+                  vnr(i)   = elec3*10000 + elec4
+               END IF
             else
                if (lfphai) then
-                  read(kanal,*,end=1001,err=1000)
-     1                 strnr(i),vnr(i),bet,pha,stabw,stabwp
-
+                  IF (crtf) THEN
+                     read(kanal,*,end=1001,err=1000)
+     1                    strnr(i),vnr(i),bet,pha,stabw,stabwp
+                  ELSE
+                     read(kanal,*,end=1001,err=1000)
+     1                    elec1,elec2,elec3,elec4,bet,pha,stabw,stabwp
+                     strnr(i) = elec1*10000 + elec2
+                     vnr(i)   = elec3*10000 + elec4
+                  END IF
 c     Ggf. Fehlermeldung
                   if (stabwp.le.0d0) then
                      fetxt = ' '
@@ -131,8 +148,16 @@ c     Ggf. Fehlermeldung
 c     ak                        stabwp = stabp0 * stabwp
                   stabwp = 1d-3*stabwp
                else
-                  read(kanal,*,end=1001,err=1000)
-     1                 strnr(i),vnr(i),bet,pha,stabw
+                  IF (crtf) THEN
+                     read(kanal,*,end=1001,err=1000)
+     1                    strnr(i),vnr(i),bet,pha,stabw
+                  ELSE
+                     read(kanal,*,end=1001,err=1000)
+     1                    elec1,elec2,elec3,elec4,bet,pha,stabw
+                     strnr(i) = elec1*10000 + elec2
+                     vnr(i)   = elec3*10000 + elec4
+
+                  END IF
                end if
             end if
 
@@ -157,15 +182,26 @@ c     ak                end if
 c     ak                stabw = (stabw0 + stabm0/bet) * stabw
          else
             if (ldc) then
-               read(kanal,*,end=1001,err=1000)
-     1              strnr(i),vnr(i),bet
-c     ak Inga
-c     ak     1                         elec1,elec2,elec3,elec4,bet
-c     ak                    strnr(i) = elec1*10000 + elec2
-c     ak                    vnr(i)   = elec3*10000 + elec4
+               IF (crtf) THEN
+                  read(kanal,*,end=1001,err=1000)
+     1                 strnr(i),vnr(i),bet
+               ELSE 
+                  read(kanal,*,end=1001,err=1000)
+     1                 elec1,elec2,elec3,elec4,bet
+                  strnr(i) = elec1*10000 + elec2
+                  vnr(i)   = elec3*10000 + elec4
+               END IF
             else
-               read(kanal,*,end=1001,err=1000)
-     1              strnr(i),vnr(i),bet,pha
+               IF (crtf) THEN
+                  read(kanal,*,end=1001,err=1000)
+     1                 strnr(i),vnr(i),bet,pha
+
+               ELSE
+                  read(kanal,*,end=1001,err=1000)
+     1                 elec1,elec2,elec3,elec4,bet,pha
+                  strnr(i) = elec1*10000 + elec2
+                  vnr(i)   = elec3*10000 + elec4
+               END IF
 
                if (lfphai) stabwp = ( stabpA1*bet**stabpB
      1              + 1d-2*stabpA2*dabs(pha)

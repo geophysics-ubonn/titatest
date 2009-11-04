@@ -72,11 +72,11 @@ c     ak                beta = beta*dcmplx(-alpha/dr1)
             pvec(j) = rvec(j) + beta*pvec(j)
          end do
          
-         IF (ltri==0) THEN
+         IF (ltri == 0) THEN
             CALL bp(bvec,pvec)
-         ELSE IF (ltri==1) THEN
+         ELSE IF (ltri < 3) THEN
             call bptri(bvec,pvec)
-         ELSE IF (ltri==2) THEN
+         ELSE IF (ltri == 3) THEN
             call bpsto(bvec,pvec)
          END IF
 

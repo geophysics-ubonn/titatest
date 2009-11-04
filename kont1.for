@@ -126,7 +126,9 @@ c     ak        write(13,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
       write(13,*,err=999)'    Variance       : ',stabmpri
       write(13,*,err=999)'Regular grid       : ',(ltri==0)
       write(13,*,err=999)'Triangular regu    : ',(ltri==1)
-      write(13,*,err=999)'Stochastic regu    : ',(ltri==2)
+      write(13,*,err=999)'Minimum grad supp  : ',(ltri==2)
+      IF (ltri == 2)write(13,*,err=999)'         MGS beta  : ',betamgs
+      write(13,*,err=999)'Stochastic regu    : ',(ltri==3)
       write(13,*,err=999)'Read start model   : ',lstart
       write(13,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
       write(13,*,err=999)'Write resolution   : ',lres

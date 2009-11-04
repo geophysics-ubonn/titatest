@@ -69,11 +69,11 @@ c.....................................................................
             pvec(j) = rvec(j) + beta*pvec(j)
          end do
 
-         IF (ltri==0) THEN
+         IF (ltri == 0) THEN
             CALL bpdc(bvecdc,pvec)
-         ELSE IF (ltri==1) THEN
+         ELSE IF (ltri < 3) THEN
             call bpdctri(bvecdc,pvec)
-         ELSE IF (ltri==2) THEN
+         ELSE IF (ltri == 3) THEN
             call bpdcsto(bvecdc,pvec)
          END IF
 

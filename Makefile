@@ -37,7 +37,10 @@ PRM		= mtools
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM)
 ################################################################
-f90crt		= alloci.o chold.o gauss.o get_error.o get_unit.o \
+# this is for evry one here
+ferr		= get_error.o
+# CRTomo objects
+f90crt		= alloci.o chold.o gauss.o get_unit.o \
 		  linv.o make_noise.o
 fcrt		= mdpotri.o mdpotrf.o inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -55,7 +58,8 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o bres_matdc.o bres_mat.o
+		  wpot.o wsens.o bres_matdc.o bres_mat.o bsmatmmgs.o
+# CRMod objects
 f90crm		= alloci.o
 fcrm		= fem.o
 forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -80,19 +84,13 @@ $(fcrt):	%.o : %.f
 		$(F90) $(FFLAG90) -c $<
 $(f90crt):	%.o : %.f90		
 		$(F90) $(FFLAG90) -c $<
-$(forcrm):	%.o : %.for
+$(fcrm):	%.o : %.f		
 		$(F90) $(FFLAG90) -c $<
-$(fcrm):	%.o : %.f
-		$(F90) $(FFLAG90) -c $<
-$(f90crm):	%.o : %.f90		
-		$(F90) $(FFLAG90) -c $<
-###############################################################
-.SILENT:	cbn
-# default targets
-################################## F90 targets..
-get_error.o:	error.txt get_error.f90
+$(ferr):	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
+###############################################################
+.SILENT:	cbn
 ###################################
 
 cbn:		
@@ -104,14 +102,14 @@ cbn:
 			mkdir ~/bin; \
 		fi
 
-crt:		$(C1) $(f90crt) $(forcrt) $(fcrt)
+crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
-		$(f90crt) $(forcrt) $(fcrt)
+		$(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(CP) CRTomo $(WPATH)
 
-crm:		$(C1) $(f90crt) $(forcrm) $(fcrm)
+crm:		$(C1) $(f90crt) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
-		$(f90crt) $(forcrm) $(fcrm)
+		$(f90crt) $(forcrm) $(fcrm) $(ferr)
 		$(CP) CRMod $(WPATH)
 
 mtools:
