@@ -42,6 +42,7 @@ ferr		= get_error.o
 # CRTomo objects
 f90crt		= alloci.o chold.o gauss.o get_unit.o \
 		  linv.o make_noise.o
+
 fcrt		= mdpotri.o mdpotrf.o inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o beta.o bkfak.o blam0.o bnachbar.o \
@@ -58,7 +59,8 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o bres_matdc.o bres_mat.o bsmatmmgs.o
+		  wpot.o wsens.o bsmatmmgs.o \
+		  batadc.o batadcreg.o bmcmdc.o bmcm.o
 # CRMod objects
 f90crm		= alloci.o
 fcrm		= fem.o

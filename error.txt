@@ -316,3 +316,9 @@
 106 Mixed boundary condition
 106 not implemented for pure 2D
 106
+107 Cholesky decomposition failed
+107 factorization
+107
+108 Solving linear system failed
+108 indefinite?
+108

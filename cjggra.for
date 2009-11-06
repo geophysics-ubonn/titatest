@@ -74,9 +74,9 @@ c     ak                beta = beta*dcmplx(-alpha/dr1)
          
          IF (ltri == 0) THEN
             CALL bp(bvec,pvec)
-         ELSE IF (ltri < 3) THEN
+         ELSE IF (ltri < 10) THEN
             call bptri(bvec,pvec)
-         ELSE IF (ltri == 3) THEN
+         ELSE
             call bpsto(bvec,pvec)
          END IF
 

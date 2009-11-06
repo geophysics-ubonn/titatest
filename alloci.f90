@@ -13,8 +13,10 @@ MODULE alloci
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: sens
 !!$general symmetric transpose matrix to compute general inverse
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata
+!!$general symmetric transpose matrix (regularized) to compute general inverse
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atareg
 !!$inverse matrix (may be resolution matrix or the MCM)
-  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: inv_ata
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atareg_inv
 !!$DC-CASE
 !!$Gesamtsteifigkeitsmatrix
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC :: adc
@@ -27,8 +29,10 @@ MODULE alloci
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: sensdc
 !!$real symmetric transpose matrix to compute general inverse
   REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadc
+!!$real symmetric transpose matrix (regularized) to compute general inverse
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadcreg
 !!$real inverse matrix (may be resolution matrix or the MCM)
-  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: inv_atadc
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadcreg_inv
 !!$Regularisierungsmatrix
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: smatm
 !!$ PSR felder fuer widerstand (r) und phase (p)

@@ -18,7 +18,7 @@ c.....................................................................
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
-
+      INCLUDE 'err.fin'
 c.....................................................................
 
 c     !!!
@@ -191,7 +191,7 @@ c$$$     1           manz,errorflag)
                PRINT*,'there was something wrong..'
                PRINT*,'Zeile::',covTT(abs(errorflag),:)
                PRINT*,'Spalte::',covTT(:,abs(errorflag))
-               STOP
+               errnr = 108
             END IF
             smatm=covTT
          ELSE IF (nx==-2) THEN        
@@ -219,8 +219,11 @@ c$$$     1           manz,errorflag)
             END DO
             CALL DPOTRF('U',manz,smatm,manz,errorflag)
             IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..',errorflag
-               STOP
+               PRINT*,'there was something wrong decomposing',errorflag
+               PRINT*,'Zeile::',covTT(abs(errorflag),:)
+               PRINT*,'Spalte::',covTT(:,abs(errorflag))
+               errnr = 107
+               RETURN
             END IF
             PRINT*,'   solving linear system.. '
 c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
@@ -231,7 +234,8 @@ c$$$
                PRINT*,'there was something wrong..'
                PRINT*,'Zeile::',covTT(abs(errorflag),:)
                PRINT*,'Spalte::',covTT(:,abs(errorflag))
-               STOP
+               errnr = 108
+               RETURN
             END IF
             smatm=covTT
          ELSE
@@ -250,7 +254,8 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
             CLOSE (ifp)
          ELSE
             PRINT*,'got NO inverse'
-            STOP
+            errnr = 108
+            RETURN
          END IF     
       END IF
 

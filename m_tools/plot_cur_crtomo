@@ -48,9 +48,9 @@ else
 fi
 echo $fenster > tmp.fenster
 
-if [ -e "tmp.range" ];then
-    c1=`awk '{print$1}' tmp.range`
-    c2=`awk '{print$2}' tmp.range`
+if [ -e "tmp.crange" ];then
+    c1=`awk '{print$1}' tmp.crange`
+    c2=`awk '{print$2}' tmp.crange`
 else
     c1=`pwd|awk '/2_decades/{printf("%.1f\t%.1f",1.0,3.0)}'` 
     c2=`pwd|awk '/3_decades/{printf("%.1f\t%.1f",0.5,3.5)}'` 

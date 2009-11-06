@@ -71,9 +71,9 @@ c.....................................................................
 
          IF (ltri == 0) THEN
             CALL bpdc(bvecdc,pvec)
-         ELSE IF (ltri < 3) THEN
+         ELSE IF (ltri < 10) THEN
             call bpdctri(bvecdc,pvec)
-         ELSE IF (ltri == 3) THEN
+         ELSE
             call bpdcsto(bvecdc,pvec)
          END IF
 

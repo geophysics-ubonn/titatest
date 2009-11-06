@@ -106,7 +106,7 @@ c     diff+<
 c     diff+>
             end do
 c     triang>
-         else if (ltri < 3) then
+         else if (ltri < 10) then
             do i=1,manz
                cdum = dcmplx(0d0)
                DO ij=1,smaxs
@@ -130,7 +130,7 @@ c     triang>
                end if
             end do
 
-         else if (ltri == 3) then
+         else
             if (.not.lprior) then
                bvec(1:manz) = 
      1              MATMUL(DCMPLX(smatm),par(1:manz))
@@ -165,9 +165,9 @@ c     Skalierungsfaktoren bestimmen
 c     triang< 
             if (ltri==0) then
                dum    = dum + lam*smatm(j,1)
-            else if (ltri==1.OR.ltri==2) then
+            else if (ltri < 10) then
                dum    = dum + lam*smatm(j,smaxs+1)
-            else if (ltri==3) then
+            else
                dum    = dum + lam*smatm(j,j)
             end if
 c     triang> 

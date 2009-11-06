@@ -204,17 +204,17 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       read(12,'(a80)',end=1001,err=999) drandb
       read(12,'(I2)',end=100,err=100) ltri
       
-      lsto = (ltri==3)
+      lsto = (ltri==10)
       GOTO 101
 
  100  BACKSPACE(12)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
-      IF ( ltri==2 ) THEN
+      IF (ltri == 2) THEN
          READ(12,*,end=105,err=105) betamgs
 	 GOTO 106
- 105     betamgs = 0.5          ! default value for MGS
+ 105     betamgs = 0.1          ! default value for MGS
          BACKSPACE(12)
 
  106     PRINT*,'Minimum gradient support regularisierung beta =',
@@ -288,9 +288,13 @@ c     goto 999
       end if
       
 c Mega switch testing..
-      lsens=BTEST(mswitch,0) !ueberdeckung schreiben
-      lres=BTEST(mswitch,1) ! rsolution matrix berechnen
-      lcov=BTEST(mswitch,2) ! posterior modell covariance
+      lsens = BTEST(mswitch,0) !ueberdeckung schreiben
+      lcov1 = BTEST(mswitch,1) ! posterior modell covariance matrix 1
+      lres  = BTEST(mswitch,2) ! rsolution matrix berechnen
+      lcov2 = BTEST(mswitch,3) ! posterior modell covariance matrix 2
+
+      lres  = lcov2            ! compute mcm2 on top of resolution
+      lcov1 = lres             ! compute resolution by taking mcm1
 c
       if (lratio) then
          lrho0  = .true.

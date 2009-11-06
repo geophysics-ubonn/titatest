@@ -86,7 +86,6 @@ c     Start-Regularisierungsparameter bestimmen
 
       end if
 
-c$$$  IF (ltri/=2) lammax = lammax/dble(manz)
       lammax = lammax/dble(manz)
 
       lammax = lammax * 2d0/(alfx+alfz)

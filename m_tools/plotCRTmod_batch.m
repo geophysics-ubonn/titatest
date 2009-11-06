@@ -199,12 +199,12 @@ fp=fopen('tmp.fenster','w');
 fprintf(fp,'%s \n',name);
 fclose(fp);
 
-if scrsz ~= 0
-    scrsz = get(0,'ScreenSize');
-    fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)/2],'Numbertitle','off');
-else
-    fig=figure('Name',name,'Numbertitle','off');
-end
+%scrsz = get(0,'ScreenSize');
+%fig=figure('Name',name,'Position',[1 scrsz(4) scrsz(3) scrsz(4)],'Numbertitle','off');
+%if scrsz ~= 0
+%else
+fig=figure('Name',name,'Numbertitle','off');
+%end
 %%
 % Plotten
 clf;
@@ -213,27 +213,33 @@ title(name,'fontsize',fns);
 romin=min(rho); % absolutes minimum
 romax=max(rho); % absolutes maximum
 
-if (cmin==0)
-    cmin=romin;
+if cmin~=cmax
+    climits=[cmin cmax];
+else
+    climits=[romin romax];
 end
-if (cmax==0)
-    cmax=romax;
-end
-sprintf('Plot range:: %f\t%f\n',cmin,cmax);
+
 patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
-caxis([cmin cmax])
+caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
 xlabel('x [m]','fontsize',fns)
 ylabel('z [m]','fontsize',fns)
 axis tight
-
+axis image
 if xmin~=xmax
-    xlim([xmin xmax])
+    xlimits=[xmin xmax];
+else
+    xlimits=xlim;
 end
+xlim(xlimits);
+
 if ymin~=ymax
-    ylim([ymin ymax])
+    ylimits=[ymin ymax];
+else
+    ylimits=ylim;
 end
+ylim(ylimits);
 
 h=colorbar('vert');
 
@@ -248,9 +254,19 @@ for i=1:nelec
         'MarkerEdgeColor','k','MarkerFaceColor','k',...
         'MarkerSize',marksize);
 end
-if (saveplot==1)
-    [p,fls,app,m]=fileparts(modfile);
-    fleps=strcat(fls,app,'.eps');
-    set(fig,'PaperPositionMode','auto');
-    print('-depsc2','-r400',fleps)
-end
+[p,fls,app,m]=fileparts(modfile);
+fleps=strcat(fls,app,'.eps');
+set(fig,'PaperPositionMode','auto');
+print('-depsc2','-r400',fleps)
+
+fp=fopen('tmp.crange','w');
+fprintf(fp,'%f\t%f\n',climits);
+fclose(fp);
+
+fp=fopen('tmp.xrange','w');
+fprintf(fp,'%f\t%f\n',xlimits);
+fclose(fp);
+
+fp=fopen('tmp.yrange','w');
+fprintf(fp,'%f\t%f\n',ylimits);
+fclose(fp);

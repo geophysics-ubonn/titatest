@@ -3,9 +3,9 @@ c
 c     Unterprogramm belegt die Rauhigkeitsmatrix....
 c     Fuer beliebige Triangulierung
 c     
-c     Andreas Kemna                                            29-Feb-1996
+c     Andreas Kemna                                            03-Nov-2009
 c     
-c     Letzte Aenderung                                         29-Jul-2009
+c     Letzte Aenderung   RM                                    03-Nov-2009
 c     
 c.........................................................................
       USE alloci
@@ -20,9 +20,7 @@ c.........................................................................
       INCLUDE 'inv.fin'
       INCLUDE 'fem.fin'
 !.....................................................................
-
 !     PROGRAMMINTERNE PARAMETER:
-
 !     Hilfsvariablen 
       REAL(KIND(0D0)) :: dum
       INTEGER         :: i,j,l,k,smaxs,ik,anz

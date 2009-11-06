@@ -35,6 +35,7 @@ c     USE portlib
 
       CHARACTER(256)  :: ftext
       INTEGER :: i
+      COMPLEX(KIND(0D0))    :: cdum 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
@@ -452,9 +453,14 @@ c     Rauhigkeitsmatrix belegen
             ELSE IF (ltri == 2) THEN
                WRITE (*,'(a)')' Triangular MGS'
                CALL bsmatmmgs
-            ELSE IF (ltri == 3) THEN
+            ELSE IF (ltri == 10) THEN
                WRITE (*,'(a)')' Triangular Stochastic'
                CALL bsmatmsto
+               if (errnr.ne.0) goto 999
+            ELSE
+               WRITE (*,'(a)')' Error:: '//
+     1              'Regularization can just be 0,1,2 or 10'
+               STOP
             END IF 
          end if
       else
@@ -586,9 +592,9 @@ c     UPDATE anbringen
 c     Leitfaehigkeiten belegen und Roughness bestimmen
       IF (ltri == 0) THEN
          call brough()
-      ELSE IF (ltri < 3) THEN
+      ELSE IF (ltri < 10) THEN
          CALL broughtri
-      ELSE IF (ltri == 3) THEN
+      ELSE
          CALL broughsto
       END IF
 
@@ -613,36 +619,94 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          end if
          if (errnr.ne.0) goto 999
       end if
-      PRINT*,'calculating wsens'
-      IF (ldc) THEN ! sens -> wsens...
-         DO i=1,nanz
-            sensdc(i,:)=wmatd(i)*sensdc(i,:)*DBLE(wdfak(i))
-         END DO
-      ELSE
-         DO i=1,nanz
-            sens(i,:)=wmatd(i)*sens(i,:)*DBLE(wdfak(i))
-         END DO
-      END IF
-
-      IF (lres) THEN
-         PRINT*,'calculating resolution matrix'
-         fetxt = ramd(1:lnramd)//slash(1:1)//'res_diag.ctr'
+      IF (lcov1) THEN
+         WRITE (*,'(/a,G10.3/)')'Lambda::',lam
+         fetxt = ramd(1:lnramd)//slash(1:1)//'mcm1.diag'
          open(10,file=fetxt,status='replace',err=999)
          errnr = 4
+         WRITE(*,'(a)')ACHAR(13)//
+     1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
          IF (ldc) THEN
-            CALL bres_matdc
+
+            CALL batadc ! A^TC_d^-1A                 -> atadc
+            if (errnr.ne.0) goto 999
+
+            CALL batadcreg !A^TC_d^-1A + C_m^-1(lam) -> atadcreg
+            if (errnr.ne.0) goto 999
+
+            CALL bmcmdc ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
+            if (errnr.ne.0) goto 999
+
+            WRITE (10,*)manz
             DO i=1,manz
-               WRITE (10,*)inv_atadc(i,i)
+               WRITE (10,*)log10(sqrt(abs(atadcreg_inv(i,i)))),
+     1              atadcreg_inv(i,i)
             END DO
 
          ELSE
-            CALL bres_mat
-            DO i=1,manz
-               WRITE (10,*)inv_ata(i,i)
+
+            DO i=1,nanz
+               cdum = DCMPLX(wmatd(i),wmatdp(i))
+               sens(i,:)=sens(i,:)*DCMPLX(cdum*DBLE(wdfak(i)))
             END DO
+
+            CALL bmcm
+            if (errnr.ne.0) goto 999
+
+            DO i=1,manz
+               WRITE (10,*)atareg_inv(i,i)
+            END DO
+
          END IF
-         
-      END IF
+
+         close (10)
+
+         IF (lres) THEN
+
+            WRITE(*,'(a)')ACHAR(13)//
+     1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
+     1           ' A^TC_d^-1A'
+            fetxt = ramd(1:lnramd)//slash(1:1)//'res.diag'
+            open(10,file=fetxt,status='replace',err=999)
+            errnr = 4
+
+            IF (ldc) THEN
+               atadcreg = MATMUL(atadcreg_inv,atadc)! -> atadcreg nun resmatrix
+               WRITE (10,*)manz
+               DO i=1,manz
+                  WRITE (10,*)atadcreg(i,i),log10(abs(atadcreg(i,i)))
+               END DO
+            ELSE
+               ata = MATMUL  (atareg_inv,ata)
+               DO i=1,manz
+                  WRITE (10,*)ata(i,i)
+               END DO
+            END IF
+            CLOSE (10)
+            IF (lcov2) THEN
+               WRITE(*,'(a)')ACHAR(13)//
+     1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
+     1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
+               fetxt = ramd(1:lnramd)//slash(1:1)//'mcm2.diag'
+               open(10,file=fetxt,status='replace',err=999)
+               errnr = 4
+               IF (ldc) THEN
+                  atadcreg = MATMUL (atadcreg,atadcreg_inv)
+                  WRITE (10,*)manz
+                  DO i=1,manz
+                     WRITE (10,*)log10(sqrt(abs(atadcreg(i,i)))),
+     1                    atadcreg(i,i)
+                  END DO
+               ELSE
+                  ata = MATMUL  (ata,atareg_inv)
+                  DO i=1,manz
+                     WRITE (10,*)ata(i,i)
+                  END DO
+               END IF
+               CLOSE (10)
+            END IF              ! lcov2
+         END IF                 ! lres
+      END IF                    ! lcov1
 
 c     Kontrollausgaben
       errnr = 1
