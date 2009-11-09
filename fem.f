@@ -111,7 +111,7 @@ c     'crmod.cfg' einlesen
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
-      read(12,'(L)',end=100,err=999) wkfak
+      read(12,'(L)',end=100,err=100) wkfak
 
       IF ( wkfak ) GOTO 101
 
