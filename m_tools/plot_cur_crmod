@@ -60,11 +60,16 @@ fi
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
+tmp=`cat tmp.lastmod`
+
+awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
+echo 'cur_crmod.mag' > tmp.lastmod
+
 $mtlb < $plotmod >& /dev/null
 
-tmp=`cat tmp.lastmod`
-myeps=`basename $tmp`'.eps'
-mypdf=`basename $myeps '.eps'`'.pdf'
+myeps='cur_crmod.mag.eps'
+mypdf='cur_crmod.pdf'
+
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$1$mypdf >& /dev/null
 $mogri -format jpg $myeps
