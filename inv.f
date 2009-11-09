@@ -630,12 +630,14 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 
             CALL batadc ! A^TC_d^-1A                 -> atadc
             if (errnr.ne.0) goto 999
-
             CALL batadcreg !A^TC_d^-1A + C_m^-1(lam) -> atadcreg
             if (errnr.ne.0) goto 999
 
             CALL bmcmdc ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
             if (errnr.ne.0) goto 999
+            DO i=1,manz
+               PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
+            END DO
 
             WRITE (10,*)manz
             DO i=1,manz
