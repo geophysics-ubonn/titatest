@@ -482,96 +482,96 @@ c     'kpot' freigeben
       end if
 
 c     REGULARISIERUNG / STEP-LENGTH einstellen
-      IF (alfx/=0.AND.alfz/=0) THEN
-         if (.not.lstep) then
-            if (llam) then
+c$$$  IF (BTEST(mswitch,10)) THEN
+      if (.not.lstep) then
+         if (llam) then
 
 c     "Regularisierungsschleife" initialisieren und step-length zuruecksetzen
-               llam = .false.
-               step = 1d0
-            else
+            llam = .false.
+            step = 1d0
+         else
 
 c     Regularisierungsindex hochzaehlen
-               itr = itr+1
+            itr = itr+1
 
-               if ((((nrmsd.lt.rmsreg.and.itr.le.nlam).or.
-     1              (dlam.gt.1d0.and.itr.le.nlam)).and.
-     1              (.not.ldlamf.or.dlalt.le.1d0).and.
-     1              dabs(1d0-rmsreg/nrmsdm).gt.mqrms).or.
-     1              rmsreg.eq.0d0) then
+            if ((((nrmsd.lt.rmsreg.and.itr.le.nlam).or.
+     1           (dlam.gt.1d0.and.itr.le.nlam)).and.
+     1           (.not.ldlamf.or.dlalt.le.1d0).and.
+     1           dabs(1d0-rmsreg/nrmsdm).gt.mqrms).or.
+     1           rmsreg.eq.0d0) then
 
 c     Regularisierungsparameter bestimmen
-                  if (lsetup.or.lsetip) then
+               if (lsetup.or.lsetip) then
 
 c     Kontrollausgabe
-                     write(*,'(a,i3,a,i3,a)',ADVANCE='no')
-     1                    ACHAR(13)//' Iteration ',it,', ',itr,
-     1                    ' : Calculating 1st regularization parameter'
-                     call blam0()
-                     lam = lammax
+                  write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1                 ACHAR(13)//' Iteration ',it,', ',itr,
+     1                 ' : Calculating 1st regularization parameter'
+                  call blam0()
+                  lam = lammax
 c     ak Model EGS2003, ERT2003                        call blam0()
 c     ak Model EGS2003, ERT2003                        lam = lammax
 c     ak                        lam = 1d4
+               else
+                  dlalt = dlam
+                  if (ldlami) then
+                     ldlami = .false.
+                     alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),
+     1                    dlog(1d0+mqrms))
+                     dlam   = fstart
                   else
-                     dlalt = dlam
-                     if (ldlami) then
-                        ldlami = .false.
-                        alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),
-     1                       dlog(1d0+mqrms))
-                        dlam   = fstart
-                     else
-                        alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
-                        dlam = dlog(fstop)*
-     1                       sign(1d0,dlog(nrmsd/nrmsdm))+
-     1                       dlog(fstart/fstop)*
-     1                       dlog(nrmsd/nrmsdm)/alam
-                        dlam = dexp(dlam)
-                     end if
-                     lam = lam*dlam
-                     if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.
+                     alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
+                     dlam = dlog(fstop)*
+     1                    sign(1d0,dlog(nrmsd/nrmsdm))+
+     1                    dlog(fstart/fstop)*
+     1                    dlog(nrmsd/nrmsdm)/alam
+                     dlam = dexp(dlam)
+                  end if
+                  lam = lam*dlam
+                  if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.
 c     tst                        if (dlam.gt.1d0) lfstep=.true.
 c     ak Model EGS2003
-                     if (dlam.gt.1d0) lrobust=.false.
-                  end if
-               else
-
-c     Regularisierungsparameter zuruecksetzen und step-length verkleinern
-                  llam = .true.
-                  lam  = lam/dlam
-
-                  if (lfstep) then
-                     lfstep = .false.
-                  else
-                     lstep = .true.
-                     step  = 5d-1
-                  end if
+                  if (dlam.gt.1d0) lrobust=.false.
                end if
-
-c     Ggf. Daten-RMS speichern
-               if (lsetup.or.lsetip) then
-                  lsetup = .false.
-                  lsetip = .false.
-               else
-                  if (.not.lstep) rmsreg=nrmsd
-               end if
-            end if
-         else
-            lstep = .false.
-            
-c     Parabolische Interpolation zur Bestimmung der optimalen step-length
-            call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
-
-            if (step.eq.stpmin.and.stpalt.eq.stpmin) then
-
-c     Nach naechstem Modelling abbrechen
-               stpalt = 0d0
             else
 
-c     Step-length speichern
-               stpalt = step
+c     Regularisierungsparameter zuruecksetzen und step-length verkleinern
+               llam = .true.
+               lam  = lam/dlam
+
+               if (lfstep) then
+                  lfstep = .false.
+               else
+                  lstep = .true.
+                  step  = 5d-1
+               end if
+            end if
+
+c     Ggf. Daten-RMS speichern
+            if (lsetup.or.lsetip) then
+               lsetup = .false.
+               lsetip = .false.
+            else
+               if (.not.lstep) rmsreg=nrmsd
             end if
          end if
-      END IF
+      else
+         lstep = .false.
+         
+c     Parabolische Interpolation zur Bestimmung der optimalen step-length
+         call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
+
+         if (step.eq.stpmin.and.stpalt.eq.stpmin) then
+
+c     Nach naechstem Modelling abbrechen
+            stpalt = 0d0
+         else
+
+c     Step-length speichern
+            stpalt = step
+         end if
+      end if
+c$$$  END IF
 c     Kontrollausgaben
       write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1     ACHAR(13)//' Iteration ',it,', ',itr,
@@ -628,16 +628,16 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
          IF (ldc) THEN
 
-            CALL batadc ! A^TC_d^-1A                 -> atadc
+            CALL batadc         ! A^TC_d^-1A                 -> atadc
             if (errnr.ne.0) goto 999
-            CALL batadcreg !A^TC_d^-1A + C_m^-1(lam) -> atadcreg
+            CALL batadcreg      !A^TC_d^-1A + C_m^-1(lam) -> atadcreg
             if (errnr.ne.0) goto 999
 
-            CALL bmcmdc ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
+            CALL bmcmdc         ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
             if (errnr.ne.0) goto 999
-c$$$            DO i=1,manz
-c$$$               PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
-c$$$            END DO
+c$$$  DO i=1,manz
+c$$$  PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
+c$$$  END DO
 
             WRITE (10,*)manz
             DO i=1,manz
