@@ -60,7 +60,7 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
 		  wpot.o wsens.o bsmatmmgs.o \
-		  batadc.o batadcreg.o bmcmdc.o bmcm.o
+		  batadc.o batadcreg.o bmcmdc.o bmcm.o bresdc.o
 # CRMod objects
 f90crm		= alloci.o
 fcrm		= fem.o

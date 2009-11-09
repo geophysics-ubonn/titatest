@@ -635,9 +635,9 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 
             CALL bmcmdc ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
             if (errnr.ne.0) goto 999
-            DO i=1,manz
-               PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
-            END DO
+c$$$            DO i=1,manz
+c$$$               PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
+c$$$            END DO
 
             WRITE (10,*)manz
             DO i=1,manz
@@ -672,8 +672,21 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             open(10,file=fetxt,status='replace',err=999)
             errnr = 4
 
+            fetxt = ramd(1:lnramd)//slash(1:1)//'res2.diag'
+            open(11,file=fetxt,status='replace',err=999)
+            errnr = 4
+
             IF (ldc) THEN
-               atadcreg = MATMUL(atadcreg_inv,atadc)! -> atadcreg nun resmatrix
+
+               CALL bresdc
+               if (errnr.ne.0) goto 999
+
+               WRITE (11,*)manz
+               DO i=1,manz
+                  WRITE (11,*)atadcreg(i,i),log10(abs(atadcreg(i,i)))
+               END DO
+               
+               atadcreg = MATMUL(atadcreg_inv,atadc) ! -> atadcreg nun resmatrix
                WRITE (10,*)manz
                DO i=1,manz
                   WRITE (10,*)atadcreg(i,i),log10(abs(atadcreg(i,i)))
@@ -685,6 +698,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
                END DO
             END IF
             CLOSE (10)
+            CLOSE (11)
             IF (lcov2) THEN
                WRITE(*,'(a)')ACHAR(13)//
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
