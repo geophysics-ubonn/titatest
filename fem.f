@@ -84,6 +84,7 @@ c     ak        swrtr = 0
 
 c     Sonstiges
       lkpot = .false.
+      wkfak = .false.
 c     ak        lkpot = .true.
 c     ak        dkpot = '..\tmp\kpot.ctr'
 
@@ -115,8 +116,8 @@ c     'crmod.cfg' einlesen
 
       IF ( wkfak ) GOTO 101
 
- 100  wkfak=.false.             !dfault wert
-      PRINT*,'Modelling without K-Faktor!'
+ 100  PRINT*,'Modelling without K-Faktor!'
+      BACKSPACE (12)
  101  IF (wkfak) PRINT*,'Modelling with K-Faktor!'
 
 
