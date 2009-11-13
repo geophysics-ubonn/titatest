@@ -33,7 +33,7 @@ c 3 : GKS - aktiv      , Programm verlassen und GKS schlieáen
         integer         * 4     errflag
 
 c Fehlertext
-        character       * 80    fetxt
+        character       * 256   fetxt
 
 c.....................................................................
 

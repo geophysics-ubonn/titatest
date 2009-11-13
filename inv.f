@@ -347,13 +347,15 @@ c     Kontrollausgaben
 
                write(fprun,'(a24)',err=999)
      1              ' Final phase improvement'
-               
-               write(13,'(a,a,a)',err=999)
-     1              '------------------------------------------------',
-     1              '------------------------------------------------',
+
+               fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+               open(fpinv,file=fetxt,status='old',
+     1              POSITION='append',err=999)
+               write(fpinv,'(/a/)',err=999)
+     1              '------------------------------------------------'//
+     1              '------------------------------------------------'//
      1              '-----------------'
-               write(13,*,err=999)
-               close(13)
+               close(fpinv)
 
 c     Wichtungsfeld umspeichern
                do j=1,nanz
@@ -622,54 +624,28 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          WRITE (*,'(/a,G10.3/)')'Lambda::',lam
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
-c$$$         ALLOCATE (cov_d(nanz,nanz),STAT=errnr)
-c$$$         IF (errnr /= 0) THEN
-c$$$            errnr = 97
-c$$$            GOTO 999
-c$$$         END IF
-c$$$         cov_d = 0D0
-c$$$         DO i=1,nanz
-c$$$            cov_d(i,i)=wmatd(i)*DBLE(wdfak(i))
-c$$$         END DO
+
          IF (ldc) THEN
+
             ALLOCATE (ata_dc(manz,manz),STAT=errnr)
             IF (errnr /= 0) THEN
                errnr = 97
                GOTO 999
             END IF
             ata_dc = 0D0
-c$$$            CALL SYSTEM_CLOCK (c1,i)
+
             fetxt = ramd(1:lnramd)//slash(1:1)//'ata_dc.diag'
             CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
             if (errnr.ne.0) goto 999
-c$$$            CALL SYSTEM_CLOCK (c2,i)
-c$$$            PRINT*,'dt1',c2-c1
-c$$$            CALL SYSTEM_CLOCK (c1,i)
-c$$$            ALLOCATE (work(manz,nanz),STAT=errnr)
-c$$$            IF (errnr /= 0) THEN
-c$$$               errnr = 97
-c$$$               GOTO 999
-c$$$            END IF
-c$$$            work = MATMUL(TRANSPOSE(sensdc),cov_d)
-c$$$            ata_dc = MATMUL(work,sensdc)
-c$$$            DEALLOCATE (work)
-c$$$            errnr = 1
-c$$$            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_dc2.diag'
-c$$$            OPEN (kanal,FILE=fetxt,STATUS='replace',ERR=999)
-c$$$            errnr = 4
-c$$$            WRITE (kanal,*)manz
-c$$$            DO i=1,manz
-c$$$               WRITE (kanal,*)ata_dc(i,i),i
-c$$$            END DO
-c$$$            CALL SYSTEM_CLOCK (c2,i)
-c$$$            PRINT*,'dt2',c2-c1
+
             ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)
             IF (errnr /= 0) THEN
                errnr = 97
                GOTO 999
             END IF
+
             fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg_dc.diag'
-            CALL bata_reg_dc(kanal) !A^TC_d^-1A + C_m^-1(lam) -> ata_reg_dc
+            CALL bata_reg_dc(kanal) !ata_dc + C_m^-1(lam) -> ata_reg_dc
             if (errnr.ne.0) goto 999
 
             ALLOCATE (cov_m_dc(manz,manz))
@@ -678,27 +654,46 @@ c$$$            PRINT*,'dt2',c2-c1
                errnr = 97
                RETURN
             END IF
-            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m_dc.diag'
+
+            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
             CALL bmcm_dc(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
             if (errnr.ne.0) goto 999
 
          ELSE
 
-            DO i=1,nanz
-               cdum = DCMPLX(wmatd(i),wmatdp(i))
-               sens(i,:)=sens(i,:)*DCMPLX(cdum*DBLE(wdfak(i)))
-            END DO
+            ALLOCATE (ata(manz,manz),STAT=errnr)
+            IF (errnr /= 0) THEN
+               errnr = 97
+               GOTO 999
+            END IF
+            ata = 0D0
 
-            CALL bmcm
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
+            CALL bata(kanal) ! A^TC_d^-1A -> ata
             if (errnr.ne.0) goto 999
 
-            DO i=1,manz
-               WRITE (kanal,*)cov_m(i,i)
-            END DO
+            ALLOCATE (ata_reg(manz,manz),STAT=errnr)
+            IF (errnr /= 0) THEN
+               errnr = 97
+               GOTO 999
+            END IF
+
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
+            CALL bata_reg(kanal) !A^TC_d^-1A + C_m^-1(lam) -> ata_reg
+            if (errnr.ne.0) goto 999
+
+            ALLOCATE (cov_m(manz,manz))
+            IF (errnr/=0) THEN
+               WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
+               errnr = 97
+               RETURN
+            END IF
+
+            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
+            CALL bmcm(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
+            if (errnr.ne.0) goto 999
 
          END IF
-
-         close (fprun)
 
          IF (lres) THEN
 
@@ -706,85 +701,31 @@ c$$$            PRINT*,'dt2',c2-c1
      1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
      1           ' A^TC_d^-1A'
 
+            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
+
             IF (ldc) THEN
-
-c$$$               CALL SYSTEM_CLOCK (c1,i)
-c$$$               fetxt = ramd(1:lnramd)//slash(1:1)//'res.diag'
-c$$$               CALL bres_dc     ! res -> ata_reg_dc
-c$$$               if (errnr.ne.0) goto 999
-c$$$               CALL SYSTEM_CLOCK (c2,i)
-c$$$               PRINT*,'dt2',c2-c1
-c$$$
-c$$$               CALL SYSTEM_CLOCK (c1,i)
-c$$$               PRINT*,'doing fast MATMUL(cov_m,ata)'
-               fetxt = ramd(1:lnramd)//slash(1:1)//'resolution.diag'
-               errnr = 1
-               open(kanal,file=fetxt,status='replace',err=999)
-               errnr = 4
-               ata_reg_dc = MATMUL(cov_m_dc,ata_dc)
-               WRITE (kanal,*)manz
-               DO i=1,manz
-                  WRITE (kanal,*)log10(abs(ata_reg_dc(i,i))),
-     1                 ata_reg_dc(i,i)
-               END DO
-               CLOSE (kanal)
-c$$$               CALL SYSTEM_CLOCK (c2,i)
-c$$$               PRINT*,'dt2',c2-c1
-c$$$
-c$$$               CALL SYSTEM_CLOCK (c1,i)
-c$$$               PRINT*,'doing long MATMUL'
-c$$$               ALLOCATE (work(manz,nanz),work2(manz,nanz))
-c$$$               work = MATMUL (cov_m_dc,TRANSPOSE(sensdc))
-c$$$               work2 = MATMUL (work,cov_d)
-c$$$               ata_reg_dc = MATMUL (work2,sensdc)
-c$$$               DEALLOCATE (work,work2)
-c$$$
-c$$$               errnr = 1
-c$$$               fetxt = ramd(1:lnramd)//slash(1:1)//'res3.diag'
-c$$$               open(kanal,file=fetxt,status='replace',err=999)
-c$$$               errnr = 4
-c$$$               WRITE (kanal,*)manz
-c$$$               DO i=1,manz
-c$$$                  WRITE (kanal,*)ata_reg_dc(i,i),
-c$$$     1                 log10(abs(ata_reg_dc(i,i)))
-c$$$               END DO
-c$$$               CLOSE (kanal)
-c$$$               CALL SYSTEM_CLOCK (c2,i)
-c$$$               PRINT*,'dt2',c2-c1
-
+               CALL bres_dc(kanal)
+               if (errnr.ne.0) goto 999
             ELSE
-               ata = MATMUL  (cov_m,ata)
-               DO i=1,manz
-                  WRITE (kanal,*)ata(i,i)
-               END DO
+               CALL bres(kanal)
+               if (errnr.ne.0) goto 999
             END IF
-            CLOSE (kanal)
 
             IF (lcov2) THEN
                WRITE(*,'(a)')ACHAR(13)//
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
      1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
+
+               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m_dc.diag'
+
                IF (ldc) THEN
-c$$$                  CALL SYSTEM_CLOCK (c1,i)
-                  fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m_dc.diag'
-                  open(kanal,file=fetxt,status='replace',err=999)
-                  errnr = 4
-                  WRITE (kanal,*)manz
-                  ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
-                  DO i=1,manz
-                     WRITE (kanal,*)log10(sqrt(abs(ata_dc(i,i)))),
-     1                    ata_dc(i,i)
-                  END DO
-                  CLOSE (kanal)
-c$$$                  CALL SYSTEM_CLOCK (c2,i)
-c$$$                  PRINT*,'dt1',c2-c1
+                  CALL bmcm2_dc(kanal)
+                  if (errnr.ne.0) goto 999
                ELSE
-                  ata = MATMUL  (ata,cov_m)
-                  DO i=1,manz
-                     WRITE (kanal,*)log10(sqrt(abs(ata(i,i))))
-                  END DO
+                  CALL bmcm2_dc(kanal)
+                  if (errnr.ne.0) goto 999
                END IF
-               CLOSE (kanal)
+
             END IF              ! lcov2
          END IF                 ! lres
       END IF                    ! lcov1
