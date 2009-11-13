@@ -33,7 +33,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,ifp
+      integer         * 4     i,ifp1,ifp2
 
 c     Elektrodennummern
       integer         * 4     elec1,elec2,
@@ -88,25 +88,23 @@ c     Ggf. Fehlermeldung
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
       IF ( lnse ) THEN
-         CALL get_unit(ifp)
-         OPEN (ifp,FILE='tmp.mynoise_rho',STATUS='replace')
+         CALL get_unit(ifp1)
+         OPEN (ifp1,FILE='tmp.mynoise_rho',STATUS='replace')
+         CALL get_unit(ifp2)
+         IF (.NOT. ldc) OPEN (ifp1,FILE='tmp.mynoise_pha',
+     1        STATUS='replace')
          WRITE (*,'(A)',advance='no')' Initializing noise '
          ALLOCATE (rnd_r(nanz))
          CALL Random_Init(iseed)
          DO i=1,nanz
             rnd_r(i) = Random_Gauss()
-            WRITE (ifp,'(G10.3)')rnd_r(i)
          END DO
-         CLOSE (ifp)
          IF (.NOT.ldc) THEN
-            OPEN (ifp,FILE='tmp.mynoise_phase',STATUS='replace')
             ALLOCATE (rnd_p(nanz))
             CALL Random_Init(-iseed)
             DO i=1,nanz
                rnd_p(i) = Random_Gauss()
-               WRITE (ifp,'(G10.3)')rnd_p(i)
             END DO
-            CLOSE (ifp)
          END IF
       END IF
 
@@ -221,11 +219,17 @@ c     ak                    write(*,*) i
 
             IF ( lnse ) THEN
                eps_r = 1d-2*stabw0 * bet + stabm0
+               WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
+     1              rnd_r(i),eps_r,bet
                bet = bet + rnd_r(i) * eps_r
+               WRITE(ifp1,'(G14.4)')bet
                IF (.NOT. ldc) THEN
                   eps_p = (stabpA1*eps_r**stabpB + 
      1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
+                  WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
+     1                 rnd_p(i),eps_p,pha
                   pha = pha + rnd_p(i) * eps_p
+                  WRITE(ifp2,'(G14.4)')pha
                END IF
             END IF
 
@@ -257,7 +261,10 @@ c     ak                    write(*,*) i
          dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
          wmatd(i) = 1d0/(stabw*stabw)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
-         if (lfphai) wmatdp(i)=1d0/(stabwp*stabwp)
+         IF (lfphai) THEN
+            wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
+            wmatdp(i)=1d0/(stabwp*stabwp)
+         END IF
          wdfak(i) = 1
 
 c     Stromelektroden bestimmen
@@ -295,7 +302,10 @@ c     ak
 
 c     'datei' schliessen
       close(kanal)
-      CLOSE (ifp)
+      IF (lnse) THEN
+         close(ifp1)
+         IF (.not.ldc) close (ifp2)
+      END IF
       errnr = 0
       IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
       IF (ALLOCATED (rnd_p)) DEALLOCATE (rnd_p)

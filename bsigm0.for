@@ -110,7 +110,7 @@ c     Ggf. Fehlermeldung
             errnr = 99
             goto 999
          end if
-
+         
 c     'sigma' belegen
          do i=1,elanz
             sigma(i) = cdexp(sigma0/dcmplx(dum))

@@ -24,6 +24,7 @@ c.....................................................................
       INCLUDE 'model.fin'
       INCLUDE 'fem.fin'
       INCLUDE 'randb.fin'
+      INCLUDE 'konv.fin'
 
 c.....................................................................
 
@@ -85,6 +86,8 @@ c     ak        swrtr = 0
 c     Sonstiges
       lkpot = .false.
       wkfak = .false.
+      lprior = .false.
+      lnsepri = .false.
 c     ak        lkpot = .true.
 c     ak        dkpot = '..\tmp\kpot.ctr'
 

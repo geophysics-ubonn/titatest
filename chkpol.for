@@ -41,11 +41,7 @@ c.....................................................................
 
       pi = dacos(-1d0)
 
-c     'run.ctr' oeffnen
-      open(10,file=ramd(1:lnramd)//slash(1:1)//'run.ctr',status='old')
- 1    read(10,*,end=2)
-      goto 1
- 2    backspace(10)
+      
 
       do i=1,nanz
          wdfak(i) = 1
@@ -88,14 +84,14 @@ c     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
             volt(i)   = cdexp(-sigmaa(i))
             
             if (lpol) then
-               write(10,'(i4,a30)')
+               write(fprun,'(i4,a30)')
      1              i,' : correct and change polarity'
                if (.not.lsetup) wdfak(i)=0
             else
                imdat  = imdat - dsign(pi,imdat)
                dat(i) = dcmplx(redat,imdat)
 
-               write(10,'(i4,a18)')
+               write(fprun,'(i4,a18)')
      1              i,' : change polarity'
                wdfak(i) = 0
             end if
@@ -108,7 +104,7 @@ c     ggf. Korrektur
                imdat  = imdat + dble(idat)*pi
                dat(i) = dcmplx(redat,imdat)
 
-               write(10,'(i4,a19)')
+               write(fprun,'(i4,a19)')
      1              i,' : correct polarity'
                if (.not.lsetup) wdfak(i)=0
             else
@@ -125,7 +121,7 @@ c     Polaritaetswechsel
             imdat     = imdat + dble(idat)*pi
             dat(i)    = dcmplx(redat,imdat)
 
-            write(10,'(i4,a18)')
+            write(fprun,'(i4,a18)')
      1           i,' : change polarity'
 
          end if
@@ -133,11 +129,9 @@ c     Polaritaetswechsel
 
 c     Ggf. Ausgabe
       do i=1,nanz
-         if (wdfak(i).eq.0) write(10,'(i4,a11)') i,' : excluded'
+         if (wdfak(i).eq.0) write(fprun,'(i4,a11)') i,' : excluded'
       end do
 
-c     'run.ctr' schliessen
-      close(10)
 
       return
       end

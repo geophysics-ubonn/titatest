@@ -2,13 +2,14 @@
 
 c     Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
 
-c     Belegte Kanaele:  9 - error.dat
-c     10 - run.ctr
-c     11 - in-/output
-c     12 - crtomo.cfg
-c     13 - inv.ctr
-c     14 - cjg.ctr
-c     15 - eps.ctr
+c     Belegte Kanaele:  
+c     9 - error.dat   -> fperr
+c     10 - run.ctr    -> fprun
+c     11 - in-/output -> kanal
+c     12 - crtomo.cfg -> fpcfg
+c     13 - inv.ctr    -> fpinv
+c     14 - cjg.ctr    -> fpcjg
+c     15 - eps.ctr    -> fpeps
 
 c     Andreas Kemna                                            02-May-1995
 c     Letzte Aenderung                                         29-Jul-2009
@@ -33,21 +34,29 @@ c     USE portlib
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
-      CHARACTER(256)  :: ftext
-      INTEGER :: i
-      COMPLEX(KIND(0D0))    :: cdum 
+      CHARACTER(256)                             :: ftext
+      INTEGER                                    :: i,c1,c2
+      COMPLEX(KIND(0D0))                         :: cdum 
+      REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work,work2
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
 c     'crtomo.cfg' oeffnen
       fetxt = 'crtomo.cfg'
       errnr = 1
-      open(12,file=fetxt,status='old',err=999)
+c     Kanal nummern belegen.. die variablen sind global!
+      fperr = 9 
+      fprun = 10
+      kanal = 11 
+      fpcfg = 12 
+      fpinv = 13 
+      fpcjg = 14 
+      fpeps = 15 
 
+      open(fpcfg,file=fetxt,status='old',err=999)
+      
 c     Allgemeine Parameter setzen
-      kanal  = 11
  5    errnr2 = 0
-
 c     Benoetigte Variablen einlesen
       call rall(kanal,delem,delectr,dstrom,drandb,
 c     diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
@@ -105,6 +114,23 @@ c     Startparameter setzen
       stpalt = 1d0
       alam   = 0d0
 
+c     Kontrolldateien oeffnen
+      errnr = 1
+
+      fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+      open(fpinv,file=fetxt,status='replace',err=999)
+      close(fpinv)
+      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
+      open(fprun,file=fetxt,status='replace',err=999)
+      close(fpinv)
+      fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
+      open(fpcjg,file=fetxt,status='replace',err=999)
+      close(fpcjg)
+      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
+      open(fpeps,file=fetxt,status='replace',err=999)
+      close(fpeps)
+      errnr = 4
+
 c     Kontrolldateien initialisieren
 c     diff-        call kont1(delem,delectr,dstrom,drandb)
 c     diff+<
@@ -145,16 +171,10 @@ c     Kontrollausgaben
      1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Calculating Potentials'
 
-      errnr = 1
-      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='unknown',err=999,
-     1     POSITION='append')
-      errnr = 4
 
-      write(10,'(a,i3,a,i3,a)',ADVANCE='no')
-     1     ACHAR(13)//' Iteration ',it,', ',itr,
+      write(fprun,'(a,i3,a,i3,a)')
+     1     ' Iteration ',it,', ',itr,
      1     ' : Calculating Potentials'
-      close(10)
 
       if (ldc) then
          
@@ -325,20 +345,9 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
 c     Kontrollausgaben
                write(*,'(a24)') ' Final phase improvement'
 
-               errnr = 1
-               fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-               open(10,file=fetxt,status='old',err=999,
-     1              POSITION='append')
-               errnr = 4
-               write(10,'(a24)',err=999)
+               write(fprun,'(a24)',err=999)
      1              ' Final phase improvement'
-               close(10)
                
-               errnr = 1
-               fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-               open(13,file=fetxt,status='old',err=999,
-     1              POSITION='append')
-               errnr = 4
                write(13,'(a,a,a)',err=999)
      1              '------------------------------------------------',
      1              '------------------------------------------------',
@@ -414,15 +423,8 @@ c     Kontrollausgaben
      1        ACHAR(13)//' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
          
-         errnr = 1
-         fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-         open(10,file=fetxt,status='old',err=999,
-     1        POSITION='append')
-         errnr = 4
-         
-         write(10,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
+         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
      1        ' : Calculating Sensitivities'
-         close(10)
 
 c     SENSITIVITAETEN berechnen
          if (ldc) then
@@ -507,6 +509,9 @@ c     Kontrollausgabe
                   write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1                 ACHAR(13)//' Iteration ',it,', ',itr,
      1                 ' : Calculating 1st regularization parameter'
+                  write(fprun,'(a,i3,a,i3,a)')
+     1                 ' Iteration ',it,', ',itr,
+     1                 ' : Calculating 1st regularization parameter'
                   call blam0()
                   lam = lammax
 c     ak Model EGS2003, ERT2003                        call blam0()
@@ -577,14 +582,8 @@ c     Kontrollausgaben
      1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
 
-      errnr = 1
-      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='old',err=999,
-     1     POSITION='append')
-      errnr = 4
-      write(10,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
+      write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
      1     ' : Updating'
-      close(10)
 
 c     UPDATE anbringen
       call update(dpar2,cgres2)
@@ -621,29 +620,67 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       end if
       IF (lcov1) THEN
          WRITE (*,'(/a,G10.3/)')'Lambda::',lam
-         fetxt = ramd(1:lnramd)//slash(1:1)//'mcm1.diag'
-         open(10,file=fetxt,status='replace',err=999)
-         errnr = 4
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
+c$$$         ALLOCATE (cov_d(nanz,nanz),STAT=errnr)
+c$$$         IF (errnr /= 0) THEN
+c$$$            errnr = 97
+c$$$            GOTO 999
+c$$$         END IF
+c$$$         cov_d = 0D0
+c$$$         DO i=1,nanz
+c$$$            cov_d(i,i)=wmatd(i)*DBLE(wdfak(i))
+c$$$         END DO
          IF (ldc) THEN
-
-            CALL batadc         ! A^TC_d^-1A                 -> atadc
+            ALLOCATE (ata_dc(manz,manz),STAT=errnr)
+            IF (errnr /= 0) THEN
+               errnr = 97
+               GOTO 999
+            END IF
+            ata_dc = 0D0
+c$$$            CALL SYSTEM_CLOCK (c1,i)
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_dc.diag'
+            CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
             if (errnr.ne.0) goto 999
-            CALL batadcreg      !A^TC_d^-1A + C_m^-1(lam) -> atadcreg
+c$$$            CALL SYSTEM_CLOCK (c2,i)
+c$$$            PRINT*,'dt1',c2-c1
+c$$$            CALL SYSTEM_CLOCK (c1,i)
+c$$$            ALLOCATE (work(manz,nanz),STAT=errnr)
+c$$$            IF (errnr /= 0) THEN
+c$$$               errnr = 97
+c$$$               GOTO 999
+c$$$            END IF
+c$$$            work = MATMUL(TRANSPOSE(sensdc),cov_d)
+c$$$            ata_dc = MATMUL(work,sensdc)
+c$$$            DEALLOCATE (work)
+c$$$            errnr = 1
+c$$$            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_dc2.diag'
+c$$$            OPEN (kanal,FILE=fetxt,STATUS='replace',ERR=999)
+c$$$            errnr = 4
+c$$$            WRITE (kanal,*)manz
+c$$$            DO i=1,manz
+c$$$               WRITE (kanal,*)ata_dc(i,i),i
+c$$$            END DO
+c$$$            CALL SYSTEM_CLOCK (c2,i)
+c$$$            PRINT*,'dt2',c2-c1
+            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)
+            IF (errnr /= 0) THEN
+               errnr = 97
+               GOTO 999
+            END IF
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg_dc.diag'
+            CALL bata_reg_dc(kanal) !A^TC_d^-1A + C_m^-1(lam) -> ata_reg_dc
             if (errnr.ne.0) goto 999
 
-            CALL bmcmdc         ! (A^TC_d^-1A + C_m^-1)^-1   -> atadcreg_inv
+            ALLOCATE (cov_m_dc(manz,manz))
+            IF (errnr/=0) THEN
+               WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
+               errnr = 97
+               RETURN
+            END IF
+            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m_dc.diag'
+            CALL bmcm_dc(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
             if (errnr.ne.0) goto 999
-c$$$  DO i=1,manz
-c$$$  PRINT*,i,atadc(i,i),atadcreg(i,i),atadcreg_inv(i,i)
-c$$$  END DO
-
-            WRITE (10,*)manz
-            DO i=1,manz
-               WRITE (10,*)log10(sqrt(abs(atadcreg_inv(i,i)))),
-     1              atadcreg_inv(i,i)
-            END DO
 
          ELSE
 
@@ -656,104 +693,127 @@ c$$$  END DO
             if (errnr.ne.0) goto 999
 
             DO i=1,manz
-               WRITE (10,*)atareg_inv(i,i)
+               WRITE (kanal,*)cov_m(i,i)
             END DO
 
          END IF
 
-         close (10)
+         close (fprun)
 
          IF (lres) THEN
 
             WRITE(*,'(a)')ACHAR(13)//
      1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
      1           ' A^TC_d^-1A'
-            fetxt = ramd(1:lnramd)//slash(1:1)//'res.diag'
-            open(10,file=fetxt,status='replace',err=999)
-            errnr = 4
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'res2.diag'
-            open(11,file=fetxt,status='replace',err=999)
-            errnr = 4
 
             IF (ldc) THEN
 
-               CALL bresdc
-               if (errnr.ne.0) goto 999
+c$$$               CALL SYSTEM_CLOCK (c1,i)
+c$$$               fetxt = ramd(1:lnramd)//slash(1:1)//'res.diag'
+c$$$               CALL bres_dc     ! res -> ata_reg_dc
+c$$$               if (errnr.ne.0) goto 999
+c$$$               CALL SYSTEM_CLOCK (c2,i)
+c$$$               PRINT*,'dt2',c2-c1
+c$$$
+c$$$               CALL SYSTEM_CLOCK (c1,i)
+c$$$               PRINT*,'doing fast MATMUL(cov_m,ata)'
+               fetxt = ramd(1:lnramd)//slash(1:1)//'resolution.diag'
+               errnr = 1
+               open(kanal,file=fetxt,status='replace',err=999)
+               errnr = 4
+               ata_reg_dc = MATMUL(cov_m_dc,ata_dc)
+               WRITE (kanal,*)manz
+               DO i=1,manz
+                  WRITE (kanal,*)log10(abs(ata_reg_dc(i,i))),
+     1                 ata_reg_dc(i,i)
+               END DO
+               CLOSE (kanal)
+c$$$               CALL SYSTEM_CLOCK (c2,i)
+c$$$               PRINT*,'dt2',c2-c1
+c$$$
+c$$$               CALL SYSTEM_CLOCK (c1,i)
+c$$$               PRINT*,'doing long MATMUL'
+c$$$               ALLOCATE (work(manz,nanz),work2(manz,nanz))
+c$$$               work = MATMUL (cov_m_dc,TRANSPOSE(sensdc))
+c$$$               work2 = MATMUL (work,cov_d)
+c$$$               ata_reg_dc = MATMUL (work2,sensdc)
+c$$$               DEALLOCATE (work,work2)
+c$$$
+c$$$               errnr = 1
+c$$$               fetxt = ramd(1:lnramd)//slash(1:1)//'res3.diag'
+c$$$               open(kanal,file=fetxt,status='replace',err=999)
+c$$$               errnr = 4
+c$$$               WRITE (kanal,*)manz
+c$$$               DO i=1,manz
+c$$$                  WRITE (kanal,*)ata_reg_dc(i,i),
+c$$$     1                 log10(abs(ata_reg_dc(i,i)))
+c$$$               END DO
+c$$$               CLOSE (kanal)
+c$$$               CALL SYSTEM_CLOCK (c2,i)
+c$$$               PRINT*,'dt2',c2-c1
 
-               WRITE (11,*)manz
-               DO i=1,manz
-                  WRITE (11,*)atadcreg(i,i),log10(abs(atadcreg(i,i)))
-               END DO
-               
-               atadcreg = MATMUL(atadcreg_inv,atadc) ! -> atadcreg nun resmatrix
-               WRITE (10,*)manz
-               DO i=1,manz
-                  WRITE (10,*)atadcreg(i,i),log10(abs(atadcreg(i,i)))
-               END DO
             ELSE
-               ata = MATMUL  (atareg_inv,ata)
+               ata = MATMUL  (cov_m,ata)
                DO i=1,manz
-                  WRITE (10,*)ata(i,i)
+                  WRITE (kanal,*)ata(i,i)
                END DO
             END IF
-            CLOSE (10)
-            CLOSE (11)
+            CLOSE (kanal)
+
             IF (lcov2) THEN
                WRITE(*,'(a)')ACHAR(13)//
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
      1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
-               fetxt = ramd(1:lnramd)//slash(1:1)//'mcm2.diag'
-               open(10,file=fetxt,status='replace',err=999)
-               errnr = 4
                IF (ldc) THEN
-                  atadcreg = MATMUL (atadcreg,atadcreg_inv)
-                  WRITE (10,*)manz
+c$$$                  CALL SYSTEM_CLOCK (c1,i)
+                  fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m_dc.diag'
+                  open(kanal,file=fetxt,status='replace',err=999)
+                  errnr = 4
+                  WRITE (kanal,*)manz
+                  ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
                   DO i=1,manz
-                     WRITE (10,*)log10(sqrt(abs(atadcreg(i,i)))),
-     1                    atadcreg(i,i)
+                     WRITE (kanal,*)log10(sqrt(abs(ata_dc(i,i)))),
+     1                    ata_dc(i,i)
                   END DO
+                  CLOSE (kanal)
+c$$$                  CALL SYSTEM_CLOCK (c2,i)
+c$$$                  PRINT*,'dt1',c2-c1
                ELSE
-                  ata = MATMUL  (ata,atareg_inv)
+                  ata = MATMUL  (ata,cov_m)
                   DO i=1,manz
-                     WRITE (10,*)ata(i,i)
+                     WRITE (kanal,*)log10(sqrt(abs(ata(i,i))))
                   END DO
                END IF
-               CLOSE (10)
+               CLOSE (kanal)
             END IF              ! lcov2
          END IF                 ! lres
       END IF                    ! lcov1
 
 c     Kontrollausgaben
-      errnr = 1
-      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-      open(10,file=fetxt,status='old',err=999,
-     1     POSITION='append')
-      errnr = 4
 
       if (errnr2.eq.92) then
          write(*,'(a22,a31)') ' Iteration terminated:',
      1        ' Min. step-length for 2nd time.'
 
-         write(10,'(a22,a31)',err=999) ' Iteration terminated:',
+         write(fprun,'(a22,a31)',err=999) ' Iteration terminated:',
      1        ' Min. step-length for 2nd time.'
       else if (errnr2.eq.80) then
          write(*,'(a22,a10)') ' Iteration terminated:',
      1        ' Min. RMS.'
          
-         write(10,'(a22,a10)',err=999) ' Iteration terminated:',
+         write(fprun,'(a22,a10)',err=999) ' Iteration terminated:',
      1        ' Min. RMS.'
       else if (errnr2.eq.81) then
          write(*,'(a22,a24)') ' Iteration terminated:',
      1        ' Min. rel. RMS decrease.'
          
-         write(10,'(a22,a24)',err=999) ' Iteration terminated:',
+         write(fprun,'(a22,a24)',err=999) ' Iteration terminated:',
      1        ' Min. rel. RMS decrease.'
       else if (errnr2.eq.79) then
          write(*,'(a22,a19)') ' Iteration terminated:',
      1        ' Max. # iterations.'
          
-         write(10,'(a22,a19)',err=999) ' Iteration terminated:',
+         write(fprun,'(a22,a19)',err=999) ' Iteration terminated:',
      1        ' Max. # iterations.'
       end if
       
@@ -765,13 +825,14 @@ c     Run-time abfragen und ausgeben
       
       write(*,'(a10,i3,a3,i3,a3)')
      1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
-      write(10,'(a10,i3,a3,i3,a3)',err=999)
+      write(fprun,'(a10,i3,a3,i3,a3)',err=999)
      1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
-      close(10)
       
 c     Kontrolldateien schliessen
-      close(14)
-      close(15)
+      close(fprun)
+      close(fpinv)
+      close(fpcjg)
+      close(fpeps)
       
 c     'sens' und 'kpot' freigeben
       if (ldc) then
@@ -784,19 +845,19 @@ c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5
 
 c     'crtomo.cfg' schliessen
-      close(12)
+      close(fpcfg)
 
       stop ' '
 
 c.....................................................................
 
 c     Fehlermeldung
- 999  open(9,file='error.dat',status='replace')
+ 999  open(fperr,file='error.dat',status='replace')
       errflag = 2
       CALL get_error(ftext,errnr,errflag,fetxt)
-      write(9,'(a80,i3,i1)') fetxt,errnr,errflag
-      write(9,*)ftext
-      close(9)
+      write(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
+      write(fperr,*)ftext
+      close(fperr)
       stop ' '
 
       end

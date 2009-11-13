@@ -40,7 +40,7 @@ c$$$  solve A^TC_d^-1A + C_m^-1
          errnr = 97
          RETURN
       END IF
-      ALLOCATE (atareg_inv(manz,manz))
+      ALLOCATE (cov_m(manz,manz))
       IF (errnr/=0) THEN
          WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcm'
          errnr = 97
@@ -93,16 +93,16 @@ c$$$  solve A^TC_d^-1A + C_m^-1
 
 c$$$  building Right Hand Side (unit matrix)
       DO i=1,manz
-         atareg_inv(i,i) = CMPLX(1.d0,1.d0)
+         cov_m(i,i) = CMPLX(1.d0,1.d0)
       END DO
 
 c$$$  Solving Linear System Ax=B -> B=A^-1
       WRITE (*,'(a)')'Solving Ax=B'
-      CALL ZGESV(manz,manz,work,manz,ipiv,atareg_inv,manz,errnr)
+      CALL ZGESV(manz,manz,work,manz,ipiv,cov_m,manz,errnr)
 
       IF (errnr /= 0) THEN
-         PRINT*,'Zeile::',atareg_inv(abs(errnr),:)
-         PRINT*,'Spalte::',atareg_inv(:,abs(errnr))
+         PRINT*,'Zeile::',cov_m(abs(errnr),:)
+         PRINT*,'Spalte::',cov_m(:,abs(errnr))
          errnr = 108
          RETURN
       END IF

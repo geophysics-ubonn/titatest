@@ -1,4 +1,4 @@
-      SUBROUTINE bresdc
+      SUBROUTINE bres_dc(kanal)
 c     
 c     Unterprogramm berechnet Aufloesungsmatrix
 c     (A^TC_d^-1A + C_m^-1)^-1 RES = A^TC_d^-1A
@@ -20,44 +20,55 @@ c.........................................................................
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      INTEGER                                      :: i
+      INTEGER                                      :: i,kanal
       REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE   :: work
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: ipiv
 !.....................................................................
 
 c$$$  solve (A^TC_d^-1A + C_m^-1) x = A^TC_d^-1A
 
-      ALLOCATE (work(manz,manz))
+      errnr = 1
+      open(kanal,file=fetxt,status='replace',err=999)
+      errnr = 4
+
+      ALLOCATE (work(manz,manz),STAT=errnr)
       IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem work in bresdc ',
-     1        manz**2.*8/(1024**3.),' GB'
+         WRITE (*,'(/a,G10.3,a/)')'Allocation problem work in bresdc ',
+     1        REAL(manz)**2.*8./(1024.**3.),' GB'
          errnr = 97
          RETURN
       END IF
-      ALLOCATE (ipiv(manz))
+      ALLOCATE (ipiv(manz),STAT=errnr)
       IF (errnr/=0) THEN
          WRITE (*,'(/a/)')'Allocation problem IPIV in bresdc'
          errnr = 97
          RETURN
       END IF
 
-      work = atadcreg ! work is replaced by PLU decomposition
+      work = ata_reg_dc ! work is replaced by LU decomposition
 
 c$$$  setting up RHS, overwriting atadcreg
-      atadcreg = atadc
+      ata_reg_dc = ata_dc
 
 c$$$  Solving Linear System Ax=B -> x=A^-1B
 
       WRITE (*,'(a)')ACHAR(9)//'Solving Ax=B'
-      CALL DGESV(manz,manz,work,manz,ipiv,atadcreg,manz,errnr)
+      CALL DGESV(manz,manz,work,manz,ipiv,ata_reg_dc,manz,errnr)
       
       IF (errnr /= 0) THEN
-         PRINT*,'Zeile::',atadcreg(abs(errnr),:)
-         PRINT*,'Spalte::',atadcreg(:,abs(errnr))
+         PRINT*,'Zeile::',ata_reg_dc(abs(errnr),:)
+         PRINT*,'Spalte::',ata_reg_dc(:,abs(errnr))
          errnr = 108
          RETURN
       END IF
       
       DEALLOCATE (work,ipiv)
+
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         WRITE (kanal,*)ata_reg_dc(i,i),log10(abs(ata_reg_dc(i,i)))
+      END DO
+      
+ 999  RETURN
 
       END

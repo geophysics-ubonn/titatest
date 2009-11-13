@@ -38,61 +38,60 @@ c     'inv.ctr' oeffnen
       END DO
       errnr = 1
       fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-      open(13,file=fetxt,status='old',err=1000,position='append')
-c$$$  1       read(13,*,end=2)
-c$$$  goto 1
-c$$$  2       backspace(13)
+      open(fpinv,file=fetxt,status='old',err=1000,position='append')
+      fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
+      open(fpcjg,file=fetxt,status='old',err=1000,position='append')
       errnr = 4
 
       if (lsetup) then
 
-         write(13,'(a)',err=1000)cdump
+         write(fpinv,'(a)',err=1000)cdump
          if (lrobust) then
-            write(13,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
+            write(fpinv,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
      1t89,i4,t101,g9.3)',err=1000)
      1           it,nrmsd,betrms,pharms,npol,l1rat
          else
-            write(13,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
+            write(fpinv,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
      1t89,i4)',err=1000)
      1           it,nrmsd,betrms,pharms,npol
          end if
-         write(13,'(a)',err=1000)cdump
+         write(fpinv,'(a)',err=1000)cdump
       else
          ncg = int(cgres(1))
 
          if (llam.and..not.lstep) then
-            write(13,'(a)',err=1000)cdump
+            write(fpinv,'(a)',err=1000)cdump
             if (lrobust) then
-               write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
+               write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
      1t89,i4,t101,g9.3,t113,f5.3)',err=1000)
      1              it,nrmsd,bdpar,lam,rough,ncg,betrms,
      1              pharms,npol,l1rat,step
             else
-               write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
+               write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
      1t89,i4,t101,f5.3)',err=1000)
      1              it,nrmsd,bdpar,lam,rough,ncg,betrms,
      1              pharms,npol,step
             end if
-            write(13,'(a)',err=1000)cdump
+            write(fpinv,'(a)',err=1000)cdump
 
-            fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-            write(14,*,err=1000)
-            write(14,*,err=1000) it
+            write(fpcjg,*,err=1000)
+            write(fpcjg,*,err=1000) it
             do k=1,ncg
-               write(14,*,err=1000) cgres(k+1)
+               write(fpcjg,*,err=1000) cgres(k+1)
             end do
          else
 
-            write(13,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
+            write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
      1t42,g10.4,t54,i4,t101,f5.3)',err=1000)
      1           itr,nrmsd,bdpar,lam,rough,ncg,step
          end if
       end if
 
 c     'inv.ctr' schliessen
-      close(13)
+      close(fpinv)
+      close(fpcjg)
 
       errnr = 0
       return

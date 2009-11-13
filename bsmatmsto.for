@@ -23,7 +23,7 @@ c.....................................................................
 
 c     !!!
 c     Varianz !!!!
-      real :: var = 1
+      real :: var
 
 c     integral scale
 
@@ -51,6 +51,7 @@ c clearscreen
       CALL SYSTEM_CLOCK (c1,i)
 
       gamma = 2.
+      var = 1.
 
       DO i=1,79
          csz(i:i+1)=' '
@@ -231,7 +232,7 @@ c$$$
             CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
      1           manz,errorflag)
             IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..'
+               PRINT*,'there was something wrong..',abs(errorflag)
                PRINT*,'Zeile::',covTT(abs(errorflag),:)
                PRINT*,'Spalte::',covTT(:,abs(errorflag))
                errnr = 108

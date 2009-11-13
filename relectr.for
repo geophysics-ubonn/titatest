@@ -34,10 +34,11 @@ c.....................................................................
 
 c     'datei' oeffnen
       fetxt = datei
-      CALL get_unit(ifp)
-      OPEN (ifp,FILE='tmp.elecpositions',STATUS='replace')
       errnr = 1
       open(kanal,file=fetxt,status='old',err=999)
+      CALL get_unit(ifp)
+
+      OPEN (ifp,FILE='tmp.elecpositions',STATUS='replace')
 
       errnr = 3
 

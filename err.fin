@@ -9,6 +9,21 @@ c COMMON
 
 c Fehlernummer
         integer         * 4     errnr
+c Kanaele
+        integer         * 4     fperr
+        integer         * 4     fprun
+        integer         * 4     fpinv
+        integer         * 4     fpcjg
+        integer         * 4     fpeps
+        integer         * 4     fpcfg
+
+c     9 - error.dat   -> fperr  die io nummern werden nun ueber get_unit belegt..
+c     10 - run.ctr    -> fprun 
+c     12 - crtomo.cfg -> fpcrf
+c     13 - inv.ctr    -> fpinv
+c     14 - cjg.ctr    -> fpcjg
+c     15 - eps.ctr    -> fpeps
+
 
 c Fehlerart
 c 0 : GKS - nicht aktiv, Programm nicht verlassen
@@ -25,3 +40,10 @@ c.....................................................................
         common/cerr/    errnr,
      1                  errflag,
      1                  fetxt
+
+        common/myunits/ fperr,
+     1			fprun,
+     1			fpinv,
+     1			fpcjg,
+     1			fpeps,
+     1			fpcfg

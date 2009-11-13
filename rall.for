@@ -155,16 +155,16 @@ c     ak        fstop  = 0.8d0
 c#########################################################
 c Read in input values..
 
-      read(12,*,end=1001,err=98) mswitch
- 98   read(12,'(a80)',end=1001,err=999) delem
-      read(12,'(a80)',end=1001,err=999) delectr
-      read(12,'(a80)',end=1001,err=999) dstrom
-      read(12,'(a60)',end=1001,err=999) ramd
+      read(fpcfg,*,end=1001,err=98) mswitch
+ 98   read(fpcfg,'(a80)',end=1001,err=999) delem
+      read(fpcfg,'(a80)',end=1001,err=999) delectr
+      read(fpcfg,'(a80)',end=1001,err=999) dstrom
+      read(fpcfg,'(a60)',end=1001,err=999) ramd
 c     diff+<
-      read(12,*,end=1001,err=999) ldiff
-      read(12,'(a80)',end=1001,err=999) dd0
-      read(12,'(a80)',end=1001,err=999) dm0
-      read(12,'(a80)',end=1001,err=999) dfm0
+      read(fpcfg,*,end=1001,err=999) ldiff
+      read(fpcfg,'(a80)',end=1001,err=999) dd0
+      read(fpcfg,'(a80)',end=1001,err=999) dm0
+      read(fpcfg,'(a80)',end=1001,err=999) dfm0
 
       IF (ldiff) THEN
          lprior = .TRUE.
@@ -173,49 +173,49 @@ c     diff+<
          ldiff = .NOT.lstart
       END IF
 c     diff+>
-      read(12,*,end=1001,err=99) iseedpri,stabmpri
+      read(fpcfg,*,end=1001,err=99) iseedpri,stabmpri
       lnsepri = lprior
- 99   read(12,*,end=1001,err=999) nx
-      read(12,*,end=1001,err=999) nz
-      read(12,*,end=1001,err=999) alfx
-      read(12,*,end=1001,err=999) alfz
-      read(12,*,end=1001,err=999) itmax
-c     ak        read(12,*,end=1001,err=999) nrmsdm
-      read(12,*,end=1001,err=999) ldc
-c     ak        read(12,*,end=1001,err=999) lsr
-      read(12,*,end=1001,err=999) lrobust
-c     ak        read(12,*,end=1001,err=999) lpol
-      read(12,*,end=1001,err=999) lfphai
-c     ak        read(12,*,end=1001,err=999) lindiv
-      read(12,*,end=1001,err=999) stabw0
-      read(12,*,end=1001,err=999) stabm0
-      read(12,*,end=1001,err=999) stabpA1
-      read(12,*,end=1001,err=999) stabpB
-      read(12,*,end=1001,err=999) stabpA2
-      read(12,*,end=1001,err=999) stabp0
-      read(12,*,end=1001,err=999) lrho0
-      read(12,*,end=1001,err=999) bet0
-      read(12,*,end=1001,err=999) pha0
-      read(12,*,end=1001,err=999) lagain
-      read(12,*,end=1001,err=999) swrtr
-      read(12,*,end=1001,err=999) lsink
-      read(12,*,end=1001,err=999) nsink
-      read(12,*,end=1001,err=999) lrandb2
-      read(12,'(a80)',end=1001,err=999) drandb
-      read(12,'(I2)',end=100,err=100) ltri
+ 99   read(fpcfg,*,end=1001,err=999) nx
+      read(fpcfg,*,end=1001,err=999) nz
+      read(fpcfg,*,end=1001,err=999) alfx
+      read(fpcfg,*,end=1001,err=999) alfz
+      read(fpcfg,*,end=1001,err=999) itmax
+c     ak        read(fpcfg,*,end=1001,err=999) nrmsdm
+      read(fpcfg,*,end=1001,err=999) ldc
+c     ak        read(fpcfg,*,end=1001,err=999) lsr
+      read(fpcfg,*,end=1001,err=999) lrobust
+c     ak        read(fpcfg,*,end=1001,err=999) lpol
+      read(fpcfg,*,end=1001,err=999) lfphai
+c     ak        read(fpcfg,*,end=1001,err=999) lindiv
+      read(fpcfg,*,end=1001,err=999) stabw0
+      read(fpcfg,*,end=1001,err=999) stabm0
+      read(fpcfg,*,end=1001,err=999) stabpA1
+      read(fpcfg,*,end=1001,err=999) stabpB
+      read(fpcfg,*,end=1001,err=999) stabpA2
+      read(fpcfg,*,end=1001,err=999) stabp0
+      read(fpcfg,*,end=1001,err=999) lrho0
+      read(fpcfg,*,end=1001,err=999) bet0
+      read(fpcfg,*,end=1001,err=999) pha0
+      read(fpcfg,*,end=1001,err=999) lagain
+      read(fpcfg,*,end=1001,err=999) swrtr
+      read(fpcfg,*,end=1001,err=999) lsink
+      read(fpcfg,*,end=1001,err=999) nsink
+      read(fpcfg,*,end=1001,err=999) lrandb2
+      read(fpcfg,'(a80)',end=1001,err=999) drandb
+      read(fpcfg,'(I2)',end=100,err=100) ltri
       
       lsto = (ltri==10)
       GOTO 101
 
- 100  BACKSPACE(12)
+ 100  BACKSPACE(fpcfg)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
       IF (ltri == 2) THEN
-         READ(12,*,end=105,err=105) betamgs
+         READ(fpcfg,*,end=105,err=105) betamgs
 	 GOTO 106
  105     betamgs = 0.1          ! default value for MGS
-         BACKSPACE(12)
+         BACKSPACE(fpcfg)
 
  106     PRINT*,'Minimum gradient support regularisierung beta =',
      1        betamgs
@@ -224,10 +224,10 @@ c     ak        read(12,*,end=1001,err=999) lindiv
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
-         READ(12,*,end=110,err=110) iseed
+         READ(fpcfg,*,end=110,err=110) iseed
 	 GOTO 111
  110     iseed = 1              ! default value for PRS
-         BACKSPACE(12)
+         BACKSPACE(fpcfg)
  111     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
      1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
      1        iseed
@@ -327,7 +327,7 @@ c     Elementeinteilung einlesen
 
       IF (ltri/=0) THEN
          manz = elanz ! wichtig an dieser stelle..
-         CALL bnachbar
+         CALL bnachbar ! blegt nachbar
          CALL besp_elem
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
@@ -347,7 +347,6 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
       do i=1,elanz
          mnr(i) = i
       end do
-
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
       ncgmax = manz/10
@@ -356,9 +355,12 @@ c     bestimmen
       call relectr(kanal,delectr)
       if (errnr.ne.0) goto 999
 
-      IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
+      IF (lsink) THEN
+         WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
      1     nsink,sx(snr(nsink)),sy(snr(nsink))
-
+         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
+     1     nsink,sx(snr(nsink)),sy(snr(nsink))
+      END IF
       call rdati (kanal,dstrom)
 c      PRINT*,'data in'
       if (errnr.ne.0) goto 999
@@ -414,16 +416,8 @@ c     j0     = j
          else if (j.lt.nanz0) then
             goto 20
          else
-            errnr = 1
-            fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-            open(10,file=fetxt,status='unknown',err=999)
- 1          read(10,*,end=2)
-            goto 1
- 2          backspace(10)
-            errnr = 4
-            write(10,'(i7,1x,i7,a12)',err=999)
+            write(fprun,'(i7,1x,i7,a12)',err=999)
      1           strnr(i),vnr(i),' : discarded'
-            close(10)
 
             nanz = nanz-1
             do j=i,nanz

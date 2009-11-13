@@ -36,13 +36,18 @@ c     Hilfsvariablen
 
 c.....................................................................
 
-c     Ggf. Ausgabe
+c     einfach mal oeffnen falls Ausgabe
+      errnr = 1
+      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
+      OPEN(fpeps,file=fetxt,STATUS='old',POSITION='append',ERR=1000)
+      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
+      OPEN(fprun,file=fetxt,STATUS='old',POSITION='append',ERR=1000)
+      errnr = 4
+
       if ((llam.and..not.lstep).or.lsetup) then
-         fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
-         errnr = 4
-         write(15,*,err=1000)'eps      '//
+         write(fpeps,*,err=1000)'eps      '//
      1        'psi     '//'pol      '//'d        '//'f'
-         write(15,*,err=1000) it
+         write(fpeps,*,err=1000) it
       end if
 
 c     RMS-WERTE BERECHNEN
@@ -78,7 +83,7 @@ c     diff+>
 
 c     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
          if ((llam.and..not.lstep).or.lsetup)
-     1        write(15,*,err=1000) real(1d0/dsqrt(wmatd(i))),
+     1        write(fpeps,*,err=1000) real(1d0/dsqrt(wmatd(i))),
      1        real(psi(i)),wdlok(i),real(cdat),real(csig)
          
          idum   = idum   + wdlok(i)
@@ -140,15 +145,10 @@ c     Ggf. neue Wichtungsfaktoren belegen
 c     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
                if (dum.lt.0.83d0*wmatd(i).and.
      1              ((llam.and..not.lstep).or.lsetup)) then
-                  open(10,file=ramd(1:lnramd)//slash(1:1)
-     1                 //'run.ctr',status='old')
- 1                read(10,*,end=2)
-                  goto 1
- 2                backspace(10)
-                  write(10,'(i4,a32,f5.1)')
+
+                  write(fprun,'(i4,a32,f5.1)')
      1                 i,' : increase standard deviation *',
      1                 real(eps2(i)*dsqrt(wmatd(i)))
-                  close(10)
                end if
 
                wmatd(i) = dum
@@ -162,8 +162,8 @@ c     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     Fehlermeldungen
- 1000 close(14)
-      close(15)
+ 1000 close(fpeps)
+      close(fprun)
       return
 
       end

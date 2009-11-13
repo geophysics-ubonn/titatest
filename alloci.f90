@@ -14,9 +14,9 @@ MODULE alloci
 !!$general symmetric transpose matrix to compute general inverse
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata
 !!$general symmetric transpose matrix (regularized) to compute general inverse
-  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atareg
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata_reg
 !!$inverse matrix (may be resolution matrix or the MCM)
-  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atareg_inv
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: cov_m
 !!$DC-CASE
 !!$Gesamtsteifigkeitsmatrix
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC :: adc
@@ -28,11 +28,13 @@ MODULE alloci
 !!$Sensitivitaeten
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: sensdc
 !!$real symmetric transpose matrix to compute general inverse
-  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadc
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata_dc
 !!$real symmetric transpose matrix (regularized) to compute general inverse
-  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadcreg
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: ata_reg_dc
 !!$real inverse matrix (may be resolution matrix or the MCM)
-  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: atadcreg_inv
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: cov_m_dc
+!!$real symmetric data covariance
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC :: cov_d
 !!$Regularisierungsmatrix
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC :: smatm
 !!$ PSR felder fuer widerstand (r) und phase (p)
