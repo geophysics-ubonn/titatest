@@ -144,12 +144,14 @@ c     Fehlermeldung
          idum = idum+nelanz(l)
       end do
       PRINT*,'graph erstellt'
-      maxgd = grad(1)
-      mingd = grad(1)
-      do i=2,sanz
-         maxgd = max0(maxgd,grad(i))
-         mingd = min0(mingd,grad(i))
-      end do
+      maxgd = MAXVAL(grad)
+      mingd = MINVAL(grad)
+c$$$      maxgd = grad(1)
+c$$$      mingd = grad(1)
+c$$$      do i=2,sanz
+c$$$         maxgd = max0(maxgd,grad(i))
+c$$$         mingd = min0(mingd,grad(i))
+c$$$      end do
 c$$$  DO i=1,sanz
 c$$$  PRINT*,'Knoten ',i,'grad ',grad(i)
 c$$$  ENDDO

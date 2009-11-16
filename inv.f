@@ -716,7 +716,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
      1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
 
-               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m_dc.diag'
+               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
 
                IF (ldc) THEN
                   CALL bmcm2_dc(kanal)
@@ -733,9 +733,10 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     Kontrollausgaben
 
       if (errnr2.eq.92) then
+         
          write(*,'(a22,a31)') ' Iteration terminated:',
      1        ' Min. step-length for 2nd time.'
-
+         
          write(fprun,'(a22,a31)',err=999) ' Iteration terminated:',
      1        ' Min. step-length for 2nd time.'
       else if (errnr2.eq.80) then
