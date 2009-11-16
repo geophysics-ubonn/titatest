@@ -244,7 +244,7 @@ ylim(ylimits);
 h=colorbar('vert');
 
 set(h,'fontsize',fns)
-set(h,'XaxisLocation','top')
+set(h,'XaxisLocation','bottom')
 
 set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);

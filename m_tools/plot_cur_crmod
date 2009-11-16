@@ -42,12 +42,6 @@ done
 awk '{if (NR==2){print}}' crmod.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crmod.cfg > tmp.elecname
 awk '{if (NR==4){print}}' crmod.cfg > tmp.lastmod
-if [ -e "tmp.fenster" ];then
-    fenster=`cat tmp.fenster`
-else
-    fenster=$1
-fi
-echo $fenster > tmp.fenster
 
 if [ -e "tmp.crange" ];then
     c1=`awk '{print$1}' tmp.crange`
@@ -62,6 +56,7 @@ echo $c1 $c2 $c3 $2 > tmp.crange
 
 tmp=`cat tmp.lastmod`
 
+echo 'CRTomo resistivity model' > tmp.fenster
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
 echo 'cur_crmod.mag' > tmp.lastmod
 
@@ -69,6 +64,21 @@ $mtlb < $plotmod >& /dev/null
 
 myeps='cur_crmod.mag.eps'
 mypdf='cur_crmod.pdf'
+
+echo image conversion... $myeps $mypdf
+$epsp $myeps -o=$1$mypdf >& /dev/null
+$mogri -format jpg $myeps
+
+echo $c1 $c2 $c3 $2 > tmp.crange
+echo 'CRTomo conductivity model' > tmp.fenster
+echo 'ln(\sigma) [S/m]' > tmp.cbarn
+awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,-log($1))}else{print}}' $tmp > cur_crmod_s.mag
+echo 'cur_crmod_s.mag' > tmp.lastmod
+
+$mtlb < $plotmod >& /dev/null
+
+myeps='cur_crmod_s.mag.eps'
+mypdf='cur_crmod_s.pdf'
 
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$1$mypdf >& /dev/null
