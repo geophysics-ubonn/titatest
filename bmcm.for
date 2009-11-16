@@ -69,5 +69,7 @@ c$$$  Solving Linear System Ax=B -> B=A^-1
      1        log10(sqrt(abs(dimag(cov_m(i,i)))))
       END DO
 
+      CLOSE (kanal)
+      errnr = 0
  999  RETURN
       END

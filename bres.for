@@ -32,7 +32,7 @@ c$$$  solve (A^TC_d^-1A + C_m^-1) x = A^TC_d^-1A
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
-      IF (.NOT.ols.OR..NOT.PRESENT(ols)) THEN
+      IF (.NOT.PRESENT(ols)) THEN
          ata_reg = MATMUL(cov_m,ata)
       ELSE
          ALLOCATE (work(manz,manz),STAT=errnr)
@@ -69,6 +69,8 @@ c$$$  Solving Linear System Ax=B -> x=A^-1B
      1        log10(abs(DIMAG(ata_reg(i,i))))
       END DO
       
+      CLOSE (kanal)
+      errnr = 0
  999  RETURN
 
       END

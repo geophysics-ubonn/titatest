@@ -72,6 +72,8 @@ c$$$  Solving Linear System Ax=B -> B=A^-1
      1        cov_m_dc(i,i)
       END DO
       
+      CLOSE (kanal)
+      errnr = 0
  999  RETURN
 
       END
