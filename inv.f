@@ -626,8 +626,10 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       IF (lcov1) THEN
          WRITE (*,'(/a,G10.3,a)',ADVANCE='no')
      1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
-         READ (*,*)fetxt
-         IF (fetxt/='')READ(fetxt,*)lam
+         IF (BTEST(mswitch,5)) THEN 
+            READ (*,*)fetxt
+            IF (fetxt/='')READ(fetxt,*)lam
+         END IF
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
