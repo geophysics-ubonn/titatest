@@ -322,3 +322,6 @@
 108 Solving linear system failed
 108 indefinite?
 108
+109 Min. stepsize reached
+109 Execution time:
+109

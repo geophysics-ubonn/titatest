@@ -139,7 +139,7 @@ c     Mindest-step-size
       stpmin = 1d-3
 c     Regularisierungsparameter
 c     ak Default
-      nlam   = 50
+      nlam   = 20
 c     ak Default
       fstart = 0.5d0
       fstop  = 0.9d0
@@ -245,7 +245,7 @@ c$$$      else if (alfx.le.0d0.or.alfz.le.0d0) then
 c$$$         fetxt = ' '
 c$$$         errnr = 96
 c$$$         goto 999
-      else if (itmax.lt.1.or.itmax.ge.100) then
+      else if (itmax<1.or.itmax.ge.100) then
          fetxt = ' '
          errnr = 61
          goto 999
@@ -293,8 +293,8 @@ c Mega switch testing..
       lres  = BTEST(mswitch,2) ! rsolution matrix berechnen
       lcov2 = BTEST(mswitch,3) ! posterior modell covariance matrix 2
 
-      lres  = lcov2            ! compute mcm2 on top of resolution
-      lcov1 = lres             ! compute resolution by taking mcm1
+      lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
+      lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
 c
       if (lratio) then
          lrho0  = .true.

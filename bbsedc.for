@@ -119,9 +119,8 @@ c 'datei' oeffnen
         open(kanal,file=fetxt,status='replace',err=999)
         errnr = 4
 
-cak
-c Maximale Sensitivitaet schreiben
-        write(kanal,*,err=1000) dum
+c Anzahl der Werte
+        write(kanal,*,err=1000) manz
 
 c Koordinaten und Sensitivitaetsbetraege schreiben
 c (logarithmierter (Basis 10) normierter Betrag)
@@ -141,6 +140,9 @@ c (logarithmierter (Basis 10) normierter Betrag)
             end if
         end do
 
+cak
+c Maximale Sensitivitaet schreiben
+        write(kanal,*,err=1000) dum
 c 'datei' schliessen
         close(kanal)
 

@@ -34,10 +34,10 @@ c     USE portlib
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
-      CHARACTER(256)                             :: ftext
-      INTEGER                                    :: i,c1,c2
-      COMPLEX(KIND(0D0))                         :: cdum 
-      REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work,work2
+      CHARACTER(256)         :: ftext
+      INTEGER                :: i,c1,c2
+      REAL(KIND(0D0))        :: lamalt
+      LOGICAL                :: ols
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
@@ -314,6 +314,7 @@ c     Kontrollvariablen ausgeben
       call kont2(lsetup)
       if (errnr.ne.0) goto 999
 
+C      llam=(bdpar<=stpmin.AND.it>0)
 c     ABBRUCHBEDINGUNGEN
       if (llam.and..not.lstep) then
 
@@ -332,6 +333,9 @@ c     tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
 
 c     Maximale Anzahl an Iterationen ?
          if (it.ge.itmax) errnr2=79
+
+c     Minimal stepsize erriecht ?
+         if (bdpar<=stpmin) errnr2=109
 
 c     Ggf. abbrechen oder "final phase improvement"
          if (errnr2.ne.0) then
@@ -497,7 +501,6 @@ c     "Regularisierungsschleife" initialisieren und step-length zuruecksetzen
 
 c     Regularisierungsindex hochzaehlen
             itr = itr+1
-
             if ((((nrmsd.lt.rmsreg.and.itr.le.nlam).or.
      1           (dlam.gt.1d0.and.itr.le.nlam)).and.
      1           (.not.ldlamf.or.dlalt.le.1d0).and.
@@ -568,7 +571,7 @@ c     Ggf. Daten-RMS speichern
 c     Parabolische Interpolation zur Bestimmung der optimalen step-length
          call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
 
-         if (step.eq.stpmin.and.stpalt.eq.stpmin) then
+         if (step.eq.stpmin.and.stpalt.eq.stpmin)then
 
 c     Nach naechstem Modelling abbrechen
             stpalt = 0d0
@@ -621,7 +624,10 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          if (errnr.ne.0) goto 999
       end if
       IF (lcov1) THEN
-         WRITE (*,'(/a,G10.3/)')'Lambda::',lam
+         WRITE (*,'(/a,G10.3,a)',ADVANCE='no')
+     1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
+         READ (*,*)fetxt
+         IF (fetxt/='')READ(fetxt,*)lam
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
@@ -634,7 +640,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             END IF
             ata_dc = 0D0
 
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_dc.diag'
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
             CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
             if (errnr.ne.0) goto 999
 
@@ -644,7 +650,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
                GOTO 999
             END IF
 
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg_dc.diag'
+            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
             CALL bata_reg_dc(kanal) !ata_dc + C_m^-1(lam) -> ata_reg_dc
             if (errnr.ne.0) goto 999
 
@@ -696,7 +702,9 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          END IF
 
          IF (lres) THEN
-
+            
+            ols = .FALSE.
+            
             WRITE(*,'(a)')ACHAR(13)//
      1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
      1           ' A^TC_d^-1A'
@@ -704,10 +712,10 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
 
             IF (ldc) THEN
-               CALL bres_dc(kanal)
+               CALL bres_dc(kanal,ols)
                if (errnr.ne.0) goto 999
             ELSE
-               CALL bres(kanal)
+               CALL bres(kanal,ols)
                if (errnr.ne.0) goto 999
             END IF
 
@@ -757,6 +765,14 @@ c     Kontrollausgaben
          
          write(fprun,'(a22,a19)',err=999) ' Iteration terminated:',
      1        ' Max. # iterations.'
+         
+      else if (errnr2.eq.109) then
+         write(*,'(a)') ' Iteration terminated:'//
+     1        ' Min. model changes reached'
+         
+         write(fprun,'(a)',err=999) ' Iteration terminated:'//
+     1        ' Min. model changes reached'
+         
       end if
       
 c     Run-time abfragen und ausgeben

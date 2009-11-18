@@ -66,13 +66,11 @@ c.....................................................................
 
          do 10 j=1,nelanz(i)
             iel = iel + 1
-c$$$  print*,iel
             do m=1,nkel
                xk(m) = sx(snr(nrel(iel,m)))
                yk(m) = sy(snr(nrel(iel,m)))
-c$$$  print*,xk(m),yk(m)
             end do
-
+            WRITE (fetxt,'(a,I7,2F10.2)')'Elementnr',iel
 c     Randelement, linearer Ansatz
             if (ntyp.eq.11) then
 

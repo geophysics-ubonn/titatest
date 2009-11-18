@@ -65,6 +65,7 @@ c     diff+<
       real            * 8     dum2,dum3
 c     diff+>
       logical         * 4     exi
+      CHARACTER       * 2     ci
 c.....................................................................
 
 c     Schwerpunktkoordinaten der Elemente bestimmen
@@ -92,18 +93,26 @@ c     Schwerpunktkoordinaten der Elemente bestimmen
       end do
 
 c     'dsigma' modifizieren
- 10   lit  = int(log10(real(itmax)))+1
+c$$$ 10   lit  = int(log10(real(itmax)))+1
+c$$$      htxt = filpat(dsigma,idum2,1,slash(1:1))
+c$$$      idum = idum2+index(dsigma(idum2+1:80),'.')-1
+c$$$      if ((idum-idum2-1).gt.(8-lit)) then
+c$$$         fetxt = dsigma
+c$$$         errnr = 15
+c$$$         goto 999
+c$$$      end if
+c$$$
+c$$$      htxt2 = intcha(it,lit)
+c$$$      htxt  = dsigma(1:idum)//htxt2(1:lit)//dsigma(idum+1:idum+4)
+
+ 10   IF (it>9) THEN
+         WRITE (ci,'(I2)')it
+      ELSE 
+         WRITE (ci,'(a,I1)')'0',it
+      END IF
       htxt = filpat(dsigma,idum2,1,slash(1:1))
       idum = idum2+index(dsigma(idum2+1:80),'.')-1
-
-      if ((idum-idum2-1).gt.(8-lit)) then
-         fetxt = dsigma
-         errnr = 15
-         goto 999
-      end if
-
-      htxt2 = intcha(it,lit)
-      htxt  = dsigma(1:idum)//htxt2(1:lit)//dsigma(idum+1:idum+4)
+      htxt  = dsigma(1:idum)//ci//dsigma(idum+1:idum+4)
 
 c     Betraege ausgeben
       idum  = index(htxt,' ')
@@ -190,14 +199,15 @@ c     'dvolt' modifizieren
       htxt = filpat(dvolt,idum2,1,slash(1:1))
       idum = idum2+index(dvolt(idum2+1:80),'.')-1
 
-      if ((idum-idum2-1).gt.(8-lit)) then
-         fetxt = dvolt
-         errnr = 15
-         goto 999
-      end if
-
-      htxt2 = intcha(it,lit)
-      htxt  = dvolt(1:idum)//htxt2(1:lit)//dvolt(idum+1:idum+4)
+c$$$      if ((idum-idum2-1).gt.(8-lit)) then
+c$$$         fetxt = dvolt
+c$$$         errnr = 15
+c$$$         goto 999
+c$$$      end if
+c$$$
+c$$$      htxt2 = intcha(it,lit)
+c$$$      htxt  = dvolt(1:idum)//htxt2(1:lit)//dvolt(idum+1:idum+4)
+      htxt  = dvolt(1:idum)//ci//dvolt(idum+1:idum+4)
 
       fetxt = htxt
       errnr = 1

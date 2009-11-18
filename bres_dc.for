@@ -23,6 +23,7 @@ c.........................................................................
       INTEGER                                      :: i,kanal
       REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE   :: work
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: ipiv
+      REAL(KIND(0D0))                              :: ipiv_min,ipiv_max
       LOGICAL,OPTIONAL                             :: ols 
 !     switch solv ordinary linear system or not^^
 !.....................................................................
@@ -33,19 +34,21 @@ c$$$  solve (A^TC_d^-1A + C_m^-1) x = A^TC_d^-1A
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
 
-      IF (.NOT.PRESENT(ols)) THEN
+      ALLOCATE (ipiv(manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem IPIV in bresdc'
+         errnr = 97
+         RETURN
+      END IF
+      
+      IF (.NOT.ols) THEN
+         print*,'ueber matmul..'
          ata_reg_dc = MATMUL(cov_m_dc,ata_dc)
       ELSE
          ALLOCATE (work(manz,manz),STAT=errnr)
          IF (errnr/=0) THEN
             WRITE (*,'(/a,G10.3,a/)')'Allocation problem work'//
      1           ' in bres_dc',REAL(manz)**2.*8./(1024.**3.),' GB'
-            errnr = 97
-            RETURN
-         END IF
-         ALLOCATE (ipiv(manz),STAT=errnr)
-         IF (errnr/=0) THEN
-            WRITE (*,'(/a/)')'Allocation problem IPIV in bresdc'
             errnr = 97
             RETURN
          END IF
@@ -61,16 +64,26 @@ c$$$  Solving Linear System Ax=B -> x=A^-1B
             errnr = 108
             RETURN
          END IF
-         DEALLOCATE (work,ipiv)
+         DEALLOCATE (work)
       END IF
 
+      DO i=1,manz
+         ipiv(i) = ata_reg_dc(i,i)
+      END DO
+      
+      ipiv_min = MINVAL(ipiv) 
+      ipiv_max = MAXVAL(ipiv)
+      
+      PRINT*,ipiv_min,ipiv_max
+      
+      ipiv = ipiv/ipiv_max
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)log10(abs(ata_reg_dc(i,i))),ata_reg_dc(i,i)
+         WRITE (kanal,*)log10(abs(ipiv(i))),ipiv(i)*ipiv_max
       END DO
-
       CLOSE (kanal)
       errnr = 0
+      DEALLOCATE (ipiv)
  999  RETURN
 
       END

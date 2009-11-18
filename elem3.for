@@ -64,7 +64,8 @@ c.....................................................................
       
 c     Ggf. Fehlermeldung
       if (det.le.0d0) then
-         fetxt = ' '
+c         fetxt = ' '
+         print*,det,x21,y31,x31,y21
          errnr = 26
          return
       end if

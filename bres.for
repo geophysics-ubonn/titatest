@@ -32,7 +32,7 @@ c$$$  solve (A^TC_d^-1A + C_m^-1) x = A^TC_d^-1A
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
-      IF (.NOT.PRESENT(ols)) THEN
+      IF (.NOT.ols) THEN
          ata_reg = MATMUL(cov_m,ata)
       ELSE
          ALLOCATE (work(manz,manz),STAT=errnr)

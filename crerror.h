@@ -1,4 +1,4 @@
-CHARACTER(256) :: fetxt(108)
+CHARACTER(256) :: fetxt(109)
 
    fetxt(1)=' Error opening'
    fetxt(2)=' End of File encountered'
@@ -108,3 +108,4 @@ CHARACTER(256) :: fetxt(108)
    fetxt(106)=' Mixed boundary condition not implemented for pure 2D'
    fetxt(107)=' Cholesky decomposition failed factorization'
    fetxt(108)=' Solving linear system failed indefinite?'
+   fetxt(109)=' Min. stepsize reached Execution time:'
