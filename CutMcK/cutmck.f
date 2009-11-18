@@ -144,17 +144,12 @@ c     Fehlermeldung
          idum = idum+nelanz(l)
       end do
       PRINT*,'graph erstellt'
-      maxgd = MAXVAL(grad)
-      mingd = MINVAL(grad)
-c$$$      maxgd = grad(1)
-c$$$      mingd = grad(1)
-c$$$      do i=2,sanz
-c$$$         maxgd = max0(maxgd,grad(i))
-c$$$         mingd = min0(mingd,grad(i))
-c$$$      end do
-c$$$  DO i=1,sanz
-c$$$  PRINT*,'Knoten ',i,'grad ',grad(i)
-c$$$  ENDDO
+      
+      mingd = MINVAL(grad(1:sanz))
+      maxgd = MAXVAL(grad(1:sanz))
+c$$$      DO i=1,sanz
+c$$$         PRINT*,'Knoten ',i,'grad ',grad(i)
+c$$$      ENDDO
 
       IF (mingd==0) THEN
          PRINT*,'existance of zero nodes.. aborting'
@@ -182,7 +177,7 @@ c     ak
       spanz = MAX(spanz,1000)
       k = 0
       spanz = MIN(spanz,spmax)
-      PRINT*,'mingd_1::',mingd
+      WRITE(*,'(a,I8)',ADVANCE='no')'mingd::',mingd
  110  do 120 i=1,sanz
          if (grad(i).eq.mingd) then
             k = k+1
@@ -190,9 +185,9 @@ c     ak
             if (k.ge.spanz) goto 130
          end if
  120  continue
-
+      IF (mingd>elanz/10) GOTO 130
       mingd = mingd+1
-      PRINT*,'mingd::',mingd
+      WRITE(*,'(a,I8)',ADVANCE='no')ACHAR(13)//'mingd::',mingd
       goto 110
 
  130  continue

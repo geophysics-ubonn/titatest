@@ -34,26 +34,12 @@ all:		$(PR1)
 .SILENT:	cbn
 #################################################
 #
-OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o \
-		  get_error.o
-# suffixes
-.SUFFIXES:	.f90 .f .c .o .mod
-#.SUFFIXES:	.f90 .f .c .o
-# rules
-.f90.mod:		
-		$(F90) $(FFLAG90) $(FFLAGMPI) -c $<
+OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o
 
-.mod.o:		
-		$(F90) $(FFLAG90) $(FFLAGMPI) -c $<
-
-.f90.o:		
-		$(F90) $(FFLAG90) $(FFLAGMPI) -c $<
-
-.f.o:		
-		$(F90) $(FFLAG90) $(FFLAGMPI) -c $<
-
-.c.o:		
-		$(CC) $(CFLAGS) $(CFLAGMPI) -c $<
+OBJF90		= get_error.o
+###################################################
+$(OBJ):		%.o : %.f	
+		$(F90) $(FFLAG90) -c $<
 # dependencies	
 get_error.o:	error.txt get_error.f90
 		./make_crerr.sh
@@ -72,7 +58,7 @@ cbn:
 
 ctm:		$(OBJ) 
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
-		$(OBJ) \
+		$(OBJ) $(OBJF90) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)
 
 clean:		
