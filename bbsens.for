@@ -121,7 +121,7 @@ c 'datei' oeffnen
 
 cak
 c Maximale Sensitivitaet schreiben
-        write(kanal,*,err=1000) dum
+        write(kanal,*,err=1000) manz
 
 c Koordinaten und Sensitivitaetsbetraege schreiben
 c (logarithmierter (Basis 10) normierter Betrag)
@@ -141,6 +141,7 @@ c (logarithmierter (Basis 10) normierter Betrag)
             end if
         end do
 
+        write(kanal,*,err=1000) dum
 c 'datei' schliessen
         close(kanal)
 

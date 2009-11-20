@@ -18,6 +18,7 @@ c.........................................................................
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
+      INCLUDE 'err.fin'
 !.....................................................................
 
 !     PROGRAMMINTERNE PARAMETER:
@@ -35,7 +36,8 @@ c.........................................................................
       
       smaxs=MAXVAL(selanz)
 
-      IF (.NOT.ALLOCATED (smatm))ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
+      IF (.NOT.ALLOCATED (smatm))
+     1  ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
       IF (errnr/=0) THEN
          WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmtri'
          errnr = 97

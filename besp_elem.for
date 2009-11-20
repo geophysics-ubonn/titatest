@@ -10,7 +10,7 @@ c
 c     Letzte Aenderung                                         07-Aug-2009
 c     
 c.....................................................................
-
+      use alloci
       IMPLICIT none
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
