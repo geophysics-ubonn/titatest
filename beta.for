@@ -2,8 +2,8 @@
 
 c     Function zur Berechnung der 'mixed boundary conditions'.
 
-c     Andreas Kemna                                            20-Dec-1993
-c     Letzte Aenderung   22-Sep-1998
+c     Andreas Kemna                                         20-Dec-1993
+c     Letzte Aenderung                                      20-Nov-2009
 
 c.....................................................................
       IMPLICIT none
@@ -60,8 +60,8 @@ c     Koordinaten des aktuellen Randelements bestimmen
 
 c     Abstand Randelement - Quelle/Spiegelquelle bestimmen
       x3  = xr - xs
-      y3m = yr - ys
-      y3p = yr + ys
+      y3m = (yr-sytop) - (ys-sytop)
+      y3p = (yr-sytop) + (ys-sytop)
 
       r1m = dsqrt(x3*x3 + y3m*y3m)
       r1p = dsqrt(x3*x3 + y3p*y3p)

@@ -35,7 +35,7 @@ PR3		= ctm
 PRM		= mtools
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM)
+all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
@@ -59,7 +59,7 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o bsmatmmgs.o \
+		  wpot.o wsens.o bsmatmmgs.o bsytop.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
 		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o
 # CRMod objects
@@ -69,7 +69,7 @@ forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bvolt.o bvolti.o chareal.o chkpol.o \
-		  choldc.o chol.o elem1.o \
+		  choldc.o chol.o elem1.o bsytop.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
@@ -81,8 +81,12 @@ forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  wpot.o wsens.o
 ################################################################
 # rules
-$(forcrt):	%.o : %.for
+%.o:		%.for
 		$(F90) $(FFLAG90) -c $<
+
+#$(forcrt):	%.o : %.for
+#		$(F90) $(FFLAG90) -c $<
+
 $(fcrt):	%.o : %.f
 		$(F90) $(FFLAG90) -c $<
 $(f90crt):	%.o : %.f90		
@@ -121,7 +125,7 @@ mtools:
 ctm:		
 		cd ./CutMcK ; make
 
-install:	$(C1)				
+install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
 		cd ./m_tools ; make install
