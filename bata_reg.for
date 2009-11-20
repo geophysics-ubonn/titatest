@@ -55,19 +55,6 @@ c$$$  A^TC_d^-1A+lamC_m
                ELSE
                   ata_reg(i,j) = ata(i,j) + DCMPLX(lam * smatm(i,1))
                END IF
-c$$$  IF (i==j) THEN   ! sparse C_m
-c$$$  ata_reg(i,j) = ata(i,j) + lam * smatm(i,1)
-c$$$  IF (i+1 < manz) ata_reg(i+1,j) = ata(i+1,j) + 
-c$$$  1                 lam * smatm(i+1,2)
-c$$$  IF (i+nx < manz) ata_reg(i+nx,j) = ata(i+nx,j) + 
-c$$$  1                 lam * smatm(i+nx,3)
-c$$$  IF (i-1 > 1) ata_reg(i-1,j) = ata(i-1,j) + 
-c$$$  1                 lam * smatm(i-1,2)
-c$$$  IF (i-nx > 1) ata_reg(i-nx,j) = ata(i-nx,j) + 
-c$$$  1                 lam * smatm(i-nx,3)
-c$$$  ELSE
-c$$$  ata_reg(i,j) = ata(i,j) 
-c$$$  END IF
             END DO
             WRITE (kanal,*)ata_reg(j,j),j
          END DO
@@ -78,7 +65,7 @@ c$$$  END IF
             DO i=1,manz
                IF (i==j) THEN   ! sparse C_m
                   ata_reg(i,j) = ata(i,j) + lam * smatm(i,smaxs+1)
-                  DO k=1,nachbar(i,0)
+                  DO k=1,nachbar(i,smaxs+1)
                      IF (nachbar(i,k) /= 0) ata_reg(nachbar(i,k),j) = 
      1                    ata(nachbar(i,k),j) + DCMPLX(lam * smatm(i,k))
                   END DO

@@ -73,7 +73,13 @@ c clearscreen
      1     'Speicher fuer model covariance: ',
      1     REAL ((manz**2*8.)/(1024.**3)),'GB'
       
-      IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,manz))
+      IF (.NOT.ALLOCATED (smatm))
+     1     ALLOCATE (smatm(manz,manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmsto'
+         errnr = 97
+         RETURN
+      END IF
 
       IF (alfx==0.) THEN
          Ix=esp_mit
@@ -262,7 +268,7 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
 
 c$$$      PRINT*,'Erasing border cell influence..'
 c$$$      DO i=1,manz
-c$$$         IF (nachbar(i,0)/=smaxs) THEN
+c$$$  IF (nachbar(i,smaxs+1)/=smaxs) THEN
 c$$$            PRINT*,'Damping for cell#',i
 c$$$            smatm(i,:)=0.
 c$$$            smatm(i,i)=1.

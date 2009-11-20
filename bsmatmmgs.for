@@ -110,7 +110,8 @@ c.........................................................................
                dist(k) = SQRT((sp(0,1) - sp(k,1))**2 +
      1              (sp(0,2) - sp(k,2))**2)
                ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !neu
-               alfgeo = DSQRT((alfx*DCOS(ang))**2 + (alfz*DSIN(ang))**2)
+               alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
+     1              (alfz*DSIN(ang))**2.)
 !     MGS Teil
                dum = CDABS(par(i)-par(nachbar(i,k)))
                dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 

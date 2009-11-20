@@ -34,10 +34,17 @@ c.........................................................................
 !.....................................................................
       
       smaxs=MAXVAL(selanz)
-      IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
+
+      IF (.NOT.ALLOCATED (smatm))ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmtri'
+         errnr = 97
+         RETURN
+      END IF
+
       smatm = 0d0               ! initialize smatm
       iflnr =0
-      
+      IF (elanz/=manz)PRINT*,'elanz/=manzSMATMTRI may be wrong'
       DO i=1,elanz
 
          sp(0:smaxs,:) = 0.

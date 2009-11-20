@@ -15,7 +15,6 @@ c.....................................................................
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
-      INCLUDE 'model.fin'       ! fuer manz
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
