@@ -144,7 +144,7 @@ c     GGF. RUECKTRANSFORMATION
                   dum = dum / dcmplx(pi)
 
                end if
-
+c        hier koennte auch eine mittelung passieren
                sens(i,mnr(iel)) = sens(i,mnr(iel))
      1              + dum * sigma(iel)/volt(i)
             end do

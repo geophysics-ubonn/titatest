@@ -112,6 +112,7 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
                   END IF
                END IF
                sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
+c    hier koennte mittelung passieren
                m0(mnr(i)) = cdlog(sigma(i))
             ELSE                
 !     or let it stay at zero and take background cond
