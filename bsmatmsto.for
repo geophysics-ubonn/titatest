@@ -147,16 +147,8 @@ c     covTT=0
          end do
       end do
 
-c     Berechne nun (komponentenweise)
-c     CovTT = sqrt(CovTT)
-
-c     Berechne nun (komponentenweise)
-c     CovTT = var*exp(-CovTT)
-
-
       exc=.TRUE.
-      INQUIRE(FILE='tmp.smatmi',EXIST=ex)
-
+      INQUIRE(FILE='tmp.smatmi',EXIST=ex) ! already an inverse c_m ?
       IF (ex) THEN
          PRINT*,'found tmp.smatmi'
          CALL get_unit(ifp)
@@ -173,83 +165,60 @@ c     CovTT = var*exp(-CovTT)
       END IF
 
       IF (exc) THEN
-         PRINT*,'bestimme nun inv{C_m}'
-         IF (nx==-1) THEN
-            PRINT*,'   DGESV (LAPACK)... '
-            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-            IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
-            covTT=0.0
-            DO i=1,manz
-               covTT(i,i)=1.0
-            END DO
+         PRINT*,'bestimme nun C_m^-1'
+c$$$         IF (nx==-1) THEN
+c$$$            PRINT*,'   DGESV (LAPACK)... '
+c$$$            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+c$$$            IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
+c$$$            covTT=0.0
+c$$$            DO i=1,manz
+c$$$               covTT(i,i)=1.0
+c$$$            END DO
 c$$$            CALL DPOTRF('U',manz,smatm,manz,errorflag)
 c$$$            IF (errorflag/=0) THEN
 c$$$               PRINT*,'there was something wrong..',errorflag
 c$$$               STOP
 c$$$            END IF
-            PRINT*,'   Invertiere smatm ... '
+c$$$            PRINT*,'   Invertiere smatm ... '
 c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
 c$$$            
 c$$$            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
 c$$$     1           manz,errorflag)
-            CALL DGESV(manz,manz,smatm,manz,IPIV,covTT,
-     1           manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..'
-               PRINT*,'Zeile::',covTT(abs(errorflag),:)
-               PRINT*,'Spalte::',covTT(:,abs(errorflag))
-               errnr = 108
-            END IF
-            smatm=covTT
-         ELSE IF (nx==-2) THEN        
-            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-            PRINT*,'   Cholesky factorization (Schwarz)... '
-            CALL chold(smatm,covTT,manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..',errorflag
-               STOP
-            END IF
-            PRINT*,'   Invertiere smatm ... '
-            CALL linv(covTT,smatm,manz)
-         ELSE IF (nx==-3) THEN        
-            PRINT*,'   Find inv ... '
-            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-            covTT=smatm
-            CALL findinv(CovTT,smatm,manz,ErrorFlag)
-         ELSE IF (nx==-4) THEN
-            PRINT*,'   Cholesky dec (LAPACK)... '
-            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-            IF (.NOT.ALLOCATED (IPIV)) ALLOCATE (IPIV(manz))
-            covTT=0.0
-            DO i=1,manz
-               covTT(i,i)=1.0
-            END DO
-            CALL DPOTRF('U',manz,smatm,manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong decomposing',errorflag
-               PRINT*,'Zeile::',covTT(abs(errorflag),:)
-               PRINT*,'Spalte::',covTT(:,abs(errorflag))
-               errnr = 107
-               RETURN
-            END IF
-            PRINT*,'   solving linear system.. '
-c$$$            CALL MDPOTRI('U',manz,smatm,manz,errorflag)
-c$$$            
-            CALL DPOTRS('U',manz,manz,smatm,manz,covTT,
-     1           manz,errorflag)
-            IF (errorflag/=0) THEN
-               PRINT*,'there was something wrong..',abs(errorflag)
-               PRINT*,'Zeile::',covTT(abs(errorflag),:)
-               PRINT*,'Spalte::',covTT(:,abs(errorflag))
-               errnr = 108
-               RETURN
-            END IF
-            smatm=covTT
-         ELSE
-            PRINT*,'   Gauss elemination ... '
+c$$$            CALL DGESV(manz,manz,smatm,manz,IPIV,covTT,
+c$$$     1           manz,errorflag)
+c$$$            IF (errorflag/=0) THEN
+c$$$               PRINT*,'there was something wrong..'
+c$$$               PRINT*,'Zeile::',covTT(abs(errorflag),:)
+c$$$               PRINT*,'Spalte::',covTT(:,abs(errorflag))
+c$$$               errnr = 108
+c$$$            END IF
+c$$$            smatm=covTT
+c$$$         ELSE IF (nx==-2) THEN        
+c$$$            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+c$$$            PRINT*,'   Cholesky factorization (Schwarz)... '
+c$$$            CALL chold(smatm,covTT,manz,errorflag)
+c$$$            IF (errorflag/=0) THEN
+c$$$               PRINT*,'there was something wrong..',errorflag
+c$$$               STOP
+c$$$            END IF
+c$$$            PRINT*,'   Invertiere smatm ... '
+c$$$            CALL linv(covTT,smatm,manz)
+c$$$         ELSE IF (nx==-3) THEN        
+c$$$            PRINT*,'   Find inv ... '
+c$$$            IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
+c$$$            covTT=smatm
+c$$$            CALL findinv(CovTT,smatm,manz,ErrorFlag)
+c$$$         ELSE
+c$$$            PRINT*,'   Gauss elemination ... '
 c     Berechne nun die Inverse der Covarianzmatrix!!!
-            CALL gauss(manz,errorflag)
+         CALL gauss_dble(smatm,manz,errorflag)
+         IF (errorflag/=0) THEN
+            fetxt='there was something wrong..'
+            PRINT*,'Zeile::',smatm(abs(errorflag),:)
+            PRINT*,'Spalte::',smatm(:,abs(errorflag))
+            errnr = 108
          END IF
+c$$$  END IF
          IF (errorflag==0) THEN
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'got inverse and write out'
@@ -265,7 +234,7 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
             RETURN
          END IF     
       END IF
-
+      
 c$$$      PRINT*,'Erasing border cell influence..'
 c$$$      DO i=1,manz
 c$$$  IF (nachbar(i,smaxs+1)/=smaxs) THEN
@@ -276,7 +245,7 @@ c$$$         END IF
 c$$$      END DO
 
       IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
-
+      
       CALL SYSTEM_CLOCK (c2,i)
 
       l = (c2-c1)/i ! Gesamt Sekunden

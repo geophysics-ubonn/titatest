@@ -41,7 +41,7 @@ c     Standartabweichung.-..
       real            * 4     stab
 c.....................................................................
 
- 100  FORMAT(2(4X,I6),2(2x,G12.3))
+ 100  FORMAT(2(4X,I6),2(1x,G14.7))
       pi = dacos(-1d0)
 
 c     'datei' oeffnen

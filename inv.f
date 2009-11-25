@@ -103,6 +103,8 @@ c     Startparameter setzen
       it     = 0
       itr    = 0
       rmsalt = 0d0
+      lamalt = 1.
+      bdpar = 1.
       lsetup = .true.
       lsetip = .false.
       lip    = .false.
@@ -314,10 +316,8 @@ c     Kontrollvariablen ausgeben
       call kont2(lsetup)
       if (errnr.ne.0) goto 999
 
-C      llam=(bdpar<=stpmin.AND.it>0)
 c     ABBRUCHBEDINGUNGEN
       if (llam.and..not.lstep) then
-
 c     Polaritaeten checken
          call chkpol(lsetup)
 
@@ -334,8 +334,8 @@ c     tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
 c     Maximale Anzahl an Iterationen ?
          if (it.ge.itmax) errnr2=79
 
-c     Minimal stepsize erriecht ?
-         if (bdpar<=stpmin) errnr2=109
+c     Minimal stepsize erreicht ?
+         if (bdpar < bdmin) errnr2=109
 
 c     Ggf. abbrechen oder "final phase improvement"
          if (errnr2.ne.0) then
@@ -401,7 +401,6 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
       end if
 
       if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
-
 c     Iterationsindex hochzaehlen
          it = it+1
 
@@ -414,6 +413,9 @@ c     Parameter zuruecksetzen
 
 c     Daten-RMS speichern
          rmsalt = nrmsd
+
+c     Lambda speichen
+         IF (it>1) lamalt = lam ! mindestens einmal konvergiert
 
 c     Felder speichern
          do j=1,elanz
@@ -439,7 +441,7 @@ c     SENSITIVITAETEN berechnen
             call bsensi()
          end if
 
-         if (lsetup.OR.ltri == 2) then
+         if (lsetup.OR.ltri == 3.OR.ltri == 4) then
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -458,16 +460,24 @@ c     Rauhigkeitsmatrix belegen
             ELSE IF (ltri == 1) THEN
                WRITE (*,'(a)')' Triangular smooth'
                CALL bsmatmtri
-            ELSE IF (ltri == 2) THEN
-               WRITE (*,'(a)')' Triangular MGS'
+            ELSE IF (ltri >= 2 .AND. ltri < 5) THEN
+               IF (ltri == 2) WRITE (*,'(a)')
+     1              ' Triangular pure MGS '
+               IF (ltri == 3) WRITE (*,'(a)')
+     1              ' Triangular sens weighted MGS'
+               IF (ltri == 4) WRITE (*,'(a)')
+     1              ' Triangular sens weighted MGS mean'
                CALL bsmatmmgs
+            ELSE IF (ltri == 5) THEN
+               WRITE (*,'(a)')' Triangular Total (beta) variance'
+               CALL bsmatmtv
             ELSE IF (ltri == 10) THEN
                WRITE (*,'(a)')' Triangular Stochastic'
                CALL bsmatmsto
                if (errnr.ne.0) goto 999
             ELSE
                WRITE (*,'(a)')' Error:: '//
-     1              'Regularization can just be 0,1,2 or 10'
+     1              'Regularization can just be 0,1,2,3,4 or 10'
                STOP
             END IF 
          end if
@@ -481,7 +491,11 @@ c     Felder zuruecksetzen
             sigmaa(j) = sgmaa2(j)
          end do
       end if
-
+      IF (itmax == 0) THEN
+         errnr2 = 109
+         print*,'Only precalcs'
+         GOTO 30
+      END IF 
 c     'kpot' freigeben
       if (ldc) then
          DEALLOCATE(kpotdc)
@@ -501,12 +515,12 @@ c     "Regularisierungsschleife" initialisieren und step-length zuruecksetzen
 
 c     Regularisierungsindex hochzaehlen
             itr = itr+1
-            if ((((nrmsd.lt.rmsreg.and.itr.le.nlam).or.
+            if (((((nrmsd.lt.rmsreg.and.itr.le.nlam).or.
      1           (dlam.gt.1d0.and.itr.le.nlam)).and.
      1           (.not.ldlamf.or.dlalt.le.1d0).and.
      1           dabs(1d0-rmsreg/nrmsdm).gt.mqrms).or.
-     1           rmsreg.eq.0d0) then
-
+     1           (rmsreg.eq.0d0)).AND.
+     1           (bdpar >= bdmin)) then
 c     Regularisierungsparameter bestimmen
                if (lsetup.or.lsetip) then
 
@@ -624,8 +638,11 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          if (errnr.ne.0) goto 999
       end if
       IF (lcov1) THEN
-         WRITE (*,'(/a,G10.3,a)',ADVANCE='no')
+         IF (it<2) lam = lamalt
+
+         WRITE (*,'(/a,G10.3,a/)')
      1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
+         print*,mswitch,BTEST(mswitch,4),BTEST(mswitch,5)
          IF (BTEST(mswitch,5)) THEN 
             READ (*,*)fetxt
             IF (fetxt/='')READ(fetxt,*)lam
@@ -732,7 +749,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
                   CALL bmcm2_dc(kanal)
                   if (errnr.ne.0) goto 999
                ELSE
-                  CALL bmcm2_dc(kanal)
+                  CALL bmcm2(kanal)
                   if (errnr.ne.0) goto 999
                END IF
 

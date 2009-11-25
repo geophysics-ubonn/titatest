@@ -21,6 +21,8 @@ c.........................................................................
 !     Hilfsvariablen 
       INTEGER                                      :: kanal
       INTEGER                                      :: i,j,k
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
+      REAL(KIND(0D0))                              :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A
@@ -29,7 +31,7 @@ c$$$  A^TC_d^-1A
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
-
+      ALLOCATE(dig(manz))
       WRITE (kanal,*)manz
       DO k=1,manz
          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
@@ -41,12 +43,20 @@ c$$$  A^TC_d^-1A
             END DO
             IF (k /= j) ata(j,k) = ata(k,j)
          END DO
-         WRITE (kanal,*)ata(k,k),k
+         dig(k) = DBLE(ata(k,k))
       END DO
 
-      PRINT*,MINVAL(REAL(ata)),MAXVAL(REAL(ata))
+      dig_min = MINVAL(dig)
+      dig_max = MAXVAL(dig)
 
+      PRINT*,dig_min,dig_max
+      dig = dig/dig_max ! normierung
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)*dig_max
+      END DO
       CLOSE(kanal)
+
       errnr = 0
  999  RETURN
       

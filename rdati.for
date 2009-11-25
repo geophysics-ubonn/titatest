@@ -91,7 +91,7 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
          CALL get_unit(ifp1)
          OPEN (ifp1,FILE='tmp.mynoise_rho',STATUS='replace')
          CALL get_unit(ifp2)
-         IF (.NOT. ldc) OPEN (ifp1,FILE='tmp.mynoise_pha',
+         IF (.NOT. ldc) OPEN (ifp2,FILE='tmp.mynoise_pha',
      1        STATUS='replace')
          WRITE (*,'(A)',advance='no')' Initializing noise '
          ALLOCATE (rnd_r(nanz))
