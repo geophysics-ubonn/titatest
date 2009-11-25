@@ -1,11 +1,12 @@
       subroutine bsmatmmgs      !MGS
 c     
-c     Unterprogramm belegt die Rauhigkeitsmatrix....
-c     Fuer beliebige Triangulierung
+c     Unterprogramm belegt die Rauhigkeitsmatrix ala Portniaguine und Zhdanov [1999]
+c     Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
+c     Copyright by Andreas Kemna 2009
 c     
-c     Andreas Kemna                                            03-Nov-2009
+c     Andreas Kemna/Roland Martin                              03-Nov-2009
 c     
-c     Letzte Aenderung   RM                                    03-Nov-2009
+c     Letzte Aenderung   RM                                    23-Nov-2009
 c     
 c.........................................................................
       USE alloci
@@ -28,6 +29,7 @@ c.........................................................................
       REAL(KIND(0D0)) :: dist(selmax) ! Abstand der Schwerpunkte
       REAL(KIND(0D0)) :: sp(0:selmax,2) ! Schwerpunktkoordinaten
       REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
+      REAL(KIND(0D0)) :: snsmn  !Mittlere Sensitivität
       REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
       REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
@@ -63,12 +65,16 @@ c.........................................................................
          END DO
       ENDIF
       dum = MAXVAL(csens)
-!     Summe der Sensitivitaeten normieren
-!      WRITE(*,*) 'dum lip ldc',dum,lip,ldc
-
       IF (dum.gt.1d-12) THEN
          csens = csens/dum
       END IF
+      snsmn = 0.
+      DO i=1,manz
+         snsmn = snsmn + csens(i)
+      END DO
+      snsmn = snsmn / DBLE(manz)
+!     Summe der Sensitivitaeten normieren
+      WRITE(*,*) 'dum snsmn',dum,snsmn
 
       smaxs=MAXVAL(selanz)
       IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
@@ -78,7 +84,7 @@ c.........................................................................
 
          sp(0:smaxs,:) = 0.
          
-         DO k=1,smaxs           ! Schwerpunkt des mittleren Elementes
+         DO k=1,smaxs           ! Schwerpunkt berechnen 
             sp(0,1) = sp(0,1) + sx(snr(nrel(i,k)))
             sp(0,2) = sp(0,2) + sy(snr(nrel(i,k)))
          END DO
@@ -110,11 +116,19 @@ c.........................................................................
                dist(k) = SQRT((sp(0,1) - sp(k,1))**2 +
      1              (sp(0,2) - sp(k,2))**2)
                ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !neu
-               alfgeo = DSQRT((alfx*DCOS(ang))**2 + (alfz*DSIN(ang))**2)
+               alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
+     1              (alfz*DSIN(ang))**2.)
 !     MGS Teil
                dum = CDABS(par(i)-par(nachbar(i,k)))
-               dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 
-     1              DLOG10(csens(nachbar(i,k))) ) ))
+               IF (ltri == 2) THEN ! reines MGS
+                  dum = dum 
+               ELSE IF (ltri == 3) THEN ! sensitivitaetswichtung 1
+                  dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 
+     1                 DLOG10(csens(nachbar(i,k))) ) ))
+               ELSE IF (ltri == 4) THEN ! sensitivitaetswichtung und mittelwert
+                  dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 
+     1                 DLOG10(csens(nachbar(i,k))) ) / snsmn ))
+               END IF
                alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
 !     gesamt eintrag
                dum = edglen(k) / dist(k) * alfgeo * alfmgs

@@ -116,6 +116,8 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,*,err=999)'Regular grid       : ',(ltri==0)
       write(fpinv,*,err=999)'Triangular regu    : ',(ltri==1)
       write(fpinv,*,err=999)'Minimum grad supp  : ',(ltri==2)
+      write(fpinv,*,err=999)'MGS sens           : ',(ltri==3)
+      write(fpinv,*,err=999)'MGS sens mean      : ',(ltri==4)
       IF (ltri == 2)
      1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
       write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
@@ -149,7 +151,9 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(a,t50,g11.5)',err=999)
      1     ' Min. rel. decrease of data RMS :',mqrms
       write(fpinv,'(a,t50,g11.5)',err=999)
-     1     ' Min. stepsize (||\delta m||) :',stpmin
+     1     ' Min. steplength              :',stpmin
+      write(fpinv,'(a,t50,g11.5)',err=999)
+     1     ' Min. stepsize (||\delta m||) :',bdmin
       write(fpinv,'(a,t50,g11.5)',err=999)
      1     ' Min. error in relaxation :',eps
       write(fpinv,'(a,t50,i5)',err=999)

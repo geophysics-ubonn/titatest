@@ -91,7 +91,7 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
          CALL get_unit(ifp1)
          OPEN (ifp1,FILE='tmp.mynoise_rho',STATUS='replace')
          CALL get_unit(ifp2)
-         IF (.NOT. ldc) OPEN (ifp1,FILE='tmp.mynoise_pha',
+         IF (.NOT. ldc) OPEN (ifp2,FILE='tmp.mynoise_pha',
      1        STATUS='replace')
          WRITE (*,'(A)',advance='no')' Initializing noise '
          ALLOCATE (rnd_r(nanz))
@@ -262,7 +262,7 @@ c     ak                    write(*,*) i
          wmatd(i) = 1d0/(stabw*stabw)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
          IF (lfphai) THEN
-            wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
+c RM            wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
             wmatdp(i)=1d0/(stabwp*stabwp)
          END IF
          wdfak(i) = 1

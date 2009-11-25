@@ -29,7 +29,7 @@ PROG	        = CutMcK
 PR1		= ctm
 
 # default targets
-all:		$(PR1)
+all:		$(PR1) install
 
 .SILENT:	cbn
 #################################################
@@ -41,7 +41,7 @@ OBJF90		= get_error.o
 $(OBJ):		%.o : %.f	
 		$(F90) $(FFLAG90) -c $<
 # dependencies	
-get_error.o:	error.txt get_error.f90
+$(OBJF90):	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
 
@@ -56,7 +56,7 @@ cbn:
 			mkdir ~/bin; \
 		fi
 
-ctm:		$(OBJ) 
+ctm:		$(OBJ) $(OBJF90)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
 		$(OBJ) $(OBJF90) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)

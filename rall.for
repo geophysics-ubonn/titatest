@@ -135,11 +135,13 @@ c     ak MMAJ
 c     ak        mqrms = 5d-2
 c     CG-Epsilon
       eps = 1d-4
-c     Mindest-step-size
+c     Mindest-step-length
       stpmin = 1d-3
+c     Minimale stepsize (bdpar)
+      bdmin = 1d-3
 c     Regularisierungsparameter
 c     ak Default
-      nlam   = 20
+      nlam   = 30
 c     ak Default
       fstart = 0.5d0
       fstop  = 0.9d0
@@ -154,41 +156,61 @@ c     ak        fstop  = 0.8d0
       iregus = 0
 c#########################################################
 c Read in input values..
-
+      fetxt = 'rall -> grid file'
       read(fpcfg,*,end=1001,err=98) mswitch
  98   read(fpcfg,'(a80)',end=1001,err=999) delem
+      fetxt = 'rall -> electrode file'
       read(fpcfg,'(a80)',end=1001,err=999) delectr
+      fetxt = 'rall -> spannungs file'
       read(fpcfg,'(a80)',end=1001,err=999) dstrom
+      fetxt = 'rall -> Inversionsverzeichnis'
       read(fpcfg,'(a60)',end=1001,err=999) ramd
 c     diff+<
+      fetxt = 'rall -> Differenz inversion'
       read(fpcfg,*,end=1001,err=999) ldiff
+      fetxt = 'rall -> Diff. Messspannung'
       read(fpcfg,'(a80)',end=1001,err=999) dd0
+      fetxt = 'rall -> Diff. Modell (auch prior)'
       read(fpcfg,'(a80)',end=1001,err=999) dm0
+      fetxt = 'rall -> Diff. Modellierungen'
       read(fpcfg,'(a80)',end=1001,err=999) dfm0
 
-      IF (ldiff) THEN
+      IF (dm0 /= '') THEN
+         lstart = .TRUE.
+         dstart = dm0
+      END IF
+      IF (ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
          lprior = .TRUE.
-         lstart = (dd0 == ''.AND.dfm0 == '')
-         IF (lstart) dstart = dm0
-         ldiff = .NOT.lstart
+         ldiff = .FALSE.
       END IF
 c     diff+>
+      fetxt = 'rall -> Gitter nx'
       read(fpcfg,*,end=1001,err=99) iseedpri,stabmpri
       lnsepri = lprior
  99   read(fpcfg,*,end=1001,err=999) nx
+      fetxt = 'rall -> Gitter nz'
       read(fpcfg,*,end=1001,err=999) nz
+      fetxt = 'rall -> Anisotropie /x'
       read(fpcfg,*,end=1001,err=999) alfx
+      fetxt = 'rall -> Anistotropie /y'
       read(fpcfg,*,end=1001,err=999) alfz
+      fetxt = 'rall -> Maximale Iterationen'
       read(fpcfg,*,end=1001,err=999) itmax
 c     ak        read(fpcfg,*,end=1001,err=999) nrmsdm
+      fetxt = 'rall -> DC/IP Inversion'
       read(fpcfg,*,end=1001,err=999) ldc
 c     ak        read(fpcfg,*,end=1001,err=999) lsr
+      fetxt = 'rall -> Robuste Inversion'
       read(fpcfg,*,end=1001,err=999) lrobust
 c     ak        read(fpcfg,*,end=1001,err=999) lpol
+      fetxt = 'rall -> Finale Phasen Inversion'
       read(fpcfg,*,end=1001,err=999) lfphai
 c     ak        read(fpcfg,*,end=1001,err=999) lindiv
+      fetxt = 'rall -> Relativer Fehler Widerstand'
       read(fpcfg,*,end=1001,err=999) stabw0
+      fetxt = 'rall -> Absoluter Fehler Widerstand'
       read(fpcfg,*,end=1001,err=999) stabm0
+      fetxt = 'rall -> Finale Phasen Inversion'
       read(fpcfg,*,end=1001,err=999) stabpA1
       read(fpcfg,*,end=1001,err=999) stabpB
       read(fpcfg,*,end=1001,err=999) stabpA2
@@ -245,7 +267,7 @@ c$$$      else if (alfx.le.0d0.or.alfz.le.0d0) then
 c$$$         fetxt = ' '
 c$$$         errnr = 96
 c$$$         goto 999
-      else if (itmax<1.or.itmax.ge.100) then
+      else if (itmax<0.or.itmax.ge.100) then
          fetxt = ' '
          errnr = 61
          goto 999

@@ -71,8 +71,11 @@ c Minimale "L1-ratio" (Grenze der "robust inversion")
 c "L1-ratio"
         real            * 8     l1rat
 
-c Betrag des Verbesserungsvektors
+c Norm des Verbesserungsvektors (stepsize)
         real            * 8     bdpar
+
+c Minimale step size 
+        real            * 8     bdmin
 
 c CG-Epsilon
         real            * 8     eps
@@ -153,6 +156,7 @@ c.....................................................................
      1                  nrmsdm,
      1                  mqrms,
      1                  bdpar,
+     1			bdmin,
      1                  eps,
      1                  alfx,
      1                  alfz,

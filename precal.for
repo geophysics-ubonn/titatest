@@ -60,6 +60,8 @@ c.....................................................................
       lrandb = .false.
       iel    = 0
 
+      CALL bsytop
+
       do i=1,typanz
          ntyp = typ(i)
          nkel = selanz(i)

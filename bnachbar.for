@@ -12,12 +12,13 @@ c
 c     Letzte Aenderung                                         07-Aug-2009
 c     
 c.....................................................................
-
+      use alloci
       IMPLICIT none
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
       INCLUDE 'model.fin'       ! fuer manz
+      INCLUDE 'err.fin'       ! fuer manz
 
 c     PROGRAMMINTERNE PARAMETER:----------------------------------------
 c     Indexvariablen
@@ -28,11 +29,14 @@ c     Maximale knotenanzahl nicht entarteter Elemente
       INTEGER :: smaxs
 c-----------------------------------------------------------------------
 
-      smaxs = selanz(1)
+      smaxs = MAXVAL(selanz)
 
-      IF (smaxs /= MAXVAL(selanz)) THEN
-         PRINT*,'smaxs/=MAXVAL(selanz)!! check grid file please'
-         STOP
+      IF (.NOT.ALLOCATED (nachbar)) 
+     1     ALLOCATE (nachbar(manz,smaxs+1),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem nachbar in bnachbar'
+         errnr = 97
+         RETURN
       END IF
 
       nachbar = 0
@@ -60,7 +64,7 @@ c-----------------------------------------------------------------------
      1                 (ik1==jk2.AND.ik2==jk1) ) THEN
 
                      nachbar(i,ik) = j ! Element teilt kante
-                     nachbar(i,0) = nachbar(i,0)+1 ! Anzahl der Nachbarn
+                     nachbar(i,smaxs+1) = nachbar(i,smaxs+1)+1 ! Anzahl der Nachbarn
 
                   END IF
 

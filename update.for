@@ -280,7 +280,8 @@ c     i.e Stepsize = ||\delta m||
          bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
       end do
 
-!!$      bdpar = dsqrt(bdpar/dble(manz))
+c$$$      bdpar = dsqrt(bdpar/dble(manz))
 
       return
+
       end

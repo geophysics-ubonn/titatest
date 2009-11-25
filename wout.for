@@ -93,17 +93,6 @@ c     Schwerpunktkoordinaten der Elemente bestimmen
       end do
 
 c     'dsigma' modifizieren
-c$$$ 10   lit  = int(log10(real(itmax)))+1
-c$$$      htxt = filpat(dsigma,idum2,1,slash(1:1))
-c$$$      idum = idum2+index(dsigma(idum2+1:80),'.')-1
-c$$$      if ((idum-idum2-1).gt.(8-lit)) then
-c$$$         fetxt = dsigma
-c$$$         errnr = 15
-c$$$         goto 999
-c$$$      end if
-c$$$
-c$$$      htxt2 = intcha(it,lit)
-c$$$      htxt  = dsigma(1:idum)//htxt2(1:lit)//dsigma(idum+1:idum+4)
 
  10   IF (it>9) THEN
          WRITE (ci,'(I2)')it
@@ -153,19 +142,6 @@ c     diff+>
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
 
-c$$$  
-c$$$  INQUIRE (FILE='tmp.matinfo',EXIST=exi)
-c$$$  IF (exi) THEN
-c$$$  OPEN (kanal,FILE='tmp.matinfo',STATUS='old',
-c$$$  1        POSITION='append')
-c$$$  WRITE (kanal,*)TRIM(fetxt)
-c$$$  CLOSE (kanal)
-c$$$  ELSE
-c$$$  OPEN (kanal,FILE='tmp.matinfo',STATUS='new')
-c$$$  WRITE (kanal,*)TRIM(fetxt)
-c$$$  CLOSE (kanal)
-c$$$  END IF
-
       OPEN (kanal,FILE=fetxt,status='replace')
       WRITE (kanal,'(I7)',err=1000) elanz
       DO i=1,elanz
@@ -199,14 +175,6 @@ c     'dvolt' modifizieren
       htxt = filpat(dvolt,idum2,1,slash(1:1))
       idum = idum2+index(dvolt(idum2+1:80),'.')-1
 
-c$$$      if ((idum-idum2-1).gt.(8-lit)) then
-c$$$         fetxt = dvolt
-c$$$         errnr = 15
-c$$$         goto 999
-c$$$      end if
-c$$$
-c$$$      htxt2 = intcha(it,lit)
-c$$$      htxt  = dvolt(1:idum)//htxt2(1:lit)//dvolt(idum+1:idum+4)
       htxt  = dvolt(1:idum)//ci//dvolt(idum+1:idum+4)
 
       fetxt = htxt

@@ -1,12 +1,12 @@
-      SUBROUTINE bres_dc(kanal,ols)
+      SUBROUTINE bres_dc(kanal)
 c     
 c     Unterprogramm berechnet Aufloesungsmatrix
-c     (A^TC_d^-1A + C_m^-1)^-1 RES = A^TC_d^-1A
+c     RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 c     Fuer beliebige Triangulierung
 c     
 c     Andreas Kemna                                            02-Nov-2009
 c     
-c     Letzte Aenderung    RM                                   06-Nov-2009
+c     Letzte Aenderung    RM                                   23-Nov-2009
 c     
 c.........................................................................
       USE alloci
@@ -21,69 +21,37 @@ c.........................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
       INTEGER                                      :: i,kanal
-      REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE   :: work
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: ipiv
-      REAL(KIND(0D0))                              :: ipiv_min,ipiv_max
-      LOGICAL,OPTIONAL                             :: ols 
-!     switch solv ordinary linear system or not^^
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
+      REAL(KIND(0D0))                              :: dig_min,dig_max
 !.....................................................................
 
-c$$$  solve (A^TC_d^-1A + C_m^-1) x = A^TC_d^-1A
+c$$$  calc RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
 
-      ALLOCATE (ipiv(manz),STAT=errnr)
-      IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem IPIV in bresdc'
-         errnr = 97
-         RETURN
-      END IF
-      
-      IF (.NOT.ols) THEN
-         print*,'ueber matmul..'
-         ata_reg_dc = MATMUL(cov_m_dc,ata_dc)
-      ELSE
-         ALLOCATE (work(manz,manz),STAT=errnr)
-         IF (errnr/=0) THEN
-            WRITE (*,'(/a,G10.3,a/)')'Allocation problem work'//
-     1           ' in bres_dc',REAL(manz)**2.*8./(1024.**3.),' GB'
-            errnr = 97
-            RETURN
-         END IF
-         work = ata_reg_dc      ! work is replaced by LU decomposition
-c$$$  setting up RHS, overwriting atadcreg
-         ata_reg_dc = ata_dc
-c$$$  Solving Linear System Ax=B -> x=A^-1B
-         WRITE (*,'(a)')ACHAR(9)//'Solving Ax=B'
-         CALL DGESV(manz,manz,work,manz,ipiv,ata_reg_dc,manz,errnr)
-         IF (errnr /= 0) THEN
-            PRINT*,'Zeile::',ata_reg_dc(abs(errnr),:)
-            PRINT*,'Spalte::',ata_reg_dc(:,abs(errnr))
-            errnr = 108
-            RETURN
-         END IF
-         DEALLOCATE (work)
-      END IF
+      ata_reg_dc = MATMUL(cov_m_dc,ata_dc) ! that's it...
+
+      ALLOCATE (dig(manz)) !prepare to write out main diagonal
 
       DO i=1,manz
-         ipiv(i) = ata_reg_dc(i,i)
+         dig(i) = ata_reg_dc(i,i)
       END DO
       
-      ipiv_min = MINVAL(ipiv) 
-      ipiv_max = MAXVAL(ipiv)
+      dig_min = MINVAL(ABS(dig))
+      dig_max = MAXVAL(ABS(dig))
       
-      PRINT*,ipiv_min,ipiv_max
+      PRINT*,dig_min,dig_max
       
-      ipiv = ipiv/ipiv_max
+      dig = dig/dig_max
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)log10(abs(ipiv(i))),ipiv(i)*ipiv_max
+         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)*dig_max
       END DO
       CLOSE (kanal)
       errnr = 0
-      DEALLOCATE (ipiv)
+      DEALLOCATE (dig)
  999  RETURN
 
       END

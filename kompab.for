@@ -89,7 +89,8 @@ c     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
 
 c     Ggf. Fehlermeldung
                   if (idif.gt.mb) then
-                     print*,idif,mb
+                     WRITE (fetxt,*)
+     1                    'kompab idif',idif,' iel ',iel
                      fetxt = ' '
                      errnr = 19
                      goto 1000
@@ -120,7 +121,6 @@ c     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                         if (nnp.ne.nzp)
      1                       b(nnp) = b(nnp) + dum2 * pota(nzp)
                      end if
-
                   end if
                end do
             end do

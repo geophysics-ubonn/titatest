@@ -37,7 +37,7 @@ c.....................................................................
 
          if (dum.le.0d0) then
             WRITE (fetxt,'(a,I6,A,I6)')
-     1           'scalab',i,'idi',idi
+     1           'scaldc',i,'idi',idi
             errnr = 27
             goto 1000
          end if

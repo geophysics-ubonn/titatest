@@ -17,12 +17,12 @@ FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
 FLIBMPI         = 
-FLIBLINBLAS     = -llapack -lblas
-#FLIBLINBLAS     = 
 FLIB            = -lm
 FLIBF77         = -lm
 
 # definition der default targets..
+#  BLAS und LAPACK tools
+LALIB		= -llapack -lblas
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # macht CRTomo
@@ -35,15 +35,15 @@ PR3		= ctm
 PRM		= mtools
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM)
+all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
 # CRTomo objects
-f90crt		= alloci.o chold.o gauss.o get_unit.o \
+f90crt		= alloci.o chold.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  linv.o make_noise.o
 
-fcrt		= mdpotri.o mdpotrf.o inv.o
+fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o beta.o bkfak.o blam0.o bnachbar.o \
 		  bpdc.o bpdcsto.o bpdctri.o bp.o bpot.o bpsto.o \
@@ -59,7 +59,7 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o bsmatmmgs.o \
+		  wpot.o wsens.o bsmatmmgs.o bsytop.o bsmatmtv.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
 		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o
 # CRMod objects
@@ -69,7 +69,7 @@ forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bvolt.o bvolti.o chareal.o chkpol.o \
-		  choldc.o chol.o elem1.o \
+		  choldc.o chol.o elem1.o bsytop.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
@@ -81,8 +81,12 @@ forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  wpot.o wsens.o
 ################################################################
 # rules
-$(forcrt):	%.o : %.for
+%.o:		%.for
 		$(F90) $(FFLAG90) -c $<
+
+#$(forcrt):	%.o : %.for
+#		$(F90) $(FFLAG90) -c $<
+
 $(fcrt):	%.o : %.f
 		$(F90) $(FFLAG90) -c $<
 $(f90crt):	%.o : %.f90		
@@ -95,6 +99,8 @@ $(ferr):	error.txt get_error.f90
 ###############################################################
 .SILENT:	cbn
 ###################################
+LALIB:		./libla/%.f	
+		make -C libla
 
 cbn:		
 		echo "Pruefe ~/bin"
@@ -106,13 +112,13 @@ cbn:
 		fi
 
 crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
-		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRTomo \
-		$(f90crt) $(forcrt) $(fcrt) $(ferr)
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo \
+		$(f90crt) $(forcrt) $(fcrt) $(ferr) $(LALIB)
 		$(CP) CRTomo $(WPATH)
 
 crm:		$(C1) $(f90crt) $(forcrm) $(fcrm) $(ferr)
-		$(F90) $(FFLAG90) $(FFLAGMPI) $(FLIBLINBLAS) -o CRMod \
-		$(f90crt) $(forcrm) $(fcrm) $(ferr)
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod \
+		$(f90crt) $(forcrm) $(fcrm) $(ferr) $(LALIB)
 		$(CP) CRMod $(WPATH)
 
 mtools:
@@ -121,7 +127,7 @@ mtools:
 ctm:		
 		cd ./CutMcK ; make
 
-install:	$(C1)				
+install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)
 		$(CP) CRMod $(WPATH)
 		cd ./m_tools ; make install
