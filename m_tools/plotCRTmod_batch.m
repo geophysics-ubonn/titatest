@@ -219,7 +219,8 @@ else
     climits=[romin romax];
 end
 
-patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
 caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
