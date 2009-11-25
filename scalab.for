@@ -36,7 +36,8 @@ c.....................................................................
          dum = cdabs(a(idi))
 
          if (dum.le.0d0) then
-            fetxt = ' '
+            WRITE (fetxt,*)
+     1           'scalab idi',idi,'i',i
             errnr = 27
             goto 1000
          end if

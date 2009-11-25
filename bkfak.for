@@ -125,8 +125,7 @@ c     tmp                write(*,'(i4)') i
 c     tmp                dum = 1d-12
          end if
 
-         dum     = 4d0*pi / dum
-         kfak(i) = dum
+         kfak(i) = 4d0*pi / dum
          
       end do
 

@@ -60,6 +60,9 @@ c     Schalter ob weiterer Datensatz modelliert werden soll
 c     Schalter ob mit K-Faktor modelliert werden soll (default ohne)
       logical         * 4     wkfak
 
+c     Schalter ob nur analytisch modelliert werden soll (default ohne)
+      logical         * 4     lana
+
 c     Indexvariablen
       integer         * 4     j,k,l,c1,c2,se,mi,st,ta
 
@@ -86,7 +89,8 @@ c     ak        swrtr = 0
 c     Sonstiges
       lkpot = .false.
       wkfak = .false.
-      lprior = .false.
+      lana = .FALSE.
+      lprior = .false. ! kann prior modell verrauschen
       lnsepri = .false.
 c     ak        lkpot = .true.
 c     ak        dkpot = '..\tmp\kpot.ctr'
@@ -115,13 +119,17 @@ c     'crmod.cfg' einlesen
       read(12,*,end=1001,err=999) nsink
       read(12,*,end=1001,err=999) lrandb2
       read(12,'(a80)',end=1001,err=999) drandb
-      read(12,'(L)',end=100,err=100) wkfak
+      fetxt = 'reading mswitch'
+      read(12,'(I2)',end=101,err=100) mswitch
 
-      IF ( wkfak ) GOTO 101
+      GOTO 101
 
- 100  PRINT*,'Modelling without K-Faktor!'
-      BACKSPACE (12)
- 101  IF (wkfak) PRINT*,'Modelling with K-Faktor!'
+ 100  BACKSPACE (12)
+
+ 101  lana = BTEST(mswitch,0)
+      wkfak = BTEST(mswitch,1)
+      lsr = BTEST(mswitch,2)
+      
 
 
 c     Alles einlesen
@@ -135,13 +143,23 @@ c     Alles einlesen
       if (errnr.ne.0) goto 999
 
       if (swrtr.eq.0) then
-         lsr    = .false.
+         lana = .FALSE.
+         lsr = .FALSE.
          kwnanz = 1
          kwn(1) = 0d0
       else
          call rwaven()
          if (errnr.ne.0) goto 999
       end if
+      print*,''
+      IF (wkfak) PRINT*,'Modelling with K-Faktor!'
+      IF (lana) PRINT*,'Analytical solution only'
+      IF (lsr) THEN
+         PRINT*,'Singularity removal'
+         lana = .false.
+      END IF
+      lsr = lana
+      print*,''
 
       call rsigma(kanal,dsigma)
       if (errnr.ne.0) goto 999
@@ -183,39 +201,42 @@ c     Kontrollausgabe
 
          do l=1,eanz
             if (lsr.or.lbeta.or.l.eq.1) then
-
+               
 c     Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
                if (lsr) call potana(l,k)
-
+               
 c     Kompilation des Gleichungssystems (fuer Einheitsstrom !)
                call kompab(l,k)
                if (errnr.ne.0) goto 999
-
+                  
 c     Ggf. Randbedingung beruecksichtigen
                if (lrandb) call randb()
                if (lrandb2) call randb2()
-
+               
 c     Gleichungssystem skalieren
                call scalab()
                if (errnr.ne.0) goto 999
-
+               
 c     Cholesky-Zerlegung der Matrix
                call chol()
                if (errnr.ne.0) goto 999
             else
-
+               
 c     Stromvektor modifizieren
                call kompb(l)
             end if
-
+            
 c     Gleichungssystem loesen
-            call vre()
-
+            IF (.NOT.lana) call vre()
 c     Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 c     analytische Loesung addieren
             do j=1,sanz
-               kpot(j,l,k) = pot(j) * dcmplx(fak(j))
-               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+               IF (lana) THEN
+                  kpot(j,l,k) = pota(j)
+               ELSE
+                  kpot(j,l,k) = pot(j) * dcmplx(fak(j))
+                  if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+               END IF
 c     ak (fuer Testzwecke)
 c     ak                    kpot(j,l,k) = pota(j)
                if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
