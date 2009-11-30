@@ -219,8 +219,8 @@ else
     climits=[romin romax];
 end
 
-%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
-patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
 caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
@@ -246,7 +246,7 @@ h=colorbar('vert');
 
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','bottom')
-
+%cbarn=sprintf( '%s \n %s' , '   ' ,cbarn);
 set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);
 hold on
