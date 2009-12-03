@@ -336,7 +336,10 @@ c     Maximale Anzahl an Iterationen ?
          if (it.ge.itmax) errnr2=79
 
 c     Minimal stepsize erreicht ?
-         if (bdpar < bdmin) errnr2=109
+         IF (bdpar < bdmin) THEN
+               errnr2=109
+               WRITE (ftext,*)'check stepsize',bdpar,it,itr
+         END IF
 
 c     Ggf. abbrechen oder "final phase improvement"
          if (errnr2.ne.0) then
@@ -605,8 +608,8 @@ c     Kontrollausgaben
      1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
 
-      write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,
-     1     ' : Updating'
+      write(fprun,*)' Iteration ',it,', ',itr,
+     1     ' : Updating',llam,lstep
 
 c     UPDATE anbringen
       call update(dpar2,cgres2)
@@ -790,7 +793,7 @@ c     Kontrollausgaben
          
       else if (errnr2.eq.109) then
          write(*,'(a)') ' Iteration terminated:'//
-     1        ' Min. model changes reached'
+     1        ' Min. model changes reached'//ftext
          
          write(fprun,'(a)',err=999) ' Iteration terminated:'//
      1        ' Min. model changes reached'
