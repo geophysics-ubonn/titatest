@@ -180,8 +180,14 @@ c     diff+<
       read(fpcfg,'(a80)',end=1001,err=999) dfm0
 
       IF (dm0 /= '') THEN
-         lstart = .TRUE.
-         dstart = dm0
+         INQUIRE(FILE=TRIM(dm0),EXIST=lstart)
+         IF (lstart) THEN
+            dstart = dm0
+            PRINT*,'reading prior',TRIM(dm0)
+         ELSE
+            PRINT*,'omitting prior',TRIM(dm0)
+            dm0 = ''
+         END IF
       END IF
       IF (ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
          lprior = .TRUE.
@@ -190,7 +196,7 @@ c     diff+<
 c     diff+>
       fetxt = 'rall -> Gitter nx'
       read(fpcfg,*,end=1001,err=99) iseedpri,stabmpri
-      lnsepri = lprior
+      lnsepri = lprior ! if we have seed and std we assume to add noise to prior
  99   read(fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
       read(fpcfg,*,end=1001,err=999) nz
