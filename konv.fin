@@ -13,6 +13,9 @@ c Regularisierungsparameter
 c Maximaler Regularisierungsparameter
         real            * 8     lammax
 
+c Fester Regularisierungsparameter
+        real            * 8     lamfix
+
 c Schrittweitenfaktor, maximale Anzahl der Schritte
         real            * 8     dlam,dlalt
         integer         * 4     nlam
@@ -138,6 +141,7 @@ c.....................................................................
 
         common/ckonv/   lam,
      1                  lammax,
+     1                  lamfix,
      1                  dlam,
      1                  dlalt,
      1                  alam,

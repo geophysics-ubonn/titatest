@@ -76,6 +76,7 @@ c     ak Inga
       integer         * 4     elec1,elec2,
      1     elec3,elec4
       character(120) :: buff
+      logical        :: exi
 c.....................................................................
 
       pi = dacos(-1d0)
@@ -145,6 +146,7 @@ c     ak Default
 c     ak Default
       fstart = 0.5d0
       fstop  = 0.9d0
+      lamfix = 0.0D0
 c     ak MMAJ
 c     ak        fstart = 0.2d0
 c     ak        fstop  = 0.8d0
@@ -165,6 +167,8 @@ c Read in input values..
       read(fpcfg,'(a80)',end=1001,err=999) dstrom
       fetxt = 'rall -> Inversionsverzeichnis'
       read(fpcfg,'(a60)',end=1001,err=999) ramd
+      INQUIRE (FILE=ramd,EXIST= exi)
+      IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
 c     diff+<
       fetxt = 'rall -> Differenz inversion'
       read(fpcfg,*,end=1001,err=999) ldiff
@@ -234,23 +238,34 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
       IF (ltri == 2) THEN
-         READ(fpcfg,*,end=105,err=105) betamgs
-	 GOTO 106
- 105     betamgs = 0.1          ! default value for MGS
+         READ(fpcfg,*,end=102,err=102) betamgs
+	 GOTO 103
+ 102     betamgs = 0.1          ! default value for MGS
          BACKSPACE(fpcfg)
 
- 106     PRINT*,'Minimum gradient support regularisierung beta =',
+ 103     PRINT*,'Minimum gradient support regularisierung beta =',
      1        betamgs
       END IF
+
+      IF (ltri >= 20) THEN
+         READ(fpcfg,*,end=104,err=104) lamfix
+	 GOTO 105
+ 104     lamfix = 1.0         ! default value for MGS
+         BACKSPACE(fpcfg)
+
+ 105     PRINT*,'Fixing Lambda =', lamfix
+         ltri = ltri - 20
+      END IF
+      
       
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
          stabw0 = -stabw0
-         READ(fpcfg,*,end=110,err=110) iseed
-	 GOTO 111
- 110     iseed = 1              ! default value for PRS
+         READ(fpcfg,*,end=106,err=106) iseed
+	 GOTO 107
+ 106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
- 111     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
+ 107     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
      1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
      1        iseed
       END IF

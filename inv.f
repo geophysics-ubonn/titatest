@@ -318,6 +318,7 @@ c     Kontrollvariablen ausgeben
 
 c     ABBRUCHBEDINGUNGEN
       if (llam.and..not.lstep) then
+         lamalt = lam 
 c     Polaritaeten checken
          call chkpol(lsetup)
 
@@ -504,7 +505,7 @@ c     'kpot' freigeben
       end if
 
 c     REGULARISIERUNG / STEP-LENGTH einstellen
-c$$$  IF (BTEST(mswitch,10)) THEN
+      IF (ABS(lamfix) <= EPSILON(lamfix)) THEN ! i.a. == 0.0..
       if (.not.lstep) then
          if (llam) then
 
@@ -595,7 +596,10 @@ c     Step-length speichern
             stpalt = step
          end if
       end if
-c$$$  END IF
+      ELSE
+              llam = .TRUE.
+              lam = lamfix
+      END IF
 c     Kontrollausgaben
       write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1     ACHAR(13)//' Iteration ',it,', ',itr,
@@ -642,7 +646,6 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 
          WRITE (*,'(/a,G10.3,a/)')
      1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
-         print*,mswitch,BTEST(mswitch,4),BTEST(mswitch,5)
          IF (BTEST(mswitch,5)) THEN 
             READ (*,*)fetxt
             IF (fetxt/='')READ(fetxt,*)lam
