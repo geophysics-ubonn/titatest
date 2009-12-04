@@ -50,7 +50,7 @@ c     diff+<
      1     '! difference inversion ?'
       write(fpinv,'(a80)',err=999) dd0
       write(fpinv,'(l1,t18,a24)',err=999) lprior,
-     1     '! prior model ?'
+     1     '! smooth (m - m_{prior}) ?'
       write(fpinv,'(a80)',err=999) dm0
       write(fpinv,'(a80)',err=999) dfm0
 c     diff+>
