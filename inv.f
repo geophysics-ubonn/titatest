@@ -337,8 +337,8 @@ c     Maximale Anzahl an Iterationen ?
 
 c     Minimal stepsize erreicht ?
          IF (bdpar < bdmin) THEN
-               errnr2=109
-               WRITE (ftext,*)'check stepsize',bdpar,it,itr
+            errnr2=109
+            WRITE (ftext,*)'check stepsize',bdpar,it,itr
          END IF
 
 c     Ggf. abbrechen oder "final phase improvement"
@@ -508,7 +508,6 @@ c     'kpot' freigeben
       end if
 
 c     REGULARISIERUNG / STEP-LENGTH einstellen
-      IF (ABS(lamfix) <= EPSILON(lamfix)) THEN ! i.a. == 0.0..
       if (.not.lstep) then
          if (llam) then
 
@@ -529,44 +528,55 @@ c     Regularisierungsparameter bestimmen
                if (lsetup.or.lsetip) then
 
 c     Kontrollausgabe
-                  write(*,'(a,i3,a,i3,a)',ADVANCE='no')
-     1                 ACHAR(13)//' Iteration ',it,', ',itr,
-     1                 ' : Calculating 1st regularization parameter'
-                  write(fprun,'(a,i3,a,i3,a)')
-     1                 ' Iteration ',it,', ',itr,
-     1                 ' : Calculating 1st regularization parameter'
-                  call blam0()
-                  lam = lammax
+                  IF (llamf) THEN
+                     lam = lamfix
+                  ELSE
+                     write(*,'(a,i3,a,i3,a)',ADVANCE='no')
+     1                    ACHAR(13)//' Iteration ',it,', ',itr,
+     1                    ' : Calculating 1st regularization parameter'
+                     write(fprun,'(a,i3,a,i3,a)')
+     1                    ' Iteration ',it,', ',itr,
+     1                    ' : Calculating 1st regularization parameter'
+                     call blam0()
+                     lam = lammax
 c     ak Model EGS2003, ERT2003                        call blam0()
 c     ak Model EGS2003, ERT2003                        lam = lammax
 c     ak                        lam = 1d4
+                  END IF
                else
-                  dlalt = dlam
-                  if (ldlami) then
-                     ldlami = .false.
-                     alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),
-     1                    dlog(1d0+mqrms))
-                     dlam   = fstart
-                  else
-                     alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
-                     dlam = dlog(fstop)*
-     1                    sign(1d0,dlog(nrmsd/nrmsdm))+
-     1                    dlog(fstart/fstop)*
-     1                    dlog(nrmsd/nrmsdm)/alam
-                     dlam = dexp(dlam)
-                  end if
-                  lam = lam*dlam
-                  if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.
+                  IF (llamf) THEN
+                     lam = lamfix
+                  ELSE
+                     dlalt = dlam
+                     if (ldlami) then
+                        ldlami = .false.
+                        alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),
+     1                       dlog(1d0+mqrms))
+                        dlam   = fstart
+                     else
+                        alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
+                        dlam = dlog(fstop)*
+     1                       sign(1d0,dlog(nrmsd/nrmsdm))+
+     1                       dlog(fstart/fstop)*
+     1                       dlog(nrmsd/nrmsdm)/alam
+                        dlam = dexp(dlam)
+                     end if
+                     lam = lam*dlam
+                     if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.
 c     tst                        if (dlam.gt.1d0) lfstep=.true.
 c     ak Model EGS2003
-                  if (dlam.gt.1d0) lrobust=.false.
+                     if (dlam.gt.1d0) lrobust=.false.
+                  END IF
                end if
             else
 
 c     Regularisierungsparameter zuruecksetzen und step-length verkleinern
                llam = .true.
-               lam  = lam/dlam
-
+               IF (llamf) THEN
+                  lam = lamfix
+               ELSE
+                  lam  = lam/dlam
+               END IF
                if (lfstep) then
                   lfstep = .false.
                else
@@ -599,17 +609,13 @@ c     Step-length speichern
             stpalt = step
          end if
       end if
-      ELSE
-              llam = .TRUE.
-              lam = lamfix
-      END IF
 c     Kontrollausgaben
       write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1     ACHAR(13)//' Iteration ',it,', ',itr,
      1     ' : Updating'
 
       write(fprun,*)' Iteration ',it,', ',itr,
-     1     ' : Updating',llam,lstep
+     1     ' : Updating'
 
 c     UPDATE anbringen
       call update(dpar2,cgres2)
@@ -700,7 +706,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             ata = 0D0
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
-            CALL bata(kanal) ! A^TC_d^-1A -> ata
+            CALL bata(kanal)    ! A^TC_d^-1A -> ata
             if (errnr.ne.0) goto 999
 
             ALLOCATE (ata_reg(manz,manz),STAT=errnr)
@@ -721,7 +727,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
+            CALL bmcm(kanal)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
             if (errnr.ne.0) goto 999
 
          END IF

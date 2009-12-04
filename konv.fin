@@ -38,8 +38,9 @@ c Schalter zur Steuerung der Regularisierung und der step-length-Wahl
         logical         * 4     llam,
      1                          lstep,
      1                          ldlami,
-     1                          ldlamf
-
+     1                          ldlamf,
+     1				llamf
+c wenn llamf wahr ist wird ein fixes Lambda gesetzt
 c Schalter ob volle step-length angebracht werden soll
         logical         * 4     lfstep
 
@@ -180,6 +181,7 @@ c.....................................................................
      1                  ldlami,
      1                  ldlamf,
      1                  lstep,
+     1			llamf,
      1                  lrobust,
 cdiff+<
      1                  ldiff,

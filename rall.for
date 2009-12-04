@@ -114,6 +114,7 @@ c     ak        lphi0 = .false.
 c     "ratio-dataset" ?
       lratio = .false.
 c     ak        lratio = .true.
+      llamf = .FALSE.
 c###### values..
 c     FIXED PARAMETER
 c     Slash
@@ -183,9 +184,9 @@ c     diff+<
          INQUIRE(FILE=TRIM(dm0),EXIST=lstart)
          IF (lstart) THEN
             dstart = dm0
-            PRINT*,'reading prior',TRIM(dm0)
+            PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
          ELSE
-            PRINT*,'omitting prior',TRIM(dm0)
+            PRINT*,'omitting prior:',ACHAR(9)//TRIM(dm0)
             dm0 = ''
          END IF
       END IF
@@ -254,6 +255,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       END IF
 
       IF (ltri >= 20) THEN
+         llamf = .TRUE.
          READ(fpcfg,*,end=104,err=104) lamfix
 	 GOTO 105
  104     lamfix = 1.0         ! default value for MGS

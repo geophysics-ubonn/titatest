@@ -121,6 +121,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       IF (ltri == 2)
      1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
       write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
+      write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,*,err=999)'Read start model   : ',lstart
       write(fpinv,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1
