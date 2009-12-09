@@ -534,10 +534,12 @@ c     Kontrollausgabe
                      write(*,'(a,i3,a,i3,a)',ADVANCE='no')
      1                    ACHAR(13)//' Iteration ',it,', ',itr,
      1                    ' : Calculating 1st regularization parameter'
-                     write(fprun,'(a,i3,a,i3,a)')
+                     write(fprun,'(a,i3,a,i3,a)',ADVANCE='no')
      1                    ' Iteration ',it,', ',itr,
      1                    ' : Calculating 1st regularization parameter'
                      call blam0()
+                     WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0:: ',lammax
+                     WRITE (fprun,'(a,G10.2)')'lam_0 ',lammax
                      lam = lammax
 c     ak Model EGS2003, ERT2003                        call blam0()
 c     ak Model EGS2003, ERT2003                        lam = lammax

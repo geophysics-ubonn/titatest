@@ -92,7 +92,6 @@ c     Start-Regularisierungsparameter bestimmen
 c     ak Default
       lammax = lammax * 5d0
 
-      WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0 ',lammax
 c     ak Synthetic Example (JoH)
 c     ak        lammax = lammax * 1d1
 
