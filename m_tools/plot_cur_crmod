@@ -57,6 +57,7 @@ echo $c1 $c2 $c3 $2 > tmp.crange
 tmp=`cat tmp.lastmod`
 
 echo 'CRTomo resistivity model' > tmp.fenster
+rm tmp.cbarn
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
 echo 'cur_crmod.mag' > tmp.lastmod
 
@@ -69,9 +70,12 @@ echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$1$mypdf >& /dev/null
 $mogri -format jpg $myeps
 
-echo $c1 $c2 $c3 $2 > tmp.crange
+cp tmp.crange tmp.crange.r
+c2=`awk '{printf("%f",-log(10^$1))}' tmp.crange.r`
+c1=`awk '{printf("%f",-log(10^$2))}' tmp.crange.r`
 echo 'CRTomo conductivity model' > tmp.fenster
 echo 'ln(\sigma) [S/m]' > tmp.cbarn
+echo $1 $2 > tmp.crange
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,-log($1))}else{print}}' $tmp > cur_crmod_s.mag
 echo 'cur_crmod_s.mag' > tmp.lastmod
 
@@ -83,6 +87,7 @@ mypdf='cur_crmod_s.pdf'
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$1$mypdf >& /dev/null
 $mogri -format jpg $myeps
+mv tmp.crange.r tmp.crange
 echo "done $1"
 
 #pdfcr=`which pdfcrop`

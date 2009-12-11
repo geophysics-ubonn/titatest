@@ -1,11 +1,6 @@
 %%
 % Definitions
 
-
-close all
-clear all
-
-
 elecmark='bo';
 marksize=5;
 az=0; % Azimuth for the plot 
@@ -168,7 +163,7 @@ if length(cbarn) == 0
     elseif length(mag) ~= 0
         cbarn='log_{10}(\rho) [\Omega m]';
     elseif length(modl) ~= 0
-        cbarn='\rho [\Omega m]';        
+        cbarn='\rho} [\Omega m]';  
     else
         cbarn='Parameter [Units]';
     end
@@ -219,8 +214,8 @@ else
     climits=[romin romax];
 end
 
-patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
-%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
+%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
 caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
@@ -246,8 +241,10 @@ h=colorbar('vert');
 
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','bottom')
-%cbarn=sprintf( '%s \n %s' , '   ' ,cbarn);
-set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
+%cbarn=sprintf('$$\\mathsf{%s}$$',cbarn);
+cbarn2=sprintf('\n%s\n',cbarn);
+%set(get(h,'xlabel'),'interpreter','latex','String',cbarn2,'fontsize',fns)
+set(get(h,'xlabel'),'String',cbarn2,'fontsize',fns)
 view(az,el);
 hold on
 for i=1:nelec
@@ -255,10 +252,18 @@ for i=1:nelec
         'MarkerEdgeColor','k','MarkerFaceColor','k',...
         'MarkerSize',marksize);
 end
-[p,fls,app,m]=fileparts(modfile);
+
 fleps=strcat(fls,app,'.eps');
 set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',fleps)
+
+close (fig);
+%write out some config files..
+[p,fls,app,m]=fileparts(modfile);
+
+fp=fopen('tmp.cbarn2','w');
+fprintf(fp,'%s \n',cbarn2);
+fclose(fp);
 
 fp=fopen('tmp.crange','w');
 fprintf(fp,'%f\t%f\n',climits);

@@ -59,6 +59,7 @@ fi
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
+echo "$mtlb < $plotmod >& /dev/null"
 $mtlb < $plotmod >& /dev/null
 
 tmp=`cat tmp.lastmod`

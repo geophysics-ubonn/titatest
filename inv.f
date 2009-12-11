@@ -801,7 +801,7 @@ c     Kontrollausgaben
          
       else if (errnr2.eq.109) then
          write(*,'(a)') ' Iteration terminated:'//
-     1        ' Min. model changes reached'//ftext
+     1        ' Min. model changes reached'
          
          write(fprun,'(a)',err=999) ' Iteration terminated:'//
      1        ' Min. model changes reached'
