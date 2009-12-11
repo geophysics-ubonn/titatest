@@ -597,6 +597,7 @@ c     Ggf. Daten-RMS speichern
          end if
       else
          lstep = .false.
+         print*,'hi'
          
 c     Parabolische Interpolation zur Bestimmung der optimalen step-length
          call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
