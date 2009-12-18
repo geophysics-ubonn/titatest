@@ -379,6 +379,8 @@ c     Wichtungsfeld umspeichern
                step   = 1d0
 
 c     ak
+               fetxt = 'cp -f tmp.lastmod tmp.lastmod_rho'
+               CALL SYSTEM (TRIM(fetxt))
                do j=1,elanz
                   sigma(j) = dcmplx(
      1                 dcos(pha0/1d3)*cdabs(sigma(j)) ,
