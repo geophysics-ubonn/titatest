@@ -3,9 +3,9 @@ c
 c     Unterprogramm belegt die Rauhigkeitsmatrix....
 c     Fuer beliebige Triangulierung
 c
-c     Andreas Kemna                                            29-Feb-1996
-c
-c     Letzte Aenderung                                         29-Jul-2009
+c     Copyright by Andreas Kemna                               2009
+c     Created by Roland Blaschek/Roland Martin               29-Jul-2009
+c     Last edited                                            18-Dec-2009
 c
 c.........................................................................
       USE alloci
@@ -82,7 +82,7 @@ c.........................................................................
                dist(k) = SQRT((sp(0,1) - sp(k,1))**2 + 
      1              (sp(0,2) - sp(k,2))**2)
                
-               ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !neu
+               ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !winkel
                
                alfxz = DSQRT((alfx*DCOS(ang))**2 + (alfz*DSIN(ang))**2)
                

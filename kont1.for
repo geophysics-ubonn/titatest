@@ -118,8 +118,10 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,*,err=999)'Minimum grad supp  : ',(ltri==2)
       write(fpinv,*,err=999)'MGS sens           : ',(ltri==3)
       write(fpinv,*,err=999)'MGS sens mean      : ',(ltri==4)
-      IF (ltri == 2)
+      IF (ltri >= 2 .AND. ltri < 5)
      1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
+      write(fpinv,*,err=999)'Levenberg damping  : ',(ltri==5)
+      write(fpinv,*,err=999)'Marquardt damping  : ',(ltri==6)
       write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,*,err=999)'Read start model   : ',lstart

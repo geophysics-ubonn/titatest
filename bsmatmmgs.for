@@ -2,11 +2,12 @@
 c     
 c     Unterprogramm belegt die Rauhigkeitsmatrix ala Portniaguine und Zhdanov [1999]
 c     Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
-c     Copyright by Andreas Kemna 2009
+c
+c     Copyright by Andreas Kemna                               2009
 c     
-c     Andreas Kemna/Roland Martin                              03-Nov-2009
+c     Created by Roland Blaschek/Roland Martin                 03-Nov-2009
 c     
-c     Letzte Aenderung   RM                                    23-Nov-2009
+c     Last edited  RM                                          18-Dec-2009
 c     
 c.........................................................................
       USE alloci
@@ -35,8 +36,23 @@ c.........................................................................
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
 !.....................................................................
       
-      IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz))
+      smaxs=MAXVAL(selanz)
+
+      IF (.NOT.ALLOCATED(smatm)) 
+     1     ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
+
+      IF (.NOT.ALLOCATED(csens)) 
+     1     ALLOCATE (csens(manz),STAT=errnr)
+
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem bsmatmmgs'
+         
+         errnr = 97
+         RETURN
+      END IF
+
       csens=0.
+      smatm = 0d0               ! initializing
 
       IF (lip) THEN
          DO j=1,manz
@@ -75,11 +91,7 @@ c.........................................................................
       snsmn = snsmn / DBLE(manz)
 !     Summe der Sensitivitaeten normieren
       WRITE(*,*) 'dum snsmn',dum,snsmn
-
-      smaxs=MAXVAL(selanz)
-      IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
-      smatm = 0d0               ! initialize smatm
-
+ 
       DO i=1,elanz
 
          sp(0:smaxs,:) = 0.
@@ -139,6 +151,6 @@ c.........................................................................
 
          END DO
       END DO
-
+      errnr = 0
       END
 
