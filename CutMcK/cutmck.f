@@ -25,8 +25,7 @@ c     Schalter ob Kontrolldateien ('*.ctr') ausgegeben werden sollen
       logical         * 1     kont
 
 c     Dateinamen
-      character       * 80    delem,
-     1     delectr
+      character       * 80    delem,delectr
       CHARACTER(256)      ::  ftext
 c     Permutationsvektor der Umnumerierung
       integer         * 4     perm(smax)
@@ -337,9 +336,13 @@ c     Startwerte umspeichern (zur Kontrolle)
       PRINT*,' writing out new values '
 c     Elementeinteilung und Elektrodenverteilung schreiben
 c      delem=TRIM(ADJUSTL(delem))//'_ctm'
+      fetxt='cp -f '//TRIM(delem)//' '//TRIM(delem)//'.orig'
+      CALL SYSTEM (fetxt)
       call welem(11,delem)
       if (errnr.ne.0) goto 1000
 
+      fetxt='cp -f '//TRIM(delectr)//' '//TRIM(delectr)//'.orig'
+      CALL SYSTEM (fetxt)
 c      delectr=TRIM(ADJUSTL(delectr))//'_ctm'
       call welectr(11,delectr)
       if (errnr.ne.0) goto 1000

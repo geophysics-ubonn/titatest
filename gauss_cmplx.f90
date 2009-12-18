@@ -10,7 +10,7 @@ SUBROUTINE Gauss_cmplx (a,n,e_flag)    ! Invert matrix by Gauss method
 
   ALLOCATE (temp(n),STAT=e_flag)
   IF (e_flag/=0) THEN
-     print*,'error alllocating temp(',n,')=',n*8/(1024**3),' GB'
+     print*,'error alllocating temp(',n,')=',n*16/(1024**3),' GB'
      RETURN
   END IF
 

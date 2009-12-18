@@ -31,6 +31,7 @@ c.....................................................................
 c     Kanalnummer
       integer         * 4     kanal
 
+
 c     Dateinamen
       character       * 80    delem,
      1     delectr,
@@ -334,7 +335,7 @@ c     Kontrollausgabe
  110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
       WRITE (*,110)ta,st,mi,se
 
-      RETURN
+      STOP '0'
       
 c.....................................................................
 
@@ -345,7 +346,7 @@ c     (Fehler-) Meldung schreiben
       write(9,'(a80,i3,i1)') fetxt,errnr,errflag
       write(9,*)ftext
       close(9)
-      stop ' '
+      stop '-1'
 
  1001 open(9,file='error.dat',status='replace')
       errnr   = 2
@@ -354,6 +355,6 @@ c     (Fehler-) Meldung schreiben
       write(9,'(a80,i3,i1)') fetxt,errnr,errflag
       write(9,*)ftext
       close(9)
-      stop ' '
+      stop '-2'
 
       end

@@ -221,19 +221,31 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) stabw0
       fetxt = 'rall -> Absoluter Fehler Widerstand'
       read(fpcfg,*,end=1001,err=999) stabm0
-      fetxt = 'rall -> Finale Phasen Inversion'
+      fetxt = 'rall -> Phasenfehlerparameter A1'
       read(fpcfg,*,end=1001,err=999) stabpA1
+      fetxt = 'rall -> Phasenfehlerparameter B'
       read(fpcfg,*,end=1001,err=999) stabpB
+      fetxt = 'rall -> Relative Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabpA2
+      fetxt = 'rall -> Absoluter Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabp0
+      fetxt = 'rall -> Homogenes startmodell?'
       read(fpcfg,*,end=1001,err=999) lrho0
+      fetxt = 'rall -> rho_0'
       read(fpcfg,*,end=1001,err=999) bet0
+      fetxt = 'rall -> phase_0'
       read(fpcfg,*,end=1001,err=999) pha0
+      fetxt = 'rall -> Noch ne Inversion'
       read(fpcfg,*,end=1001,err=999) lagain
+      fetxt = 'rall -> 2D oder 2.5D ?'
       read(fpcfg,*,end=1001,err=999) swrtr
+      fetxt = 'rall -> weirtere Quelle?'
       read(fpcfg,*,end=1001,err=999) lsink
+      fetxt = 'rall -> Nummer der Quelle'
       read(fpcfg,*,end=1001,err=999) nsink
+      fetxt = 'rall -> Randbedingungen ?'
       read(fpcfg,*,end=1001,err=999) lrandb2
+      fetxt = 'rall -> Datei mit Randwerten'
       read(fpcfg,'(a80)',end=1001,err=999) drandb
       read(fpcfg,'(I2)',end=100,err=100) ltri
       
@@ -313,7 +325,8 @@ c     goto 999
          errnr = 104
          goto 999
       else if (.not.ldc.and.lfphai.and.
-     1        (stabp0.le.0d0.or.stabpA2.lt.0d0)) then
+     1        ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR.
+     1        ((stabp0 == 0d0).and.(stabpA2 == 0d0)))) then
          fetxt = ' '
          errnr = 105
          goto 999

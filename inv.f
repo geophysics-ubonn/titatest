@@ -599,6 +599,7 @@ c     Ggf. Daten-RMS speichern
          end if
       else
          lstep = .false.
+         print*,'hi'
          
 c     Parabolische Interpolation zur Bestimmung der optimalen step-length
          call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
@@ -635,16 +636,16 @@ c     Leitfaehigkeiten belegen und Roughness bestimmen
 
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
-
+      
 c     Neues Modelling
       goto 10
-
+      
 c.................................................
-
+      
 c     OUTPUT
  30   call wout(kanal,dsigma,dvolt)
       if (errnr.ne.0) goto 999
-
+      
 c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       if (lsens) then
          if (ldc) then
@@ -840,7 +841,7 @@ c     Ggf. weiteren Datensatz invertieren
 c     'crtomo.cfg' schliessen
       close(fpcfg)
 
-      stop ' '
+      stop '0'
 
 c.....................................................................
 
@@ -851,6 +852,6 @@ c     Fehlermeldung
       write(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
       write(fperr,*)ftext
       close(fperr)
-      stop ' '
+      STOP '-1'
 
       end
