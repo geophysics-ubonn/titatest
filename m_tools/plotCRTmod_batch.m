@@ -253,7 +253,7 @@ for i=1:nelec
         'MarkerSize',marksize);
 end
 
-fleps=strcat(fls,'.eps');
+fleps=strcat(fls,appi,'.eps');
 set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',fleps)
 
