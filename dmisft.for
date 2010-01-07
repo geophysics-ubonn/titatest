@@ -90,8 +90,10 @@ c     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
          nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
          betrms = betrms + wmatd(i)*dble(wdlok(i))*
      1        dble(cdum)*dble(cdum)
-         pharms = pharms + wmatd(i)*dble(wdlok(i))*
+
+         IF (lfphai) pharms = pharms + wmatdp(i)*dble(wdlok(i))*
      1        dimag(cdum)*dimag(cdum)
+
       end do
       
 c     Ggf. Fehlermeldung

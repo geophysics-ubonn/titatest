@@ -57,11 +57,11 @@ c clearscreen
          csz(i:i+1)=' '
       END DO
 
-      IF (nz==1) THEN           !spherical
+      IF (nx==1) THEN           !spherical
          WRITE (csz,'(a)')'Spherical model(va*(1- h*(1.5-.5*h**2)))'
-      ELSE IF (nz==2) THEN      ! Gaussian
+      ELSE IF (nx==2) THEN      ! Gaussian
          WRITE (csz,'(a)')'Gaussian model(va*EXP(-3*h**2))'
-      ELSE IF (nz==3) THEN      ! power
+      ELSE IF (nx==3) THEN      ! power
          WRITE (csz,'(a)')'Power model(va*dump**gamma)'
       ELSE                      ! exponential (default)
          WRITE (csz,'(a)')'Exponential model(va*EXP(-3*h))'
@@ -135,11 +135,11 @@ c     covTT=0
             
             h=sqrt(h)
             
-            IF (nz==1) THEN     !spherical
+            IF (nx==1) THEN     !spherical
                smatm(i,j) = var*(1. - h*(1.5 - .5*h**2.))
-            ELSE IF (nz==2) THEN ! Gaussian
+            ELSE IF (nx==2) THEN ! Gaussian
                smatm(i,j) = var*EXP(-3.*h**2.)
-            ELSE IF (nz==3) THEN ! power
+            ELSE IF (nx==3) THEN ! power
                smatm(i,j) = var*h**gamma
             ELSE                ! exponential (default)
                smatm(i,j) = var*EXP(-3.*h)
