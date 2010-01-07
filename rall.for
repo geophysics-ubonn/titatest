@@ -115,6 +115,8 @@ c     "ratio-dataset" ?
       lratio = .false.
 c     ak        lratio = .true.
       llamf = .FALSE.
+c final phase improvement setzt phase zueruck auf homogenes modell
+      lffhom = .FALSE.
 c###### values..
 c     FIXED PARAMETER
 c     Slash
@@ -140,7 +142,7 @@ c     CG-Epsilon
 c     Mindest-step-length
       stpmin = 1d-3
 c     Minimale stepsize (bdpar)
-      bdmin = 1d-3
+      bdmin = 1d-4
 c     Regularisierungsparameter
 c     ak Default
       nlam   = 30
@@ -290,9 +292,9 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
      1        iseed
       END IF
 
-      IF ((nx==0.OR.nz==0).AND.ltri==0) ltri=1 ! at least smoothness
-       
-      
+      IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least smoothness
+c check if the final phase should start with homogenous model      
+      lffhom = (stabp0<0)
 c     Ggf. Fehlermeldungen
       if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
          fetxt = ' '

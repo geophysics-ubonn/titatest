@@ -318,6 +318,7 @@ c     Fehlermeldungen
  999  return
 
  1000 close(kanal)
+      close(fpeps)
       return
 
  1001 close(kanal)

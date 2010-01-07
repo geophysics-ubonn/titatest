@@ -90,6 +90,9 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(g11.5,t18,a93)',err=999) stabp0,
      1     '! phase error model parameter A3 (mrad)       '//
      1     '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
+      write(fpinv,*,err=999)
+     1     ' restart final phase with homogenous phase model?',
+     1     lffhom
       write(fpinv,'(l1,t18,a38)',err=999) lrho0,
      1     '! homogeneous background resistivity ?'
       write(fpinv,'(g11.5,t18,a30)',err=999) bet0,
@@ -105,7 +108,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(l1,t18,a19)',err=999) lrandb2,
      1     '! boundary values ?'
       write(fpinv,'(a80)',err=999) drandb
-      write(fpinv,'(a)',err=999)      '***Model stats***'
+      write(fpinv,'(/a)',err=999)      '***Model stats***'
       write(fpinv,*,err=999)'# Model parameters : ',manz
       write(fpinv,*,err=999)'# Data points      : ',nanz
       write(fpinv,*,err=999)'Add data noise ?   : ',lnse
@@ -121,14 +124,37 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       IF (ltri == 2)
      1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
       write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
+      IF (ltri == 10) THEN
+         write(fpinv,*,err=999)' nx-switch  : ',nx
+         IF (nx==1) THEN        !spherical
+            WRITE (fetxt,'(a)')
+     1           'Spherical model(va*(1- h*(1.5-.5*h**2)))'
+         ELSE IF (nx==2) THEN   ! Gaussian
+            WRITE (fetxt,'(a)')
+     1           'Gaussian model(va*EXP(-3*h**2))'
+         ELSE IF (nx==3) THEN   ! power
+            WRITE (fetxt,'(a)')
+     1           'Power model(va*dump**gamma)'
+         ELSE                   ! exponential (default)
+            WRITE (fetxt,'(a)')
+     1           'Exponential (default) model(va*EXP(-3*h))'
+         END IF
+         write(fpinv,*,err=999)fetxt
+      END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,*,err=999)'Read start model   : ',lstart
       write(fpinv,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1
       write(fpinv,*,err=999)'Write resolution   : ',lres
       write(fpinv,*,err=999)'Write MCM 2        : ',lcov2
+      IF (nz<0) THEN
+         write(fpinv,'(1x,a)',err=999,ADVANCE='no')
+     1        'taking easy lam_0 : '
+         IF (nz<-1) write(fpinv,*,err=999) -REAL(nz)
+         IF (nz==-1) write(fpinv,*,err=999) REAL(manz)
+      END IF
 
-      write(fpinv,'(a)',err=999) '***FIXED***'
+      write(fpinv,'(/a)',err=999) '***FIXED***'
       if (swrtr.eq.1) then
          write(fpinv,'(a,t50,i2)',err=999) ' # wavenumbers :',kwnanz
          write(fpinv,'(a,t50,g11.5,t62,a1)',err=999)

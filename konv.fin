@@ -122,6 +122,8 @@ c Schalter ob positive Phasen auf Null korrigiert werden sollen
         logical         * 4     lphi0
 c Schalter ob "final phase improvement" durchgefuehrt werden soll
         logical         * 4     lfphai
+c Schalter ob "final phase improvement" mit homogenem phasenwert startet
+        logical         * 4     lffhom
 c	triang>
 c Schalter für die Triangularisierungsinversion
         integer         * 4	ltri
@@ -186,6 +188,7 @@ c.....................................................................
 cdiff+<
      1                  ldiff,
 cdiff+>
+     1			lffhom,
      1                  lphi0,
      1                  lfphai,
      1			ltri,

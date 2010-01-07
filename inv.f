@@ -130,6 +130,14 @@ c     Kontrolldateien oeffnen
       close(fpcjg)
       fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
       open(fpeps,file=fetxt,status='replace',err=999)
+      IF (lfphai) THEN
+         WRITE (fpeps,'(a,10x,a)')'1/eps_r','1/eps_p'
+         WRITE (fpeps,'(G12.3,2x,G12.3)')
+     1        (sqrt(wmatd(i)),sqrt(wmatdp(i)),i=1,nanz)
+      ELSE
+         WRITE (fpeps,'(a)')'1/eps_r'
+         WRITE (fpeps,'(G10.3)')(sqrt(wmatd(i)),i=1,nanz)
+      END IF
       close(fpeps)
       errnr = 4
 
@@ -142,11 +150,12 @@ c     diff+>
 
 c     'sens' zuweisen
       if (ldc) then
-         ALLOCATE(sensdc(nanz,manz),stat=errnr)
+         ALLOCATE(sensdc(nanz,manz),kpotdc(sanz,eanz,kwnanz),stat=errnr)
       else
-         ALLOCATE(sens(nanz,manz),stat=errnr)
+         ALLOCATE(sens(nanz,manz),kpot(sanz,eanz,kwnanz),stat=errnr)
       end if
       if (errnr.ne.0) then
+         fetxt = 'allocation problem sens and kpot'
          errnr = 97 
          goto 999
       end if
@@ -156,13 +165,12 @@ c.................................................
 c     MODELLING
 c     'a', 'hpot' und 'kpot' zuweisen
  10   if (ldc) then
-         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),
-     1        kpotdc(sanz,eanz,kwnanz),stat=errnr)
+         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),stat=errnr)
       else
-         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),
-     1        kpot(sanz,eanz,kwnanz),stat=errnr)
+         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),stat=errnr)
       end if
       if (errnr.ne.0) then
+         fetxt = 'allocation problem a and hpot'
          errnr = 97 
          goto 999
       end if
@@ -381,11 +389,19 @@ c     Wichtungsfeld umspeichern
 c     ak
                fetxt = 'cp -f tmp.lastmod tmp.lastmod_rho'
                CALL SYSTEM (TRIM(fetxt))
-               do j=1,elanz
-                  sigma(j) = dcmplx(
-     1                 dcos(pha0/1d3)*cdabs(sigma(j)) ,
-     1                 -dsin(pha0/1d3)*cdabs(sigma(j)) )
-               end do
+               IF (lffhom) THEN
+                  write(*,*)
+     1                 ' ******* Restarting phase model ********'
+                  write(fprun,*)
+     1                 ' ******* Restarting phase model ********'
+                  do j=1,elanz
+                     sigma(j) = dcmplx(
+     1                    dcos(pha0/1d3)*cdabs(sigma(j)) ,
+     1                    -dsin(pha0/1d3)*cdabs(sigma(j)) )
+                  end do
+                  
+                  GOTO 10       ! neues calc
+               END IF
 c     ak
 
 c     Daten-RMS berechnen
@@ -502,12 +518,12 @@ c     Felder zuruecksetzen
          print*,'Only precalcs'
          GOTO 30
       END IF 
-c     'kpot' freigeben
-      if (ldc) then
-         DEALLOCATE(kpotdc)
-      else
-         DEALLOCATE(kpot)
-      end if
+c$$$c     'kpot' freigeben wird nicht mehr freigegeben
+c$$$      if (ldc) then
+c$$$         DEALLOCATE(kpotdc)
+c$$$      else
+c$$$         DEALLOCATE(kpot)
+c$$$      end if
 
 c     REGULARISIERUNG / STEP-LENGTH einstellen
       if (.not.lstep) then
@@ -599,7 +615,6 @@ c     Ggf. Daten-RMS speichern
          end if
       else
          lstep = .false.
-         print*,'hi'
          
 c     Parabolische Interpolation zur Bestimmung der optimalen step-length
          call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
