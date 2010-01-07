@@ -90,8 +90,8 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(g11.5,t18,a93)',err=999) stabp0,
      1     '! phase error model parameter A3 (mrad)       '//
      1     '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-      write(fpinv,*,err=999)
-     1     ' restart final phase with homogenous phase model?',
+      write(fpinv,'(a,1X,l1)',err=999)
+     1     '! (NEW) restart final phase with homogenous phase model?',
      1     lffhom
       write(fpinv,'(l1,t18,a38)',err=999) lrho0,
      1     '! homogeneous background resistivity ?'
