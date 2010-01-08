@@ -292,6 +292,10 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
      1        iseed
       END IF
 
+c check if the final phase should start with homogenous model      
+      lffhom = (stabp0 < 0)
+      IF (stabp0 < 0) stabp0 = -stabp0
+
       IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least smoothness
 
 c     Ggf. Fehlermeldungen
@@ -354,10 +358,6 @@ c Mega switch testing..
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
-
-c check if the final phase should start with homogenous model      
-      lffhom = (stabp0 < 0)
-      IF (stabp0 < 0) stabp0 = -stabp0
 c
       if (lratio) then
          lrho0  = .true.
