@@ -128,8 +128,8 @@ c     tmp                dum = 1d-12
          kfak(i) = 4d0*pi / dum
          
       end do
-
       WRITE (fp,'(I8,2X,G12.4)')(i,kfak(i),i=1,nanz)
+      close (fp)
 
       errnr = 0
       return
