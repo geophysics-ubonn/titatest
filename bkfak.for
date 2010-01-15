@@ -129,7 +129,7 @@ c     tmp                dum = 1d-12
          
       end do
       WRITE (fp,'(I8,2X,G12.4)')(i,kfak(i),i=1,nanz)
-      CLOSE (fp)
+      close (fp)
 
       errnr = 0
       return
