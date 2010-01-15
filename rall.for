@@ -231,17 +231,17 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) stabpA2
       fetxt = 'rall -> Absoluter Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabp0
-      fetxt = 'rall -> Homogenes startmodell?'
+      fetxt = 'rall -> Homogenes Startmodell?'
       read(fpcfg,*,end=1001,err=999) lrho0
       fetxt = 'rall -> rho_0'
       read(fpcfg,*,end=1001,err=999) bet0
       fetxt = 'rall -> phase_0'
       read(fpcfg,*,end=1001,err=999) pha0
-      fetxt = 'rall -> Noch ne Inversion'
+      fetxt = 'rall -> Noch eine Inversion'
       read(fpcfg,*,end=1001,err=999) lagain
       fetxt = 'rall -> 2D oder 2.5D ?'
       read(fpcfg,*,end=1001,err=999) swrtr
-      fetxt = 'rall -> weirtere Quelle?'
+      fetxt = 'rall -> weitere Quelle?'
       read(fpcfg,*,end=1001,err=999) lsink
       fetxt = 'rall -> Nummer der Quelle'
       read(fpcfg,*,end=1001,err=999) nsink
