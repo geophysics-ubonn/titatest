@@ -142,7 +142,7 @@ c     CG-Epsilon
 c     Mindest-step-length
       stpmin = 1d-3
 c     Minimale stepsize (bdpar)
-      bdmin = 1d-4
+      bdmin = 0.0d0
 c     Regularisierungsparameter
 c     ak Default
       nlam   = 30
