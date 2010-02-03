@@ -88,6 +88,7 @@ c     ak        swrtr = 1
 c     ak        swrtr = 0
 
 c     Sonstiges
+      
       lkpot = .false.
       wkfak = .false.
       lana = .FALSE.
