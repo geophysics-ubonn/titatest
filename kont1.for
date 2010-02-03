@@ -133,7 +133,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
             WRITE (fetxt,'(a)')
      1           'Gaussian model(va*EXP(-3*h**2))'
          ELSE IF (nx==3) THEN   ! power
-            WRITE (fetxt,'(a)')
+ 1d-3            WRITE (fetxt,'(a)')
      1           'Power model(va*dump**gamma)'
          ELSE                   ! exponential (default)
             WRITE (fetxt,'(a)')
