@@ -124,7 +124,7 @@ c     Kontrolldateien oeffnen
       close(fpinv)
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
       open(fprun,file=fetxt,status='replace',err=999)
-      close(fpinv)
+!!$      close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
       fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
       open(fpcjg,file=fetxt,status='replace',err=999)
       close(fpcjg)
