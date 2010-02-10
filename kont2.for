@@ -13,6 +13,8 @@ c.....................................................................
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'dat.fin'
+c mw
+      INCLUDE 'inv.fin'
 
 c.....................................................................
 
@@ -43,37 +45,60 @@ c     'inv.ctr' oeffnen
       open(fpcjg,file=fetxt,status='old',err=1000,position='append')
       errnr = 4
 
+c     Erste Iteration (?)
       if (lsetup) then
 
          write(fpinv,'(a)',err=1000)cdump
+c        Robuste Inversion
          if (lrobust) then
-            write(fpinv,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
-     1t89,i4,t101,g9.3)',err=1000)
-     1           it,nrmsd,betrms,pharms,npol,l1rat
+            write(fpinv,'(t1, a3, t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,
+     1t93,i4,t105,g9.3)',err=1000)
+     1           'IT',it,nrmsd,betrms,pharms,npol,l1rat
          else
-            write(fpinv,'(t1,i3,t7,g10.4,t65,g10.4,t77,g10.4,
-     1t89,i4)',err=1000)
-     1           it,nrmsd,betrms,pharms,npol
+            write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,
+     1t93,i4)',err=1000)
+     1           'IT',it,nrmsd,betrms,pharms,npol
          end if
          write(fpinv,'(a)',err=1000)cdump
       else
+c     
          ncg = int(cgres(1))
 
+c        Hauptiterationen
          if (llam.and..not.lstep) then
             write(fpinv,'(a)',err=1000)cdump
-            if (lrobust) then
-               write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1t89,i4,t101,g9.3,t113,f5.3)',err=1000)
-     1              it,nrmsd,bdpar,lam,rough,ncg,betrms,
+            if(lip) then
+               if (lrobust) then
+                 write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,
+     1t46,g10.4,t58,i4,t69,g10.4,t81,g10.4,
+     1t93,i4,t105,g9.3,t117,f5.3)',err=1000)
+     1              'PPIT',it,nrmsd,bdpar,lam,rough,ncg,betrms,
      1              pharms,npol,l1rat,step
-            else
-               write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1t42,g10.4,t54,i4,t65,g10.4,t77,g10.4,
-     1t89,i4,t101,f5.3)',err=1000)
-     1              it,nrmsd,bdpar,lam,rough,ncg,betrms,
+               else
+                 write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,
+     1t46,g10.4,t58,i4,t69,g10.4,t81,g10.4,
+     1t93,i4,t105,f5.3)',err=1000)
+     1              'PIT',it,nrmsd,bdpar,lam,rough,ncg,betrms,
      1              pharms,npol,step
+               end if
+            else
+c           kein FPI
+               if (lrobust) then
+                 write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,
+     1t46,g10.4,t58,i4,t69,g10.4,t81,g10.4,
+     1t93,i4,t105,g9.3,t117,f5.3)',err=1000)
+     1              'IT',it,nrmsd,bdpar,lam,rough,ncg,betrms,
+     1              pharms,npol,l1rat,step
+               else
+                 write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,
+     1t46,g10.4,t58,i4,t69,g10.4,t81,g10.4,
+     1t93,i4,t105,f5.3)',err=1000)
+     1              'IT',it,nrmsd,bdpar,lam,rough,ncg,betrms,
+     1              pharms,npol,step
+               end if
+
             end if
+
             write(fpinv,'(a)',err=1000)cdump
 
             write(fpcjg,*,err=1000)
@@ -81,11 +106,11 @@ c     'inv.ctr' oeffnen
             do k=1,ncg
                write(fpcjg,*,err=1000) cgres(k+1)
             end do
+c        lambda search and steplength search
          else
-
-            write(fpinv,'(t1,i3,t7,g10.4,t19,g9.3,t30,g10.4,
-     1t42,g10.4,t54,i4,t101,f5.3)',err=1000)
-     1           itr,nrmsd,bdpar,lam,rough,ncg,step
+            write(fpinv,'(t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,
+     1t46,g10.4,t58,i4,t105,f5.3)',err=1000)
+     1           'UP',itr,nrmsd,bdpar,lam,rough,ncg,step
          end if
       end if
 
