@@ -262,7 +262,7 @@ c     ak                    write(*,*) i
          wmatd(i) = 1d0/(stabw*stabw)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
          IF (lfphai) THEN
-c RM            wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
+            wmatd(i)=1d0/(stabw*stabw+stabwp*stabwp)
             wmatdp(i)=1d0/(stabwp*stabwp)
          END IF
          wdfak(i) = 1

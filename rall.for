@@ -254,15 +254,15 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       lsto = (ltri==10)
       GOTO 101
 
- 100  BACKSPACE(fpcfg)
+ 100  BACKSPACE (fpcfg)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
-      IF (ltri == 2) THEN
+      IF (ltri > 1 .AND. ltri < 5) THEN
          READ(fpcfg,*,end=102,err=102) betamgs
 	 GOTO 103
  102     betamgs = 0.1          ! default value for MGS
-         BACKSPACE(fpcfg)
+         BACKSPACE (fpcfg)
 
  103     PRINT*,'Minimum gradient support regularisierung beta =',
      1        betamgs
