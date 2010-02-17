@@ -709,7 +709,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             IF (errnr/=0) THEN
                WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
                errnr = 97
-               RETURN
+               GOTO 999
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
@@ -743,7 +743,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             IF (errnr/=0) THEN
                WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
                errnr = 97
-               RETURN
+               GOTO 999
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
@@ -827,7 +827,7 @@ c     Kontrollausgaben
       end if
       
 c     Run-time abfragen und ausgeben
-      izeit     = etime(tazeit)
+      CALL etime(tazeit,izeit)
       izeit     = izeit/60.
       tazeit(2) = amod(izeit,60.)
       tazeit(1) = (izeit-tazeit(2))/60.
