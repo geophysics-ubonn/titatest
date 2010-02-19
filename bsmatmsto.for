@@ -1,11 +1,14 @@
-      subroutine bsmatmsto()
+      subroutine bsmatmsto
 c
 c     Unterprogramm belegt die Kovarianzmatrix.   
 c     Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
 c
-c     Andreas Kemna                                            29-Feb-1996
-c     Letzte Aenderung   03-Apr-2009
-
+c     Copyright by Andreas Kemna 2009
+c     
+c     Erste Version von A. August/R. Martin                    03-Apr-2009
+c     
+c     Letzte Aenderung   RM                                    23-Nov-2009
+c
 c.....................................................................
       
       USE alloci

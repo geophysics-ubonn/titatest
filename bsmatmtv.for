@@ -1,11 +1,11 @@
       subroutine bsmatmtv      !betatv
 c     
 c     Unterprogramm belegt die Rauhigkeitsmatrix mit total variance
-c     Fuer beliebige Triangulierung 
+c     fuer beliebige Triangulierung 
 c
 c     Copyright by Andreas Kemna 2009
 c     
-c     Andreas Kemna/Roland Martin                              23-Nov-2009
+c     Erste Version von Roland Martin                          23-Nov-2009
 c     
 c     Letzte Aenderung   RM                                    23-Nov-2009
 c     
@@ -26,13 +26,13 @@ c.........................................................................
 !     Hilfsvariablen 
       REAL(KIND(0D0)) :: dum
       INTEGER         :: i,j,l,k,smaxs,ik,anz
-      REAL(KIND(0D0)) :: edglen(selmax) ! Kantenlaenge
-      REAL(KIND(0D0)) :: dist(selmax) ! Abstand der Schwerpunkte
-      REAL(KIND(0D0)) :: sp(0:selmax,2) ! Schwerpunktkoordinaten
+      REAL(KIND(0D0)) :: edglen ! Kantenlaenge
+      REAL(KIND(0D0)) :: dist   ! Abstand der Schwerpunkte
+      REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
       REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
       REAL(KIND(0D0)) :: snsmn  !Mittlere Sensitivität
-      REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
-      REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
+      REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
+      REAL(KIND(0D0)) :: alftv  !TV Glaettung
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
 !.....................................................................
       
@@ -83,21 +83,21 @@ c.........................................................................
 
       DO i=1,elanz
 
-         sp(0:smaxs,:) = 0.
+         sp1 = 0.
          
          DO k=1,smaxs           ! Schwerpunkt berechnen 
-            sp(0,1) = sp(0,1) + sx(snr(nrel(i,k)))
-            sp(0,2) = sp(0,2) + sy(snr(nrel(i,k)))
+            sp1(1) = sp1(1) + sx(snr(nrel(i,k)))
+            sp1(2) = sp1(2) + sy(snr(nrel(i,k)))
          END DO
          
-         sp(0,1) = sp(0,1)/smaxs
-         sp(0,2) = sp(0,2)/smaxs ! Mittelpunkt des aktuellen Elements
+         sp1(1) = sp1(1)/smaxs
+         sp1(2) = sp1(2)/smaxs ! Mittelpunkt des aktuellen Elements
          
          DO k=1,smaxs           ! jedes flaechenele hat mind einen nachbarn
 
             ik = MOD(k,smaxs) + 1
 
-            edglen(k) = SQRT((sx(snr(nrel(i,k))) - 
+            edglen = SQRT((sx(snr(nrel(i,k))) - 
      1           sx(snr(nrel(i,ik))))**2 +
      1           (sy(snr(nrel(i,k))) -
      1           sy(snr(nrel(i,ik))))**2) ! edge
@@ -105,26 +105,28 @@ c.........................................................................
 
             IF (nachbar(i,k)>0) THEN !nachbar existiert 
                
+               sp2 = 0.
+
                DO l=1,smaxs
-                  sp(k,1) = sp(k,1) + sx(snr(nrel(nachbar(i,k),l)))
-                  sp(k,2) = sp(k,2) + sy(snr(nrel(nachbar(i,k),l)))
+                  sp2(1) = sp2(1) + sx(snr(nrel(nachbar(i,k),l)))
+                  sp2(2) = sp2(2) + sy(snr(nrel(nachbar(i,k),l)))
                END DO
                
-               sp(k,1) = sp(k,1)/smaxs ! schwerpunkt des nachbar elements
-               sp(k,2) = sp(k,2)/smaxs
+               sp2(1) = sp2(1)/smaxs ! schwerpunkt des nachbar elements
+               sp2(2) = sp2(2)/smaxs
                
 !     Geometrischer Teil...
-               dist(k) = SQRT((sp(0,1) - sp(k,1))**2 +
-     1              (sp(0,2) - sp(k,2))**2)
-               ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !neu
+               dist = SQRT((sp1(1) - sp2(1))**2. + 
+     1              (sp1(2) - sp2(2))**2.)
+
+               ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
+
                alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
      1              (alfz*DSIN(ang))**2.)
-!     Total variance mit beta 
-               dum = CDABS(par(i)-par(nachbar(i,k)))
 
-               alfmgs = SQRT(dum**2. + betamgs**2.)
-!     gesamt eintrag
-               dum = edglen(k) / dist(k) * alfgeo * alfmgs
+               alftv = edglen / dist * alfgeo
+!     Total variance
+               dum = SQRT(alftv**2. + betamgs**2.)
 !     nun glaettung belegen
                smatm(i,k) = -dum ! neben Diagonale
                smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !Hauptdiagonale

@@ -251,20 +251,20 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,'(a80)',end=1001,err=999) drandb
       read(fpcfg,'(I2)',end=100,err=100) ltri
       
-      lsto = (ltri==10)
+      lsto = (ltri==15)
       GOTO 101
 
  100  BACKSPACE (fpcfg)
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
-      IF (ltri > 1 .AND. ltri < 5) THEN
+      IF (ltri > 3 .AND. ltri < 15) THEN
          READ(fpcfg,*,end=102,err=102) betamgs
 	 GOTO 103
  102     betamgs = 0.1          ! default value for MGS
          BACKSPACE (fpcfg)
 
- 103     PRINT*,'Minimum gradient support regularisierung beta =',
+ 103     PRINT*,'Regularisation with support stabilizer beta =',
      1        betamgs
       END IF
 
@@ -296,7 +296,7 @@ c check if the final phase should start with homogenous model
       lffhom = (stabp0 < 0)
       IF (stabp0 < 0) stabp0 = -stabp0
 
-      IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least smoothness
+      IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
 c     Ggf. Fehlermeldungen
       if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
