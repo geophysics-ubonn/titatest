@@ -197,16 +197,17 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
      1     '------------------------------------------------',
      1     '-------------'
       write(fpinv,*,err=999)
+c     Robuste Inversion
       if (lrobust) then
-         write(fpinv,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1t77,a8,t89,a8,t101,a8,t113,a10)',err=999)
-     1        'it.','data RMS','stepsize',' lambda ',' roughn.',
+         write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,
+     1t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)',err=999)
+     1        'ID','it.','data RMS','stepsize',' lambda ',' roughn.',
      1        'CG-steps',' mag RMS',' pha RMS','- # data',
      1        'L1-ratio','steplength'
       else
-         write(fpinv,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1t77,a8,t89,a8,t101,a10)',err=999)
-     1        'it.','data RMS','stepsize',' lambda ',' roughn.',
+         write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,
+     1t69,a8,t81,a8,t93,a8,t105,a10)',err=999)
+     1        'ID','it.','data RMS','stepsize',' lambda ',' roughn.',
      1        'CG-steps',' mag RMS',' pha RMS','- # data',
      1        'steplength'
       end if
