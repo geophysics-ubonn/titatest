@@ -23,7 +23,7 @@ c.........................................................................
       INTEGER                                    :: i,kanal
       REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: ipiv
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
       REAL(KIND(0D0))                            :: dig_min,dig_max
 !....................................................................
 
@@ -33,54 +33,57 @@ c$$$  invert (A^TC_d^-1A + C_m^-1)
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
 
-c$$$      ALLOCATE (work(manz,manz),STAT=errnr)
-c$$$      IF (errnr/=0) THEN
-c$$$         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
-c$$$         errnr = 97
-c$$$         RETURN
-c$$$      END IF
-c$$$      ALLOCATE (ipiv(manz),STAT=errnr)
-c$$$      IF (errnr/=0) THEN
-c$$$         WRITE (*,'(/a/)')'Allocation problem IPIV in bmcmdc'
-c$$$         errnr = 97
-c$$$         RETURN
-c$$$      END IF
-c$$$      
-c$$$      work = ata_reg_dc         ! work is replaced by PLU decomposition
-c$$$      
-c$$$c$$$  building Right Hand Side (unit matrix)
-c$$$      DO i=1,manz
-c$$$         cov_m_dc(i,i) = 1.d0
-c$$$      END DO
-c$$$      
-c$$$c$$$  Solving Linear System Ax=B -> B=A^-1
-c$$$      WRITE (*,'(a)')'Solving Ax=B'
-c$$$      CALL DGESV(manz,manz,work,manz,ipiv,cov_m_dc,manz,errnr)
-c$$$      
-c$$$      IF (errnr /= 0) THEN
-c$$$         PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
-c$$$         PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
-c$$$         errnr = 108
-c$$$         RETURN
-c$$$      END IF
-c$$$
-c$$$      DEALLOCATE (work,ipiv)
-
-      cov_m_dc = ata_reg_dc
-
-      CALL gauss_dble(cov_m_dc,manz,errnr)
+      ALLOCATE (work(manz,manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
+         errnr = 97
+         RETURN
+      END IF
+      ALLOCATE (ipiv(manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem IPIV in bmcmdc'
+         errnr = 97
+         RETURN
+      END IF
+      
+      work = ata_reg_dc         ! work is replaced by PLU decomposition
+      
+c$$$  building Right Hand Side (unit matrix)
+      DO i=1,manz
+         cov_m_dc(i,i) = 1.d0
+      END DO
+      
+c$$$  Solving Linear System Ax=B -> B=A^-1
+      WRITE (*,'(a)')'Solving Ax=B'
+      CALL DGESV(manz,manz,work,manz,ipiv,cov_m_dc,manz,errnr)
       
       IF (errnr /= 0) THEN
-         fetxt = 'error matrix inverse not found'
          PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
          PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
          errnr = 108
          RETURN
       END IF
+
+      work = MATMUL(ata_reg_dc,cov_m_dc)
+
+c$$$      DEALLOCATE (work,ipiv)
+c$$$
+c$$$      cov_m_dc = ata_reg_dc
+c$$$
+c$$$      CALL gauss_dble(cov_m_dc,manz,errnr)
+c$$$      
+c$$$      IF (errnr /= 0) THEN
+c$$$         fetxt = 'error matrix inverse not found'
+c$$$         PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
+c$$$         PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+c$$$         errnr = 108
+c$$$         RETURN
+c$$$      END IF
       
-      ALLOCATE (dig(manz)) !prepare to write out main diagonal
+      ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
       DO i=1,manz
          dig(i) = cov_m_dc(i,i)
+         dig2(i) = work(i,i)
       END DO
       
       dig_min = MINVAL(dig)
@@ -90,10 +93,11 @@ c$$$      DEALLOCATE (work,ipiv)
       
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig(i)
+         WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig2(i)
       END DO
       CLOSE (kanal)
-      DEALLOCATE (dig)
+
+      DEALLOCATE (dig,work,ipiv)
 
       errnr = 0
  999  RETURN

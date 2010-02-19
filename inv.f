@@ -463,7 +463,7 @@ c     SENSITIVITAETEN berechnen
             call bsensi()
          end if
 
-         if (lsetup.OR.ltri == 3.OR.ltri == 4) then
+         if (lsetup.OR.ltri == 6.OR.ltri == 7) then
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -482,24 +482,24 @@ c     Rauhigkeitsmatrix belegen
             ELSE IF (ltri == 1) THEN
                WRITE (*,'(a)')' Triangular smooth'
                CALL bsmatmtri
-            ELSE IF (ltri >= 2 .AND. ltri < 5) THEN
-               IF (ltri == 2) WRITE (*,'(a)')
+            ELSE IF (ltri > 4 .AND. ltri < 8) THEN
+               IF (ltri == 5) WRITE (*,'(a)')
      1              ' Triangular pure MGS '
-               IF (ltri == 3) WRITE (*,'(a)')
+               IF (ltri == 6) WRITE (*,'(a)')
      1              ' Triangular sens weighted MGS'
-               IF (ltri == 4) WRITE (*,'(a)')
+               IF (ltri == 7) WRITE (*,'(a)')
      1              ' Triangular sens weighted MGS mean'
                CALL bsmatmmgs
-            ELSE IF (ltri == 5) THEN
-               WRITE (*,'(a)')' Triangular Total (beta) variance'
-               CALL bsmatmtv
             ELSE IF (ltri == 10) THEN
+               WRITE (*,'(a)')' Triangular Total variance (beta)'
+               CALL bsmatmtv
+            ELSE IF (ltri == 15) THEN
                WRITE (*,'(a)')' Triangular Stochastic'
                CALL bsmatmsto
                if (errnr.ne.0) goto 999
             ELSE
                WRITE (*,'(a)')' Error:: '//
-     1              'Regularization can just be 0,1,2,3,4 or 10'
+     1              'Regularization can just be 0,1,2,5,6 7,10 or 15'
                STOP
             END IF 
          end if
@@ -672,12 +672,13 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       end if
       IF (lcov1) THEN
          IF (it<2) lam = lamalt
-
+         lam = lamalt
          WRITE (*,'(/a,G10.3,a/)')
      1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
          IF (BTEST(mswitch,5)) THEN 
             READ (*,*)fetxt
             IF (fetxt/='')READ(fetxt,*)lam
+            WRITE (*,*)'Set lambda to ',lam
          END IF
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'

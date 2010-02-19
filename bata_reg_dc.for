@@ -23,16 +23,19 @@ c.........................................................................
       INTEGER                                      :: kanal ! io number
 !     Hilfsvariablen 
       INTEGER                                      :: i,j,k,smaxs
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
+      REAL(KIND(0D0))                              :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A+lamC_m
       
-      smaxs=MAXVAL(selanz)
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
 
-      WRITE (kanal,*)manz
+      ALLOCATE(dig(manz))
+      smaxs=MAXVAL(selanz)
+
       IF (ltri == 0) THEN
          DO j=1,manz
             write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
@@ -54,7 +57,7 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg_dc(i,j) = ata_dc(i,j) + lam * smatm(i,1)
                END IF
             END DO
-            WRITE (kanal,*)ata_reg_dc(j,j),j
+            dig(j) = ata_reg_dc(j,j)
          END DO
       ELSE IF (ltri < 10 ) THEN
          DO j=1,manz
@@ -71,20 +74,31 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg_dc(i,j) = ata_dc(i,j)
                END IF
             END DO
-            WRITE (kanal,*)ata_reg_dc(j,j),j
+            dig(j) = ata_reg_dc(j,j)
          END DO
       ELSE
          ata_reg_dc = ata_dc + smatm ! for full C_m..
          DO j=1,manz
-            WRITE (kanal,*)ata_reg_dc(j,j),j
+            dig(j) = ata_reg_dc(j,j)
          END DO
       END IF
-      
-      PRINT*,MINVAL(ata_reg_dc),MAXVAL(ata_reg_dc)
-      
-      CLOSE (kanal)
-      errnr = 0
 
+      dig_min = MINVAL(dig)
+      dig_max = MAXVAL(dig)
+
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
+      END DO
+
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+      CLOSE(kanal)
+
+      DEALLOCATE (dig)
+
+      errnr = 0
  999  RETURN
 
       END
