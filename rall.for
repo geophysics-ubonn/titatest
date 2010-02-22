@@ -9,7 +9,7 @@ c     Unterprogramm zum Einlesen der benoetigten Variablen.
 
 c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   20-Aug-2007
-
+c
 c.....................................................................
       USE make_noise
       IMPLICIT none
