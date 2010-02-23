@@ -147,6 +147,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1
       write(fpinv,*,err=999)'Write resolution   : ',lres
       write(fpinv,*,err=999)'Write MCM 2        : ',lcov2
+      write(fpinv,*,err=999)'Using Gauss ols    : ',lgauss
       IF (nz<0) THEN
          write(fpinv,'(1x,a)',err=999,ADVANCE='no')
      1        'taking easy lam_0 : '

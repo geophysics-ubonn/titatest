@@ -17,8 +17,8 @@ SUBROUTINE Gauss_cmplx (a,n,e_flag)    ! Invert matrix by Gauss method
   e_flag=-1
   
   DO i = 1,n
-     WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'gauss/ ',&
-          REAL( i * (100./n)),'%'
+     WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//&
+          'gauss/ ',REAL( i * (100./n)),'%'
 
      e_flag = -i
 

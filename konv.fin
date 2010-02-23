@@ -140,6 +140,8 @@ c Schalter fuer posterior cov
         logical         * 4	lcov2
 c Mega schalter, wird binaer getestet
         integer         * 4	mswitch
+c Schalter für ols Loeser
+  	logical         * 4     lgauss
 c.....................................................................
 
         common/ckonv/   lam,
@@ -197,4 +199,5 @@ cdiff+>
      1 			lres,
      1 			lcov1,
      1 			lcov2,
-     1 			mswitch
+     1 			mswitch,
+     1			lgauss

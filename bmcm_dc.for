@@ -1,17 +1,18 @@
-      SUBROUTINE bmcm_dc(kanal)
+      SUBROUTINE bmcm_dc(kanal,ols)
 c     
 c     Unterprogramm berechnet (einfache) Modell Kovarianz Matrix
 c     (A^TC_d^-1A + C_m^-1)^-1
 c     Fuer beliebige Triangulierung
-c
+c     
 c     Copyright Andreas Kemna 2009
 c     Andreas Kemna / Roland Martin                            02-Nov-2009
 c     
 c     Letzte Aenderung    RM                                   20-Feb-2010
-c
+c     
 c.........................................................................
       USE alloci
-      
+      USE tic_toc
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
@@ -26,6 +27,7 @@ c.........................................................................
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: ipiv
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
       REAL(KIND(0D0))                            :: dig_min,dig_max
+      LOGICAL,INTENT(IN),OPTIONAL                :: ols
 !....................................................................
 
 c$$$  invert (A^TC_d^-1A + C_m^-1)
@@ -40,47 +42,57 @@ c$$$  invert (A^TC_d^-1A + C_m^-1)
          errnr = 97
          RETURN
       END IF
-      ALLOCATE (ipiv(manz),STAT=errnr)
-      IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem IPIV in bmcmdc'
-         errnr = 97
-         RETURN
-      END IF
-      
-      work = ata_reg_dc         ! work is replaced by PLU decomposition
-      
+
+      CALL TIC
+
+      IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN !default
+         ALLOCATE (ipiv(manz),STAT=errnr)
+         IF (errnr/=0) THEN
+            WRITE (*,'(/a/)')'Allocation problem IPIV in bmcmdc'
+            errnr = 97
+            RETURN
+         END IF
+         
+         work = ata_reg_dc      ! work is replaced by PLU decomposition
+         
 c$$$  building Right Hand Side (unit matrix)
-      DO i=1,manz
-         cov_m_dc(i,i) = 1.d0
-      END DO
-      
+         DO i=1,manz
+            cov_m_dc(i,i) = 1.d0
+         END DO
+         
 c$$$  Solving Linear System Ax=B -> B=A^-1
-      WRITE (*,'(a)',ADVANCE='no')'Solving Ax=B (DGESV)'
-      CALL DGESV(manz,manz,work,manz,ipiv,cov_m_dc,manz,errnr)
-      
-      IF (errnr /= 0) THEN
-         PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
-         PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
-         errnr = 108
-         RETURN
+         WRITE (*,'(a)',ADVANCE='no')'Solving Ax=B (DGESV)'
+         CALL DGESV(manz,manz,work,manz,ipiv,cov_m_dc,manz,errnr)
+         
+         IF (errnr /= 0) THEN
+            PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
+            PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+            errnr = 108
+            RETURN
+         END IF
+
+      ELSE
+
+         cov_m_dc = ata_reg_dc
+
+         WRITE (*,'(a)',ADVANCE='no')
+     1        'Solving Ax=B (Gauss elemination)'
+
+         CALL gauss_dble(cov_m_dc,manz,errnr)
+         
+         IF (errnr /= 0) THEN
+            fetxt = 'error matrix inverse not found'
+            PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
+            PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+            errnr = 108
+            RETURN
+         END IF
       END IF
+
+      CALL TOC
 
       work = MATMUL(cov_m_dc,ata_reg_dc)
 
-c$$$      DEALLOCATE (work,ipiv)
-c$$$
-c$$$      cov_m_dc = ata_reg_dc
-c$$$
-c$$$      CALL gauss_dble(cov_m_dc,manz,errnr)
-c$$$      
-c$$$      IF (errnr /= 0) THEN
-c$$$         fetxt = 'error matrix inverse not found'
-c$$$         PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
-c$$$         PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
-c$$$         errnr = 108
-c$$$         RETURN
-c$$$      END IF
-      
       ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
       DO i=1,manz
          dig(i) = cov_m_dc(i,i)
@@ -100,7 +112,8 @@ c$$$      END IF
 
       CLOSE(kanal)
 
-      DEALLOCATE (dig,dig2,work,ipiv)
+      DEALLOCATE (dig,dig2,work)
+      IF (ALLOCATED(ipiv)) DEALLOCATE (ipiv)
 
       errnr = 0
  999  RETURN
