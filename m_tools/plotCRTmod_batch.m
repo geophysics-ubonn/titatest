@@ -16,9 +16,15 @@ fp=fopen('tmp.elecname','r');
 elecfile=fscanf(fp,'%s',1);
 fclose(fp);
 
-fp=fopen('tmp.lastmod','r');
+checkme = exist ('inv.lastmod','file');
+if checkme~=0
+  fp=fopen('inv.lastmod','r');
 modfile=fscanf(fp,'%s',1);
 fclose(fp);
+ else
+   
+ end
+
 fenster='';
 checkme = exist ('tmp.fenster','file');
 if checkme~=0
@@ -276,3 +282,5 @@ fclose(fp);
 fp=fopen('tmp.yrange','w');
 fprintf(fp,'%f\t%f\n',ylimits);
 fclose(fp);
+disp(sprintf('check dis out3\n'));
+
