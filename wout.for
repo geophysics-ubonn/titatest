@@ -106,7 +106,7 @@ c     'dsigma' modifizieren
 c     Betraege ausgeben
       idum  = index(htxt,' ')
       fetxt = htxt(1:idum-4)//'mag'
-      OPEN (kanal,FILE='tmp.lastmod',STATUS='replace')
+      OPEN (kanal,FILE='inv.lastmod',STATUS='replace')
       WRITE (kanal,*)TRIM(fetxt)
       CLOSE (kanal)
       errnr = 1

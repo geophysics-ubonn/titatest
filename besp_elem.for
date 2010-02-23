@@ -71,7 +71,7 @@ c     maximaler wert aus der Menge der Nachbarmittelpunkte
       CALL MDIAN1(abst,elanz,esp_med)
 
       CALL get_unit(fp)
-      OPEN (fp,FILE='tmp.gstat',STATUS='replace')
+      OPEN (fp,FILE='inv.gstat',STATUS='replace')
       WRITE (fp,'(a/)')'Grid statistics:'
       WRITE (fp,'(20X,A,I10)')'Gridcells:'//ACHAR(9),elanz
       WRITE (fp,'(20X,A,2F10.4)')'Min/Max:'//ACHAR(9),esp_min,esp_max

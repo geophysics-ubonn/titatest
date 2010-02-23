@@ -387,7 +387,7 @@ c     Wichtungsfeld umspeichern
                step   = 1d0
 
 c     ak
-               fetxt = 'cp -f tmp.lastmod tmp.lastmod_rho'
+               fetxt = 'cp -f inv.lastmod inv.lastmod_rho'
                CALL SYSTEM (TRIM(fetxt))
                IF (lffhom) THEN
                   write(*,*)
@@ -714,7 +714,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm_dc(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
+            CALL bmcm_dc(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
             if (errnr.ne.0) goto 999
 
          ELSE
@@ -748,7 +748,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm(kanal)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
+            CALL bmcm(kanal,lgauss)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
             if (errnr.ne.0) goto 999
 
          END IF
