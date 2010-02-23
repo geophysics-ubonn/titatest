@@ -357,6 +357,8 @@ c Mega switch testing..
       lres  = BTEST(mswitch,2) ! rsolution matrix berechnen
       lcov2 = BTEST(mswitch,3) ! posterior modell covariance matrix 2
 
+      lgauss = BTEST (mswitch,4) ! solve ols with Gauss elemination
+
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
 c
