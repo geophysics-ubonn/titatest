@@ -12,7 +12,8 @@ c
 c.....................................................................
       
       USE alloci
-      
+      USE tic_toc
+
       IMPLICIT none
       
       INCLUDE 'parmax.fin'
@@ -51,7 +52,7 @@ c     Hilfsvariablen
 c clearscreen
       CHARACTER(80)        :: csz
 
-      CALL SYSTEM_CLOCK (c1,i)
+      CALL TIC()
 
       gamma = 2.
       var = 1.
@@ -249,15 +250,6 @@ c$$$      END DO
 
       IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
       
-      CALL SYSTEM_CLOCK (c2,i)
+      CALL TOC()
 
-      l = (c2-c1)/i ! Gesamt Sekunden
-      mi=INT(l/60) ! Minuten
-      st=INT(l/60/60) ! Stunden
-      ta=INT(l/60/60/24) ! Tage
-      se=l-mi*60-st*60*60-ta*60*60*24 ! Sekunden
-
- 110  FORMAT(I3,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
-      WRITE (*,110)ta,st,mi,se
-
-      end
+      END
