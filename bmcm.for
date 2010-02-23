@@ -79,7 +79,7 @@ c$$$      END IF
 
       ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
       DO i=1,manz
-         dig(i) = DBLE(cov_m_dc(i,i))
+         dig(i) = DBLE(cov_m(i,i))
          dig2(i) = DBLE(work(i,i))
       END DO
       
