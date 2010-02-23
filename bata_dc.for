@@ -1,11 +1,12 @@
       SUBROUTINE bata_dc(kanal)
 c     
 c     Unterprogramm berechnet ATC_d^-1A
+c
+c     Copyright Andreas Kemna 2009
+c      Andreas Kemna / Roland Martin                           02-Nov-2009
 c     
-c     Andreas Kemna                                            02-Nov-2009
-c     
-c     Letzte Aenderung    RM                                   06-Nov-2009
-c     
+c     Letzte Aenderung    RM                                   20-Feb-2010
+c
 c.........................................................................
       USE alloci
       

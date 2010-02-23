@@ -67,7 +67,7 @@ myeps=`basename $tmp`'.eps'
 mypdf=`basename $myeps '.eps'|tr '.' '_'`'.pdf'
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$mypdf >& /dev/null
-$mogri -format jpg $myeps
+#$mogri -format jpg $myeps
 echo "done $1"
 
 #pdfcr=`which pdfcrop`

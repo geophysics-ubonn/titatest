@@ -1,7 +1,7 @@
       SUBROUTINE bres(kanal,ols)
 c     
 c     Unterprogramm berechnet Aufloesungsmatrix
-c     Fuer beliebige Triangulierung
+c     Fuer beliebige Triangulierung und Complex
 c     RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 c     wobei (A^TC_d^-1A + C_m^-1) bereits invertiert wurde (cov_m)
 c     
@@ -48,16 +48,20 @@ c$$$  calculate  RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
       dig_min = MINVAL(dig) 
       dig_max = MAXVAL(dig)
       
-      PRINT*,dig_min,dig_max
-      
-      dig = dig/dig_max
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)*dig_max
+         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)
       END DO
-      CLOSE (kanal)
+
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+      CLOSE(kanal)
+
       DEALLOCATE (dig)
+
       errnr = 0
+
  999  RETURN
 
       END

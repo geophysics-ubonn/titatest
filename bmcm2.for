@@ -2,10 +2,10 @@
 c     
 c     Unterprogramm berechnet Modellkovarianz nach Fehlerfortpflanzung
 c     MCM = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1
-c     Fuer beliebige Triangulierung und Komplexe Werte
+c     Fuer beliebige Triangulierung und Complex
 c
 c     Copyright Andreas Kemna 2009
-c     erstellt von Roland Martin                               02-Nov-2009
+c     Andreas Kemna / Roland Martin                            02-Nov-2009
 c     
 c     Letzte Aenderung    RM                                   23-Nov-2009
 c     
@@ -46,14 +46,16 @@ c.........................................................................
       dig_min = MINVAL(dig) 
       dig_max = MAXVAL(dig)
       
-      PRINT*,dig_min,dig_max
-      
-      dig = dig/dig_max
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)*dig_max
+         WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig(i)
       END DO
-      CLOSE (kanal)
+
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+      CLOSE(kanal)
+
       DEALLOCATE (dig)
 
       errnr = 0

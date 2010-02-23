@@ -3,11 +3,12 @@ c
 c     Unterprogramm berechnet (einfache) Modell Kovarianz Matrix
 c     (A^TC_d^-1A + C_m^-1)^-1
 c     Fuer beliebige Triangulierung
+c
+c     Copyright Andreas Kemna 2009
+c     Andreas Kemna / Roland Martin                            02-Nov-2009
 c     
-c     Andreas Kemna                                            02-Nov-2009
-c     
-c     Letzte Aenderung    RM                                   06-Nov-2009
-c     
+c     Letzte Aenderung    RM                                   20-Feb-2010
+c
 c.........................................................................
       USE alloci
       
@@ -54,7 +55,7 @@ c$$$  building Right Hand Side (unit matrix)
       END DO
       
 c$$$  Solving Linear System Ax=B -> B=A^-1
-      WRITE (*,'(a)')'Solving Ax=B'
+      WRITE (*,'(a)',ADVANCE='no')'Solving Ax=B (DGESV)'
       CALL DGESV(manz,manz,work,manz,ipiv,cov_m_dc,manz,errnr)
       
       IF (errnr /= 0) THEN
@@ -64,7 +65,7 @@ c$$$  Solving Linear System Ax=B -> B=A^-1
          RETURN
       END IF
 
-      work = MATMUL(ata_reg_dc,cov_m_dc)
+      work = MATMUL(cov_m_dc,ata_reg_dc)
 
 c$$$      DEALLOCATE (work,ipiv)
 c$$$
@@ -89,15 +90,17 @@ c$$$      END IF
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
       
-      PRINT*,dig_min,dig_max
-      
       WRITE (kanal,*)manz
       DO i=1,manz
          WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig2(i)
       END DO
-      CLOSE (kanal)
 
-      DEALLOCATE (dig,work,ipiv)
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+      CLOSE(kanal)
+
+      DEALLOCATE (dig,dig2,work,ipiv)
 
       errnr = 0
  999  RETURN

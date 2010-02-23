@@ -169,7 +169,7 @@ c Read in input values..
       fetxt = 'rall -> spannungs file'
       read(fpcfg,'(a80)',end=1001,err=999) dstrom
       fetxt = 'rall -> Inversionsverzeichnis'
-      read(fpcfg,'(a60)',end=1001,err=999) ramd
+      read(fpcfg,'(a80)',end=1001,err=999) ramd
       INQUIRE (FILE=ramd,EXIST= exi)
       IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
 c     diff+<

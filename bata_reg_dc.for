@@ -2,10 +2,11 @@
 c     
 c     Unterprogramm berechnet ATC_d^-1A+lam*C_m
 c     Fuer beliebige Triangulierung
+c
+c     Copyright Andreas Kemna
+c     Erstellt von Roland Martin                               02-Nov-2009
 c     
-c     Andreas Kemna                                            02-Nov-2009
-c     
-c     Letzte Aenderung    RM                                   06-Nov-2009
+c     Letzte Aenderung    RM                                   20-Feb-2010
 c     
 c.........................................................................
       USE alloci

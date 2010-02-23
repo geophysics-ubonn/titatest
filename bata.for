@@ -1,11 +1,12 @@
       SUBROUTINE bata(kanal)
 c     
-c     Unterprogramm berechnet ATC_d^-1A
+c     Unterprogramm berechnet ATA=A^T C_d^{-1} A (complex)
 c     
-c     Andreas Kemna                                            02-Nov-2009
+c     Copyright Andreas Kemna 2009
+c     Andreas Kemna / Roland Martin                            02-Nov-2009
 c     
-c     Letzte Aenderung    RM                                   06-Nov-2009
-c     
+c     Letzte Aenderung    RM                                   20-Feb-2010
+c
 c.........................................................................
       USE alloci
       
@@ -49,15 +50,19 @@ c$$$  A^TC_d^-1A
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
 
-      PRINT*,dig_min,dig_max
-      dig = dig/dig_max ! normierung
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),dig(i)*dig_max
+         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
       END DO
+
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
       CLOSE(kanal)
+
+      DEALLOCATE (dig)
 
       errnr = 0
  999  RETURN
-      
+
       END

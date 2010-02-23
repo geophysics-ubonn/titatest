@@ -12,7 +12,7 @@ c     14 - cjg.ctr    -> fpcjg
 c     15 - eps.ctr    -> fpeps
 
 c     Andreas Kemna                                            02-May-1995
-c     Letzte Aenderung                                         29-Jul-2009
+c     Letzte Aenderung                                         03-Jan-2010
 
 c.....................................................................
 
