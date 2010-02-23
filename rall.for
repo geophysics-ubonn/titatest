@@ -250,23 +250,6 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       fetxt = 'rall -> Datei mit Randwerten'
       read(fpcfg,'(a80)',end=1001,err=999) drandb
       read(fpcfg,'(I2)',end=100,err=100) ltri
-      
-      lsto = (ltri==15)
-      GOTO 101
-
- 100  BACKSPACE (fpcfg)
-
- 101  IF (lsto) PRINT*,'Stochastische Regularisierung'
-      
-      IF (ltri > 3 .AND. ltri < 15) THEN
-         READ(fpcfg,*,end=102,err=102) betamgs
-	 GOTO 103
- 102     betamgs = 0.1          ! default value for MGS
-         BACKSPACE (fpcfg)
-
- 103     PRINT*,'Regularisation with support stabilizer beta =',
-     1        betamgs
-      END IF
 
       IF (ltri >= 20) THEN
          llamf = .TRUE.
@@ -278,7 +261,25 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
  105     PRINT*,'Fixing Lambda =', lamfix
          ltri = ltri - 20
       END IF
+
+      lsto = (ltri==15)
       
+      GOTO 101
+
+ 100  BACKSPACE (fpcfg)
+
+
+ 101  IF (lsto) PRINT*,'Stochastische Regularisierung'
+      
+      IF (ltri > 3 .AND. ltri < 10) THEN
+         READ(fpcfg,*,end=102,err=102) betamgs
+	 GOTO 103
+ 102     betamgs = 0.1          ! default value for MGS
+         BACKSPACE (fpcfg)
+
+ 103     PRINT*,'Regularisation with support stabilizer beta =',
+     1        betamgs
+      END IF      
       
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN

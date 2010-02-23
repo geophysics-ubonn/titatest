@@ -61,7 +61,7 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg(i,j) = ata(i,j) + DCMPLX(lam * smatm(i,1))
                END IF
             END DO
-            dig(j) = DBLE(ata_reg_dc(j,j))
+            dig(j) = DBLE(ata_reg(j,j))
          END DO
       ELSE IF (ltri < 10 ) THEN
          DO j=1,manz
@@ -78,12 +78,12 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg(i,j) = ata(i,j)
                END IF
             END DO
-            dig(j) = DBLE(ata_reg_dc(j,j))
+            dig(j) = DBLE(ata_reg(j,j))
          END DO
       ELSE
          ata_reg = ata + DCMPLX(lam * smatm) ! for full C_m..
          DO j=1,manz
-            dig(j) = DBLE(ata_reg_dc(j,j))
+            dig(j) = DBLE(ata_reg(j,j))
          END DO
       END IF
       
