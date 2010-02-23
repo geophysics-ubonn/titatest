@@ -41,7 +41,7 @@ all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 ferr		= get_error.o
 # CRTomo objects
 f90crt		= alloci.o chold.o gauss_dble.o gauss_cmplx.o get_unit.o \
-		  linv.o make_noise.o
+		  linv.o make_noise.o tic_toc.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
