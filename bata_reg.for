@@ -24,6 +24,8 @@ c.........................................................................
       INTEGER                                      :: kanal ! io number
 !     Hilfsvariablen 
       INTEGER                                      :: i,j,k,smaxs
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE      :: dig
+      REAL(KIND(0D0))                               :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A+lamC_m
