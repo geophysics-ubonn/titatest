@@ -1,13 +1,13 @@
-      subroutine bpdcsto(bvec,pvec)
-
+      subroutine bpdclma(bvec,pvec)
+c
 c     Unterprogramm berechnet b = B * p . 
-c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+c     Angepasst an Levenberg-Marquardt-Daempfung
 c
-c     Copyright by Andreas Kemna 2009
+c     Copyright by Andreas Kemna 2010
 c     
-c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c     Andreas Kemna / Roland Martin                            24-Feb-2010
 c
-c     Letzte Aenderung   RM                                    30-Jun-2009
+c     Letzte Aenderung   RM                                    24-Feb-2010
 c
 c.....................................................................
 
@@ -28,7 +28,6 @@ c     EIN-/AUSGABEPARAMETER:
 c     Vektoren
       real            * 8     bvec(mmax)
       real            * 8     pvec(mmax)
-      real            * 8     pvecdum(manz)
 
 c.....................................................................
 
@@ -59,13 +58,10 @@ c     A * p  berechnen (skaliert)
       end do
 
 c     R^m * p  berechnen (skaliert)
-caa   Abgeändert auf (4 Zeilen)
       do i=1,manz
-         pvecdum(i)=pvec(i)*fak(i)
+         bvec(i)=pvec(i)*fak(i)*smatm(i,1) ! damping stuff..
 c     PRINT*,'pvec bp::',i,pvec(i),fak(i)
       end do
-
-      bvec(1:manz)=MATMUL(smatm,pvecdum(1:manz))
 
 c     PRINT*,'bvec cg::',bvec(1:manz)
 

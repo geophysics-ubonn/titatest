@@ -1,11 +1,15 @@
       subroutine broughsto
 
 c     Unterprogramm zum Belegen der Leitfaehigkeit und zum Bestimmen der
-c     Rauhigkeit. Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-
-c     Andreas Kemna                                            12-Apr-1996
-c     Letzte Aenderung   30-Jun-2009
-
+c     Rauhigkeit. 
+c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+c
+c     Copyright by Andreas Kemna 2009
+c     
+c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c
+c     Letzte Aenderung   RM                                    30-Jun-2009
+c
 c.....................................................................
       USE alloci,only:smatm
       IMPLICIT none
@@ -32,9 +36,6 @@ c.....................................................................
 c     Roughness bestimmen
       rough = 0d0
 
-caa   do i=1,manz
-caa   cdum = dcmplx(0d0)
-
 c     diff+<
       if (.not.lprior) then
 c     diff+>
@@ -50,7 +51,7 @@ c     diff+>
          end if
 c     diff+<
       else
-         parh=MATMUL(dcmplx(smatm),(par(1:manz)-m0(i:manz)))
+         parh=MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
          if (lip) then
             do i=1,manz
                rough = rough + dimag(parh(i))*dimag(par(i)-m0(i))

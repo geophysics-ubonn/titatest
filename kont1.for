@@ -109,22 +109,31 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
      1     '! boundary values ?'
       write(fpinv,'(a80)',err=999) drandb
       write(fpinv,'(/a)',err=999)      '***Model stats***'
-      write(fpinv,*,err=999)'# Model parameters : ',manz
-      write(fpinv,*,err=999)'# Data points      : ',nanz
-      write(fpinv,*,err=999)'Add data noise ?   : ',lnse
-      write(fpinv,*,err=999)'    seed           : ',iseed
-      write(fpinv,*,err=999)'Add model noise ?  : ',lnsepri
-      write(fpinv,*,err=999)'    seed           : ',iseedpri
-      write(fpinv,*,err=999)'    Variance       : ',stabmpri
-      write(fpinv,*,err=999)'Regular grid       : ',(ltri==0)
-      write(fpinv,*,err=999)'Triangular regu    : ',(ltri==1)
-      write(fpinv,*,err=999)'Minimum grad supp  : ',(ltri==2)
-      write(fpinv,*,err=999)'MGS sens           : ',(ltri==3)
-      write(fpinv,*,err=999)'MGS sens mean      : ',(ltri==4)
-      IF (ltri == 2)
-     1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
-      write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
-      IF (ltri == 10) THEN
+      write(fpinv,*,err=999)'# Model parameters  : ',manz
+      write(fpinv,*,err=999)'# Data points       : ',nanz
+      write(fpinv,*,err=999)'Add data noise ?    : ',lnse
+      write(fpinv,*,err=999)'    seed            : ',iseed
+      write(fpinv,*,err=999)'Add model noise ?   : ',lnsepri
+      write(fpinv,*,err=999)'    seed            : ',iseedpri
+      write(fpinv,*,err=999)'    Variance        : ',stabmpri
+      write(fpinv,'(/a)',err=999)
+     1     '******** Regularization Part *********'
+      write(fpinv,*,err=999)'Regular grid smooth : ',(ltri==0)
+      write(fpinv,*,err=999)'Triangular regu     : ',(ltri==1)
+      write(fpinv,*,err=999)'Triangular regu2    : ',(ltri==2)
+      write(fpinv,*,err=999)'LA-Damping          : ',(ltri==3)
+      write(fpinv,*,err=999)'LMA-Damping         : ',(ltri==4)
+      write(fpinv,*,err=999)'Minimum grad supp   : ',(ltri==5)
+      write(fpinv,*,err=999)'MGS beta/sns1 (RM)  : ',(ltri==6)
+      write(fpinv,*,err=999)'MGS beta/sns2 (RM)  : ',(ltri==7)
+      write(fpinv,*,err=999)'MGS beta/sns1 (RB)  : ',(ltri==8)
+      write(fpinv,*,err=999)'MGS beta/sns2 (RB)  : ',(ltri==9)
+      write(fpinv,*,err=999)'TV (Huber)          : ',(ltri==10)
+
+      IF (ltri>4.AND.ltri<15)
+     1     write(fpinv,*,err=999)'  Stabilizer beta  : ',betamgs
+      write(fpinv,*,err=999)'Stochastic regu     : ',(ltri==15)
+      IF (ltri == 15) THEN
          write(fpinv,*,err=999)' nx-switch  : ',nx
          IF (nx==1) THEN        !spherical
             WRITE (fetxt,'(a)')
@@ -142,6 +151,8 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
          write(fpinv,*,err=999)fetxt
       END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
+      write(fpinv,'(/a)',err=999)
+     1     '******** Additional output *********'
       write(fpinv,*,err=999)'Read start model   : ',lstart
       write(fpinv,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1

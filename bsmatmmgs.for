@@ -24,7 +24,7 @@ c.........................................................................
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      REAL(KIND(0D0)) :: dum
+      REAL(KIND(0D0)) :: dum,dum2
       INTEGER         :: i,j,l,k,smaxs,ik,anz
       REAL(KIND(0D0)) :: edglen ! Kantenlaenge
       REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
@@ -127,25 +127,69 @@ c$$$      snsmn = snsmn / DBLE(manz)
                alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
      1              (alfz*DSIN(ang))**2.)
 !     MGS Teil
-               dum = CDABS(par(i)-par(nachbar(i,k))) / dist ! warum hier schon das modell mit reinnehmen? sollte eigentlich nicht drin sein.. -> fred fragen
+               dum = CDABS(par(i)-par(nachbar(i,k))) / dist
+!     Modell nur im zaehler nicht im Nenner -> fred fragen
 
+!     \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
+!     -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
+!     wobei (m_i-m_{i+1})^2 rausgezogen wird und spaeter 
+!     als Matrix Vektor Produkt berechnet wird
+!     (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i} 
+!     -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrischem Teil 
+!     von anisotroper Wichtung
                IF (ltri == 5) THEN ! reines MGS
-                  dum = dum 
-               ELSE IF (ltri == 6) THEN ! sensitivitaetswichtung 1
+
+                  dum = dum**2. + betamgs**2.
+                  dum = alfgeo * edglen / dist / dum
+
+               ELSE IF (ltri == 6) THEN ! sensitivitaetswichtung 1 von RM
+!     f(i,k) = 1 + g(i) + g(k)
+                  dum2 = 1d0 + DABS(DLOG10(csens(i))) + 
+     1                 DABS(DLOG10(csens(nachbar(i,k))))
+!     dum2 = f(i,k)^2
+                  dum2 = dum2**2.
+!     dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+                  dum = dum**2. + (betamgs / dum2)**2.
+!     dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+!     grad(m)^2 + (\beta/f(i,k)^2)^2
+                  dum = alfgeo * edglen / dist /dum2 / dum
+
+               ELSE IF (ltri == 7) THEN ! sensitivitaetswichtung 1 von RM
+                  
+!     f(i,k) = 1 + (g(i) + g(k))/mean(g)
+                  dum2 = 1d0 + DABS(DLOG10(csens(i))) + 
+     1                 DABS(DLOG10(csens(nachbar(i,k))))
+!     dum2 = f(i,k)^2
+                  dum2 = dum2**2.
+!     dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+                  dum = dum**2. + (betamgs / dum2)**2.
+!     dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+!     grad(m)^2 + (\beta/f(i,k)^2)^2
+                  dum = alfgeo * edglen / dist /dum2 / dum
+
+               ELSE IF (ltri == 8) THEN ! sensitivitaetswichtung von RB
+
+!     der folgende code wurde mir so ueberliefert... 
+!     keine ahnung was das genau macht
                   dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 
      1                 DLOG10(csens(nachbar(i,k))) ) ))
-               ELSE IF (ltri == 7) THEN ! sensitivitaetswichtung und mittelwert
+                  alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
+                  dum =  edglen * alfgeo * alfmgs
+                  
+               ELSE IF (ltri == 9) THEN
+                  
                   dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + 
      1                 DLOG10(csens(nachbar(i,k))) ) / snsmn ))
+                  alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
+                  dum =  edglen * alfgeo * alfmgs
+
                END IF
-               alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
-!     gesamt eintrag
-               dum =  edglen * alfgeo * alfmgs
+
 !     nun glaettung belegen
                smatm(i,k) = -dum ! neben Diagonale
                smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !Hauptdiagonale
-            END IF
 
+            END IF
          END DO
       END DO
 

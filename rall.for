@@ -271,7 +271,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
 
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
-      IF (ltri > 3 .AND. ltri < 10) THEN
+      IF (ltri > 4 .AND. ltri < 15) THEN
          READ(fpcfg,*,end=102,err=102) betamgs
 	 GOTO 103
  102     betamgs = 0.1          ! default value for MGS

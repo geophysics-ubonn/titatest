@@ -1,17 +1,15 @@
-      subroutine bpsto(bvec,pvec)
-
-c     Unterprogramm berechnet b = B * p .
-c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-c     Fuer komplexes Modell
+      subroutine bplma(bvec,pvec)
 c
-c     Copyright by Andreas Kemna 2009
+c     Unterprogramm berechnet b = B * p . 
+c     Angepasst an Levenberg-Marquardt-Daempfung
+c
+c     Copyright by Andreas Kemna 2010
 c     
-c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c     Andreas Kemna / Roland Martin                            24-Feb-2010
 c
-c     Letzte Aenderung   RM                                    30-Jun-2009
+c     Letzte Aenderung   RM                                    24-Feb-2010
 c
 c.....................................................................
-
       USE alloci
       IMPLICIT none
 
@@ -29,7 +27,6 @@ c     EIN-/AUSGABEPARAMETER:
 c     Vektoren
       complex         * 16    bvec(mmax)
       complex         * 16    pvec(mmax)
-      complex         * 16     pvecdum(manz)
 
 c.....................................................................
 
@@ -56,10 +53,8 @@ c     A * p  berechnen (skaliert)
 c     coaa R^m * p  berechnen (skaliert)
 
       do j=1,manz
-         pvecdum(i)=pvec(i)*dcmplx(fak(i))
+         bvec(i)=pvec(i)*dcmplx(fak(i))*DCMPLX(smatm(i,1))
       end do
-
-      bvec(1:manz)=MATMUL(dcmplx(smatm),pvecdum(1:manz))  
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz

@@ -6,7 +6,7 @@ c     Angelehnt an R. Blaschek (2008)
 c
 c     Copyright by Andreas Kemna 2009
 c     
-c     Erste Version von Roland Martin                          23-Jun-2009
+c     Andreas Kemna / Roland Martin                            23-Jun-2009
 c     
 c     Letzte Aenderung   RM                                    29-Jul-2009
 c

@@ -477,30 +477,48 @@ c     ak
 c     Rauhigkeitsmatrix belegen
             WRITE (*,'(/a)',ADVANCE='no')'Regularization::'
             IF (ltri == 0) THEN
+
                WRITE (*,'(a)')' Rectangular smooth'
                call bsmatm
-            ELSE IF (ltri == 1) THEN
+
+            ELSE IF (ltri == 1.OR.ltri == 2) THEN
+
                WRITE (*,'(a)')' Triangular smooth'
                CALL bsmatmtri
-            ELSE IF (ltri > 4 .AND. ltri < 8) THEN
+
+            ELSE IF (ltri == 3.OR.ltri==4) THEN
+
+               WRITE (*,'(a)',ADVANCE='no')' Using damping'
+               CALL bsmatmlma
+
+            ELSE IF (ltri > 4 .AND. ltri < 10) THEN
+
                IF (ltri == 5) WRITE (*,'(a)')
-     1              ' Triangular pure MGS '
-               IF (ltri == 6) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS'
-               IF (ltri == 7) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS mean'
+     1              ' Triangular pure MGS (alpha)'
+               IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
+     1              ' Triangular sens weighted MGS (alpha)'
+               IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
+     1              ' Triangular sens weighted MGS mean (alpha)'
                CALL bsmatmmgs
+
             ELSE IF (ltri == 10) THEN
-               WRITE (*,'(a)')' Triangular Total variance (beta)'
+
+               WRITE (*,'(a)')' Triangular Total variance (alpha)'
                CALL bsmatmtv
+
             ELSE IF (ltri == 15) THEN
-               WRITE (*,'(a)')' Triangular Stochastic'
+
+               WRITE (*,'(a)')' Triangular Stochastic (beta)'
                CALL bsmatmsto
                if (errnr.ne.0) goto 999
+
             ELSE
+
                WRITE (*,'(a)')' Error:: '//
-     1              'Regularization can just be 0,1,2,5,6 7,10 or 15'
+     1              'Regularization can just be '//
+     1              '0,1,3,4,5,6,7,8,9,10 or 15'
                STOP
+
             END IF 
          end if
       else
@@ -642,10 +660,13 @@ c     UPDATE anbringen
 
 c     Leitfaehigkeiten belegen und Roughness bestimmen
       IF (ltri == 0) THEN
-         call brough()
-      ELSE IF (ltri < 10) THEN
+         CALL brough()
+      ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1        (ltri > 4 .AND. ltri < 15)) THEN
          CALL broughtri
-      ELSE
+      ELSE IF (ltri == 3.OR.ltri == 4) THEN
+         CALL broughlma
+      ELSE IF (ltri == 15) THEN
          CALL broughsto
       END IF
 
@@ -696,7 +717,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
             if (errnr.ne.0) goto 999
 
-            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)
+            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)            
             IF (errnr /= 0) THEN
                errnr = 97
                GOTO 999
