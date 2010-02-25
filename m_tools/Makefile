@@ -31,6 +31,7 @@ mtools:		$(C1)
 		$(CP) crtomo_run.sh $(WPATH)
 		$(CP) plot_cur_crmod $(WPATH)
 		$(CP) plot_cur_crtomo $(WPATH)
+		$(CP) plot_cur_crt $(WPATH)
 		$(CP) plotCRTmod_batch.m $(WPATH)
 
 install:	$(C1)
@@ -38,6 +39,7 @@ install:	$(C1)
 		$(CP) crtomo_run.sh $(WPATH)
 		$(CP) plot_cur_crmod $(WPATH)
 		$(CP) plot_cur_crtomo $(WPATH)
+		$(CP) plot_cur_crt $(WPATH)
 		$(CP) plotCRTmod_batch.m $(WPATH)
 
 clean:		

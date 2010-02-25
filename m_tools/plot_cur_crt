@@ -55,7 +55,13 @@ mod=$1
 if [ -z $mod ];then
     if [ -e inv.lastmod ];then
 	echo found inv.lastmod
-	mod=`cat inv.lastmod`
+	mag=`cat inv.lastmod`
+	mod=$mag
+	ismag=`echo $mag|grep mag`
+	if [ -n $ismag ];then 
+	    mod=${mag%mag}modl;
+	    awk '{if(NR==1){print}else{print $3,0}}' $mag > $mod
+	fi
     else
 	exit
     fi
@@ -67,7 +73,7 @@ else
     titel=$2
 fi
 
-if [ -z $titel ];then titel='CRTomo result';fi
+if [ -z $titel ];then titel='"CRTomo result"';fi
 
 if [ -e "griev.cbarn" ];then
     cbarn=`cat griev.cbarn`
@@ -75,9 +81,11 @@ else
     cbarn=$3
 fi
 
-if [ -z $cbarn ];then titel='[Units]';fi
+if [ -z $cbarn ];then cbarn='"Units"';fi
 
 mypdf=`basename $mod|tr '.' '_'`'.pdf'
+
+echo $griev -i -e $elem -t $elec -r $mod --use_latex -a $titel -s $cbarn -p -o $mypdf 
 
 $griev -i -e $elem -t $elec -r $mod --use_latex -a $titel -s $cbarn -p -o $mypdf 
 
