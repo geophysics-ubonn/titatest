@@ -54,7 +54,7 @@ c$$$  invert (A^TC_d^-1A + C_m^-1)
          END IF
          
          work = ata_reg_dc      ! work is replaced by PLU decomposition
-         
+         cov_m_dc = 0.
 c$$$  building Right Hand Side (unit matrix)
          DO i=1,manz
             cov_m_dc(i,i) = 1.d0

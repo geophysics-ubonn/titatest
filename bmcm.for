@@ -55,7 +55,9 @@ c$$$  invert A^TC_d^-1A + C_m^-1
          END IF
          
          work = ata_reg         ! work is replaced by PLU decomposition
-         
+
+         cov_m = 0.
+
 c     c$$$  building Right Hand Side (unit matrix)
          DO i=1,manz
             cov_m(i,i) = CMPLX(1.d0,1.d0)
@@ -116,7 +118,7 @@ c$$$  END IF
 
       END IF
 
-      CALL TOC()
+      CALL TOC
 
       work = MATMUL(cov_m,ata_reg) ! just checking result
 

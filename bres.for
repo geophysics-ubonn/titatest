@@ -23,9 +23,7 @@ c.........................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
       INTEGER                                         :: i,kanal
-      COMPLEX(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE   :: work
-      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: ipiv
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE        :: dig
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE        :: dig,digi
       REAL(KIND(0D0))                                 :: dig_min,dig_max
       LOGICAL,OPTIONAL                                :: ols 
 !     switch solv ordinary linear system or not^^
@@ -43,6 +41,7 @@ c$$$  calculate  RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 
       DO i=1,manz
          dig(i) = DBLE(ata_reg(i,i))
+         dig(i) = DBLE(DIMAG(ata_reg(i,i)))
       END DO
       
       dig_min = MINVAL(dig) 
@@ -50,7 +49,7 @@ c$$$  calculate  RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
       
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)
       END DO
 
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min

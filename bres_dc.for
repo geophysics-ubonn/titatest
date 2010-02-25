@@ -46,7 +46,7 @@ c$$$  calc RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)
       END DO
 
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min

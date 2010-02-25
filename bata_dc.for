@@ -39,12 +39,12 @@ c$$$  A^TC_d^-1A
       DO k=1,manz
          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
      1        'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
-         DO j=1,manz
+         DO j=k,manz ! fills upper triangle (k,j)
             DO i=1,nanz
                ata_dc(k,j) = ata_dc(k,j) + sensdc(i,k) * 
      1              sensdc(i,j) * wmatd(i) * DBLE(wdfak(i))
             END DO
-            IF (k /= j) ata_dc(j,k) = ata_dc(k,j)
+            ata_dc(j,k) = ata_dc(k,j) ! fills lower triangle (k,j)
          END DO
          dig(k) = ata_dc(k,k)
       END DO

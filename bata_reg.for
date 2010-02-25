@@ -42,28 +42,34 @@ c$$$  A^TC_d^-1A+lamC_m
          DO j=1,manz
             write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
      1           'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
-            DO i=1,manz
-               IF (i > j) THEN
-                  IF (i == j + 1) THEN
-                     ata_reg(i,j) = ata(i,j) + 
-     1                    DCMPLX(lam * smatm(i,2)) 
-!     nebendiagonale in x richtung
-                  ELSE IF (i == j + nx) THEN
-                     ata_reg(i,j) = ata(i,j) +
-     1                    DCMPLX(lam * smatm(i,3)) 
-!     nebendiagonale in z richtung
-                  ELSE
-                     ata_reg(i,j) = ata(i,j)
-                  END IF
-               ELSE IF (i < j) THEN
-                  ata_reg(i,j) = ata_reg(j,i) ! symmetry
-               ELSE
+            DO i=1,j ! lower triangle
+               
+               IF (i == j) THEN
                   ata_reg(i,j) = ata(i,j) + DCMPLX(lam * smatm(i,1))
+                  
+                  IF (i+1 < manz) ata_reg(i+1,j) = ata(i+1,j) + 
+     1                 DCMPLX(lam * smatm(i+1,2)) ! nebendiagonale in x richtung
+                  IF (i+nx < manz) ata_reg(i+nx,j) = ata(i+nx,j) +
+     1                 DCMPLX(lam * smatm(i+nx,3)) ! nebendiagonale in z richtung
+               ELSE
+                  ata_reg(i,j) = ata(i,j) ! only aTa
                END IF
+
+               ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
+
             END DO
             dig(j) = DBLE(ata_reg(j,j))
          END DO
-      ELSE IF (ltri < 10 ) THEN
+
+      ELSE IF (ltri == 3.OR.ltri == 4) THEN
+         ata_reg = ata
+         DO i=1,manz
+            ata_reg(i,i) = ata(i,j) + DCMPLX(lam * smatm(i,1))
+            dig(i) = DBLE(ata_reg(i,i))
+         END DO
+
+      ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1        (ltri > 4 .AND. ltri < 15)) THEN
          DO j=1,manz
             write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//
      1           'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
@@ -80,7 +86,7 @@ c$$$  A^TC_d^-1A+lamC_m
             END DO
             dig(j) = DBLE(ata_reg(j,j))
          END DO
-      ELSE
+      ELSE IF (ltri == 15) THEN
          ata_reg = ata + DCMPLX(lam * smatm) ! for full C_m..
          DO j=1,manz
             dig(j) = DBLE(ata_reg(j,j))
@@ -92,7 +98,7 @@ c$$$  A^TC_d^-1A+lamC_m
 
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)
       END DO
 
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
