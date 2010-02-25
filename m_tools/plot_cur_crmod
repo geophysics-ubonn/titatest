@@ -41,7 +41,7 @@ done
 
 awk '{if (NR==2){print}}' crmod.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crmod.cfg > tmp.elecname
-awk '{if (NR==4){print}}' crmod.cfg > tmp.lastmod
+awk '{if (NR==4){print}}' crmod.cfg > inv.lastmod
 
 if [ -e "tmp.crange" ];then
     c1=`awk '{print$1}' tmp.crange`
@@ -54,12 +54,12 @@ fi
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
-tmp=`cat tmp.lastmod`
+tmp=`cat inv.lastmod`
 
 echo 'CRTomo resistivity model' > tmp.fenster
 rm tmp.cbarn
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
-echo 'cur_crmod.mag' > tmp.lastmod
+echo 'cur_crmod.mag' > inv.lastmod
 
 $mtlb < $plotmod >& /dev/null
 
@@ -77,7 +77,7 @@ echo 'CRTomo conductivity model' > tmp.fenster
 echo 'ln(\sigma) [S/m]' > tmp.cbarn
 echo $1 $2 > tmp.crange
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,-log($1))}else{print}}' $tmp > cur_crmod_s.mag
-echo 'cur_crmod_s.mag' > tmp.lastmod
+echo 'cur_crmod_s.mag' > inv.lastmod
 
 $mtlb < $plotmod >& /dev/null
 
