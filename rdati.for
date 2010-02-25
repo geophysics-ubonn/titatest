@@ -224,8 +224,11 @@ c     ak                    write(*,*) i
                bet = bet + rnd_r(i) * eps_r
                WRITE(ifp1,'(G14.4)')bet
                IF (.NOT. ldc) THEN
+c$$$                  eps_p = (stabpA1*eps_r**stabpB + 
+c$$$     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
                   eps_p = (stabpA1*eps_r**stabpB + 
-     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
+     1                 1d-2*stabpA2*dabs(pha) + stabp0)
+
                   WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
      1                 rnd_p(i),eps_p,pha
                   pha = pha + rnd_p(i) * eps_p
