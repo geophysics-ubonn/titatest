@@ -259,11 +259,12 @@ for i=1:nelec
         'MarkerSize',marksize);
 end
 
-fleps=strcat(fls,appi,'.eps');
 set(fig,'PaperPositionMode','auto');
-print('-depsc2','-r400',fleps)
-
+print('-depsc2','-r400',strcat(fls,appi,'.eps'));
+print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
+print('-djpeg',strcat(fls,appi,'.jpg'));
 close (fig);
+
 %write out some config files..
 [p,fls,app,m]=fileparts(modfile);
 
@@ -282,5 +283,3 @@ fclose(fp);
 fp=fopen('tmp.yrange','w');
 fprintf(fp,'%f\t%f\n',ylimits);
 fclose(fp);
-disp(sprintf('check dis out3\n'));
-

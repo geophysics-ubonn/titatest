@@ -49,8 +49,11 @@ else
 fi
 
 
-
-mod=$1
+if [ -n $1 ];then 
+    mod=$1;
+else 
+    mod='';
+fi
 
 if [ -z $mod ];then
     if [ -e inv.lastmod ];then
@@ -73,19 +76,20 @@ else
     titel=$2
 fi
 
-if [ -z $titel ];then titel='"CRTomo result"';fi
+if [ -z $titel ];then titel='CRTomo result';fi
 
+echo 
 if [ -e "griev.cbarn" ];then
     cbarn=`cat griev.cbarn`
 else
     cbarn=$3
 fi
 
-if [ -z $cbarn ];then cbarn='"Units"';fi
+if [ -z $cbarn ];then cbarn='Units';fi
 
 mypdf=`basename $mod|tr '.' '_'`'.pdf'
 
-echo $griev -i -e $elem -t $elec -r $mod --use_latex -a $titel -s $cbarn -p -o $mypdf 
+echo $griev -i -e $elem -t $elec -r $mod --use_latex -a \"$titel\" -s \"$cbarn\" -p -o $mypdf 
+$griev -i -e $elem -t $elec -r $mod --use_latex -a \"$titel\" -s \"$cbarn\" -p -o $mypdf 
 
-$griev -i -e $elem -t $elec -r $mod --use_latex -a $titel -s $cbarn -p -o $mypdf 
 
