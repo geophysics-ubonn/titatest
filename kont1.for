@@ -111,11 +111,13 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(/a)',err=999)      '***Model stats***'
       write(fpinv,*,err=999)'# Model parameters  : ',manz
       write(fpinv,*,err=999)'# Data points       : ',nanz
-      write(fpinv,*,err=999)'Add data noise ?    : ',lnse
+      write(fpinv,*,err=999)'Add data noise ?    : ',lnse.OR.lnse2
+      write(fpinv,*,err=999)'Couple to Err. Modl?: ',lnse
       write(fpinv,*,err=999)'    seed            : ',iseed
+      write(fpinv,*,err=999)'    Variance        : ',data_stdn
       write(fpinv,*,err=999)'Add model noise ?   : ',lnsepri
       write(fpinv,*,err=999)'    seed            : ',iseedpri
-      write(fpinv,*,err=999)'    Variance        : ',stabmpri
+      write(fpinv,*,err=999)'    Variance        : ',modl_stdn
       write(fpinv,'(/a)',err=999)
      1     '******** Regularization Part *********'
       write(fpinv,*,err=999)'Regular grid smooth : ',(ltri==0)

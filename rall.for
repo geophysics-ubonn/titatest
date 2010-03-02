@@ -117,6 +117,8 @@ c     ak        lratio = .true.
       llamf = .FALSE.
 c final phase improvement setzt phase zueruck auf homogenes modell
       lffhom = .FALSE.
+c     Daten Rauschen vom Fehlermodell entkoppeln ?
+      lnse2 = .FALSE.
 c###### values..
 c     FIXED PARAMETER
 c     Slash
@@ -156,7 +158,7 @@ c     ak        fstop  = 0.8d0
 c     ak Strasbrg/Werne/Grimberg
 c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
-      iseedpri = 0; stabmpri = 0.
+      iseedpri = 0; modl_stdn = 0.; iseed = 1;
       mswitch = 0
       iregus = 0
 c#########################################################
@@ -198,7 +200,10 @@ c     diff+<
       END IF
 c     diff+>
       fetxt = 'rall -> Gitter nx'
-      read(fpcfg,*,end=1001,err=99) iseedpri,stabmpri
+      read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
+!     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
+      lnse2 = .NOT.lprior 
+!     Daten Rauschen unabhängig vom Fehlermodell?
       lnsepri = lprior ! if we have seed and std we assume to add noise to prior
  99   read(fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
@@ -283,14 +288,23 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
+         lnse2 = .FALSE.
          stabw0 = -stabw0
+         data_stdn = stabw0
          READ(fpcfg,*,end=106,err=106) iseed
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
- 107     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
-     1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
-     1        iseed
+ 107  END IF
+
+      IF (lnse2) THEN
+         data_stdn = modl_stdn
+         modl_stdn = 0.
+         iseed = iseedpri
+         iseedpri = 0
+         WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
+     1        'Entkoppeltes Daten Rauschen:: RMS ',data_stdn,
+     1    ' /%  seed:',iseed
       END IF
 
 c check if the final phase should start with homogenous model      

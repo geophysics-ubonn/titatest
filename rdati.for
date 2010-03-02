@@ -87,13 +87,26 @@ c     Ggf. Fehlermeldung
 
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
-      IF ( lnse ) THEN
+      IF ( lnse.OR.lnse2 ) THEN
+         WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
+         IF (lnse) WRITE (*,'(a)',ADVANCE='no')'       '//
+     1        'Gekoppelt an Fehlermodell '
+         IF (lnse2) WRITE (*,'(a)',ADVANCE='no')'       '//
+     1        'Fehlermodell entkoppelt '
+         WRITE (*,'(a,F4.1,a,I7)')'       '//
+     1        'RMS ',data_stdn,' /%  seed:',iseed
+
          CALL get_unit(ifp1)
-         OPEN (ifp1,FILE='tmp.mynoise_rho',STATUS='replace')
-         CALL get_unit(ifp2)
-         IF (.NOT. ldc) OPEN (ifp2,FILE='tmp.mynoise_pha',
-     1        STATUS='replace')
-         WRITE (*,'(A)',advance='no')' Initializing noise '
+         OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
+         WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//
+     1        ACHAR(9)//ACHAR(9)//'bet(old)'//ACHAR(9)//'bet(new)'
+         IF (.NOT. ldc) THEN
+            CALL get_unit(ifp2)
+            OPEN (ifp2,FILE='inv.mynoise_pha',STATUS='replace')
+            WRITE(ifp2,'(a)')'#  rnd_p'//ACHAR(9)//'eps_p'//
+     1           ACHAR(9)//ACHAR(9)//'pha(old)'//ACHAR(9)//'pha(new)'
+         END IF
+
          ALLOCATE (rnd_r(nanz))
          CALL Random_Init(iseed)
          DO i=1,nanz
@@ -108,8 +121,8 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
          END IF
       END IF
 
-      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
-     1     ACHAR(9)//ACHAR(9)//ACHAR(9)
+c$$$      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
+c$$$     1     ACHAR(9)//ACHAR(9)//ACHAR(9)
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
@@ -217,7 +230,7 @@ c     ak                    write(*,*) i
 
             stabw = 1d-2*stabw0 + stabm0/bet
 
-            IF ( lnse ) THEN
+            IF ( lnse) THEN
                eps_r = 1d-2*stabw0 * bet + stabm0
                WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
      1              rnd_r(i),eps_r,bet
@@ -229,6 +242,19 @@ c$$$     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
                   eps_p = (stabpA1*eps_r**stabpB + 
      1                 1d-2*stabpA2*dabs(pha) + stabp0)
 
+                  WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
+     1                 rnd_p(i),eps_p,pha
+                  pha = pha + rnd_p(i) * eps_p
+                  WRITE(ifp2,'(G14.4)')pha
+               END IF
+            ELSE IF (lnse2) THEN
+               eps_r = 1d-2*data_stdn * bet
+               WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
+     1              rnd_r(i),eps_r,bet
+               bet = bet + rnd_r(i) * eps_r
+               WRITE(ifp1,'(G14.4)')bet
+               IF (.NOT. ldc) THEN
+                  eps_p = 1d-2*data_stdn*dabs(pha)
                   WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
      1                 rnd_p(i),eps_p,pha
                   pha = pha + rnd_p(i) * eps_p
@@ -305,13 +331,15 @@ c     ak
 
 c     'datei' schliessen
       close(kanal)
-      IF (lnse) THEN
+      IF (lnse.OR.lnse2) THEN
          close(ifp1)
          IF (.not.ldc) close (ifp2)
       END IF
       errnr = 0
       IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
       IF (ALLOCATED (rnd_p)) DEALLOCATE (rnd_p)
+
+
       return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -321,7 +349,6 @@ c     Fehlermeldungen
  999  return
 
  1000 close(kanal)
-      close(fpeps)
       return
 
  1001 close(kanal)
