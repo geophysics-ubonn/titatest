@@ -692,6 +692,8 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          if (errnr.ne.0) goto 999
       end if
       IF (lcov1) THEN
+         WRITE(*,'(a)')'Caculating model uncertainty..'
+         WRITE (fprun,'(a)')'Caculating model uncertainty..'
          IF (it<2) lam = lamalt
          lam = lamalt
          WRITE (*,'(/a,G10.3,a/)')
@@ -701,8 +703,12 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             IF (fetxt/='')READ(fetxt,*)lam
             WRITE (*,*)'Set lambda to ',lam
          END IF
+
+         WRITE (fprun,*)'Taking lam=',lam
+
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
+         WRITE(fprun,'(a)')'MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
          IF (ldc) THEN
 
@@ -778,11 +784,14 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             
             ols = .FALSE.
             
+            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
+
             WRITE(*,'(a)')ACHAR(13)//
      1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
      1           ' A^TC_d^-1A'
+            WRITE(fprun,'(a)')'RES = (A^TC_d^-1A + C_m^-1)^-1'//
+     1           ' A^TC_d^-1A'
 
-            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
 
             IF (ldc) THEN
                CALL bres_dc(kanal,ols)
@@ -793,11 +802,14 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             END IF
 
             IF (lcov2) THEN
+
+               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
+
                WRITE(*,'(a)')ACHAR(13)//
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
      1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
-
-               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
+               WRITE(fprun,'(a)')'MCM_2 = (A^TC_d^-1A + C_m^-1)'//
+     1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
 
                IF (ldc) THEN
                   CALL bmcm2_dc(kanal)

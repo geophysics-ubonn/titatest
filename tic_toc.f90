@@ -1,4 +1,4 @@
-!!$ $Id: make_noise.f90 1.4 2008/07/29 14:05:36 Roland Martin Exp $
+!!$ $Id: tic_toc.f90 1.4 2008/07/29 14:05:36 Roland Martin Exp $
 MODULE tic_toc
 
   IMPLICIT none

@@ -53,7 +53,7 @@ c$$$  invert (A^TC_d^-1A + C_m^-1)
             RETURN
          END IF
          
-         work = ata_reg_dc      ! work is replaced by PLU decomposition
+         work = ata_reg_dc
          cov_m_dc = 0.
 c$$$  building Right Hand Side (unit matrix)
          DO i=1,manz
@@ -72,11 +72,10 @@ c$$$  Solving Linear System Ax=B -> B=A^-1
          END IF
 
       ELSE
-
          cov_m_dc = ata_reg_dc
 
          WRITE (*,'(a)',ADVANCE='no')
-     1        'Solving Ax=B (Gauss elemination)'
+     1        'Inverting Matrix (Gauss elemination)'
 
          CALL gauss_dble(cov_m_dc,manz,errnr)
          
@@ -87,6 +86,52 @@ c$$$  Solving Linear System Ax=B -> B=A^-1
             errnr = 108
             RETURN
          END IF
+c$$$         WRITE (*,'(a)',ADVANCE='no')
+c$$$     1        'Factorization of LHS'
+c$$$
+c$$$         work = ata_reg_dc ! LU decomposition of LHS
+c$$$
+c$$$         work = 0.
+c$$$         CALL chold(cov_m_dc,work,manz,errnr) ! -> L is stored in work
+c$$$         IF (errnr /= 0) THEN
+c$$$            PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
+c$$$            PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+c$$$            errnr = 108
+c$$$            RETURN
+c$$$         END IF
+c$$$         WRITE (*,'(a)',ADVANCE='no')'inverting L'
+c$$$
+c$$$         cov_m_dc = 0.0
+c$$$         CALL linv(work,cov_m_dc,manz)
+c$$$  building Right Hand Side (unit matrix)
+c$$$         cov_m_dc = 0.
+c$$$
+c$$$         DO i=1,manz
+c$$$            cov_m_dc(i,i) = 1.d0
+c$$$         END DO
+c$$$
+c$$$         CALL DPOTRF('U',manz,work,manz,errnr)
+c$$$
+c$$$         CALL DPOTRS('U',manz,manz,work,manz,cov_m_dc,
+c$$$     1        manz,errnr)
+c$$$
+c$$$         IF (errnr /= 0) THEN
+c$$$            PRINT*,'Zeile::',work(abs(errnr),:)
+c$$$            PRINT*,'Spalte::',work(:,abs(errnr))
+c$$$            errnr = 108
+c$$$            RETURN
+c$$$         END IF
+c$$$         
+c$$$         
+c$$$         WRITE (*,'(a)',ADVANCE='no')'inverting L'
+c$$$         CALL MDPOTRI('U',manz,cov_m_dc,manz,errnr)
+c$$$         IF (errnr /= 0) THEN
+c$$$            PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
+c$$$            PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+c$$$            errnr = 108
+c$$$            RETURN
+c$$$         END IF
+c$$$
       END IF
 
       CALL TOC

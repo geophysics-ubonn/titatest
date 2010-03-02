@@ -33,6 +33,7 @@ SUBROUTINE chold(a,t,n,ierr)
   INTEGER                           :: ip,k,i
 
   ierr = 0
+  t = 0.
 !!$c
 !!$c Check for positive definiteness:
 !!$c

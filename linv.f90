@@ -22,8 +22,8 @@ SUBROUTINE linv(a,b,n)
   REAL (KIND(0D0)), DIMENSION (n,n) :: a,b
   REAL (KIND(0D0))                  :: sum
   INTEGER                           :: k,i,j
-
-
+  
+  b = 0.
   DO i = 1,n
      IF(i>1) THEN
         DO k = 1,i-1
