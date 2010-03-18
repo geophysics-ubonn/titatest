@@ -199,13 +199,14 @@ c     diff+<
          ldiff = .FALSE.
       END IF
 c     diff+>
-      fetxt = 'rall -> Gitter nx'
+      fetxt = 'trying noise model seed'
       read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
 !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
       lnse2 = .NOT.lprior
 !     Daten Rauschen unabhängig vom Fehlermodell?
       lnsepri = lprior ! if we have seed and std we assume to add noise to prior
- 99   read(fpcfg,*,end=1001,err=999) nx
+ 99   fetxt = 'rall -> Gitter nx'
+      read(fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
       read(fpcfg,*,end=1001,err=999) nz
       fetxt = 'rall -> Anisotropie /x'
@@ -234,7 +235,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) stabpB
       fetxt = 'rall -> Relative Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabpA2
-      fetxt = 'rall -> Absoluter Fehler Phasen'
+      fetxt = 'rall -> Absoluter Fehler Phasen (Rad)'
       read(fpcfg,*,end=1001,err=999) stabp0
       fetxt = 'rall -> Homogenes Startmodell?'
       read(fpcfg,*,end=1001,err=999) lrho0
@@ -343,11 +344,11 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
             nstabp0 = 0.;nstabpB = 0.;nstabpA1 = 0.
          END IF
          OPEN(ifp1,FILE=TRIM(buff),STATUS='replace')
-         fetxt = 'Relativer Fehler Widerstand a (noise) dR=aR+b'
+         fetxt = 'Relativer Fehler Widerstand a (noise) dR=aR+b (Ohm m)'
          WRITE (ifp1,3,err=999) nstabw0,TRIM(fetxt)
          fetxt = 'Absoluter Fehler Widerstand b (noise)'
          WRITE (ifp1,3,err=999) nstabm0,TRIM(fetxt)
-         fetxt = 'Phasenfehlerparameter a (noise) dp=a*p+b+cR^d'
+         fetxt = 'Phasenfehlerparameter a (noise) dp=a*p+b+cR^d (Rad)'
          WRITE (ifp1,3,err=999) nstabpA1,TRIM(fetxt)
          fetxt = 'Phasenfehlerparameter b (noise)'
          WRITE (ifp1,3,err=999) nstabpB,TRIM(fetxt)
