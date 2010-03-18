@@ -31,10 +31,11 @@ c Konfigurationsfaktoren
 c Wichtungsvektor der Phasen
         real            * 8     wmatdp(nmax)
 
-c parameters of resistance error model
+c parameters of resistance error model (dR=stabw0*R+stabm0)
         real            * 8     stabw0,stabm0
 
 c parameters of phase error model
+c (dp=stabA1*R^stabpB+stabpA2*|P|+stabpA3)
         real            * 8     stabp0,stabpA1,stabpB,stabpA2
 
 c Schalter ob 'individual error' (.true.) oder 'uniform weighting'
@@ -50,8 +51,13 @@ c Daten Verrauschen? lnse2 entkoppelt Rauschen und Fehlermodell
   	logical		* 4	lnse,lnse2
 c Initialer Seed der Pseudo Random Sequence (PRS)
         integer         * 4     iseed
-c relative data noise
-        real            * 8     data_stdn
+c Noise error model ...
+c ... of resistance error model (dnR=nstabw0*nR+nstabm0)
+        real            * 8     nstabw0,nstabm0
+c ... of phase error model 
+c (dnp=nstabA1*dnR^nstabpB+nstabpA2*nP+nstabp0)
+        real            * 8     nstabpB,nstabpA1
+        real            * 8     nstabpA2,nstabp0
 c Anzahl der nicht beruecksichtigten Messwerte
         integer         * 4     npol
 
@@ -68,6 +74,12 @@ c.....................................................................
      1                  stabpA1,
      1                  stabpB,
      1                  stabpA2,
+     1			nstabw0,
+     1                  nstabm0,
+     1                  nstabp0,
+     1                  nstabpA1,
+     1                  nstabpB,
+     1                  nstabpA2,
      1                  strnr,
      1                  vnr,
      1                  nanz,
@@ -77,5 +89,4 @@ c.....................................................................
      1                  lpol,
      1			lnse,
      1			iseed,
-     1			lnse2,
-     1			data_stdn
+     1			lnse2

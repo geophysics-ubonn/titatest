@@ -89,13 +89,6 @@ c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
       IF ( lnse.OR.lnse2 ) THEN
          WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
-         IF (lnse) WRITE (*,'(a)',ADVANCE='no')'       '//
-     1        'Gekoppelt an Fehlermodell '
-         IF (lnse2) WRITE (*,'(a)',ADVANCE='no')'       '//
-     1        'Fehlermodell entkoppelt '
-         WRITE (*,'(a,F4.1,a,I7)')'       '//
-     1        'RMS ',data_stdn,' /%  seed:',iseed
-
          CALL get_unit(ifp1)
          OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
          WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//
@@ -230,36 +223,34 @@ c     ak                    write(*,*) i
 
             stabw = 1d-2*stabw0 + stabm0/bet
 
-            IF ( lnse) THEN
-               eps_r = 1d-2*stabw0 * bet + stabm0
+            IF ( lnse) THEN ! add synthetic noise
+
+               eps_r = 1d-2*nstabw0 * bet + nstabm0
+
                WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
      1              rnd_r(i),eps_r,bet
-               bet = bet + rnd_r(i) * eps_r
-               WRITE(ifp1,'(G14.4)')bet
+
                IF (.NOT. ldc) THEN
-c$$$                  eps_p = (stabpA1*eps_r**stabpB + 
-c$$$     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
-                  eps_p = (stabpA1*eps_r**stabpB + 
-     1                 1d-2*stabpA2*dabs(pha) + stabp0)
+                  
+                  eps_p = (nstabpA1*eps_r**nstabpB + 
+     1                 1d-2*nstabpA2*dabs(pha) + nstabp0)
+
+c$$$                  eps_p = (nstabpA1*bet**nstabpB + 
+c$$$     1                 1d-2*nstabpA2*dabs(pha) + nstabp0)
 
                   WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
      1                 rnd_p(i),eps_p,pha
-                  pha = pha + rnd_p(i) * eps_p
+
+                  pha = pha + rnd_p(i) * eps_p ! add noise
+
                   WRITE(ifp2,'(G14.4)')pha
                END IF
-            ELSE IF (lnse2) THEN
-               eps_r = 1d-2*data_stdn * bet
-               WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
-     1              rnd_r(i),eps_r,bet
-               bet = bet + rnd_r(i) * eps_r
+
+               bet = bet + rnd_r(i) * eps_r ! add noise
+
                WRITE(ifp1,'(G14.4)')bet
-               IF (.NOT. ldc) THEN
-                  eps_p = 1d-2*data_stdn*dabs(pha)
-                  WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
-     1                 rnd_p(i),eps_p,pha
-                  pha = pha + rnd_p(i) * eps_p
-                  WRITE(ifp2,'(G14.4)')pha
-               END IF
+
+
             END IF
 
          end if
@@ -288,11 +279,11 @@ c     ak                    write(*,*) i
          end if
 
          dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-         wmatd(i) = 1d0/(stabw*stabw)
+         wmatd(i) = 1d0/(stabw**2.)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
          IF (lfphai) THEN
-            wmatd(i)=1d0/(stabw*stabw+stabwp*stabwp)
-            wmatdp(i)=1d0/(stabwp*stabwp)
+            wmatd(i)=1d0/(stabw**2.+stabwp**2.)
+            wmatdp(i)=1d0/(stabwp**2.)
          END IF
          wdfak(i) = 1
 

@@ -62,7 +62,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,iregus
+      integer         * 4     i,iregus,ifp1
 
 c     Pi
       real            * 8     pi
@@ -202,7 +202,7 @@ c     diff+>
       fetxt = 'rall -> Gitter nx'
       read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
 !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
-      lnse2 = .NOT.lprior 
+      lnse2 = .NOT.lprior
 !     Daten Rauschen unabhängig vom Fehlermodell?
       lnsepri = lprior ! if we have seed and std we assume to add noise to prior
  99   read(fpcfg,*,end=1001,err=999) nx
@@ -290,21 +290,74 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       IF ( lnse ) THEN
          lnse2 = .FALSE.
          stabw0 = -stabw0
-         data_stdn = stabw0
+         nstabw0 = stabw0
+         nstabm0 = stabm0
+         nstabpA1 = stabpA1
+         nstabpA2 = stabpA2
+         nstabp0 = stabp0
          READ(fpcfg,*,end=106,err=106) iseed
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
+         WRITE (*,'(a)',ADVANCE='no')' Rauschen '//
+     1        'Gekoppelt an Fehlermodell '
  107  END IF
 
       IF (lnse2) THEN
-         data_stdn = modl_stdn
-         modl_stdn = 0.
+
          iseed = iseedpri
+         WRITE (*,'(a,I7)',ADVANCE='no')
+     1        'Entkoppeltes Daten Rauschen:: seed:',iseed
+
+         buff = 'crt.noisemod'
+         INQUIRE (FILE=TRIM(buff),EXIST=exi)
+
+         IF (exi) THEN
+            PRINT*,'reading NOISE model '//TRIM(buff)
+            CALL get_unit(ifp1)
+            OPEN(ifp1,FILE=TRIM(buff),STATUS='old')
+            fetxt = 'Relativer Fehler Widerstand ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabw0
+            WRITE (*,*)TRIM(fetxt)//':',nstabw0
+            fetxt = 'Absoluter Fehler Widerstand ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabm0
+            WRITE (*,*)TRIM(fetxt)//':',nstabm0
+            fetxt = 'Phasenfehlerparameter A1 ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabpA1
+            WRITE (*,*)TRIM(fetxt)//':',nstabpA1
+            fetxt = 'Phasenfehlerparameter B ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabpB
+            WRITE (*,*)TRIM(fetxt)//':',nstabpB
+            fetxt = 'Relativer Fehler Phasen A2 ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabpA2
+            WRITE (*,*)TRIM(fetxt)//':',nstabpA2
+            fetxt = 'Absoluter Fehler Phasen A3 ('//TRIM(buff)//')'
+            READ (ifp1,*,end=1001,err=999) nstabp0
+            WRITE (*,*)TRIM(fetxt)//':',nstabp0
+            CLOSE (ifp1)
+         ELSE
+            nstabw0 = modl_stdn
+            PRINT*,'Taking standard deviation',nstabw0
+            nstabm0 = 0.
+            nstabpA2 = modl_stdn
+            nstabp0 = 0.;nstabpB = 0.;nstabpA1 = 0.
+         END IF
+         OPEN(ifp1,FILE=TRIM(buff),STATUS='replace')
+         fetxt = 'Relativer Fehler Widerstand a (noise) dR=aR+b'
+         WRITE (ifp1,3,err=999) nstabw0,TRIM(fetxt)
+         fetxt = 'Absoluter Fehler Widerstand b (noise)'
+         WRITE (ifp1,3,err=999) nstabm0,TRIM(fetxt)
+         fetxt = 'Phasenfehlerparameter a (noise) dp=a*p+b+cR^d'
+         WRITE (ifp1,3,err=999) nstabpA1,TRIM(fetxt)
+         fetxt = 'Phasenfehlerparameter b (noise)'
+         WRITE (ifp1,3,err=999) nstabpB,TRIM(fetxt)
+         fetxt = 'Relativer Fehler Phasen c (noise)'
+         WRITE (ifp1,3,err=999) nstabpA2,TRIM(fetxt)
+         fetxt = 'Absoluter Fehler Phasen d (noise)'
+         WRITE (ifp1,3,err=999) nstabp0,TRIM(fetxt)
+         CLOSE (ifp1)
+         modl_stdn = 0.
          iseedpri = 0
-         WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
-     1        'Entkoppeltes Daten Rauschen:: RMS ',data_stdn,
-     1    ' /%  seed:',iseed
       END IF
 
 c check if the final phase should start with homogenous model      
@@ -530,6 +583,8 @@ c     diff+>
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     Fehlermeldungen
+
+ 3    FORMAT(G10.3,5X,'#',1X,A)
 
  999  return
 
