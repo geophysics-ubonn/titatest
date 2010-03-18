@@ -344,17 +344,18 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
             nstabp0 = 0.;nstabpB = 0.;nstabpA1 = 0.
          END IF
          OPEN(ifp1,FILE=TRIM(buff),STATUS='replace')
-         fetxt = 'Relativer Fehler Widerstand a (noise) dR=aR+b (Ohm m)'
+         fetxt = 'Relativer Fehler Widerstand a (noise) [] von dR=aR+b'
          WRITE (ifp1,3,err=999) nstabw0,TRIM(fetxt)
-         fetxt = 'Absoluter Fehler Widerstand b (noise)'
+         fetxt = 'Absoluter Fehler Widerstand b (noise) [Ohm m]'
          WRITE (ifp1,3,err=999) nstabm0,TRIM(fetxt)
-         fetxt = 'Phasenfehlerparameter a (noise) dp=a*p+b+cR^d (Rad)'
+         fetxt = 'Phasenfehlerparameter a (noise) [Rad/Ohm/m] von'// 
+     1        ' dp=a*R^b+c*p+d'
          WRITE (ifp1,3,err=999) nstabpA1,TRIM(fetxt)
-         fetxt = 'Phasenfehlerparameter b (noise)'
+         fetxt = 'Phasenfehlerparameter b (noise) []'
          WRITE (ifp1,3,err=999) nstabpB,TRIM(fetxt)
-         fetxt = 'Relativer Fehler Phasen c (noise)'
+         fetxt = 'Relativer Fehler Phasen c (noise) []'
          WRITE (ifp1,3,err=999) nstabpA2,TRIM(fetxt)
-         fetxt = 'Absoluter Fehler Phasen d (noise)'
+         fetxt = 'Absoluter Fehler Phasen d (noise) [Rad]'
          WRITE (ifp1,3,err=999) nstabp0,TRIM(fetxt)
          CLOSE (ifp1)
          modl_stdn = 0.
