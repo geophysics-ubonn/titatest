@@ -220,8 +220,8 @@ else
     climits=[romin romax];
 end
 
-%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
-patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
 caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
@@ -262,7 +262,7 @@ end
 set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',strcat(fls,appi,'.eps'));
 print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
-print('-djpeg',strcat(fls,appi,'.jpg'));
+print('-dpng','-r400',strcat(fls,appi,'.png'));
 close (fig);
 
 %write out some config files..
