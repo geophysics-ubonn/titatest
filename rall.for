@@ -317,22 +317,28 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
             PRINT*,'reading NOISE model '//TRIM(buff)
             CALL get_unit(ifp1)
             OPEN(ifp1,FILE=TRIM(buff),STATUS='old')
-            fetxt = 'Relativer Fehler Widerstand ('//TRIM(buff)//')'
+            fetxt = 'Relativer Fehler Widerstand [%]('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabw0
             WRITE (*,*)TRIM(fetxt)//':',nstabw0
-            fetxt = 'Absoluter Fehler Widerstand ('//TRIM(buff)//')'
+            fetxt = 'Absoluter Fehler Widerstand [Ohm m] ('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabm0
             WRITE (*,*)TRIM(fetxt)//':',nstabm0
-            fetxt = 'Phasenfehlerparameter A1 ('//TRIM(buff)//')'
+            fetxt = 'Phasenfehlerparameter A1 [Rad/Ohm/m]('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabpA1
             WRITE (*,*)TRIM(fetxt)//':',nstabpA1
-            fetxt = 'Phasenfehlerparameter B ('//TRIM(buff)//')'
+            fetxt = 'Phasenfehlerparameter B []('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabpB
             WRITE (*,*)TRIM(fetxt)//':',nstabpB
-            fetxt = 'Relativer Fehler Phasen A2 ('//TRIM(buff)//')'
+            fetxt = 'Relativer Fehler Phasen A2 [%]('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabpA2
             WRITE (*,*)TRIM(fetxt)//':',nstabpA2
-            fetxt = 'Absoluter Fehler Phasen A3 ('//TRIM(buff)//')'
+            fetxt = 'Absoluter Fehler Phasen p0 [Rad] ('//
+     1           TRIM(buff)//')'
             READ (ifp1,*,end=1001,err=999) nstabp0
             WRITE (*,*)TRIM(fetxt)//':',nstabp0
             CLOSE (ifp1)
@@ -343,8 +349,9 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
             nstabpA2 = modl_stdn
             nstabp0 = 0.;nstabpB = 0.;nstabpA1 = 0.
          END IF
+
          OPEN(ifp1,FILE=TRIM(buff),STATUS='replace')
-         fetxt = 'Relativer Fehler Widerstand a (noise) [] von dR=aR+b'
+         fetxt = 'Relativer Fehler Widerstand a (noise) [%] von dR=aR+b'
          WRITE (ifp1,3,err=999) nstabw0,TRIM(fetxt)
          fetxt = 'Absoluter Fehler Widerstand b (noise) [Ohm m]'
          WRITE (ifp1,3,err=999) nstabm0,TRIM(fetxt)
@@ -353,13 +360,15 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
          WRITE (ifp1,3,err=999) nstabpA1,TRIM(fetxt)
          fetxt = 'Phasenfehlerparameter b (noise) []'
          WRITE (ifp1,3,err=999) nstabpB,TRIM(fetxt)
-         fetxt = 'Relativer Fehler Phasen c (noise) []'
+         fetxt = 'Relativer Fehler Phasen c (noise) [%]'
          WRITE (ifp1,3,err=999) nstabpA2,TRIM(fetxt)
          fetxt = 'Absoluter Fehler Phasen d (noise) [Rad]'
          WRITE (ifp1,3,err=999) nstabp0,TRIM(fetxt)
          CLOSE (ifp1)
+
          modl_stdn = 0.
          iseedpri = 0
+
       END IF
 
 c check if the final phase should start with homogenous model      

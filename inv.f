@@ -463,7 +463,7 @@ c     SENSITIVITAETEN berechnen
             call bsensi()
          end if
 
-         if (lsetup.OR.ltri == 6.OR.ltri == 7) then
+         if (lsetup.OR.(ltri > 4 .AND. ltri < 10)) then
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -475,7 +475,9 @@ c     if (errnr.ne.0) goto 999
 c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
-            WRITE (*,'(/a)',ADVANCE='no')'Regularization::'
+            IF (it == 1) WRITE (*,'(/a)',ADVANCE='no')
+     1           'Regularization::'
+
             IF (ltri == 0) THEN
 
                WRITE (*,'(a)')' Rectangular smooth'
@@ -493,12 +495,17 @@ c     Rauhigkeitsmatrix belegen
 
             ELSE IF (ltri > 4 .AND. ltri < 10) THEN
 
-               IF (ltri == 5) WRITE (*,'(a)')
-     1              ' Triangular pure MGS (alpha)'
-               IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS (alpha)'
-               IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS mean (alpha)'
+               IF (it == 1) THEN
+                  IF (ltri == 5) WRITE (*,'(a)')
+     1                 ' Triangular pure MGS (alpha)'
+                  IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
+     1                 ' Triangular sens weighted MGS (alpha)'
+                  IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
+     1                 ' Triangular sens weighted MGS mean (alpha)'
+               ELSE
+                  WRITE (*,'(a)')' Updating MGS functional'
+               END IF
+
                CALL bsmatmmgs
 
             ELSE IF (ltri == 10) THEN
