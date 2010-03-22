@@ -99,6 +99,8 @@ c     Startmodell belegen
       call bsigm0(kanal,dstart)
       if (errnr.ne.0) goto 999        
 
+c      CALL bvariogram
+
 c     Startparameter setzen
       it     = 0
       itr    = 0
