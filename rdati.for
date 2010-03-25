@@ -223,7 +223,7 @@ c     ak                    write(*,*) i
 
             stabw = 1d-2*stabw0 + stabm0/bet
 
-            IF ( lnse) THEN ! add synthetic noise
+            IF ( lnse.OR.lnse2) THEN ! add synthetic noise
 
                eps_r = 1d-2*nstabw0 * bet + nstabm0
 
