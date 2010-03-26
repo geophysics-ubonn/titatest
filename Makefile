@@ -41,7 +41,7 @@ all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 ferr		= get_error.o
 # CRTomo objects
 f90crt		= alloci.o chold.o gauss_dble.o gauss_cmplx.o get_unit.o \
-		  linv.o make_noise.o tic_toc.o
+		  linv.o make_noise.o tic_toc.o variomodel.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -62,7 +62,8 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  wpot.o wsens.o bsmatmmgs.o bsytop.o bsmatmtv.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
 		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o \
-		  bsmatmlma.o bplma.o bpdclma.o broughlma.o bvariogram.o
+		  bsmatmlma.o bplma.o bpdclma.o broughlma.o \
+		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
 f90crm		= alloci.o
 fcrm		= fem.o

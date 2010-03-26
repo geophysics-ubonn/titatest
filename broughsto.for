@@ -3,13 +3,13 @@
 c     Unterprogramm zum Belegen der Leitfaehigkeit und zum Bestimmen der
 c     Rauhigkeit. 
 c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-c
+c     
 c     Copyright by Andreas Kemna 2009
 c     
 c     Andreas Kemna / Roland Martin                            10-Jun-2009
-c
+c     
 c     Letzte Aenderung   RM                                    30-Jun-2009
-c
+c     
 c.....................................................................
       USE alloci,only:smatm
       IMPLICIT none
@@ -34,42 +34,33 @@ c     parh: Parameter-Hilfsvektor (R^TR)m bzw (C_m^-1)m
 c.....................................................................
 
 c     Roughness bestimmen
-      rough = 0d0
 
 c     diff+<
       if (.not.lprior) then
 c     diff+>
-         parh=MATMUL(DCMPLX(smatm),par(1:manz))
+
+         parh = MATMUL(par(1:manz),DCMPLX(smatm))
+
          if (lip) then
-            do i=1,manz
-               rough = rough + dimag(parh(i))*dimag(par(i))
-            end do
+            rough = DOT_PRODUCT(DIMAG(parh(1:manz)),
+     1           DIMAG(par(1:manz)))
          else
-            do i=1,manz
-               rough = rough + dble(parh(i)*dconjg(par(i)))
-            end do
+            rough = DOT_PRODUCT(DBLE(parh(1:manz)),
+     1           DCONJG(par(1:manz)))
          end if
+         
 c     diff+<
       else
-         parh=MATMUL(dcmplx(smatm),(par(1:manz)-m0(1:manz)))
-         if (lip) then
-            do i=1,manz
-               rough = rough + dimag(parh(i))*dimag(par(i)-m0(i))
-            end do
-         else
-            do i=1,manz
-               rough = rough + dble(parh(i)*dconjg(par(i)-m0(i)))
-            end do
-         end if
+         
+         parh = MATMUL((par(1:manz)-m0(1:manz)),DCMPLX(smatm))
+         IF (lip) THEN
+            rough = DOT_PRODUCT(DIMAG(parh(1:manz)),
+     1           DIMAG(par(1:manz)-m0(1:manz)))
+         ELSE
+            rough = DOT_PRODUCT(DBLE(parh(1:manz)),
+     1           DCONJG(par(1:manz)-m0(1:manz)))
+         END IF
+
       end if
 c     diff+>
-caa   end do
-
-c     Leitfaehigkeiten belegen
-      do k=1,elanz
-         j = mnr(k)
-         sigma(k) = cdexp(par(j))
-      end do
-
-      return
       end

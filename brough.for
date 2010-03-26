@@ -73,11 +73,4 @@ c     diff+<
 c     diff+>
       end do
 
-c     Leitfaehigkeiten belegen
-      do k=1,elanz
-         j = mnr(k)
-         sigma(k) = cdexp(par(j))
-      end do
-
-      return
       end

@@ -12,6 +12,7 @@ c     Letzte Aenderung   20-Aug-2007
 c
 c.....................................................................
       USE make_noise
+      USE variomodel
       IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
@@ -76,7 +77,8 @@ c     ak Inga
       integer         * 4     elec1,elec2,
      1     elec3,elec4
       character(120) :: buff
-      logical        :: exi
+      logical        :: exi,lnse2
+c     lnse2 entkoppelt Rauschen und Fehlermodell
 c.....................................................................
 
       pi = dacos(-1d0)
@@ -172,7 +174,7 @@ c Read in input values..
       read(fpcfg,'(a80)',end=1001,err=999) dstrom
       fetxt = 'rall -> Inversionsverzeichnis'
       read(fpcfg,'(a80)',end=1001,err=999) ramd
-      INQUIRE (FILE=ramd,EXIST= exi)
+      INQUIRE (FILE=TRIM(ramd),EXIST= exi)
       IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
 c     diff+<
       fetxt = 'rall -> Differenz inversion'
@@ -286,16 +288,23 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
  103     PRINT*,'Regularisation with support stabilizer beta =',
      1        betamgs
       END IF      
+
+c check if the final phase should start with homogenous model      
+      lffhom = (stabp0 < 0)
+      IF (lffhom) stabp0 = -stabp0
       
       lnse = ( stabw0 < 0 ) 
       IF ( lnse ) THEN
-         lnse2 = .FALSE.
          stabw0 = -stabw0
+         IF (lnse2) print*,'overriding seperate noise model'
+         lnse2 = .FALSE.
+c     copy error model into noise model
          nstabw0 = stabw0
          nstabm0 = stabm0
          nstabpA1 = stabpA1
          nstabpA2 = stabpA2
          nstabp0 = stabp0
+
          READ(fpcfg,*,end=106,err=106) iseed
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
@@ -309,71 +318,27 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
          iseed = iseedpri
          WRITE (*,'(a,I7)',ADVANCE='no')
      1        'Entkoppeltes Daten Rauschen:: seed:',iseed
-
-         buff = 'crt.noisemod'
-         INQUIRE (FILE=TRIM(buff),EXIST=exi)
-
-         IF (exi) THEN
-            PRINT*,'reading NOISE model '//TRIM(buff)
-            CALL get_unit(ifp1)
-            OPEN(ifp1,FILE=TRIM(buff),STATUS='old')
-            fetxt = 'Relativer Fehler Widerstand [%]('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabw0
-            WRITE (*,*)TRIM(fetxt)//':',nstabw0
-            fetxt = 'Absoluter Fehler Widerstand [Ohm m] ('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabm0
-            WRITE (*,*)TRIM(fetxt)//':',nstabm0
-            fetxt = 'Phasenfehlerparameter A1 [Rad/Ohm/m]('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabpA1
-            WRITE (*,*)TRIM(fetxt)//':',nstabpA1
-            fetxt = 'Phasenfehlerparameter B []('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabpB
-            WRITE (*,*)TRIM(fetxt)//':',nstabpB
-            fetxt = 'Relativer Fehler Phasen A2 [%]('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabpA2
-            WRITE (*,*)TRIM(fetxt)//':',nstabpA2
-            fetxt = 'Absoluter Fehler Phasen p0 [Rad] ('//
-     1           TRIM(buff)//')'
-            READ (ifp1,*,end=1001,err=999) nstabp0
-            WRITE (*,*)TRIM(fetxt)//':',nstabp0
-            CLOSE (ifp1)
-         ELSE
-            nstabw0 = modl_stdn
-            PRINT*,'Taking standard deviation',nstabw0
-            nstabm0 = 0.
-            nstabpA2 = modl_stdn
-            nstabp0 = 0.;nstabpB = 0.;nstabpA1 = 0.
-         END IF
-
-         OPEN(ifp1,FILE=TRIM(buff),STATUS='replace')
-         fetxt = 'Relativer Fehler Widerstand a (noise) [%] von dR=aR+b'
-         WRITE (ifp1,3,err=999) nstabw0,TRIM(fetxt)
-         fetxt = 'Absoluter Fehler Widerstand b (noise) [Ohm m]'
-         WRITE (ifp1,3,err=999) nstabm0,TRIM(fetxt)
-         fetxt = 'Phasenfehlerparameter a (noise) [Rad/Ohm/m] von'// 
-     1        ' dp=a*R^b+c*p+d'
-         WRITE (ifp1,3,err=999) nstabpA1,TRIM(fetxt)
-         fetxt = 'Phasenfehlerparameter b (noise) []'
-         WRITE (ifp1,3,err=999) nstabpB,TRIM(fetxt)
-         fetxt = 'Relativer Fehler Phasen c (noise) [%]'
-         WRITE (ifp1,3,err=999) nstabpA2,TRIM(fetxt)
-         fetxt = 'Absoluter Fehler Phasen d (noise) [Rad]'
-         WRITE (ifp1,3,err=999) nstabp0,TRIM(fetxt)
-         CLOSE (ifp1)
+         
+         nstabw0 = modl_stdn
+         
+         fetxt = 'get noise model from crt.noisemod'
+         CALL get_noisemodel(nstabw0,nstabm0,nstabpA1,
+     1        nstabpB,nstabpA2,nstabp0,errnr)
+         IF (errnr /= 0) GOTO 999
 
          modl_stdn = 0.
          iseedpri = 0
+         
+         lnse = .TRUE. ! add noise
 
       END IF
 
-c check if the final phase should start with homogenous model      
-      lffhom = (stabp0 < 0)
-      IF (stabp0 < 0) stabp0 = -stabp0
+      IF (lnse) THEN 
+         fetxt = 'write out noise model'
+         CALL write_noisemodel(nstabw0,nstabm0,
+     1        nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
+         IF (errnr /= 0) GOTO 999
+      END IF
 
       IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
@@ -428,7 +393,7 @@ c     fetxt = ' '
 c     errnr = 90
 c     goto 999
       end if
-      
+
 c Mega switch testing..
       lsens = BTEST(mswitch,0) !ueberdeckung schreiben
       lcov1 = BTEST(mswitch,1) ! posterior modell covariance matrix 1
@@ -477,6 +442,9 @@ c     Elementeinteilung einlesen
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
       END IF
+
+      IF (lsto.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
+     1     CALL rvario (nx,alfx,alfz,esp_mit,esp_med)
 
       if (manz.ne.elanz) then
          fetxt = ' '
@@ -594,8 +562,6 @@ c     diff+>
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     Fehlermeldungen
-
- 3    FORMAT(G10.3,5X,'#',1X,A)
 
  999  return
 

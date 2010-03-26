@@ -39,7 +39,6 @@ c     Hilfsvariablen
       real            * 8     dum
 
 c     Hilfsfelder
-      logical         * 4     lfeld(mmax)
       complex         * 16    bvec(mmax)
 
 c     Indexvariablen
@@ -47,21 +46,7 @@ c     Indexvariablen
       integer         * 4     smaxs !
 c.....................................................................
 
-c     Parametervektor belegen
       smaxs=MAXVAL(selanz)
-
-      do j=1,manz
-         lfeld(j) = .false.
-      end do
-
-      do k=1,elanz
-         j = mnr(k)
-
-         if (.not.lfeld(j)) then
-            lfeld(j) = .true.
-            par(j)   = cdlog(sigma(k))
-         end if
-      end do
 
       if (.not.llam) then
 
@@ -108,7 +93,8 @@ c     diff+>
 c Damping--
          else if (ltri == 3.OR.ltri == 4) THEN
 
-            print *,'update:: damping has no part in the gradient'
+            WRITE(*,'(a)',ADVANCE='no')
+     1           'update:: damping has no part in the gradient'
 
 c     triang>
          else if (ltri == 1.OR.ltri == 2.OR.
@@ -190,7 +176,7 @@ c     triang>
 
          end do
 
-c     Konstantenvektor berechen und skalieren
+c     Konstantenvektor berechen und skalieren (RHS)
          do j=1,manz
 
             cdum = dcmplx(0d0)
@@ -304,7 +290,5 @@ c     i.e Stepsize = ||\delta m||
       end do
       bdpar = bdpar * step
 c$$$      bdpar = dsqrt(bdpar/dble(manz))
-
-      return
 
       end

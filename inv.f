@@ -97,10 +97,8 @@ c     Ggf. Fehlermeldungen
 
 c     Startmodell belegen
       call bsigm0(kanal,dstart)
-      if (errnr.ne.0) goto 999        
-
-c      CALL bvariogram
-
+      if (errnr.ne.0) goto 999
+        
 c     Startparameter setzen
       it     = 0
       itr    = 0
@@ -424,6 +422,7 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
          end if
       end if
 
+
       if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
 c     Iterationsindex hochzaehlen
          it = it+1
@@ -464,8 +463,12 @@ c     SENSITIVITAETEN berechnen
          else
             call bsensi()
          end if
-
+         
          if (lsetup.OR.(ltri > 4 .AND. ltri < 10)) then
+            
+            IF (ltri==15.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
+     1           CALL bvariogram
+            
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -664,10 +667,20 @@ c     Kontrollausgaben
       write(fprun,*)' Iteration ',it,', ',itr,
      1     ' : Updating'
 
+c Modell parameter mit aktuellen Leitfaehigkeiten belegen
+
+      CALL bpar
+      if (errnr.ne.0) goto 999
+
 c     UPDATE anbringen
       call update(dpar2,cgres2)
+      if (errnr.ne.0) goto 999
 
-c     Leitfaehigkeiten belegen und Roughness bestimmen
+c Leitfaehigkeiten mit verbessertem Modell belegen
+      CALL bsigma
+      if (errnr.ne.0) goto 999
+
+c     Roughness bestimmen
       IF (ltri == 0) THEN
          CALL brough()
       ELSE IF (ltri == 1.OR.ltri == 2.OR.
@@ -690,7 +703,7 @@ c.................................................
 c     OUTPUT
  30   call wout(kanal,dsigma,dvolt)
       if (errnr.ne.0) goto 999
-      
+
 c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       if (lsens) then
          if (ldc) then
@@ -700,6 +713,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          end if
          if (errnr.ne.0) goto 999
       end if
+
       IF (lcov1) THEN
          WRITE(*,'(a)')'Caculating model uncertainty..'
          WRITE (fprun,'(a)')'Caculating model uncertainty..'
