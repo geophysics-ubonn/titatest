@@ -31,13 +31,20 @@ c     Indexvariablen
 c.....................................................................
 
 c     Start-Regularisierungsparameter bestimmen
-      lammax = 0d0
       IF (nz<0) THEN
          IF (nz<-1) lammax = -REAL(nz)
          IF (nz==-1) lammax = REAL(manz)
          WRITE (*,'(2x,a,G10.2)')'taking easy lam_0 ',lammax
          return
+      ELSE IF (ltri == 15) THEN
+         lammax = 1./par_vari
+         WRITE (*,'(2x,a,G10.2)')'stochastic approach taking lam_0 ',
+     1        lammax
+         RETURN
       END IF
+
+      lammax = 0d0
+
       if (ldc) then
          do j=1,manz
             write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//

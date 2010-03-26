@@ -38,6 +38,8 @@ c        real            * 8     smatm(mmax,0:selmax)
 
 c Schalter ob reine Phaseninversion durchgefuehrt werden soll
         logical         * 4     lip
+c	 Paramter Varianz
+        real            * 8	par_vari
 
 c.....................................................................
 
@@ -51,5 +53,6 @@ cdiff+<
 cdiff+>
      1                  wmatd,
 c     1                  smatm, ! RM
+     1			par_vari,
      1                  wdfak,
      1                  lip

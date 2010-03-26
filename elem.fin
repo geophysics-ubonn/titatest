@@ -55,6 +55,11 @@ c Min/Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten (ESP)
   	real            * 8     esp_min,esp_max
 c Mittelwert/Median und Standardabweichung der ESP
   	real            * 8     esp_mit,esp_med,esp_std
+c Min/Maximale  Gitterabstaende
+  	real            * 8     grid_min,grid_max
+c Min/Maximaler Gitterabstand in x-,y-richtung
+  	real            * 8     grid_minx,grid_maxx
+        real 		* 8     grid_miny,grid_maxy
 c switch/number fictitious sink node, switch boundary values
         logical         * 4     lsink
         integer         * 4     nsink
@@ -69,6 +74,9 @@ c.....................................................................
      1                  sy,
      1			esp_min,esp_max,
      1			esp_mit,esp_med,esp_std,
+     1			grid_min,grid_max,
+     1			grid_minx,grid_maxx,
+     1			grid_miny,grid_maxy,
      1			sytop,
      1                  sanz,
      1                  typanz,
