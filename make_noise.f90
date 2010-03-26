@@ -9,6 +9,8 @@ MODULE Make_noise
 !!$
 !!$------------------------------------------------------------------------
   IMPLICIT none
+  PUBLIC :: get_noisemodel
+  PUBLIC :: write_noisemodel
   PUBLIC :: Random_Init
   PUBLIC :: Random_Gauss
   PUBLIC :: Random_Exponential
@@ -38,6 +40,87 @@ MODULE Make_noise
   REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM2=1./M2
 
   CONTAINS
+
+    SUBROUTINE get_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ widerstand noise model output parameters
+      REAL(KIND(0D0)),INTENT(INOUT)   :: wa,w0
+!!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
+      REAL(KIND(0D0)),INTENT(INOUT)   :: pa1,pb,pa2,p0
+      CHARACTER (40) :: csz,buff
+      INTEGER        :: ifp,ierr
+      LOGICAL        :: exi
+      ierr = 1
+      CALL get_unit(ifp)
+      buff = 'crt.noisemod'
+      INQUIRE (FILE=TRIM(buff),EXIST=exi)
+
+      IF (exi) THEN
+         PRINT*,'reading NOISE model '//TRIM(buff)
+         CALL get_unit(ifp)
+         OPEN(ifp,FILE=TRIM(buff),STATUS='old')
+         csz = 'Relativer Fehler Widerstand [%]('//TRIM(buff)//')'
+         READ (ifp,*) wa
+         WRITE (*,*)TRIM(csz)//':',wa
+         csz = 'Absoluter Fehler Widerstand [Ohm m] ('//TRIM(buff)//')'
+         READ (ifp,*) w0
+         WRITE (*,*)TRIM(csz)//':',w0
+         csz = 'Phasenfehlerparameter A1 [Rad/Ohm/m]('//TRIM(buff)//')'
+         READ (ifp,*) pa1
+         WRITE (*,*)TRIM(csz)//':',pa1
+         csz = 'Phasenfehlerparameter B []('//TRIM(buff)//')'
+         READ (ifp,*) pb
+         WRITE (*,*)TRIM(csz)//':',pb
+         csz = 'Relativer Fehler Phasen A2 [%]('//TRIM(buff)//')'
+         READ (ifp,*) pa2
+         WRITE (*,*)TRIM(csz)//':',pa2
+         csz = 'Absoluter Fehler Phasen p0 [Rad] ('//TRIM(buff)//')'
+         READ (ifp,*) p0
+         WRITE (*,*)TRIM(csz)//':',p0
+         CLOSE (ifp)
+      ELSE
+         pa1 = wa
+         PRINT*,'Taking standard deviation',wa
+         w0 = 0.;pb = 0.; pa2 = 0.;p0 = 0.
+      END IF
+      IF (wa <= 0.) RETURN
+
+      ierr = 0
+      
+    END SUBROUTINE get_noisemodel
+
+    SUBROUTINE write_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ widerstand noise model output parameters
+      REAL(KIND(0D0)),INTENT(IN)   :: wa,w0
+!!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
+      REAL(KIND(0D0)),INTENT(IN)   :: pa1,pb,pa2,p0
+      CHARACTER (40) :: csz
+      INTEGER        :: ifp,ierr
+3     FORMAT(G10.3,5X,'#',1X,A)
+
+      
+      ierr = 1
+
+      CALL get_unit(ifp)
+
+      csz = 'crt.noisemod'
+      OPEN(ifp,FILE=TRIM(csz),STATUS='replace')
+      csz = 'Relativer Fehler Widerstand a (noise) [%] von dR=aR+b'
+      WRITE (ifp,3) wa,TRIM(csz)
+      csz = 'Absoluter Fehler Widerstand b (noise) [Ohm m]'
+      WRITE (ifp,3) w0,TRIM(csz)
+      csz = 'Phasenfehlerparameter a (noise) [Rad/Ohm/m] von'//&
+           ' dp=a*R^b+c*p+d'
+      WRITE (ifp,3) pa1,TRIM(csz)
+      csz = 'Phasenfehlerparameter b (noise) []'
+      WRITE (ifp,3) pb,TRIM(csz)
+      csz = 'Relativer Fehler Phasen c (noise) [%]'
+      WRITE (ifp,3) pa2,TRIM(csz)
+      csz = 'Absoluter Fehler Phasen d (noise) [Rad]'
+      WRITE (ifp,3) p0,TRIM(csz)
+      CLOSE (ifp)
+
+      ierr = 0
+    END SUBROUTINE write_noisemodel
 !!$------------------------------------------------------------------------
 !!$ initialize portable pseudo random numbers 
 !!$ (set the pseudo random numbers)

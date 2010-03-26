@@ -87,7 +87,7 @@ c     Ggf. Fehlermeldung
 
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
-      IF ( lnse.OR.lnse2 ) THEN
+      IF ( lnse ) THEN
          WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
          CALL get_unit(ifp1)
          OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
@@ -223,7 +223,7 @@ c     ak                    write(*,*) i
 
             stabw = 1d-2*stabw0 + stabm0/bet
 
-            IF ( lnse.OR.lnse2) THEN ! add synthetic noise
+            IF ( lnse ) THEN ! add synthetic noise
 
                eps_r = 1d-2*nstabw0 * bet + nstabm0
 
@@ -322,7 +322,7 @@ c     ak
 
 c     'datei' schliessen
       close(kanal)
-      IF (lnse.OR.lnse2) THEN
+      IF ( lnse ) THEN
          close(ifp1)
          IF (.not.ldc) close (ifp2)
       END IF
