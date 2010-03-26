@@ -30,7 +30,7 @@ c     Indexvariablen
 
 c.....................................................................
 
-      do 30 i=1,sanz
+      do i=1,sanz
 
          idi = i*(mb+1)
          dum = adc(idi)
@@ -39,31 +39,28 @@ c.....................................................................
             WRITE (fetxt,'(a,I6,A,I6)')
      1           'scaldc',i,'idi',idi
             errnr = 27
-            goto 1000
+            RETURN
          end if
 
          adc(idi) = 1d0
          fak(i)   = 1d0 / dsqrt(dum)
          bdc(i)   = bdc(i) * fak(i)
 
-         if (i.eq.1) goto 30
+         if (i.eq.1) CYCLE
 
          i0 = i*mb
          ja = max0(1,i-mb)
 
-         do 20 j=ja,i-1
+         do j=ja,i-1
             adc(i0+j) = adc(i0+j)*fak(i)*fak(j)
- 20      continue
+         end do
 
- 30   continue
+      END DO
 
       errnr = 0
-      return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     Fehlermeldungen
-
- 1000 return
 
       end
