@@ -37,10 +37,12 @@ SUBROUTINE chold(a,t,n,ierr)
 !!$c
 !!$c Check for positive definiteness:
 !!$c
+  print *,'in chold',a(4,:)
   DO ip=1,n
      IF(a(ip,ip)<=0.0) THEN
         PRINT*,'WARNING: chol - not positive definite'
-        ierr = 1
+        ierr = -ip
+        PRINT *,a(ip,:)
         RETURN
      END IF
      t(ip,ip) = SQRT (a(ip,ip))

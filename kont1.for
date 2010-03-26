@@ -9,6 +9,7 @@ c     Andreas Kemna                                            16-Apr-1996
 c     Letzte Aenderung   16-Jul-2007
       
 c.....................................................................
+      USE variomodel
 
       IMPLICIT none
       INCLUDE 'parmax.fin'
@@ -35,7 +36,8 @@ c     diff+<
      1     dfm0,
 c     diff+>
      1     drandb
-
+      REAL(KIND(0D0)) :: Ix,Iy
+ 
       fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
       OPEN(fpinv,file=fetxt,status='old',POSITION='append',err=999)
       
@@ -137,20 +139,10 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,*,err=999)'Stochastic regu     : ',(ltri==15)
       IF (ltri == 15) THEN
          write(fpinv,*,err=999)' nx-switch  : ',nx
-         IF (nx==1) THEN        !spherical
-            WRITE (fetxt,'(a)')
-     1           'Spherical model(va*(1- h*(1.5-.5*h**2)))'
-         ELSE IF (nx==2) THEN   ! Gaussian
-            WRITE (fetxt,'(a)')
-     1           'Gaussian model(va*EXP(-3*h**2))'
-         ELSE IF (nx==3) THEN   ! power
-            WRITE (fetxt,'(a)')
-     1           'Power model(va*dump**gamma)'
-         ELSE                   ! exponential (default)
-            WRITE (fetxt,'(a)')
-     1           'Exponential (default) model(va*EXP(-3*h))'
-         END IF
-         write(fpinv,*,err=999)fetxt
+         CALL gvario (Ix,Iy,fetxt) ! get korrelation lengths
+         write(fpinv,'(a)',err=999)'('//TRIM(fetxt)//')'
+         WRITE (fpinv,'(2(a,F5.2))',ERR=999)
+     1        '  Korrelation lengths Ix/Iy',Ix,'/',Iy
       END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,'(/a)',err=999)
