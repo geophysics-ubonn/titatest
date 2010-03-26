@@ -39,9 +39,22 @@ for x in $tools;do
 	i=$[$i+1];
 done
 
+if [ -e 'crmod.cfg' ];then
+    echo found crmod.cfg
+else
+    echo there is no crmod.cfg, exiting
+    exit
+fi
+
 awk '{if (NR==2){print}}' crmod.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crmod.cfg > tmp.elecname
-awk '{if (NR==4){print}}' crmod.cfg > inv.lastmod
+
+if [ -e "tmp.fenster" ];then
+    fenster=`cat tmp.fenster`
+else
+    fenster=$1
+fi
+echo $fenster > tmp.fenster
 
 if [ -e "tmp.crange" ];then
     c1=`awk '{print$1}' tmp.crange`
@@ -51,45 +64,24 @@ else
     c2=`pwd|awk '/3_decades/{printf("%.1f\t%.1f",0.5,3.5)}'` 
     c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'` 
 fi
+
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
-tmp=`cat inv.lastmod`
+tmp=`awk '{if (NR==4){print}}' crmod.cfg`
 
-echo 'CRTomo resistivity model' > tmp.fenster
-rm tmp.cbarn
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
 echo 'cur_crmod.mag' > inv.lastmod
 
 $mtlb < $plotmod >& /dev/null
 
-#myeps='cur_crmod.mag.eps'
-#mypdf='cur_crmod.pdf'
+tmp='cur_crmod.mag'
+myeps=`basename $tmp`'.eps'
+mypdf=`basename $myeps '.eps'|tr '.' '_'`'.pdf'
+echo image conversion... $myeps $mypdf
+$epsp $myeps -o=$mypdf >& /dev/null
+echo "done $1"
 
-#echo image conversion... $myeps $mypdf
-#$epsp $myeps -o=$1$mypdf >& /dev/null
-#$mogri -format jpg $myeps
-
-#cp tmp.crange tmp.crange.r
-#c2=`awk '{printf("%f",-log(10^$1))}' tmp.crange.r`
-#c1=`awk '{printf("%f",-log(10^$2))}' tmp.crange.r`
-#echo 'CRTomo conductivity model' > tmp.fenster
-#echo 'ln(\sigma) [S/m]' > tmp.cbarn
-#echo $1 $2 > tmp.crange
-#awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,-log($1))}else{print}}' $tmp > cur_crmod_s.mag
-#echo 'cur_crmod_s.mag' > inv.lastmod
-
-#$mtlb < $plotmod >& /dev/null
-
-#myeps='cur_crmod_s.mag.eps'
-#mypdf='cur_crmod_s.pdf'
-
-#echo image conversion... $myeps $mypdf
-#$epsp $myeps -o=$1$mypdf >& /dev/null
-#$mogri -format jpg $myeps
-#mv tmp.crange.r tmp.crange
-#echo "done $1"
-
-#pdfcr=`which pdfcrop`
-#forcecheck $pdfcr
-#$pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
+pdfcr=`which pdfcrop`
+forcecheck $pdfcr
+$pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
