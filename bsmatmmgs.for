@@ -21,6 +21,9 @@ c.........................................................................
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'fem.fin'
+      INCLUDE 'sigma.fin'       ! for sigma
+      INCLUDE 'err.fin'
+
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
@@ -36,7 +39,16 @@ c.........................................................................
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
 !.....................................................................
       
-      IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz))
+      errnr = 4
+
+      IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         fetxt = 'Allocation problem csens in bsmatmmgs'
+         WRITE (*,'(/a/)')TRIM(fetxt)
+         errnr = 97
+         RETURN
+      END IF
+
       csens=0.
 
       IF (lip) THEN
@@ -81,7 +93,16 @@ c$$$      snsmn = snsmn / DBLE(manz)
       WRITE(*,*) 'dum snsmn',dum,snsmn
 
       smaxs=MAXVAL(selanz) ! triangles or rectangles
-      IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
+      IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),
+     1     STAT=errnr)
+
+      IF (errnr/=0) THEN
+         fetxt = 'Allocation problem WORK in bmcm'
+         WRITE (*,'(/a/)')TRIM(fetxt)
+         errnr = 97
+         RETURN
+      END IF
+
       smatm = 0d0               ! initialize smatm
 
       DO i=1,elanz ! elanz = flaecheneles
@@ -127,7 +148,7 @@ c$$$      snsmn = snsmn / DBLE(manz)
                alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
      1              (alfz*DSIN(ang))**2.)
 !     MGS Teil
-               dum = CDABS(par(i)-par(nachbar(i,k))) / dist
+               dum = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
 !     Modell nur im zaehler nicht im Nenner -> fred fragen
 
 !     \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
@@ -192,6 +213,11 @@ c$$$      snsmn = snsmn / DBLE(manz)
             END IF
          END DO
       END DO
+
+      DEALLOCATE (csens)
+
+      errnr = 0
+ 999  RETURN
 
       END
 
