@@ -22,16 +22,12 @@ c.........................................................................
 !     Hilfsvariablen 
       INTEGER                                      :: kanal
       INTEGER                                      :: i,j,k
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
+      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE  :: dig
       REAL(KIND(0D0))                              :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A
 
-
-      errnr = 1
-      open(kanal,file=fetxt,status='replace',err=999)
-      errnr = 4
 
       ALLOCATE(dig(manz))
 
@@ -45,20 +41,36 @@ c$$$  A^TC_d^-1A
             END DO
             ata(j,k) = ata(k,j) ! fills lower triangle (j,k) 
          END DO
-         dig(k) = DBLE(ata(k,k))
+         dig(k) = ata(k,k)
       END DO
 
-      dig_min = MINVAL(dig)
-      dig_max = MAXVAL(dig)
-
+c     write out real and imaginary part
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_re',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DBLE(dig))
+      dig_max = MAXVAL(DBLE(dig))
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
+         WRITE (kanal,*)LOG10(DBLE(dig(i))),DBLE(dig(i))
       END DO
-
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
+      CLOSE(kanal)
 
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_im',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DIMAG(dig))
+      dig_max = MAXVAL(DIMAG(dig))
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         WRITE (kanal,*)LOG10(DIMAG(dig(i))),DIMAG(dig(i))
+      END DO
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
       CLOSE(kanal)
 
       DEALLOCATE (dig)

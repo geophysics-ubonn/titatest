@@ -113,8 +113,8 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(/a)',err=999)      '***Model stats***'
       write(fpinv,*,err=999)'# Model parameters  : ',manz
       write(fpinv,*,err=999)'# Data points       : ',nanz
-      write(fpinv,*,err=999)'Add data noise ?    : ',lnse.OR.lnse2
-      write(fpinv,*,err=999)'Couple to Err. Modl?: ',lnse
+      write(fpinv,*,err=999)'Add data noise ?    : ',lnse
+      write(fpinv,*,err=999)'Couple to Err. Modl?: ',.NOT.lnse2
       write(fpinv,*,err=999)'    seed            : ',iseed
       write(fpinv,*,err=999)'    Variance        : ',nstabw0
       write(fpinv,*,err=999)'Add model noise ?   : ',lnsepri
@@ -138,11 +138,16 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
      1     write(fpinv,*,err=999)'  Stabilizer beta  : ',betamgs
       write(fpinv,*,err=999)'Stochastic regu     : ',(ltri==15)
       IF (ltri == 15) THEN
-         write(fpinv,*,err=999)' nx-switch  : ',nx
-         CALL gvario (Ix,Iy,fetxt) ! get korrelation lengths
-         write(fpinv,'(a)',err=999)'('//TRIM(fetxt)//')'
-         WRITE (fpinv,'(2(a,F5.2))',ERR=999)
-     1        '  Korrelation lengths Ix/Iy',Ix,'/',Iy
+         WRITE (fpinv,'(a,I4)',err=999)ACHAR(9)//
+     1        'nx-switch  : ',nx
+         CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
+         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1        'Variogram('//TRIM(fetxt)//')'
+         CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
+         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1        'Covariance('//TRIM(fetxt)//')'
+         WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)//
+     1        'Korrelation lengths Ix/Iy',Ix,'/',Iy
       END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,'(/a)',err=999)

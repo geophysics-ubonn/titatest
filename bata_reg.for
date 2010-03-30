@@ -21,19 +21,16 @@ c.........................................................................
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
-      INTEGER                                      :: kanal ! io number
+      INTEGER                                    :: kanal ! io number
 !     Hilfsvariablen 
-      INTEGER                                      :: i,j,k,smaxs
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE      :: dig
-      REAL(KIND(0D0))                               :: dig_min,dig_max
+      INTEGER                                  :: i,j,k,smaxs
+      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig
+      REAL(KIND(0D0))                          :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A+lamC_m
       
       smaxs=MAXVAL(selanz)
-      errnr = 1
-      open(kanal,file=fetxt,status='replace',err=999)
-      errnr = 4
 
       ALLOCATE(dig(manz))
       smaxs=MAXVAL(selanz)
@@ -58,14 +55,14 @@ c$$$  A^TC_d^-1A+lamC_m
                ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
 
             END DO
-            dig(j) = DBLE(ata_reg(j,j))
+            dig(j) = ata_reg(j,j)
          END DO
 
       ELSE IF (ltri == 3.OR.ltri == 4) THEN
          ata_reg = ata
          DO i=1,manz
             ata_reg(i,i) = ata(i,j) + DCMPLX(lam * smatm(i,1))
-            dig(i) = DBLE(ata_reg(i,i))
+            dig(i) = ata_reg(i,i)
          END DO
 
       ELSE IF (ltri == 1.OR.ltri == 2.OR.
@@ -84,30 +81,47 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg(i,j) = ata(i,j)
                END IF
             END DO
-            dig(j) = DBLE(ata_reg(j,j))
+            dig(j) = ata_reg(j,j)
          END DO
       ELSE IF (ltri == 15) THEN
          ata_reg = ata + DCMPLX(lam * smatm) ! for full C_m..
          DO j=1,manz
-            dig(j) = DBLE(ata_reg(j,j))
+            dig(j) = ata_reg(j,j)
          END DO
       END IF
       
-      dig_min = MINVAL(dig)
-      dig_max = MAXVAL(dig)
-
+c     write out real and imaginary part
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_re',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DBLE(dig))
+      dig_max = MAXVAL(DBLE(dig))
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),dig(i)
+         WRITE (kanal,*)LOG10(DBLE(dig(i))),DBLE(dig(i))
       END DO
-
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
+      CLOSE(kanal)
 
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_im',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DIMAG(dig))
+      dig_max = MAXVAL(DIMAG(dig))
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         WRITE (kanal,*)LOG10(DIMAG(dig(i))),DIMAG(dig(i))
+      END DO
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
       CLOSE(kanal)
 
       DEALLOCATE (dig)
 
       errnr = 0
  999  RETURN
+
       END

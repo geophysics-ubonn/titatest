@@ -28,11 +28,6 @@ c.........................................................................
 
 c$$$  A^TC_d^-1A
 
-
-      errnr = 1
-      open(kanal,file=fetxt,status='replace',err=999)
-      errnr = 4
-
       ALLOCATE(dig(manz))
 
       ata_dc = 0.
@@ -52,11 +47,14 @@ c$$$  A^TC_d^-1A
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
 
+      errnr = 1
+      OPEN (kanal,file=TRIM(fetxt)//'_re',
+     1     status='replace',err=999)
+      errnr = 4
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)
       END DO
-
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
       WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
 

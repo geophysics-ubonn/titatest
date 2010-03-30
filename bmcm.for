@@ -5,11 +5,11 @@ c     MCM = (A^TC_d^-1A + C_m^-1)^-1
 c     Fuer beliebige Triangulierung
 c     
 c     Copyright Andreas Kemna
-c     Andreas Kemna / Roland Martin                            02-Nov-2009
+c     Andreas Kemna / Roland Martin                      02-Nov-2009
 c     
-c     Letzte Aenderung    RM                                   20-Feb-2010
+c     Letzte Aenderung    RM                             30-Mar-2010
 c     
-c.........................................................................
+c....................................................................
       USE alloci
       USE tic_toc
 
@@ -20,93 +20,55 @@ c.........................................................................
       INCLUDE 'model.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
-!.....................................................................
+!....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      INTEGER                                       :: i,kanal,c1,c2
+      INTEGER                                     :: i,kanal,j
       COMPLEX(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
-      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: ipiv
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE      :: dig,dig2
-      REAL(KIND(0D0))                               :: dig_min,dig_max
-      LOGICAL,INTENT(IN),OPTIONAL                   :: ols 
-!.....................................................................
+      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig,dig2
+      REAL(KIND(0D0))                             :: dig_min,dig_max,p
+      LOGICAL,INTENT(IN),OPTIONAL                 :: ols 
+!....................................................................
 
 c$$$  invert A^TC_d^-1A + C_m^-1
-
       errnr = 1
-      open(kanal,file=fetxt,status='replace',err=999)
-      errnr = 4
+      CALL TIC
 
-      ALLOCATE (work(manz,manz),STAT=errnr)
-      IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
-         errnr = 97
-         RETURN
-      END IF
-
-      CALL TIC()
+      cov_m = ata_reg
 
       IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN
-         ALLOCATE (ipiv(manz),STAT=errnr)
-         IF (errnr/=0) THEN
-            WRITE (*,'(/a/)')'Allocation problem IPIV in bmcmdc'
-            errnr = 97
-            RETURN
-         END IF
-         
-         work = ata_reg         ! work is replaced by PLU decomposition
-
-         cov_m = 0.
-
-c     c$$$  building Right Hand Side (unit matrix)
-         DO i=1,manz
-            cov_m(i,i) = CMPLX(1.d0,1.d0)
-         END DO
-
-c$$$  IF (ols) THEN
-c     c$$$  Solving Linear System Ax=B -> B=A^-1
-         WRITE (*,'(a)',ADVANCE='no')'Solving Ax=B (ZGESV)'
-         
-         CALL ZGESV(manz,manz,work,manz,ipiv,cov_m,manz,errnr)
-
+         WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1        'Factorization...'
+         CALL ZPOTRF('U',manz,cov_m,manz,errnr)
          IF (errnr /= 0) THEN
             PRINT*,'Zeile::',cov_m(abs(errnr),:)
             PRINT*,'Spalte::',cov_m(:,abs(errnr))
             errnr = 108
             RETURN
          END IF
-c$$$  
-c$$$  ELSE
-c$$$  
-c$$$  WRITE (*,'(a)',ADVANCE='no')'Factoring A (Upper)'
-c$$$  
-c$$$  CALL ZPOTRF('U',manz,work,manz,errnr)
-c$$$  
-c$$$  IF (errnr /= 0) THEN
-c$$$  PRINT*,'Zeile::',work(abs(errnr),:)
-c$$$  PRINT*,'Spalte::',work(:,abs(errnr))
-c$$$  errnr = 108
-c$$$  RETURN
-c$$$  END IF
-c$$$  
-c$$$  WRITE (*,'(a)',ADVANCE='no')' solving Ax=B'
-c$$$  
-c$$$  CALL ZPOTRS('U',manz,manz,work,manz,cov_m,manz,errnr)
-c$$$  
-c$$$  IF (errnr /= 0) THEN
-c$$$  PRINT*,'Zeile::',cov_m(abs(errnr),:)
-c$$$  PRINT*,'Spalte::',cov_m(:,abs(errnr))
-c$$$  errnr = 108
-c$$$  RETURN
-c$$$  END IF
-c$$$  END IF
+         WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1        'Inverting...'
+         CALL ZPOTRI('U',manz,cov_m,manz,errnr)
+         IF (errnr /= 0) THEN
+            PRINT*,'Zeile::',cov_m(abs(errnr),:)
+            PRINT*,'Spalte::',cov_m(:,abs(errnr))
+            errnr = 108
+            RETURN
+         END IF
+         WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1        'Filling lower Cov...'
+         DO i= 1,manz
+            WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
+     1           ACHAR(13)//ACHAR(9)//ACHAR(9)//
+     1           ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+            DO j = i+1,manz
+               cov_m(j,i)=cov_m(i,j)
+            END DO
+         END DO
+
       ELSE
-
-         cov_m = ata_reg
-
          WRITE (*,'(a)',ADVANCE='no')
-     1        'Solving Ax=B (Gauss elemination)'
-
+     1        'Inverting Matrix (Gauss elemination)'
          CALL gauss_cmplx(cov_m,manz,errnr)
 
          IF (errnr /= 0) THEN
@@ -119,30 +81,54 @@ c$$$  END IF
       END IF
 
       CALL TOC
+      ALLOCATE (work(manz,manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
+         errnr = 97
+         RETURN
+      END IF
 
-      work = MATMUL(cov_m,ata_reg) ! just checking result
+      work = MATMUL(cov_m,ata_reg)
 
-      ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
+      ALLOCATE (dig(manz),dig2(manz))!prepare to write out main diagonal
       DO i=1,manz
-         dig(i) = DBLE(cov_m(i,i))
-         dig2(i) = DBLE(work(i,i))
+         dig(i) = cov_m(i,i)
+         dig2(i) = work(i,i)
       END DO
-      
-      dig_min = MINVAL(dig)
-      dig_max = MAXVAL(dig)
-      
+
+c     write out real and imaginary part
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_re',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DBLE(dig))
+      dig_max = MAXVAL(DBLE(dig))
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig2(i)
+         WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig2(i))
       END DO
-
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
-
+      WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
       CLOSE(kanal)
 
-      DEALLOCATE (dig,dig2,work)
-      IF (ALLOCATED(ipiv)) DEALLOCATE (ipiv)
+      errnr = 1
+      OPEN(kanal,file=TRIM(fetxt)//'_im',
+     1     status='replace',err=999)
+      errnr = 4
+      dig_min = MINVAL(DIMAG(dig))
+      dig_max = MAXVAL(DIMAG(dig))
+      WRITE (kanal,*)manz
+      DO i=1,manz
+         p = DBLE(1d3*DATAN2(DIMAG(dig(i)),DBLE(dig(i))))
+         WRITE (kanal,*)DIMAG(dig(i)),p
+      END DO
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
+      CLOSE(kanal)
+
+
+      DEALLOCATE (dig)
+      IF (ALLOCATED(work)) DEALLOCATE (dig2,work)
 
       errnr = 0
  999  RETURN

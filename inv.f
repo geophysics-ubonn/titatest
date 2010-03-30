@@ -465,10 +465,7 @@ c     SENSITIVITAETEN berechnen
          end if
          
          if (lsetup.OR.(ltri > 4 .AND. ltri < 10)) then
-            
-            IF (ltri==15.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
-     1           CALL bvariogram
-            
+                        
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -714,9 +711,12 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          if (errnr.ne.0) goto 999
       end if
 
+      IF (ltri==15.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
+     1     CALL bvariogram
+      
       IF (lcov1) THEN
-         WRITE(*,'(a)')'Caculating model uncertainty..'
-         WRITE (fprun,'(a)')'Caculating model uncertainty..'
+         WRITE(*,'(a)')'Calculating model uncertainty..'
+         WRITE (fprun,'(a)')'Calculating model uncertainty..'
          IF (it<2) lam = lamalt
          lam = lamalt
          WRITE (*,'(/a,G10.3,a/)')
@@ -817,10 +817,10 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 
 
             IF (ldc) THEN
-               CALL bres_dc(kanal,ols)
+               CALL bres_dc(kanal)
                if (errnr.ne.0) goto 999
             ELSE
-               CALL bres(kanal,ols)
+               CALL bres(kanal)
                if (errnr.ne.0) goto 999
             END IF
 

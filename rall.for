@@ -77,8 +77,7 @@ c     ak Inga
       integer         * 4     elec1,elec2,
      1     elec3,elec4
       character(120) :: buff
-      logical        :: exi,lnse2
-c     lnse2 entkoppelt Rauschen und Fehlermodell
+      logical        :: exi
 c.....................................................................
 
       pi = dacos(-1d0)
@@ -395,12 +394,12 @@ c     goto 999
       end if
 
 c Mega switch testing..
-      lsens = BTEST(mswitch,0) !ueberdeckung schreiben
-      lcov1 = BTEST(mswitch,1) ! posterior modell covariance matrix 1
-      lres  = BTEST(mswitch,2) ! rsolution matrix berechnen
-      lcov2 = BTEST(mswitch,3) ! posterior modell covariance matrix 2
+      lsens = BTEST(mswitch,0) ! +1 ueberdeckung schreiben
+      lcov1 = BTEST(mswitch,1) ! +2 posterior modell covariance matrix 1
+      lres  = BTEST(mswitch,2) ! +4 rsolution matrix berechnen
+      lcov2 = BTEST(mswitch,3) ! +8 posterior modell covariance matrix 2
 
-      lgauss = BTEST (mswitch,4) ! solve ols with Gauss elemination
+      lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
@@ -444,7 +443,7 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
       END IF
 
       IF (lsto.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
-     1     CALL rvario (nx,alfx,alfz,esp_mit,esp_med)
+     1     CALL set_vario (nx,alfx,alfz,esp_mit,esp_med)
 
       if (manz.ne.elanz) then
          fetxt = ' '

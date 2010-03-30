@@ -26,11 +26,8 @@ c.....................................................................
       INCLUDE 'err.fin'
 c.....................................................................
 
-c     !!!
-c     Kovarianzmatrix
-      REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE  :: CovTT 
-      INTEGER,DIMENSION(:),ALLOCATABLE              :: IPIV
-c     inverse Kovarianzmatrix -> smatm
+      REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE  :: upper
+c     upper triangular matrix
       integer*4            :: ErrorFlag
 
 c     PROGRAMMINTERNE PARAMETER:
@@ -42,6 +39,8 @@ c     Korrelation lengths and variance (var)
       logical              :: ex,exc         
 c     Hilfsvariablen
       integer              :: i,j,l,smaxs,ifp,c1,c2,se,mi,st,ta
+c     smatm file name
+      CHARACTER(10)        :: fsmat
 c     clearscreen
       CHARACTER(80)        :: csz
 
@@ -50,11 +49,14 @@ c     clearscreen
 
       var = 1.
 
+      fsmat = 'inv.smatmi'
+
       DO i=1,79
          csz(i:i+1)=' '
       END DO
 
-      CALL gvario (Ix,Iy,csz)   ! get korrelation length and vario model string
+      CALL get_vario (Ix,Iy,csz,1)   
+c!!!  get korrelation length and vario model string
       
       WRITE (*,'(A80)')ACHAR(13)//TRIM(csz)
 
@@ -73,16 +75,15 @@ c     clearscreen
       smaxs=MAXVAL(selanz)
       
 c     Belege die Matrix
-c     covTT=0
 
       smatm = var
 
-      INQUIRE(FILE='tmp.smatmi',EXIST=ex) ! already an inverse c_m ?
+      INQUIRE(FILE=fsmat,EXIST=ex) ! already an inverse c_m ?
 
       IF (ex) THEN
 
-         WRITE (*,'(a)',ADVANCE='no')'checking tmp.smatmi'
-         OPEN (ifp,FILE='tmp.smatmi',STATUS='old',
+         WRITE (*,'(a)',ADVANCE='no')'checking '//fsmat
+         OPEN (ifp,FILE=fsmat,STATUS='old',
      1        ACCESS='sequential',FORM='unformatted')
          READ (ifp) i
          IF (i == manz) THEN
@@ -119,7 +120,7 @@ c     covTT=0
 
                smatm(i,j) = mcova(h,var)
 
-               IF (i /= j) smatm(j,i) = smatm(i,j) ! lower triangle
+               IF (i /= j) smatm(j,i) = smatm(i,j) ! upper triangle
 
             end do
          end do
@@ -127,28 +128,54 @@ c     covTT=0
 
          PRINT*,'bestimme nun C_m^-1'
 c     Berechne nun die Inverse der Covarianzmatrix!!!
-
-c$$$  PRINT*,'   Gauss elemination ... '
-         CALL gauss_dble(smatm,manz,errorflag)
-c$$$         IF (.NOT.ALLOCATED (covTT)) ALLOCATE (covTT(manz,manz))
-c$$$         covtt = 0.
-c$$$         PRINT*,'   Cholesky factorization (Schwarz)... '
-c$$$         CALL chold(smatm,covTT,manz,errorflag)
-         IF (errorflag/=0) THEN
-            fetxt='there was something wrong..'
-            PRINT*,'Zeile(',abs(errorflag),
-     1           ')::',smatm(abs(errorflag),:)
-            PRINT*,'Spalte::',smatm(:,abs(errorflag))
-            errnr = 108
+         IF (lgauss) THEN
+            PRINT*,'   Gauss elemination ... '
+            CALL gauss_dble(smatm,manz,errorflag)
+            IF (errorflag/=0) THEN
+               fetxt='there was something wrong..'
+               PRINT*,'Zeile(',abs(errorflag),
+     1              ')::',smatm(abs(errorflag),:)
+               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               errnr = 108
+            END IF
+         ELSE ! default..
+            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1           'Factorization...'
+            CALL DPOTRF('U',manz,smatm,manz,errorflag)
+            IF (errorflag/=0) THEN
+               fetxt='there was something wrong..'
+               PRINT*,'Zeile(',abs(errorflag),
+     1              ')::',smatm(abs(errorflag),:)
+               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               errnr = 108
+            END IF
+            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1           'Inverting...'
+            CALL DPOTRI('U',manz,smatm,manz,errnr)
+            IF (errorflag/=0) THEN
+               fetxt='there was something wrong..'
+               PRINT*,'Zeile(',abs(errorflag),
+     1              ')::',smatm(abs(errorflag),:)
+               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               errnr = 108
+            END IF
+            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+     1           'Filling lower C_m...'
+            DO i= 1,manz
+               WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
+     1              ACHAR(13)//ACHAR(9)//ACHAR(9)//
+     1              ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+               DO j = i+1,manz
+                  smatm(j,i)=smatm(i,j)
+               END DO
+            END DO
+            
          END IF
-
-c$$$         PRINT*,'   Invertiere smatm ... '
-c$$$         CALL linv(covTT,smatm,manz)
 
          IF (errorflag==0) THEN
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'got inverse and write out'
-            OPEN (ifp,FILE='tmp.smatmi',STATUS='replace',
+            OPEN (ifp,FILE=fsmat,STATUS='replace',
      1           ACCESS='sequential',FORM='unformatted')
             WRITE (ifp) manz
             WRITE (ifp) smatm
@@ -160,8 +187,6 @@ c$$$         CALL linv(covTT,smatm,manz)
          END IF     
       END IF
 
-      IF (ALLOCATED (covTT)) DEALLOCATE (covTT)
-      
       CALL TOC()
 
       END

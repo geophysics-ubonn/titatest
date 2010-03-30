@@ -31,7 +31,8 @@ c.........................................................................
 c$$$  A^TC_d^-1A+lamC_m
       
       errnr = 1
-      open(kanal,file=fetxt,status='replace',err=999)
+      open(kanal,file=TRIM(fetxt)//'_re',
+     1     status='replace',err=999)
       errnr = 4
 
       ALLOCATE(dig(manz))
@@ -99,11 +100,11 @@ c$$$  A^TC_d^-1A+lamC_m
 
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),LOG10(dig(i)/dig_max)
+         WRITE (kanal,*)LOG10(dig(i)),dig(i)
       END DO
 
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
 
       CLOSE(kanal)
 
