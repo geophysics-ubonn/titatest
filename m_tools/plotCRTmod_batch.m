@@ -259,7 +259,7 @@ for i=1:nelec
         'MarkerSize',marksize);
 end
 
-set(fig,'PaperPositionMode','auto');
+%set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',strcat(fls,appi,'.eps'));
 print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
 print('-dpng','-r400',strcat(fls,appi,'.png'));

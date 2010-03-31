@@ -26,8 +26,6 @@ c.....................................................................
       INCLUDE 'err.fin'
 c.....................................................................
 
-      REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE  :: upper
-c     upper triangular matrix
       integer*4            :: ErrorFlag
 
 c     PROGRAMMINTERNE PARAMETER:
@@ -105,7 +103,7 @@ c     Belege die Matrix
             spx1 = spx1 / smaxs ! x- schwerpunkt
             spy1 = spy1 / smaxs ! y- schwerpunkt
 
-            do j = i , manz     ! fills upper triangle
+            do j = i+1 , manz     ! fills upper triangle
 
                spx2 = 0.; spy2 = 0.
                DO l=1,smaxs
@@ -120,7 +118,7 @@ c     Belege die Matrix
 
                smatm(i,j) = mcova(h,var)
 
-               IF (i /= j) smatm(j,i) = smatm(i,j) ! upper triangle
+               smatm(j,i) = smatm(i,j) ! upper triangle
 
             end do
          end do
@@ -169,7 +167,6 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
                   smatm(j,i)=smatm(i,j)
                END DO
             END DO
-            
          END IF
 
          IF (errorflag==0) THEN
