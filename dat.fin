@@ -47,8 +47,8 @@ c Schalter ob ratio-dataset (.true.)
 
 c Schalter ob Polaritaeten gecheckt werden sollen (.true.)
         logical         * 4     lpol
-c Daten Verrauschen? 
-  	logical		* 4	lnse
+c Daten Verrauschen? lnse2 entkoppelt Rauschen und Fehlermodell
+  	logical		* 4	lnse,lnse2
 c Initialer Seed der Pseudo Random Sequence (PRS)
         integer         * 4     iseed
 c Noise error model ...
@@ -88,4 +88,5 @@ c.....................................................................
      1                  lratio,
      1                  lpol,
      1			lnse,
-     1			iseed
+     1			iseed,
+     1			lnse2
