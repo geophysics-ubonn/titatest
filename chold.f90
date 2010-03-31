@@ -1,62 +1,64 @@
-SUBROUTINE chold(a,t,n,ierr)
-
-!!$c-----------------------------------------------------------------------
+SUBROUTINE chold(a,n,u,ierr)
+!!$c-----------------------------------------------------------------
 !!$c
 !!$c                      Cholesky Decomposition
 !!$c                      **********************
 !!$c
-!!$c This subroutine calculates the lower triangular matrix T which, when
-!!$c multiplied by its own transpose, gives the symmetric matrix A. (from
-!!$c "Numerical Analysis of Symmetric Matrices,"  H.R. Schwarz et al.,
-!!$c p. 254)
-!!$c
-!!$c
-!!$c
+!!$c This subroutine calculates the lower triangular matrix L which,
+!!$c when multiplied by its own transpose, gives the symmetric 
+!!$c matrix A. From Numerical recipies
+!!$c 
+!!$c**********          NOTE           ***************************
+!!$c chold In this form needs only the upper triangular part of a
+!!$c and stores L in the lower part.
+!!$c P contains the diagonal entries (EVs)
+!!$c**************************************************************
 !!$c INPUT VARIABLES:
 !!$c
-!!$c   a(n,n)           Symmetric positive definite matrix to be
-!!$c                      decomposed (destroyed in the calculation of t)
-!!$c   t(n,n)           Lower triangular matrix solution
-!!$c   n                Dimension of the system you're decomposing
-!!$c   ierr             Error code:  ierr=0 - no errors; ierr=1 - matrix a
-!!$c                      is not positive definite
-!!$c
-!!$c
-!!$c
+!!$c   a(n,n) Symmetric positive definite nxn matrix
+!!$c    to be decomposed 
+!!$c   u(n,n) upper triangle with U^TU = A
+!!$c   ierr   Error code:  ierr=0 - no errors; ierr=1 - matrix a
+!!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
-!!$c-----------------------------------------------------------------------
+!!$c------------------------------------------------------------
   IMPLICIT none
 
   INTEGER,INTENT (IN)               :: n
-  REAL (KIND(0D0)), DIMENSION (n,n) :: a,t
+  REAL (KIND(0D0)), DIMENSION (n,n) :: a,u
+  REAL (KIND(0D0))                  :: s,d
+  REAL (KIND(0D0)),PARAMETER        :: tol=1.e-10
   INTEGER, INTENT (OUT)             :: ierr
-  INTEGER                           :: ip,k,i
+  INTEGER                           :: i,k,j
 
   ierr = 0
-  t = 0.
-!!$c
-!!$c Check for positive definiteness:
-!!$c
-  print *,'in chold',a(4,:)
-  DO ip=1,n
-     IF(a(ip,ip)<=0.0) THEN
-        PRINT*,'WARNING: chol - not positive definite'
-        ierr = -ip
-        PRINT *,a(ip,:)
-        RETURN
+  u = 0.
+
+  DO i = 1,n
+     WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//ACHAR(9)//ACHAR(9)//&
+          ACHAR(9)//'/ ',REAL( i * (100./n)),'%'
+     s = DOT_PRODUCT(u(1:i,i),u(1:i,i))
+     d = a(i,i) - s
+     IF (ABS(d)< tol) THEN
+        u(i,i) = 0.
+     ELSE
+        IF (d < 0.) THEN
+           PRINT*,'WARNING: chold - not positive definite'
+           ierr = -i
+           RETURN
+        END IF
+        u(i,i) = SQRT(d)
      END IF
-     t(ip,ip) = SQRT (a(ip,ip))
-     IF(ip>=n) RETURN
-     DO k = ip+1,n
-        t(k,ip) = a(ip,k)/t(ip,ip)
+
+     DO j = i+1,n
+        s = DOT_PRODUCT(u(1:i,i),u(1:i,j))
+        IF (ABS(s) < tol) s = 0.
+        u(i,j) = (a(i,j) - s) / u(i,i)
      END DO
-     DO i = ip+1,n
-        DO k = i,n
-           a(i,k) = a(i,k) - t(i,ip) * t(k,ip)
-        END DO
-     END DO
+
   END DO
-!!$c
-!!$c Finished
-!!$c
+
+  ierr = 0
+
 END SUBROUTINE chold
