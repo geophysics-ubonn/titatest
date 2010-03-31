@@ -85,7 +85,7 @@ c     get memory
       ngam_x = 0;ngam_y = 0;ngam = 0
       gam_x = 0.;gam_y = 0.;gam = 0.
 
-      CALL gvario(Ix,Iy,fetxt)
+      CALL get_vario(Ix,Iy,fetxt,0)
       par_vari = 1.
 c     for postscript
       tg = '{/Symbol g}'
