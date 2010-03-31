@@ -35,11 +35,6 @@ c     Start-Regularisierungsparameter bestimmen
          IF (nz<-1) lammax = -REAL(nz)
          IF (nz==-1) lammax = REAL(manz)
          WRITE (*,'(2x,a,G10.2)')'taking easy lam_0 ',lammax
-         return
-      ELSE IF (ltri == 15) THEN
-         lammax = 1./par_vari
-         WRITE (*,'(2x,a,G10.2)')'stochastic approach taking lam_0 ',
-     1        lammax
          RETURN
       END IF
 
