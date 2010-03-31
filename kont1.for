@@ -153,7 +153,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(/a)',err=999)
      1     '******** Additional output *********'
       write(fpinv,*,err=999)'Read start model   : ',lstart
-      write(fpinv,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
+      write(fpinv,*,err=999)'Write coverage     : ',lsens
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1
       write(fpinv,*,err=999)'Write resolution   : ',lres
       write(fpinv,*,err=999)'Write MCM 2        : ',lcov2

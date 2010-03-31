@@ -1,8 +1,7 @@
       subroutine rall(kanal,delem,delectr,dstrom,drandb,
 c     diff-     1                  dsigma,dvolt,dsens,dstart,lsens,lagain)
 c     diff+<
-     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,
-     1     lsens,lagain)
+     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 c     diff+>
       
 c     Unterprogramm zum Einlesen der benoetigten Variablen.
@@ -49,10 +48,6 @@ c     diff+<
      1     dfm0,
 c     diff+>
      1     drandb
-
-c     Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
-c     werden soll
-      logical         * 4     lsens
 
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
@@ -404,6 +399,8 @@ c Mega switch testing..
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
 c
+      lsens = .TRUE. ! default immer coverages schreiben..
+c
       if (lratio) then
          lrho0  = .true.
          lstart = .false.
@@ -426,7 +423,7 @@ c     Dateien
       lnramd = index(ramd,' ')-1
       dsigma = ramd(1:lnramd)//slash(1:1)//'rho.dat'
       dvolt  = ramd(1:lnramd)//slash(1:1)//'volt.dat'
-      dsens  = ramd(1:lnramd)//slash(1:1)//'sens.dat'
+      dsens  = ramd(1:lnramd)//slash(1:1)//'coverage.mag'
 
 c     Elementeinteilung einlesen
       WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'

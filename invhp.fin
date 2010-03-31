@@ -9,7 +9,7 @@ c Kanalnummer
         integer         * 4     kanal
 
 c Dateinamen
-        character       * 80    delem,
+        character       * 128   delem,
      1                          delectr,
      1                          dstrom,
      1                          dsigma,
@@ -22,10 +22,6 @@ cdiff+<
      1                          dfm0,
 cdiff+>
      1                          drandb
-
-c Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
-c werden soll
-        logical         * 4     lsens
 
 c Schalter ob allererste Iteration (Initialisierung)
         logical         * 4     lsetup

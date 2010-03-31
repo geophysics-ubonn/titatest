@@ -20,13 +20,17 @@ c.........................................................................
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      INTEGER                                      :: kanal
-      INTEGER                                      :: i,j,k
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-      REAL(KIND(0D0))                              :: dig_min,dig_max
-!.....................................................................
+      INTEGER                       :: kanal
+      INTEGER                       :: i,j,k
+      REAL,DIMENSION(:),ALLOCATABLE :: dig
+      REAL                          :: dig_min,dig_max
+!....................................................................
 
 c$$$  A^TC_d^-1A
+
+      errnr = 1
+      OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
+      errnr = 4
 
       ALLOCATE(dig(manz))
 
@@ -41,19 +45,15 @@ c$$$  A^TC_d^-1A
             END DO
             ata_dc(j,k) = ata_dc(k,j) ! fills lower triangle (k,j)
          END DO
-         dig(k) = ata_dc(k,k)
+         dig(k) = REAL(ata_dc(k,k))
       END DO
 
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
 
-      errnr = 1
-      OPEN (kanal,file=TRIM(fetxt)//'_re',
-     1     status='replace',err=999)
-      errnr = 4
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(dig(i)),dig(i)
+         WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
       END DO
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
       WRITE (*,*)'Max/Min:',dig_max,'/',dig_min

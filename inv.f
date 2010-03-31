@@ -61,8 +61,7 @@ c     Benoetigte Variablen einlesen
       call rall(kanal,delem,delectr,dstrom,drandb,
 c     diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
 c     diff+<
-     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,
-     1     lsens,lagain)
+     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 c     diff+>
       if (errnr.ne.0) goto 999
 
@@ -711,8 +710,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          if (errnr.ne.0) goto 999
       end if
 
-      IF (ltri==15.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
-     1     CALL bvariogram
+      IF (ltri==15) CALL bvariogram
       
       IF (lcov1) THEN
          WRITE(*,'(a)')'Calculating model uncertainty..'

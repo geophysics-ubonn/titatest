@@ -132,6 +132,9 @@ c Schalter ob prior model vorhanden
         logical         * 4	lprior
 c Schalter ob prior model verrauschen
         logical         * 4	lnsepri
+c Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
+c werden soll
+        logical         * 4     lsens
 c Schalter fuer Resolution matrix
         logical         * 4	lres
 c Schalter fuer posterior cov
@@ -200,4 +203,5 @@ cdiff+>
      1 			lcov1,
      1 			lcov2,
      1 			mswitch,
-     1			lgauss
+     1			lgauss,
+     1			lsens

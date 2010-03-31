@@ -4,9 +4,9 @@ c     Unterprogramm berechnet ATC_d^-1A+lam*C_m
 c     Fuer beliebige Triangulierung
 c     
 c     Copyright Andreas Kemna
-c     Erstellt von Roland Martin                               02-Nov-2009
+c     Erstellt von Roland Martin                           02-Nov-2009
 c     
-c     Letzte Aenderung    RM                                   20-Feb-2010
+c     Letzte Aenderung    RM                               31-Mar-2010
 c     
 c.........................................................................
       USE alloci
@@ -21,18 +21,17 @@ c.........................................................................
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
-      INTEGER                                      :: kanal ! io number
+      INTEGER                        :: kanal ! io number
 !     Hilfsvariablen 
-      INTEGER                                      :: i,j,k,smaxs
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-      REAL(KIND(0D0))                              :: dig_min,dig_max
+      INTEGER                        :: i,j,k,smaxs
+      REAL,DIMENSION(:),ALLOCATABLE  :: dig
+      REAL                           :: dig_min,dig_max
 !.....................................................................
 
 c$$$  A^TC_d^-1A+lamC_m
       
       errnr = 1
-      open(kanal,file=TRIM(fetxt)//'_re',
-     1     status='replace',err=999)
+      open(kanal,file=TRIM(fetxt),status='replace',err=999)
       errnr = 4
 
       ALLOCATE(dig(manz))
@@ -59,7 +58,7 @@ c$$$  A^TC_d^-1A+lamC_m
 
             END DO
             
-            dig(j) = ata_reg_dc(j,j)
+            dig(j) = REAL(ata_reg_dc(j,j))
          END DO
 
       ELSE IF (ltri == 3.OR.ltri == 4) THEN
@@ -85,13 +84,13 @@ c$$$  A^TC_d^-1A+lamC_m
                   ata_reg_dc(i,j) = ata_dc(i,j)
                END IF
             END DO
-            dig(j) = ata_reg_dc(j,j)
+            dig(j) = REAL(ata_reg_dc(j,j))
          END DO
 
       ELSE IF (ltri == 15) THEN
          ata_reg_dc = ata_dc + smatm ! for full C_m..w
          DO j=1,manz
-            dig(j) = ata_reg_dc(j,j)
+            dig(j) = REAL(ata_reg_dc(j,j))
          END DO
       END IF
 
@@ -104,7 +103,7 @@ c$$$  A^TC_d^-1A+lamC_m
       END DO
 
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-      WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
 
       CLOSE(kanal)
 
