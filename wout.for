@@ -145,7 +145,9 @@ c     diff+>
       OPEN (kanal,FILE=fetxt,status='replace')
       WRITE (kanal,'(I7)',err=1000) elanz
       DO i=1,elanz
-         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),0.0
+         dum = dcmplx(1d0)/sigma(i)
+         dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
+         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
       END DO
       CLOSE (kanal)
 c     Ggf. Phasen ausgeben
