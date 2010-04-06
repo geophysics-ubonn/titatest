@@ -12,6 +12,7 @@ c     Letzte Aenderung   02-May-2008
 c.....................................................................
 
       USE alloci
+      USE tic_toc
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
@@ -62,12 +63,12 @@ c     Schalter ob nur analytisch modelliert werden soll (default ohne)
       logical         * 4     lana
 
 c     Indexvariablen
-      integer         * 4     j,k,l,c1,c2,se,mi,st,ta
+      integer         * 4     j,k,l
 
       character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      CALL SYSTEM_CLOCK (c1,j)
+      CALL tic
 c     'crmod.cfg' oeffnen
       fetxt = 'crmod.cfg'
       errnr = 1
@@ -322,16 +323,9 @@ c     'crmod.cfg' schliessen
 
 c     Kontrollausgabe
       write(*,*)
-      write(*,'(a)',ADVANCE='no')' Modelling completed in'
+      write(*,'(a)',ADVANCE='no')' Modelling completed'
 
-      CALL SYSTEM_CLOCK (c2,j)
-      k=(c2-c1)/j               ! Gesamt Sekunden
-      mi=INT(k/60)              ! Minuten
-      st=INT(k/60/60)           ! Stunden
-      ta=INT(k/60/60/24)        ! Tage
-      se=k-mi*60-st*60*60-ta*60*60*24 ! Sekunden
- 110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
-      WRITE (*,110)ta,st,mi,se
+      CALL toc
 
       STOP '0'
       

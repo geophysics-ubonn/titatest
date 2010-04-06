@@ -65,22 +65,22 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bsmatmlma.o bplma.o bpdclma.o broughlma.o \
 		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
-f90crm		= alloci.o
+f90crm		= alloci.o tic_toc.o make_noise.o
 fcrm		= fem.o
-forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
+forcrm		= bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bvolt.o bvolti.o chareal.o chkpol.o \
 		  choldc.o chol.o elem1.o bsytop.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
-		  mdian1.o parfit.o potana.o precal.o \
-		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  kompadc.o kompbdc.o kompb.o \
+		  potana.o precal.o \
+		  randb2.o randb.o randdc.o rdatm.o \
 		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o
+		  wpot.o wsens.o get_unit.o
 ################################################################
 # rules
 %.o:		%.for
@@ -118,9 +118,9 @@ crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(f90crt) $(forcrt) $(fcrt) $(ferr) $(LALIB)
 		$(CP) CRTomo $(WPATH)
 
-crm:		$(C1) $(f90crt) $(forcrm) $(fcrm) $(ferr)
+crm:		$(C1) $(f90crm) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod \
-		$(f90crt) $(forcrm) $(fcrm) $(ferr) $(LALIB)
+		$(f90crm) $(forcrm) $(fcrm) $(ferr) $(LALIB)
 		$(CP) CRMod $(WPATH)
 
 mtools:
