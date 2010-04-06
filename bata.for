@@ -47,7 +47,7 @@ c$$$  A^TC_d^-1A
          dig(k) = REAL(ata(k,k))
       END DO
 
-c     write out real and imaginary part
+c     write out 
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
       WRITE (kanal,*)manz
@@ -57,6 +57,7 @@ c     write out real and imaginary part
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
       WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
       CLOSE(kanal)
+
       DEALLOCATE (dig)
 
       errnr = 0

@@ -47,17 +47,16 @@ c$$$  A^TC_d^-1A
          END DO
          dig(k) = REAL(ata_dc(k,k))
       END DO
-
+c     get min/max
       dig_min = MINVAL(dig)
       dig_max = MAXVAL(dig)
-
+c     write out 
       WRITE (kanal,*)manz
       DO i=1,manz
          WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
       END DO
       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
       WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
-
       CLOSE(kanal)
 
       DEALLOCATE (dig)
