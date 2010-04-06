@@ -52,9 +52,6 @@ c     Schalter ob Potentialwerte ausgegeben werden sollen
 c     Schalter ob Spannungswerte ausgegeben werden sollen
       logical         * 4     lvolt
 
-c     Schalter ob Sensitivitaeten ausgegeben werden sollen
-      logical         * 4     lsens
-
 c     Schalter ob weiterer Datensatz modelliert werden soll
       logical         * 4     lagain
 
