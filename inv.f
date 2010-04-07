@@ -17,6 +17,7 @@ c     Letzte Aenderung                                         03-Jan-2010
 c.....................................................................
 
       USE alloci
+      USE tic_toc
 c     USE portlib
 
       IMPLICIT none
@@ -35,7 +36,7 @@ c     USE portlib
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
-      INTEGER                :: i,c1,c2
+      INTEGER                :: c1,i
       REAL(KIND(0D0))        :: lamalt
       LOGICAL                :: ols
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -158,7 +159,9 @@ c     'sens' zuweisen
          errnr = 97 
          goto 999
       end if
-
+c-------------
+c     get current time
+      CALL tic(c1)
 c.................................................
 
 c     MODELLING
@@ -882,15 +885,9 @@ c     Kontrollausgaben
       end if
       
 c     Run-time abfragen und ausgeben
-      CALL etime(tazeit,izeit)
-      izeit     = izeit/60.
-      tazeit(2) = amod(izeit,60.)
-      tazeit(1) = (izeit-tazeit(2))/60.
-      
-      write(*,'(a10,i3,a3,i3,a3)')
-     1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
-      write(fprun,'(a10,i3,a3,i3,a3)',err=999)
-     1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
+      fetxt = ' CPU time: '
+      CALL toc(c1,fetxt)
+      write(fprun,'(a)',err=999)TRIM(fetxt)
       
 c     Kontrolldateien schliessen
       close(fprun)

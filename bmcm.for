@@ -23,7 +23,7 @@ c....................................................................
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      INTEGER                                     :: i,kanal,j
+      INTEGER                                     :: i,kanal,j,c1
       COMPLEX(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
       COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig,dig2
       REAL(KIND(0D0))                             :: dig_min,dig_max,p
@@ -32,7 +32,8 @@ c....................................................................
 
 c$$$  invert A^TC_d^-1A + C_m^-1
       errnr = 1
-      CALL TIC
+c     get time
+      CALL TIC(c1)
 
       cov_m = ata_reg
 
@@ -80,7 +81,9 @@ c$$$  invert A^TC_d^-1A + C_m^-1
 
       END IF
 
-      CALL TOC
+      fetxt = 'solution time'
+      CALL TOC(c1,fetxt)
+
       ALLOCATE (work(manz,manz),STAT=errnr)
       IF (errnr/=0) THEN
          WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'

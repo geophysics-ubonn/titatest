@@ -5,11 +5,11 @@ c     Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
 c     
 c     Copyright by Andreas Kemna 2009
 c     
-c     Erste Version von A. August/R. Martin                    03-Apr-2009
+c     Erste Version von A. August/R. Martin               03-Apr-2009
 c     
-c     Letzte Aenderung   RM                                    23-Nov-2009
+c     Letzte Aenderung   RM                               23-Nov-2009
 c     
-c.....................................................................
+c....................................................................
       
       USE alloci
       USE tic_toc
@@ -24,11 +24,7 @@ c.....................................................................
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'err.fin'
-c.....................................................................
-
-      integer*4            :: ErrorFlag
-
-c     PROGRAMMINTERNE PARAMETER:
+c....................................................................
 c     Schwerpunktskoordinaten der Flaechenelemente ij
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,h,sd_el
 c     Korrelation lengths and variance (var)
@@ -36,14 +32,17 @@ c     Korrelation lengths and variance (var)
 !     gibt es evtl schon eine inverse?
       logical              :: ex,exc         
 c     Hilfsvariablen
-      integer              :: i,j,l,smaxs,ifp,c1,c2,se,mi,st,ta
+      integer              :: i,j,l,smaxs,ifp,c1
 c     smatm file name
       CHARACTER(10)        :: fsmat
 c     clearscreen
       CHARACTER(80)        :: csz
 
+
+      errnr = 1
       CALL get_unit(ifp)
-      CALL TIC()
+c     get time
+      CALL TIC(c1)
 
       var = 1.
 
@@ -90,6 +89,8 @@ c     Belege die Matrix
          END IF
          CLOSE (ifp)
 
+         errnr = 0
+
       ELSE
 
          do i = 1 , manz
@@ -128,33 +129,33 @@ c     Belege die Matrix
 c     Berechne nun die Inverse der Covarianzmatrix!!!
          IF (lgauss) THEN
             PRINT*,'   Gauss elemination ... '
-            CALL gauss_dble(smatm,manz,errorflag)
-            IF (errorflag/=0) THEN
+            CALL gauss_dble(smatm,manz,errnr)
+            IF (errnr/=0) THEN
                fetxt='there was something wrong..'
-               PRINT*,'Zeile(',abs(errorflag),
-     1              ')::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               PRINT*,'Zeile(',abs(errnr),
+     1              ')::',smatm(abs(errnr),:)
+               PRINT*,'Spalte::',smatm(:,abs(errnr))
                errnr = 108
             END IF
          ELSE ! default..
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Factorization...'
-            CALL DPOTRF('U',manz,smatm,manz,errorflag)
-            IF (errorflag/=0) THEN
+            CALL DPOTRF('U',manz,smatm,manz,errnr)
+            IF (errnr/=0) THEN
                fetxt='there was something wrong..'
-               PRINT*,'Zeile(',abs(errorflag),
-     1              ')::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               PRINT*,'Zeile(',abs(errnr),
+     1              ')::',smatm(abs(errnr),:)
+               PRINT*,'Spalte::',smatm(:,abs(errnr))
                errnr = 108
             END IF
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Inverting...'
             CALL DPOTRI('U',manz,smatm,manz,errnr)
-            IF (errorflag/=0) THEN
+            IF (errnr/=0) THEN
                fetxt='there was something wrong..'
-               PRINT*,'Zeile(',abs(errorflag),
-     1              ')::',smatm(abs(errorflag),:)
-               PRINT*,'Spalte::',smatm(:,abs(errorflag))
+               PRINT*,'Zeile(',abs(errnr),
+     1              ')::',smatm(abs(errnr),:)
+               PRINT*,'Spalte::',smatm(:,abs(errnr))
                errnr = 108
             END IF
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
@@ -169,7 +170,7 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
             END DO
          END IF
 
-         IF (errorflag==0) THEN
+         IF (errnr==0) THEN
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'got inverse and write out'
             OPEN (ifp,FILE=fsmat,STATUS='replace',
@@ -184,6 +185,7 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
          END IF     
       END IF
 
-      CALL TOC()
+      fetxt = 'solution time'
+      CALL TOC(c1,fetxt)
 
       END

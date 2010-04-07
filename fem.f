@@ -63,12 +63,12 @@ c     Schalter ob nur analytisch modelliert werden soll (default ohne)
       logical         * 4     lana
 
 c     Indexvariablen
-      integer         * 4     j,k,l
+      integer         * 4     j,k,l,c1
 
       character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      CALL tic
+      CALL tic(c1)
 c     'crmod.cfg' oeffnen
       fetxt = 'crmod.cfg'
       errnr = 1
@@ -322,10 +322,12 @@ c     'crmod.cfg' schliessen
       close(12)
 
 c     Kontrollausgabe
+
+      fetxt = 'solution time'
+      CALL TOC(c1,fetxt)
+
       write(*,*)
       write(*,'(a)',ADVANCE='no')' Modelling completed'
-
-      CALL toc
 
       STOP '0'
       

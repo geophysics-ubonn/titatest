@@ -22,7 +22,7 @@ c.........................................................................
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
-      INTEGER                                    :: i,kanal,j
+      INTEGER                                    :: i,kanal,j,c1
       REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
       REAL(KIND(0D0))                            :: dig_min,dig_max
@@ -32,7 +32,8 @@ c.........................................................................
 c$$$  invert (A^TC_d^-1A + C_m^-1)
 
       errnr = 1
-      CALL TIC
+c     get time
+      CALL TIC(c1)
 
       cov_m_dc = ata_reg_dc
       
@@ -80,8 +81,9 @@ c$$$  invert (A^TC_d^-1A + C_m^-1)
             RETURN
          END IF
       END IF
-
-      CALL TOC
+      
+      fetxt = 'solution time'
+      CALL TOC(c1,fetxt)
 
       ALLOCATE (work(manz,manz),STAT=errnr)
       IF (errnr/=0) THEN
