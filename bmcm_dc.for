@@ -27,6 +27,7 @@ c.........................................................................
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
       REAL(KIND(0D0))                            :: dig_min,dig_max
       LOGICAL,INTENT(IN),OPTIONAL                :: ols
+      CHARACTER(80)                              :: csz
 !....................................................................
 
 c$$$  invert (A^TC_d^-1A + C_m^-1)
@@ -82,12 +83,12 @@ c     get time
          END IF
       END IF
       
-      fetxt = 'solution time'
-      CALL TOC(c1,fetxt)
+      csz = 'solution time'
+      CALL TOC(c1,csz)
 
       ALLOCATE (work(manz,manz),STAT=errnr)
       IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
+         fetxt = 'Allocation problem WORK in bmcm'
          errnr = 97
          RETURN
       END IF
