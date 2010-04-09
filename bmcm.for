@@ -28,7 +28,7 @@ c....................................................................
       COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig,dig2
       REAL(KIND(0D0))                             :: dig_min,dig_max,p
       LOGICAL,INTENT(IN),OPTIONAL                 :: ols 
-      CHARACTER(80)                              :: csz
+      CHARACTER(80)                               :: csz
 !....................................................................
 
 c$$$  invert A^TC_d^-1A + C_m^-1
@@ -83,7 +83,7 @@ c     get time
       END IF
 
       csz = 'solution time'
-      CALL TOC(c1,fetxt)
+      CALL TOC(c1,csz)
 
       ALLOCATE (work(manz,manz),STAT=errnr)
       IF (errnr/=0) THEN
