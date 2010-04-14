@@ -231,7 +231,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) stabpB
       fetxt = 'rall -> Relative Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabpA2
-      fetxt = 'rall -> Absoluter Fehler Phasen (Rad)'
+      fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
       read(fpcfg,*,end=1001,err=999) stabp0
       fetxt = 'rall -> Homogenes Startmodell?'
       read(fpcfg,*,end=1001,err=999) lrho0

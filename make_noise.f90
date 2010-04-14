@@ -77,7 +77,7 @@ MODULE Make_noise
          csz = 'Relativer Fehler Phasen A2 [%]('//TRIM(buff)//')'
          READ (ifp,*) pa2
          WRITE (*,*)TRIM(csz)//':',pa2
-         csz = 'Absoluter Fehler Phasen p0 [Rad] ('//TRIM(buff)//')'
+         csz = 'Absoluter Fehler Phasen p0 [mRad] ('//TRIM(buff)//')'
          READ (ifp,*) p0
          WRITE (*,*)TRIM(csz)//':',p0
          CLOSE (ifp)
