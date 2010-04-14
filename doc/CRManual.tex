@@ -72,9 +72,9 @@
 \newcommand{\gdw}{\Leftrightarrow}
 \newcommand{\Gdw}{\Longleftrightarrow}
 
-\newcommand{\crm}{{\it CRMod }}
-\newcommand{\crt}{{\it CRTomo }}
-\newcommand{\gri}{{\it Griev }}
+\newcommand{\crm}{{ CRMod }}
+\newcommand{\crt}{{ CRTomo }}
+\newcommand{\gri}{{ Griev }}
 
 \newtheoremstyle{aufgaben}%Name
 {3pt} % Abstand nach oben
@@ -163,50 +163,24 @@
 \input{intro}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \chapter{\crm}\label{chap:crmod}
-\section{Boundary value problem and FE-Method}\label{sect:crmod_boundary_fe}
-\subsection{Dirichlet}\label{sub:crmod_dirichlet}
-\subsection{Neumann}\label{sub:crmod_neumann}
-\subsection{Mixed boundary values}\label{sub:crmod_mixed}
-\subsection{2D vs. 2.5D}\label{sub:crmod_2dvs25d}
+\input{crmod_theor_dc}
 \clearpage
-\section{Induced Polarization (IP)}\label{sub:crmod_ip}
-\subsection{SIP}\label{sub:crmod_sip}
-%%%%%%%%%%%%%%%%%%%%%%%
+\input{crmod_theor_ip}
 \clearpage
-%%%%%%%%%%%%%%%%%%%%%%%
-\section{Folder structure and input files}\label{sect:crmod_dir}
-\subsection{crmod.cfg}\label{sub:crmod_input}
-\subsection{Grid file (elem.dat)}\label{sub:crmod_grid}
-\subsection{Electrode file (elec.dat)}\label{sub:crmod_elec}
-\subsection{Configuration file (conf.dat)}\label{sub:crmod_conf}
-\subsection{Model file (model.dat)}\label{sub:crmod_modl}
-\subsection{Pseudo data file (volt.dat)}\label{sub:crmod_volt}
+\input{crmod_inp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{\crt}\label{chap:crtomo}
-\section{Ordinary least squares (OLS)}\label{sect:crtomo_ols}
-\subsection{Adjoint boundary value problem and Sensitivities}\label{sub:crtomo_adj}
-\section{Complex ((S)IP) Inversion}\label{sect:crtomo_cmplx}
-\subsection{Final Phase Improvement (FPI)}\label{sub:crtomo_fpi}
+\input{crtomo_theor_ert}
 \clearpage
-\section{Regularization\index{Regularization}}\label{sect:crtomo_reg}
-\subsection{Smoothness\index{Smoothness} contraints}\label{sub:crtomo_reg_smooth}
-\subsection{Levenberg and Levenberg-Marquardt damping}\label{sub:crtomo_reg_lma}
-\subsection{Minimum Support and Minimum gradient support}\label{sub:crtomo_reg_mgs}
-\subsection{Stochastic regularization}\label{sub:crtomo_reg_sto}
-\subsubsection{Empirical Variogram and Covariance estimator}\label{ssub:crtomo_reg_sto_empvar}
-\subsubsection{Variogram and Covariance models}\label{ssub:crtomo_reg_sto_var}
+\input{crtomo_theor_eit}
 \clearpage
-\section{Error Model and Noise}\label{sct:cortomo_errmod}
-\subsection{Data Error Model}\label{sct:cortomo_data_errmod}
-\subsection{Noise implementation}\label{sct:cortomo_noise_errmod}
+\input{crtomo_theor_regu}
 \clearpage
+\input{crtomo_theor_sto}
+\clearpage
+\input{crtomo_err_noise}
+\clearpage
+\input{crtomo_inp}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Folder structure and input files}\label{sect:crtomo_dir}
-\subsection{crtomo.cfg}\label{sub:crtomo_input}
-\subsection{Grid file (elem.dat)}\label{sub:crtomo_grid}
-\subsection{Electrode file (elec.dat)}\label{sub:crtomo_elec}
-\subsection{Pseudo data file (volt.dat)}\label{sub:crtomo_volt}
-\subsection{Prior data}\label{sub:crtomo_prior}
-\subsection{Difference inversion}\label{sub:crtomo_diffinv}
 \printindex
 \end{document}
