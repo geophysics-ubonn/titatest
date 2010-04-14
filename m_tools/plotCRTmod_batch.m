@@ -246,7 +246,7 @@ ylim(ylimits);
 h=colorbar('vert');
 
 set(h,'fontsize',fns)
-set(h,'XaxisLocation','bottom')
+set(h,'XaxisLocation','top')
 %cbarn=sprintf('$$\\mathsf{%s}$$',cbarn);
 cbarn2=sprintf('\n%s\n',cbarn);
 %set(get(h,'xlabel'),'interpreter','latex','String',cbarn2,'fontsize',fns)
@@ -261,7 +261,7 @@ end
 
 %set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',strcat(fls,appi,'.eps'));
-print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
+%print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
 print('-dpng','-r400',strcat(fls,appi,'.png'));
 close (fig);
 
