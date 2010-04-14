@@ -1,0 +1,154 @@
+#!/bin/bash
+
+if [ -e crtomo.cfg ];then
+	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
+fi
+cp inv.lastmod crt.lastmod
+mymag=`cat inv.lastmod`
+mymag=`basename $mymag '.mag'`
+clean
+echo "$mymag Amplitude" > tmp.fenster
+plot_cur_crtomo
+clean
+echo $invdir/$mymag'.pha' > inv.lastmod
+echo "$mymag Phase" > tmp.fenster
+plot_cur_crtomo
+clean
+echo $mymag
+pltpdf=$mymag'_mag.pdf'
+pltpdf="$pltpdf $mymag"'_pha.pdf'
+
+echo $invdir/coverage.mag > inv.lastmod
+echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
+echo 'log_{10}(c)' > tmp.cbarn
+plot_cur_crtomo
+pltpdf="$pltpdf coverage_mag.pdf"
+clean
+if [ -e $invdir/ata.diag ];then
+    echo $invdir/ata.diag > inv.lastmod
+    echo 'Cov=A^TC_d^{-1}A' > tmp.fenster
+    echo 'log_{10}(Cov)' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf ata_diag.pdf"
+    clean
+fi
+if [ -e $invdir/ata_reg.diag ] ;then
+    echo $invdir/ata_reg.diag > inv.lastmod
+    echo 'RCov=A^TC_d^{-1}A + \lambda R^TR' > tmp.fenster
+    echo 'log_{10}(RCov)' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf ata_reg_diag.pdf"
+    clean
+fi
+if [ -e $invdir/cov1_m.diag_re ];then
+    echo $invdir/cov1_m.diag_re > inv.lastmod
+    echo 'Real MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
+    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf cov1_m_diag_re.pdf"
+    clean
+fi
+if [ -e $invdir/cov1_m.diag_im ];then
+    echo $invdir/cov1_m.diag_im > inv.lastmod
+    echo 'Imag MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
+    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf cov1_m_diag_im.pdf"
+    clean
+fi
+if [ -e $invdir/res_m.diag_re ];then
+    echo $invdir/res_m.diag_re > inv.lastmod
+    echo 'Real RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
+    echo 'log_{10}(RES)' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf res_m_diag_re.pdf"
+    clean
+fi
+if [ -e $invdir/res_m.diag_im ];then
+    echo $invdir/res_m.diag_im > inv.lastmod
+    echo 'Imag RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
+    echo 'log_{10}(RES)' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf res_m_diag_im.pdf"
+    clean
+fi
+if [ -e $invdir/cov2_m.diag_re ];then
+    echo $invdir/cov2_m.diag_re > inv.lastmod
+    echo 'Real MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenster
+    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf cov2_m_diag_re.pdf"
+    clean
+fi
+if [ -e $invdir/cov2_m.diag_im ];then
+    echo $invdir/cov2_m.diag_im > inv.lastmod
+    echo 'Imag MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenster
+    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    plot_cur_crtomo
+    pltpdf="$pltpdf cov2_m_diag_im.pdf"
+    clean
+fi
+cp crt.lastmod inv.lastmod
+if [ -n "$1" ];then
+	texfile=lam_$1.tex
+else
+	texfile=crt_plots.tex
+fi
+echo '\documentclass[12pt,a4]{article}' > $texfile 
+echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $texfile
+echo '\usepackage[T1]{fontenc}' >> $texfile
+echo '\usepackage[utf8]{inputenc}' >> $texfile
+echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $texfile
+echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $texfile
+echo '\usepackage{fancyhdr}' >> $texfile
+echo '\oddsidemargin0mm' >> $texfile
+echo '\parindent0mm' >> $texfile
+echo '\parskip0mm' >> $texfile
+echo '\textheight24cm' >> $texfile
+echo '\textwidth17cm' >> $texfile
+echo '\unitlength1mm' >> $texfile
+echo '\topmargin-2cm' >> $texfile
+echo '\headheight0cm' >> $texfile
+echo '\footskip3cm' >> $texfile
+#echo '\setlength{\parindent}{0pt}' >> $texfile
+#echo '\setlength{\topmargin}{0cm}' >> $texfile
+#echo '\setlength{\headsep}{-.5cm}' >> $texfile
+#echo '\setlength{\headheight}{0cm}' >> $texfile
+#echo '\textheight=25cm' >> $texfile
+#echo '\setlength{\oddsidemargin}{.5cm}' >> $texfile
+#echo '\setlength{\evensidemargin}{.5cm}' >> $texfile
+#echo '\textwidth=17cm' >> $texfile
+echo '\begin{document}' >> $texfile
+echo '\pagestyle{fancy}' >> $texfile
+if [ -n "$1" ];then
+	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
+else
+	echo '\fancyhead[C]{\Large\bf CRTomo run}' >> $texfile
+fi
+#echo '\begin{figure}' >> $texfile
+rm -f cropped.pdf
+echo $pltpdf
+let i=1
+for x in $pltpdf;do
+  my_pdfcrop ./ $x
+  y=`basename $x '.pdf'`;
+#  echo '\\begin{minipage}{7.5cm}' >> $texfile
+#  echo '\subfigure[][]{' >> $texfile
+  echo '\includegraphics[width=.5\textwidth,height=.33\textheight]{'$x'}' >> $texfile
+#  echo '' >> $texfile
+#  echo '\caption[]{'$x'}' >> $texfile
+#  echo '\\end{minipage}' >> $texfile
+# echo '\hspace{-1mm}' >> $texfile
+#  echo '\\vskip5mm' >> $texfile
+#  let k=$i%8
+#  if [ $k -eq 0 ]; then
+#    echo '\clearpage' >> $texfile
+#  fi
+  let i=$i+1
+done
+#echo '\end{figure}' >> $texfile
+#echo '\clearpage' >> $texfile
+echo '\end{document}' >> $texfile
+
+pdflatex $texfile
+
