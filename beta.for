@@ -60,8 +60,8 @@ c     Koordinaten des aktuellen Randelements bestimmen
 
 c     Abstand Randelement - Quelle/Spiegelquelle bestimmen
       x3  = xr - xs
-      y3m = (yr-sytop) - (ys-sytop)
-      y3p = (yr-sytop) + (ys-sytop)
+      y3m = (yr - sytop) - (ys - sytop)
+      y3p = (yr - sytop) + (ys - sytop)
 
       r1m = dsqrt(x3*x3 + y3m*y3m)
       r1p = dsqrt(x3*x3 + y3p*y3p)
