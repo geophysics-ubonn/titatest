@@ -1,3 +1,4 @@
+
       subroutine bsmatmsto
 c     
 c     Unterprogramm belegt die Kovarianzmatrix.   
@@ -28,7 +29,7 @@ c....................................................................
 c     Schwerpunktskoordinaten der Flaechenelemente ij
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,h,sd_el
 c     Korrelation lengths and variance (var)
-      REAL(KIND(0D0)) :: Ix,Iy,var
+      REAL(KIND(0D0))      :: hx,hy,var
 !     gibt es evtl schon eine inverse?
       logical              :: ex,exc         
 c     Hilfsvariablen
@@ -51,9 +52,6 @@ c     get time
       DO i=1,79
          csz(i:i+1)=' '
       END DO
-
-      CALL get_vario (Ix,Iy,csz,1)   
-c!!!  get korrelation length and vario model string
       
       WRITE (*,'(A80)')ACHAR(13)//TRIM(csz)
 
@@ -114,10 +112,10 @@ c     Belege die Matrix
                spx2 = spx2 / smaxs ! x- schwerpunkt
                spy2 = spy2 / smaxs ! y- schwerpunkt
                
-               h = SQRT(((spx1 - spx2) / Ix)**2. +
-     1              ((spy1 - spy2) / Iy)**2.)
+               hx = (spx1 - spx2)
+               hy = (spy1 - spy2)
 
-               smatm(i,j) = mcova(h,var)
+               smatm(i,j) = mcova(hx,hy,var)
 
                smatm(j,i) = smatm(i,j) ! upper triangle
 

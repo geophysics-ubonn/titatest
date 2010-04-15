@@ -53,8 +53,6 @@ CONTAINS
     SELECT CASE (c1)
     CASE (1) !spherical
        WRITE (cszv,'(a)')'va*(1-EXP(-(3h/a)**2))'
-       Ix = Ix / 3.
-       IY = Iy / 3.
     CASE (2) ! Gaussian
        PRINT*,'Change power model exponent?[',omev,']'
        READ (*,'(a)')cszv
@@ -64,8 +62,6 @@ CONTAINS
        WRITE (cszv,'(a)')'va*(1.5(h/a)-.5*(h/a)**3),va'
     CASE DEFAULT! exponential (default)
        WRITE (cszv,'(a)')'va*(1-EXP(-(3h/a))) (default)'
-       Ix = Ix / 3.
-       IY = Iy / 3.
     END SELECT
 
     SELECT CASE (c2)
@@ -104,45 +100,62 @@ CONTAINS
 
   END SUBROUTINE get_vario
 
-  REAL (KIND (0D0)) FUNCTION mvario (lag,varianz)
+  REAL (KIND (0D0)) FUNCTION mvario (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
-    REAL (KIND (0D0)),INTENT (IN) :: lag,varianz
+    REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
+    REAL (KIND (0D0))             :: dum,r
 
     mvario = 0.
+    dum = SQRT((lagx / Ix)**2. + (lagy / Iy)**2.)
 
     SELECT CASE (c1)
     CASE (1)
-       mvario = varianz*(1. - EXP(-lag**2.))
+       dum = SQRT((lagx * 3. / Ix)**2. + (lagy * 3. / Iy)**2.)
+       mvario = varianz*(1. - EXP(-dum**2.))
     CASE (2)
-       mvario = varianz*lag**omev
+       mvario = varianz*dum**omev
     CASE (3)
-       mvario = varianz*(1.5*lag - .5*lag**3.)
-       IF (lag > (Ix+Iy)*.5) mvario = varianz
+       r = SQRT(lagx**2. + lagy**2.)
+       IF (r < (Ix + Iy)*.5) THEN
+          mvario = varianz*(1.5*dum - .5*dum**3.)
+       ELSE
+          mvario = varianz
+       END IF
     CASE DEFAULT
-       mvario = varianz*(1. - EXP(-lag))
+       dum = SQRT((lagx * 3. / Ix)**2. + (lagy * 3. / Iy)**2.)
+       mvario = varianz*(1. - EXP(-dum))
     END SELECT
     
   END FUNCTION mvario
 
-  REAL (KIND (0D0)) FUNCTION mcova (lag,varianz)
+  REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
-    REAL (KIND (0D0)),INTENT (IN) :: lag,varianz
+    REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
+    REAL (KIND (0D0))             :: dum,r
+    
+    dum = SQRT((lagx / Ix)**2. + (lagy / Iy)**2.)
 
     SELECT CASE (c2)
 
     CASE (1)
-       mcova = varianz*EXP(-lag)
+       dum = SQRT((lagx * 3. / Ix)**2. + (lagy * 3. / Iy)**2.)
+       mcova = varianz*EXP(-dum)
     CASE (2)
-       mcova = varianz*EXP(-lag**2.)
+       dum = SQRT((lagx * 3. / Ix)**2. + (lagy * 3. / Iy)**2.)
+       mcova = varianz*EXP(-dum**2.)
     CASE (3)
-       mcova = varianz*lag**omec
+       mcova = varianz*dum**omec
        mcova = EXP(-mcova)
     CASE (4)
-       mcova = -varianz*(1.5*lag - .5*lag**3.)
-       IF (lag > (Ix+Iy)*.5) mcova = varianz
+       r = SQRT(lagx**2. + lagy**2.)
+       IF (r < (Ix + Iy)*.5) THEN
+          mcova = varianz*(1.5*dum - .5*dum**3.)
+       ELSE
+          mcova = varianz
+       END IF
        mcova = EXP(-mcova)
     CASE DEFAULT
-       mcova = EXP(-mvario(lag,varianz))
+       mcova = EXP(-mvario(lagx,lagy,varianz))
     END SELECT
 
   END FUNCTION mcova

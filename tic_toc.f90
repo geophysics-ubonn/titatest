@@ -30,10 +30,13 @@ CONTAINS
     ms = MODULO(ms,1000)
 
     l = (c2-c1)/i ! Gesamt Sekunden
-    mi =INT(l/60) ! Minuten
-    st =INT(mi/60) ! Stunden
-    ta =INT(st/24) ! Tage
-    se =l-mi*60-st*60*60-ta*60*60*24 ! Sekunden
+
+    ta = INT(l/24/3600) ! Tage
+    l = l - ta*3600*24
+    st = INT(l/3600) ! Stunden
+    l = l - st*3600
+    mi = INT(l/60) ! Minuten
+    se = l - mi*60
 
     WRITE (csz,110)TRIM(csz),ta,st,mi,se,ms
     PRINT*,TRIM(csz)

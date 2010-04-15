@@ -61,9 +61,9 @@ c     define linear equidistant lag vector
       lag_unit_x = grid_minx
       lag_unit_y = grid_miny
 
-      nlag = ANINT(grid_max / lag_unit)
-      nlag_x = ANINT(grid_maxx / lag_unit_x)
-      nlag_y = ANINT(grid_maxy / lag_unit_y)
+      nlag = ANINT(grid_max / lag_unit) / 2
+      nlag_x = ANINT(grid_maxx / lag_unit_x) / 2
+      nlag_y = ANINT(grid_maxy / lag_unit_y) / 2
 
       lag_tol = lag_unit * .5
       lag_tol_x = lag_unit_x * .5
@@ -96,22 +96,22 @@ c     for postscript
 c     compute synthetic variogram model
       DO i=1,nlag
          lag(i) = i*lag_unit
-         h = lag(i) / ((Ix + Iy) * .5)
+         h = lag(i)
          WRITE (tmgam,'(a)')tg//'(h)'
-         mgam(i) = mvario(h,par_vari)
+         mgam(i) = mvario(h,h,par_vari)
       END DO
 c     anisotrop
       DO i=1,nlag_x
          lag_x(i) = i*lag_unit_x
-         h = lag_x(i) / Ix
+         h = lag_x(i)
          WRITE (tmgam_x,'(a)')tg//'(hx)'
-         mgam_x(i) = mvario(h,par_vari)
+         mgam_x(i) = mvario(h,0D0,par_vari)
       END DO
       DO i=1,nlag_y
          lag_y(i) = i*lag_unit_y
-         h = lag_y(i) / Iy
+         h = lag_y(i)
          WRITE (tmgam_y,'(a)')tg//'(hy)'
-         mgam_y(i) = mvario(h,par_vari)
+         mgam_y(i) = mvario(0D0,h,par_vari)
       END DO
 
       mid_par = SUM(LOG10(DBLE(sigma(1:elanz)))) / manz
@@ -235,7 +235,7 @@ c     sets parameter variance..
       WRITE (ifp,'(a)')'set key bot right Left'
       WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\\n'//
      1     TRIM(tgam)//'"'
-      WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Distance /[m]'"
+      WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
       WRITE (ifp,'(a,2(F10.2,a))')
      1     'set xrange [',grid_min,':',grid_max/2.,']'
       WRITE (ifp,'(a)')"set ylab offset 2,0 'sv(h)=1/2N(h)"//
