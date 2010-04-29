@@ -38,6 +38,8 @@ MODULE Make_noise
   ! a bunch of magic numbers...
   REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM1=1./M1
   REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM2=1./M2
+!!!$ character container..
+  CHARACTER (128),PRIVATE :: csz
 
   CONTAINS
 !!$---------------------------------------------------------------------
@@ -50,7 +52,7 @@ MODULE Make_noise
       REAL(KIND(0D0)),INTENT(INOUT)   :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
       REAL(KIND(0D0)),INTENT(INOUT)   :: pa1,pb,pa2,p0
-      CHARACTER (40) :: csz,buff
+      CHARACTER (80) :: buff
       INTEGER        :: ifp,ierr
       LOGICAL        :: exi
       ierr = 1
@@ -68,7 +70,7 @@ MODULE Make_noise
          csz = 'Absoluter Fehler Widerstand [Ohm m] ('//TRIM(buff)//')'
          READ (ifp,*) w0
          WRITE (*,*)TRIM(csz)//':',w0
-         csz = 'Phasenfehlerparameter A1 [Rad/Ohm/m]('//TRIM(buff)//')'
+         csz = 'Phasenfehlerparameter A1 [mRad/Ohm/m]('//TRIM(buff)//')'
          READ (ifp,*) pa1
          WRITE (*,*)TRIM(csz)//':',pa1
          csz = 'Phasenfehlerparameter B []('//TRIM(buff)//')'
@@ -82,7 +84,7 @@ MODULE Make_noise
          WRITE (*,*)TRIM(csz)//':',p0
          CLOSE (ifp)
       ELSE
-         pa1 = wa
+         pb = wa
          PRINT*,'Taking standard deviation',wa
          w0 = 0.;pb = 0.; pa2 = 0.;p0 = 0.
       END IF
@@ -120,7 +122,6 @@ MODULE Make_noise
       REAL(KIND(0D0)),INTENT(IN)   :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
       REAL(KIND(0D0)),INTENT(IN)   :: pa1,pb,pa2,p0
-      CHARACTER (40) :: csz
       INTEGER        :: ifp,ierr
 3     FORMAT(G10.3,5X,'#',1X,A)
 
@@ -135,14 +136,14 @@ MODULE Make_noise
       WRITE (ifp,3) wa,TRIM(csz)
       csz = 'Absoluter Fehler Widerstand B (noise) [Ohm m]'
       WRITE (ifp,3) w0,TRIM(csz)
-      csz = 'Phasenfehlerparameter A1 (noise) [Rad/Ohm/m] von'//&
+      csz = 'Phasenfehlerparameter A1 (noise) [mRad/Ohm/m] von'//&
            ' dp=A1*R^B1+A2*p+p0'
       WRITE (ifp,3) pa1,TRIM(csz)
       csz = 'Phasenfehlerparameter B1 (noise) []'
       WRITE (ifp,3) pb,TRIM(csz)
       csz = 'Relativer Fehler Phasen A2 (noise) [%]'
       WRITE (ifp,3) pa2,TRIM(csz)
-      csz = 'Absoluter Fehler Phasen p0 (noise) [Rad]'
+      csz = 'Absoluter Fehler Phasen p0 (noise) [mRad]'
       WRITE (ifp,3) p0,TRIM(csz)
       CLOSE (ifp)
 
