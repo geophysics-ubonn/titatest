@@ -6,12 +6,13 @@ fi
 cp inv.lastmod crt.lastmod
 mymag=`cat inv.lastmod`
 mymag=`basename $mymag '.mag'`
+it=`echo $mymag|sed 's/rho//g'`
 clean
-echo "$mymag Amplitude" > tmp.fenster
+echo 'Amplitude' > tmp.fenster
 plot_cur_crtomo
 clean
 echo $invdir/$mymag'.pha' > inv.lastmod
-echo "$mymag Phase" > tmp.fenster
+echo "Phase" > tmp.fenster
 plot_cur_crtomo
 clean
 echo $mymag
@@ -20,70 +21,78 @@ pltpdf="$pltpdf $mymag"'_pha.pdf'
 
 echo $invdir/coverage.mag > inv.lastmod
 echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
-echo 'log_{10}(c)' > tmp.cbarn
+echo 'log_{10}(c)[SI]' > tmp.cbarn
 plot_cur_crtomo
 pltpdf="$pltpdf coverage_mag.pdf"
 clean
 if [ -e $invdir/ata.diag ];then
     echo $invdir/ata.diag > inv.lastmod
-    echo 'Cov=A^TC_d^{-1}A' > tmp.fenster
-    echo 'log_{10}(Cov)' > tmp.cbarn
+    echo "Squared coverage" > tmp.fenster
+    echo 'Cov=A^TC_d^{-1}A' > tmp.fenstert
+    echo 'log_{10}diag{Cov}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf ata_diag.pdf"
     clean
 fi
 if [ -e $invdir/ata_reg.diag ] ;then
     echo $invdir/ata_reg.diag > inv.lastmod
-    echo 'RCov=A^TC_d^{-1}A + \lambda R^TR' > tmp.fenster
-    echo 'log_{10}(RCov)' > tmp.cbarn
+    echo "Regularized squared coverage" > tmp.fenster
+    echo "RCov=A^TC_d^{-1}A + \lambda R^TR" > tmp.fenstert
+    echo 'log_{10}diag{RCov}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf ata_reg_diag.pdf"
     clean
 fi
 if [ -e $invdir/cov1_m.diag_re ];then
     echo $invdir/cov1_m.diag_re > inv.lastmod
-    echo 'Real MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
-    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenstert
+    echo 'log_{10}diag{var^{1/2}}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf cov1_m_diag_re.pdf"
     clean
 fi
 if [ -e $invdir/cov1_m.diag_im ];then
     echo $invdir/cov1_m.diag_im > inv.lastmod
-    echo 'Imag MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
-    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'Imag MCM_1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenstert
+    echo 'log_{10}diag{var^{1/2}}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf cov1_m_diag_im.pdf"
     clean
 fi
 if [ -e $invdir/res_m.diag_re ];then
     echo $invdir/res_m.diag_re > inv.lastmod
-    echo 'Real RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
-    echo 'log_{10}(RES)' > tmp.cbarn
+    echo "Resolution Matrix" > tmp.fenster
+    echo 'RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenstert
+    echo 'diag{RES}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf res_m_diag_re.pdf"
     clean
 fi
 if [ -e $invdir/res_m.diag_im ];then
     echo $invdir/res_m.diag_im > inv.lastmod
-    echo 'Imag RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
-    echo 'log_{10}(RES)' > tmp.cbarn
+    echo "Resolution Matrix" > tmp.fenster
+    echo 'Imag RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenstert
+    echo 'diag{RES}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf res_m_diag_im.pdf"
     clean
 fi
 if [ -e $invdir/cov2_m.diag_re ];then
     echo $invdir/cov2_m.diag_re > inv.lastmod
-    echo 'Real MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenster
-    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenstert
+    echo 'log_{10}diag{var^{1/2}}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf cov2_m_diag_re.pdf"
     clean
 fi
 if [ -e $invdir/cov2_m.diag_im ];then
     echo $invdir/cov2_m.diag_im > inv.lastmod
-    echo 'Imag MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenster
-    echo 'log_{10}(var^{1/2})' > tmp.cbarn
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'Imag MCM_2=MCM_1 A^TC_d^{-1}A MCM_1' > tmp.fenstert
+    echo 'log_{10}diag{var^{1/2}}[SI]' > tmp.cbarn
     plot_cur_crtomo
     pltpdf="$pltpdf cov2_m_diag_im.pdf"
     clean
@@ -123,7 +132,7 @@ echo '\pagestyle{fancy}' >> $texfile
 if [ -n "$1" ];then
 	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
 else
-	echo '\fancyhead[C]{\Large\bf CRTomo run}' >> $texfile
+	echo '\fancyhead[C]{\Large\bf CRTomo Iteration no. '$it'}' >> $texfile
 fi
 #echo '\begin{figure}' >> $texfile
 rm -f cropped.pdf
@@ -134,7 +143,8 @@ for x in $pltpdf;do
   y=`basename $x '.pdf'`;
 #  echo '\\begin{minipage}{7.5cm}' >> $texfile
 #  echo '\subfigure[][]{' >> $texfile
-  echo '\includegraphics[width=.5\textwidth,height=.33\textheight]{'$x'}' >> $texfile
+#  echo '\includegraphics[width=.5\textwidth,height=.33\textheight]{'$x'}' >> $texfile
+  echo '\includegraphics[width=.5\textwidth]{'$x'}' >> $texfile
 #  echo '' >> $texfile
 #  echo '\caption[]{'$x'}' >> $texfile
 #  echo '\\end{minipage}' >> $texfile
