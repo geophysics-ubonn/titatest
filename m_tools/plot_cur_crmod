@@ -38,7 +38,8 @@ for x in $tools;do
 	esac
 	i=$[$i+1];
 done
-
+cp inv.lastmod crt.lastmod
+clean
 if [ -e 'crmod.cfg' ];then
     echo found crmod.cfg
 else
@@ -48,13 +49,6 @@ fi
 
 awk '{if (NR==2){print}}' crmod.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crmod.cfg > tmp.elecname
-
-if [ -e "tmp.fenster" ];then
-    fenster=`cat tmp.fenster`
-else
-    fenster=$1
-fi
-echo $fenster > tmp.fenster
 
 if [ -e "tmp.crange" ];then
     c1=`awk '{print$1}' tmp.crange`
@@ -68,10 +62,11 @@ fi
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
-tmp=`awk '{if (NR==4){print}}' crmod.cfg`
+mod=`awk '{if (NR==4){print}}' crmod.cfg`
 
-awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $tmp > cur_crmod.mag
+awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,log($1)/log(10))}else{print}}' $mod > cur_crmod.mag
 echo 'cur_crmod.mag' > inv.lastmod
+echo 'Amplitude forward model' > tmp.fenster
 
 $mtlb < $plotmod >& /dev/null
 
@@ -80,8 +75,28 @@ myeps=`basename $tmp`'.eps'
 mypdf=`basename $myeps '.eps'|tr '.' '_'`'.pdf'
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$mypdf >& /dev/null
-echo "done $1"
 
 pdfcr=`which pdfcrop`
 forcecheck $pdfcr
 $pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
+echo "done mag"
+
+rm tmp.crange tmp.cbarn
+awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,$2)}else{print}}' $mod > cur_crmod.pha
+echo 'cur_crmod.pha' > inv.lastmod
+echo 'Phase forward model' > tmp.fenster
+
+$mtlb < $plotmod >& /dev/null
+
+tmp='cur_crmod.pha'
+myeps=`basename $tmp`'.eps'
+mypdf=`basename $myeps '.eps'|tr '.' '_'`'.pdf'
+echo image conversion... $myeps $mypdf
+$epsp $myeps -o=$mypdf >& /dev/null
+
+pdfcr=`which pdfcrop`
+forcecheck $pdfcr
+$pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
+cp crt.lastmod inv.lastmod
+clean
+echo "done all"
