@@ -32,6 +32,13 @@ if checkme~=0
     fenster=fgetl(fp);
     fclose(fp);
 end
+fenstert='';
+checkme = exist ('tmp.fenstert','file');
+if checkme~=0
+    fp=fopen('tmp.fenstert','r');
+    fenstert=fgetl(fp);
+    fclose(fp);
+end
 cmin=0;camx=0;
 checkme = exist ('tmp.crange','file');
 if checkme~=0
@@ -165,7 +172,7 @@ fclose(fp);
 %%
 if length(cbarn) == 0
     if length(pha) ~= 0
-        cbarn='Phase [mRad]';
+        cbarn='Phase -[mRad]';
     elseif length(mag) ~= 0
         cbarn='log_{10}(\rho) [\Omega m]';
     elseif length(modl) ~= 0
@@ -195,6 +202,9 @@ fclose(fp);
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
     name = fenster;
+end
+if length(fenstert) ~= 0
+    name = sprintf('%s\n%s',name,fenstert);
 end
 fp=fopen('tmp.fenster','w');
 fprintf(fp,'%s \n',name);
