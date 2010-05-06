@@ -305,9 +305,9 @@ c     copy error model into noise model
          BACKSPACE(fpcfg)
          WRITE (*,'(a)',ADVANCE='no')' Rauschen '//
      1        'Gekoppelt an Fehlermodell '
- 107  END IF
+      END IF
 
-      IF (lnse2) THEN
+ 107  IF (lnse2) THEN
 
          iseed = iseedpri
          WRITE (*,'(a,I7)',ADVANCE='no')
