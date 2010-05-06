@@ -112,7 +112,7 @@ c     Betraege ausgeben
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
-      write(kanal,*,err=1000) elanz
+      write(kanal,*,err=1000) elanz,ACHAR(9),betrms
 
       do i=1,elanz
 c     diff+<
@@ -139,7 +139,6 @@ c     diff+<
          end if
 c     diff+>
       end do
-      WRITE (kanal,*)'RMS(mag):',betrms
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
 
@@ -157,7 +156,7 @@ c     Ggf. Phasen ausgeben
          errnr = 1
          open(kanal,file=fetxt,status='replace',err=999)
          errnr = 4
-         write(kanal,*,err=1000) elanz
+         write(kanal,*,err=1000) elanz,ACHAR(9),pharms
 
          do i=1,elanz
             dum = dcmplx(1d0)/sigma(i)
@@ -171,7 +170,6 @@ c     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
 c     ro     1                      real(ykoord(i)),real(xkoord(i)),
 c     ro     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
          end do
-         WRITE (kanal,*)'RMS(pha):',pharms
          close(kanal)
       end if
 
