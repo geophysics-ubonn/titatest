@@ -139,6 +139,7 @@ c     diff+<
          end if
 c     diff+>
       end do
+      WRITE (kanal,*)'RMS(mag):',betrms
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
 
@@ -170,6 +171,7 @@ c     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
 c     ro     1                      real(ykoord(i)),real(xkoord(i)),
 c     ro     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
          end do
+         WRITE (kanal,*)'RMS(pha):',pharms
          close(kanal)
       end if
 
