@@ -146,7 +146,7 @@ vertices(:,2)=syp;
 [p,fls,appi,m]=fileparts(modfile);
 fp=fopen(modfile,'r');
 line=fgetl(fp);
-nm=sscanf(line,'%d',1);
+[nm,nrms,count]=sscanf(line,'%d %f',1);
 if (nm~=nelem)
     sprintf('There seems something wrong since the Element numbers %d \n',nelem);
     sprintf('do not match the number of Model cells %d !!!\n',nm); 
@@ -201,7 +201,7 @@ fclose(fp);
 % open figure with name
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
-    name = fenster;
+  name = sprintf('%s (RMS %.3f)',fenster,nrms);
 end
 if length(fenstert) ~= 0
     name = sprintf('%s\n%s',name,fenstert);

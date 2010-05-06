@@ -64,7 +64,7 @@ echo $c1 $c2 $c3 $2 > tmp.crange
 if [ -e inv.lastmod ];then
     echo found inv.lastmod
 else
-    echo no inv.lasmod present..
+    echo no inv.lastmod present..
     exit
 fi
 
