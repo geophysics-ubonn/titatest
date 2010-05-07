@@ -146,11 +146,14 @@ vertices(:,2)=syp;
 [p,fls,appi,m]=fileparts(modfile);
 fp=fopen(modfile,'r');
 line=fgetl(fp);
-[nm,nrms,count]=sscanf(line,'%d %f',1);
+[buff,count]=sscanf(line,'%d %f',2);
+nm=buff(1);
+nrms=buff(2);
 if (nm~=nelem)
     sprintf('There seems something wrong since the Element numbers %d \n',nelem);
     sprintf('do not match the number of Model cells %d !!!\n',nm); 
 end
+mcov=strmatch(fls,'coverage');
 pha=strmatch(appi,'.pha');
 mag=strmatch(appi,'.mag');
 modl=strmatch(appi,'.modl');
@@ -201,10 +204,14 @@ fclose(fp);
 % open figure with name
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
-  name = sprintf('%s (RMS %.3f)',fenster,nrms);
+  if ((length(mag) ~= 0 || length(pha) ~= 0)&& length(mcov) == 0)
+     name = sprintf('%s (RMS %.4f)',fenster,nrms);
+  else
+     name = fenster;
+  end
 end
 if length(fenstert) ~= 0
-    name = sprintf('%s\n%s',name,fenstert);
+    name = sprintf('%s \n %s',name,fenstert);
 end
 fp=fopen('tmp.fenster','w');
 fprintf(fp,'%s \n',name);
@@ -254,14 +261,16 @@ end
 ylim(ylimits);
 
 h=colorbar('vert');
-
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
 %cbarn=sprintf('$$\\mathsf{%s}$$',cbarn);
-cbarn2=sprintf('\n%s\n',cbarn);
+cbarn2=sprintf('%s\n',cbarn);
 %set(get(h,'xlabel'),'interpreter','latex','String',cbarn2,'fontsize',fns)
-set(get(h,'xlabel'),'String',cbarn2,'fontsize',fns)
+set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);
+axis tight
+axis image
+
 hold on
 for i=1:nelec
     plot(elecpos(i,1),elecpos(i,2),elecmark,...
