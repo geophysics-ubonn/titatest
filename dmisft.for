@@ -88,16 +88,12 @@ c     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
          
          idum   = idum   + wdlok(i)
          nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
-         betrms = betrms + wmatd(i)*dble(wdlok(i))*
+
+         betrms = betrms + wmatdr(i)*dble(wdlok(i))*
      1        dble(cdum)*dble(cdum)
 
-         IF (lfphai) THEN
-            pharms = pharms + wmatdp(i)*dble(wdlok(i))*
-     1           dimag(cdum)*dimag(cdum)
-         ELSE
-            pharms = pharms + wmatd(i) * dble(wdlok(i))*
-     1           dimag(cdum) * dimag(cdum)
-         END IF            
+         pharms = pharms + wmatdp(i)*dble(wdlok(i))*
+     1        dimag(cdum)*dimag(cdum)
 
       end do
       

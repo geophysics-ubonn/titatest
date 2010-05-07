@@ -31,6 +31,9 @@ c Konfigurationsfaktoren
 c Wichtungsvektor der Phasen
         real            * 8     wmatdp(nmax)
 
+c Wichtungsvektor der Widerstaende
+        real            * 8     wmatdr(nmax)
+
 c parameters of resistance error model (dR=stabw0*R+stabm0)
         real            * 8     stabw0,stabm0
 
@@ -68,6 +71,7 @@ c.....................................................................
      1                  kfak,
      1                  strom,
      1                  wmatdp,
+     1                  wmatdr,
      1                  stabw0,
      1                  stabm0,
      1                  stabp0,

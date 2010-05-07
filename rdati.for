@@ -279,9 +279,10 @@ c     ak                    write(*,*) i
          end if
 
          dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-         wmatd(i) = 1d0/(stabw**2.)
+         wmatdr(i) = 1d0/(stabw**2.)
+         wmatd(i) = wmatdr(i)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
-         IF (lfphai) THEN
+         IF (.NOT.ldc) THEN
             wmatd(i)=1d0/(stabw**2.+stabwp**2.)
             wmatdp(i)=1d0/(stabwp**2.)
          END IF

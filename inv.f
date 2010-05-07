@@ -130,13 +130,13 @@ c     Kontrolldateien oeffnen
       close(fpcjg)
       fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
       open(fpeps,file=fetxt,status='replace',err=999)
-      IF (lfphai) THEN
-         WRITE (fpeps,'(a,10x,a)')'1/eps_r','1/eps_p'
-         WRITE (fpeps,'(G12.3,2x,G12.3)')
-     1        (sqrt(wmatd(i)),sqrt(wmatdp(i)),i=1,nanz)
-      ELSE
+      IF (ldc) THEN
          WRITE (fpeps,'(a)')'1/eps_r'
-         WRITE (fpeps,'(G10.3)')(sqrt(wmatd(i)),i=1,nanz)
+         WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
+      ELSE
+         WRITE (fpeps,'(3(a,10x))')'1/eps','1/eps_r','1/eps_p'
+         WRITE (fpeps,'(3(G12.5,2x))')
+     1        (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),i=1,nanz)
       END IF
       close(fpeps)
       errnr = 4
@@ -376,9 +376,7 @@ c     Kontrollausgaben
                close(fpinv)
 
 c     Wichtungsfeld umspeichern
-               do j=1,nanz
-                  wmatd(j) = wmatdp(j)
-               end do
+               wmatd(1:nanz) = wmatdp(1:nanz)
 
                lip    = .true.
                lsetip = .true.
