@@ -143,7 +143,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
          CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
          WRITE (fpinv,'(a)',err=999)ACHAR(9)//
      1        'Variogram('//TRIM(fetxt)//')'
-         WRITE (*,'(a)')ACHAR(9)//
+         WRITE (*,'(/a)')ACHAR(9)//
      1        'Variogram('//TRIM(fetxt)//')'
          CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
          WRITE (fpinv,'(a)',err=999)ACHAR(9)//
