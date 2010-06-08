@@ -1,4 +1,4 @@
-SUBROUTINE chold(a,p,n,ierr)
+SUBROUTINE cholz(a,p,n,ierr)
 !!$c-----------------------------------------------------------------
 !!$c
 !!$c                      Cholesky Decomposition
@@ -9,14 +9,14 @@ SUBROUTINE chold(a,p,n,ierr)
 !!$c matrix A. From Numerical recipies
 !!$c 
 !!$c**********          NOTE           ***************************
-!!$c chold In this form needs only the upper triangular part of a
+!!$c cholz In this form needs only the upper triangular part of a
 !!$c and stores L in the lower part.
 !!$c P contains the diagonal entries (EVs)
 !!$c**************************************************************
 !!$c INPUT VARIABLES:
 !!$c
-!!$c   a(n,n) Symmetric positive definite nxn matrix
-!!$c    to be decomposed
+!!$c   a(n,n) Hermitesch positive definite nxn matrix
+!!$c    to be decomposed 
 !!$c   upper part still contains a and lower part is filled with L
 !!$c   p(n) Eigenvalues of a 
 !!$c   ierr   Error code:  ierr=0 - no errors; ierr=1 - matrix a
@@ -25,12 +25,12 @@ SUBROUTINE chold(a,p,n,ierr)
 !!$c------------------------------------------------------------
   IMPLICIT none
 
-  INTEGER,INTENT (IN)               :: n
-  REAL (KIND(0D0)), DIMENSION (n,n) :: a
-  REAL (KIND(0D0)), DIMENSION (n)   :: p
-  REAL (KIND(0D0))                  :: s
-  INTEGER, INTENT (OUT)             :: ierr
-  INTEGER                           :: i,k,j
+  INTEGER,INTENT (IN)                  :: n
+  COMPLEX (KIND(0D0)), DIMENSION (n,n) :: a
+  COMPLEX (KIND(0D0)), DIMENSION (n)   :: p
+  COMPLEX (KIND(0D0))                  :: s
+  INTEGER, INTENT (OUT)                :: ierr
+  INTEGER                              :: i,k,j
 
   ierr = 0
 
@@ -44,21 +44,21 @@ SUBROUTINE chold(a,p,n,ierr)
 
         s = a(i,j)
 
-        DO k = i-1 , 1 ,-1
+        DO k = i-1,1,-1
 
-           s = s - a(i,k) * a(j,k)
+           s = s - a(i,k)*a(j,k)
 
         END DO
 
         IF (i == j) THEN
 
-           IF (s <= 0) THEN
-              PRINT*,'WARNING: chold - not positive definite'
+           IF (CDABS(s) <= 0) THEN
+              PRINT*,'WARNING: cholz - not positive definite'
               ierr = -i
               RETURN
            END IF
 
-           p(i) = DSQRT(s)
+           p(i) = CDSQRT(s)
 
         ELSE
 
@@ -71,4 +71,4 @@ SUBROUTINE chold(a,p,n,ierr)
 
   ierr = 0
 
-END SUBROUTINE chold
+END SUBROUTINE cholz

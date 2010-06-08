@@ -23,6 +23,7 @@ FLIBF77         = -lm
 # definition der default targets..
 #  BLAS und LAPACK tools
 LALIB		= -llapack -lblas
+LALIB		= 
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # macht CRTomo
@@ -41,8 +42,9 @@ all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 # this is for evry one here
 ferr		= get_error.o
 # CRTomo objects
-f90crt		= alloci.o chold.o gauss_dble.o gauss_cmplx.o get_unit.o \
-		  linv.o make_noise.o tic_toc.o variomodel.o
+f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
+		  make_noise.o tic_toc.o variomodel.o \
+		  chold.o cholz.o linvd.o linvz.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -117,12 +119,12 @@ cbn:
 crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo \
 		$(f90crt) $(forcrt) $(fcrt) $(ferr) $(LALIB)
-		$(CP) CRTomo $(WPATH)
+		$(CP) CRTomo $(WPATH)/CRTomo_ii 
 
 crm:		$(C1) $(f90crm) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod \
 		$(f90crm) $(forcrm) $(fcrm) $(ferr) $(LALIB)
-		$(CP) CRMod $(WPATH)
+		$(CP) CRMod $(WPATH)/CRMod_ii
 
 mtools:
 		cd ./m_tools ; make

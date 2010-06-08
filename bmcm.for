@@ -33,6 +33,15 @@ c....................................................................
 
 c$$$  invert A^TC_d^-1A + C_m^-1
       errnr = 1
+
+      ALLOCATE (work(manz,manz),STAT=errnr)
+      IF (errnr/=0) THEN
+         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
+         errnr = 97
+         RETURN
+      END IF
+      ALLOCATE (dig(manz),dig2(manz)) ! help 
+
 c     get time
       CALL TIC(c1)
 
@@ -41,7 +50,33 @@ c     get time
       IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1        'Factorization...'
-         CALL ZPOTRF('U',manz,cov_m,manz,errnr)
+c$$$         CALL ZPOTRF('U',manz,cov_m,manz,errnr)
+c$$$         IF (errnr /= 0) THEN
+c$$$            PRINT*,'Zeile::',cov_m(abs(errnr),:)
+c$$$            PRINT*,'Spalte::',cov_m(:,abs(errnr))
+c$$$            errnr = 108
+c$$$            RETURN
+c$$$         END IF
+c$$$         WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+c$$$     1        'Inverting...'
+c$$$         CALL ZPOTRI('U',manz,cov_m,manz,errnr)
+c$$$         IF (errnr /= 0) THEN
+c$$$            PRINT*,'Zeile::',cov_m(abs(errnr),:)
+c$$$            PRINT*,'Spalte::',cov_m(:,abs(errnr))
+c$$$            errnr = 108
+c$$$            RETURN
+c$$$         END IF
+c$$$         WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+c$$$     1        'Filling lower Cov...'
+c$$$         DO i= 1,manz
+c$$$            WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
+c$$$     1           ACHAR(13)//ACHAR(9)//ACHAR(9)//
+c$$$     1           ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+c$$$            DO j = i+1,manz
+c$$$               cov_m(j,i)=cov_m(i,j)
+c$$$            END DO
+c$$$         END DO
+         CALL CHOLZ(cov_m,dig,manz,errnr)
          IF (errnr /= 0) THEN
             PRINT*,'Zeile::',cov_m(abs(errnr),:)
             PRINT*,'Spalte::',cov_m(:,abs(errnr))
@@ -50,24 +85,23 @@ c     get time
          END IF
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1        'Inverting...'
-         CALL ZPOTRI('U',manz,cov_m,manz,errnr)
-         IF (errnr /= 0) THEN
-            PRINT*,'Zeile::',cov_m(abs(errnr),:)
-            PRINT*,'Spalte::',cov_m(:,abs(errnr))
-            errnr = 108
-            RETURN
-         END IF
+         CALL LINVZ(cov_m,dig,manz)
+
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-     1        'Filling lower Cov...'
-         DO i= 1,manz
+     1        'Filling upper Cov...'
+
+         DO i= 1 , manz
+
             WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
      1           ACHAR(13)//ACHAR(9)//ACHAR(9)//
      1           ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
-            DO j = i+1,manz
-               cov_m(j,i)=cov_m(i,j)
+
+            DO j = 1 , i
+
+               cov_m(i,j) = cov_m(j,i)
+
             END DO
          END DO
-
       ELSE
          WRITE (*,'(a)',ADVANCE='no')
      1        'Inverting Matrix (Gauss elemination)'
@@ -85,16 +119,8 @@ c     get time
       csz = 'solution time'
       CALL TOC(c1,csz)
 
-      ALLOCATE (work(manz,manz),STAT=errnr)
-      IF (errnr/=0) THEN
-         WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
-         errnr = 97
-         RETURN
-      END IF
-
       work = MATMUL(cov_m,ata_reg)
 
-      ALLOCATE (dig(manz),dig2(manz))!prepare to write out main diagonal
       DO i=1,manz
          dig(i) = cov_m(i,i)
          dig2(i) = work(i,i)

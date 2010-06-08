@@ -26,6 +26,8 @@ c....................................................................
       INCLUDE 'inv.fin'
       INCLUDE 'err.fin'
 c....................................................................
+c     Hilfsmatrix
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
 c     Schwerpunktskoordinaten der Flaechenelemente ij
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,h,sd_el
 c     Korrelation lengths and variance (var)
@@ -138,7 +140,36 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
          ELSE ! default..
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Factorization...'
-            CALL DPOTRF('U',manz,smatm,manz,errnr)
+c$$$            CALL DPOTRF('U',manz,smatm,manz,errnr)
+c$$$            IF (errnr/=0) THEN
+c$$$               fetxt='there was something wrong..'
+c$$$               PRINT*,'Zeile(',abs(errnr),
+c$$$     1              ')::',smatm(abs(errnr),:)
+c$$$               PRINT*,'Spalte::',smatm(:,abs(errnr))
+c$$$               errnr = 108
+c$$$            END IF
+c$$$            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+c$$$     1           'Inverting...'
+c$$$            CALL DPOTRI('U',manz,smatm,manz,errnr)
+c$$$            IF (errnr/=0) THEN
+c$$$               fetxt='there was something wrong..'
+c$$$               PRINT*,'Zeile(',abs(errnr),
+c$$$     1              ')::',smatm(abs(errnr),:)
+c$$$               PRINT*,'Spalte::',smatm(:,abs(errnr))
+c$$$               errnr = 108
+c$$$            END IF
+c$$$            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
+c$$$     1           'Filling lower C_m...'
+c$$$            DO i= 1,manz
+c$$$               WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
+c$$$     1              ACHAR(13)//ACHAR(9)//ACHAR(9)//
+c$$$     1              ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+c$$$               DO j = i+1,manz
+c$$$                  smatm(j,i)=smatm(i,j)
+c$$$               END DO
+c$$$            END DO
+            ALLOCATE (work(manz))
+            CALL CHOLD(smatm,work,manz,errnr)
             IF (errnr/=0) THEN
                fetxt='there was something wrong..'
                PRINT*,'Zeile(',abs(errnr),
@@ -148,22 +179,16 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
             END IF
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Inverting...'
-            CALL DPOTRI('U',manz,smatm,manz,errnr)
-            IF (errnr/=0) THEN
-               fetxt='there was something wrong..'
-               PRINT*,'Zeile(',abs(errnr),
-     1              ')::',smatm(abs(errnr),:)
-               PRINT*,'Spalte::',smatm(:,abs(errnr))
-               errnr = 108
-            END IF
+            CALL LINVD(smatm,work,manz)
+            DEALLOCATE (work)
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-     1           'Filling lower C_m...'
-            DO i= 1,manz
+     1           'Filling upper C_m...'
+            DO i= 1, manz
                WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
      1              ACHAR(13)//ACHAR(9)//ACHAR(9)//
      1              ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
-               DO j = i+1,manz
-                  smatm(j,i)=smatm(i,j)
+               DO j = 1, i
+                  smatm(i,j) = smatm(j,i)
                END DO
             END DO
          END IF
