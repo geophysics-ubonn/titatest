@@ -1,6 +1,6 @@
       SUBROUTINE bpar
 c     
-c     Unterprogramm zur Beleguing des Paramter vektors
+c     Unterprogramm zur Belegung des Parameter Vektors
 c     im Moment noch unspektakulaer, da elanz = manz 
 c     
 c     Copyright by Andreas Kemna

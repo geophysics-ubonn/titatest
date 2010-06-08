@@ -439,7 +439,7 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
       END IF
 
-      IF (lsto.OR.(itmax == 0).AND.(ldiff.OR.lprior)) 
+      IF (lsto.OR.(itmax == 0).AND.(lstart.OR.lprior)) 
      1     CALL set_vario (nx,alfx,alfz,esp_mit,esp_med)
 
       if (manz.ne.elanz) then
