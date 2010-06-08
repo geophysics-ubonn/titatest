@@ -1,5 +1,5 @@
 %%
-
+clear all;
 close all;
 % Definitions
 elecmark='bo';

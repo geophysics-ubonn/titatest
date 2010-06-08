@@ -3,22 +3,29 @@
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
 fi
+if [ -e inv.lastmod ];then
+    echo found inv.lastmod
+else
+    echo no inversion results found.. exiting 
+    exit
+fi
 cp inv.lastmod crt.lastmod
 mymag=`cat inv.lastmod`
 mymag=`basename $mymag '.mag'`
+echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 clean
 echo 'Amplitude' > tmp.fenster
 plot_cur_crtomo
-clean
-echo $invdir/$mymag'.pha' > inv.lastmod
-echo "Phase" > tmp.fenster
-plot_cur_crtomo
-clean
-echo $mymag
 pltpdf=$mymag'_mag.pdf'
-pltpdf="$pltpdf $mymag"'_pha.pdf'
-
+clean
+if [ -e $invdir/$mymag'.pha' ];then
+    echo $invdir/$mymag'.pha' > inv.lastmod
+    echo "Phase" > tmp.fenster
+    plot_cur_crtomo
+    pltpdf="$pltpdf $mymag"'_pha.pdf'
+    clean
+fi
 echo $invdir/coverage.mag > inv.lastmod
 echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
 echo 'log_{10}(c)[SI]' > tmp.cbarn
@@ -102,11 +109,11 @@ if [ -e $invdir/cov2_m.diag_im ];then
     clean
 fi
 cp crt.lastmod inv.lastmod
-if [ -n "$1" ];then
-	texfile=lam_$1.tex
-else
+#if [ -n "$1" ];then
+#	texfile=lam_$1.tex
+#else
 	texfile=crt_plots.tex
-fi
+#fi
 echo '\documentclass[12pt,a4]{article}' > $texfile 
 echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $texfile
 echo '\usepackage[T1]{fontenc}' >> $texfile
@@ -133,11 +140,11 @@ echo '\footskip3cm' >> $texfile
 #echo '\textwidth=17cm' >> $texfile
 echo '\begin{document}' >> $texfile
 echo '\pagestyle{fancy}' >> $texfile
-if [ -n "$1" ];then
-	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
-else
+#if [ -n "$1" ];then
+#	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
+#else
 	echo '\fancyhead[C]{\Large\bf CRTomo Iteration no. '$it'}' >> $texfile
-fi
+#fi
 #echo '\begin{figure}' >> $texfile
 rm -f cropped.pdf
 echo $pltpdf
