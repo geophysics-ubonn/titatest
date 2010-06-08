@@ -233,7 +233,7 @@ c     sets parameter variance..
       WRITE (ifp,'(a)')"set out 'variograms.ps'"
       WRITE (ifp,'(a)')'set term pos col sol enh 20'
       WRITE (ifp,'(a)')'set key bot right Left'
-      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\\n'//
+      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//
      1     TRIM(tgam)//'"'
       WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
       WRITE (ifp,'(a,2(F10.2,a))')
