@@ -178,8 +178,8 @@ c$$$      snsmn = snsmn / DBLE(manz)
                ELSE IF (ltri == 7) THEN ! sensitivitaetswichtung 1 von RM
                   
 !     f(i,k) = 1 + (g(i) + g(k))/mean(g)
-                  dum2 = 1d0 + DABS(DLOG10(csens(i))) + 
-     1                 DABS(DLOG10(csens(nachbar(i,k))))
+                  dum2 = 1d0 + DABS((DLOG10(csens(i))) + 
+     1                 DABS(DLOG10(csens(nachbar(i,k))))) / snsmn
 !     dum2 = f(i,k)^2
                   dum2 = dum2**2.
 !     dum = grad(m)^2 + (\beta/f(i,k)^2)^2
