@@ -477,6 +477,16 @@ c      PRINT*,'data in'
          lsr    = .false.
          kwnanz = 1
          kwn(1) = 0d0
+         do i=1,typanz
+            IF (typ(i) == 11) THEN
+               PRINT*,'hier am besten aussteigen '//
+     1              'da es im 2D keine gemischten RB gibt'
+               fetxt = 'hier am besten aussteigen '//
+     1              'da es im 2D keine gemischten RB gibt'
+               errnr = 110
+               GOTO 999
+            END IF
+         END DO
       else
          call rwaven()
          if (errnr.ne.0) goto 999

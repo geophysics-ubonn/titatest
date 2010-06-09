@@ -325,3 +325,6 @@
 109 Min. stepsize reached
 109 Execution time:
 109
+110 Mixed boundary condition not  
+110 yet implemented for 2D case
+110
