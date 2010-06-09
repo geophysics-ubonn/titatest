@@ -86,14 +86,19 @@ c$$$         END DO
          END IF
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Inverting...'
+
          CALL LINVD(cov_m_dc,dig,manz)
+
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-     1        'Filling upper Cov...'
+     1        'Filling lower Cov...'
+
          DO i= 1 , manz
+
             WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
      1           ACHAR(13)//ACHAR(9)//ACHAR(9)//
      1           ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
-            DO j = 1 , i
+
+            DO j = 1 , i - 1
 
                cov_m_dc(i,j) = cov_m_dc(j,i)
 

@@ -6,7 +6,9 @@ SUBROUTINE linvz(a,p,n)
 !!$c
 !!$c This subroutine finds the inverse of factorized Lower triangular
 !!$c 
-!!$c from Numerical recipies
+!!$c from Numerical recipies (Press et al 2003)
+!!$c 
+!!$c Changed and put into this format by R. Martin 2010
 !!$c
 !!$c
 !!!$ in order to find the inverse of A we still need to compute 
@@ -16,7 +18,8 @@ SUBROUTINE linvz(a,p,n)
 !!$c INPUT VARIABLES:
 !!$c
 !!$c   u(n,n)  Upper triangular matrix from chold
-!!$c           which stores its inverse of a(!) in the upper part..
+!!$c           which stores the inverse of A^-1 = (L^-1)^T L^-1
+!!$c           in the upper part..
 !!$c   p(n)    Eigenvalues of former A
 !!$c   n       leading dimension 
 !!$c-----------------------------------------------------------------
@@ -34,7 +37,7 @@ SUBROUTINE linvz(a,p,n)
           ACHAR(13)//ACHAR(9)//ACHAR(9)//&
           ACHAR(9)//'/ ',REAL( (n-i) * (100./n)),'%'
 
-     a(i,i) = 1. / p(i)
+     a(i,i) = 1. / p(i)! main diagonal of L^-1
 
      DO j = i+1 , n
 
@@ -46,13 +49,19 @@ SUBROUTINE linvz(a,p,n)
 
         END DO
 
-        a(j,i) = s / p(j)
+        a(j,i) = s / p(j) ! filling lower triangle of L^-1
         
-        a(i,j) = 0. ! upper triangle eq zero
+        a(i,j) = 0. ! upper triangle eq zero for sum
 
      END DO
 
   END DO
+
+!!$ --------------- own part -------------------
+!!$ this part makes the inverse of A by MATMUL 
+!!$ of L^-T L-^1 into the
+!!$ upper part of a
+!!$ --------------------------------------------
 
   DO i = 1, n
 
@@ -60,18 +69,15 @@ SUBROUTINE linvz(a,p,n)
 
      DO k = i+1 , n
 
-        a(i,i) = a(i,i) + a(k,i) * a(k,i)
+        a(i,i) = a(i,i) + a(k,i) * a(k,i) ! main diagonal
 
      END DO
-!!$
-!!$     a(i,i) = a(i,i) * a(i,i) + &
-!!$          DOT_PRODUCT(a(i+1:n,i),a(i+1:n,i))
-     
-     DO j = i + 1, n
+
+     DO j = i + 1, n ! fills upper triangle with (L^-1)^T L^-1
         
         DO k = j, n
 
-           a(i,j) = a(i,j) + a(k,i) * a(k,j)
+           a(i,j) = a(i,j) + a(k,i) * a(k,j) 
 
         END DO
      END DO

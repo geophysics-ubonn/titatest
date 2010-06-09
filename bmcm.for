@@ -88,7 +88,7 @@ c$$$         END DO
          CALL LINVZ(cov_m,dig,manz)
 
          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-     1        'Filling upper Cov...'
+     1        'Filling lower Cov...'
 
          DO i= 1 , manz
 
@@ -96,7 +96,7 @@ c$$$         END DO
      1           ACHAR(13)//ACHAR(9)//ACHAR(9)//
      1           ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
 
-            DO j = 1 , i
+            DO j = 1 , i - 1
 
                cov_m(i,j) = cov_m(j,i)
 

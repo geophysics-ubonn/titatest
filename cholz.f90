@@ -6,7 +6,10 @@ SUBROUTINE cholz(a,p,n,ierr)
 !!$c
 !!$c This subroutine calculates the lower triangular matrix L which,
 !!$c when multiplied by its own transpose, gives the symmetric 
-!!$c matrix A. From Numerical recipies
+!!$c matrix A. From Numerical recipies (Press et al 2003)
+!!$c 
+!!$c Changed and put into this format by R. Martin 2010
+!!$c
 !!$c 
 !!$c**********          NOTE           ***************************
 !!$c cholz In this form needs only the upper triangular part of a
@@ -16,9 +19,9 @@ SUBROUTINE cholz(a,p,n,ierr)
 !!$c INPUT VARIABLES:
 !!$c
 !!$c   a(n,n) Hermitesch positive definite nxn matrix
-!!$c    to be decomposed 
-!!$c   upper part still contains a and lower part is filled with L
-!!$c   p(n) Eigenvalues of a 
+!!$c          to be decomposed
+!!$c          Upper part still contains A and lower part is filled with L
+!!$c   p(n)   Eigenvalues of a 
 !!$c   ierr   Error code:  ierr=0 - no errors; ierr=1 - matrix a
 !!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
