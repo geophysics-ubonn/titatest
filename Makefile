@@ -35,6 +35,7 @@ PR3		= ctm
 
 # kopiert die matlab tools
 PRM		= mtools
+MACHINE		= $(shell uname -n)
 ################################################################
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
@@ -119,12 +120,12 @@ cbn:
 crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo \
 		$(f90crt) $(forcrt) $(fcrt) $(ferr) $(LALIB)
-		$(CP) CRTomo $(WPATH)/CRTomo_ii 
+		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE) 
 
 crm:		$(C1) $(f90crm) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod \
 		$(f90crm) $(forcrm) $(fcrm) $(ferr) $(LALIB)
-		$(CP) CRMod $(WPATH)/CRMod_ii
+		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 
 mtools:
 		cd ./m_tools ; make
