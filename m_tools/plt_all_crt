@@ -114,18 +114,24 @@ cp crt.lastmod inv.lastmod
 #else
 	texfile=crt_plots.tex
 #fi
+
+plt_inv_ctr
+
 echo '\documentclass[12pt,a4]{article}' > $texfile 
 echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $texfile
 echo '\usepackage[T1]{fontenc}' >> $texfile
 echo '\usepackage[utf8]{inputenc}' >> $texfile
+echo '\usepackage{listings}' >> $texfile
+echo '\lstset{basicstyle=\tiny}' >> $texfile
 echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $texfile
 echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $texfile
 echo '\usepackage{fancyhdr}' >> $texfile
-echo '\oddsidemargin0mm' >> $texfile
+
+echo '\oddsidemargin-15mm' >> $texfile
 echo '\parindent0mm' >> $texfile
 echo '\parskip0mm' >> $texfile
 echo '\textheight24cm' >> $texfile
-echo '\textwidth17cm' >> $texfile
+echo '\textwidth19cm' >> $texfile
 echo '\unitlength1mm' >> $texfile
 echo '\topmargin-2cm' >> $texfile
 echo '\headheight0cm' >> $texfile
@@ -167,9 +173,18 @@ for x in $pltpdf;do
 #  fi
   let i=$i+1
 done
+
 #echo '\end{figure}' >> $texfile
-#echo '\clearpage' >> $texfile
+echo '\clearpage' >> $texfile
+
+echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
+
+echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
+
+echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
+
 echo '\end{document}' >> $texfile
+
 
 pdflatex $texfile
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 tools="plotCRTmod_batch.m epstopdf matlab mogrify";
-
+matarg='-nodesktop -nosplash'
 echo "checking for tools"
 forcecheck(){
 	Ret_val=`which $1`
@@ -38,7 +38,12 @@ for x in $tools;do
 	esac
 	i=$[$i+1];
 done
-
+if [ -e "crtomo.cfg" ];then
+    echo found crtomo.cfg
+else
+    echo no crtomo.cfg ound
+    exit
+fi
 awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
 
@@ -68,7 +73,7 @@ else
     exit
 fi
 
-$mtlb < $plotmod >& /dev/null
+$mtlb $matarg < $plotmod >& /dev/null
 
 tmp=`cat inv.lastmod`
 myeps=`basename $tmp`'.eps'
