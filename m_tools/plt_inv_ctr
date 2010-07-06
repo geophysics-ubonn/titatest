@@ -1,11 +1,15 @@
 #!/bin/bash
 
 # declare font size for the legends
-lfsz='/Times=10'
-lw='lw 2'
-lp='lw 2'
-psz='pointsize 0.8'
-font='"Helvetica" 14'
+font='"Helvetica" 14' # general font and its size of the title and axes
+# major iterations
+lw='w lp lw 2.5'   # linetype and width of the major iteration plots
+lfw='/Times=12' # legend font
+psw='pointsize 1.0' # pointsize
+#minor iterations
+lp='w lp lw 1.5'   # linetype and width of the minor iteration plots
+lfp='/Times=8' # legend font
+psp='pointsize 0.6' # pointsize
 
 if [ -e "crtomo.cfg" ];then
     echo found crtomo.cfg
@@ -53,14 +57,14 @@ for (( i=0 ; i < nnit ; i++ ));do # i saves the actual iteration number
     if [ $j -eq $nnit ];then # check whether we have another iteration
 # concanate the gnuplot command into a file which we can append into our main
 # gnuplto script afterwards
-	echo '"'$fit'"u 2:3 w p '$lp' tit "{'$lfsz' RMS it '$j'}","'$fit'" u 2:6 axes x1y2 w p '$lp' ti "{'$lfsz' Rough it '$j'}"' >> tmp.gnu_minor1 
+	echo '"'$fit'"u 2:3 '$lp' tit "{'$lfp' RMS it '$j'}","'$fit'" u 2:6 axes x1y2 '$lp' ti "{'$lfp' Rough it '$j'}"' >> tmp.gnu_minor1 
 # concanate the lower right plot commands
 # please note the ,\ at the end of each line
-	echo '"'$fit'"u 2:4 w p '$lp' tit "{'$lfsz' Step it '$j'}","'$fit'" u 2:5 axes x1y2 w p '$lp' ti "{'$lfsz' Lam it '$j'}"' >> tmp.gnu_minor2
+	echo '"'$fit'"u 2:4 '$lp' tit "{'$lfp' Step it '$j'}","'$fit'" u 2:5 axes x1y2 '$lp' ti "{'$lfp' Lam it '$j'}"' >> tmp.gnu_minor2
     else
 # this here is the last plot commands
-	echo '"'$fit'"u 2:3 w p '$lp' tit "{'$lfsz' RMS it '$j'}","'$fit'" u 2:6 axes x1y2 w p '$lp' ti "{'$lfsz' Rough it '$j'}",\' >> tmp.gnu_minor1 
-	echo '"'$fit'"u 2:4 w p '$lp' tit "{'$lfsz' Step it '$j'}","'$fit'" u 2:5 axes x1y2 w p '$lp' ti "{'$lfsz' Lam it '$j'}",\' >> tmp.gnu_minor2
+	echo '"'$fit'"u 2:3 '$lp' tit "{'$lfp' RMS it '$j'}","'$fit'" u 2:6 axes x1y2 '$lp' ti "{'$lfp' Rough it '$j'}",\' >> tmp.gnu_minor1 
+	echo '"'$fit'"u 2:4 '$lp' tit "{'$lfp' Step it '$j'}","'$fit'" u 2:5 axes x1y2 '$lp' ti "{'$lfp' Lam it '$j'}",\' >> tmp.gnu_minor2
     fi
 done
 
@@ -68,7 +72,6 @@ done
 # this stes up a standard gnuplot file
 echo 'set st da l' > tmp.gnu
 echo 'se gr' >> tmp.gnu
-echo "set $psz" >> tmp.gnu
 echo "set term pos enh col sol $font" >> tmp.gnu
 echo 'se out "inv_stat.eps"' >> tmp.gnu
 
@@ -87,15 +90,16 @@ echo 'set size 0.52,0.5' >> tmp.gnu
 # top left major iterations
 echo 'set origin 0,0.5' >> tmp.gnu
 echo 'se tit "Major iterations"' >> tmp.gnu
+echo "set $psw" >> tmp.gnu
 echo 'set yla offset 3 "RMS"' >> tmp.gnu
-echo 'p"inv.stats_it" u 2:3 w l '$lw' tit "{'$lfsz' RMS}","inv.stats_it" u 2:6 axes x1y2 w l '$lw' ti "{'$lfsz' Rough}"' >> tmp.gnu
+echo 'p"inv.stats_it" u 2:3 '$lw' tit "{'$lfw' RMS}","inv.stats_it" u 2:6 axes x1y2 '$lw' ti "{'$lfw' Rough}"' >> tmp.gnu
 # bottom links major 
 echo 'set origin 0,0' >> tmp.gnu
 #echo 'set nolog y' >> tmp.gnu
 echo 'set notit' >> tmp.gnu
 echo 'set xla offset 0,.5 "Iteration #"' >> tmp.gnu
 echo 'set yla offset 1 "Stepsize"' >> tmp.gnu
-echo 'p"inv.stats_it" u 2:4 w l '$lw' tit "{'$lfsz' Step}","inv.stats_it" u 2:5 axes x1y2 w l '$lw' ti "{'$lfsz' Lam}"' >> tmp.gnu
+echo 'p"inv.stats_it" u 2:4 '$lw' tit "{'$lfw' Step}","inv.stats_it" u 2:5 axes x1y2 '$lw' ti "{'$lfw' Lam}"' >> tmp.gnu
 # oben rechts minor
 echo 'set origin 0.5,0.5' >> tmp.gnu
 echo 'set size 0.5,0.5' >> tmp.gnu
@@ -103,8 +107,9 @@ echo 'unset yla' >> tmp.gnu
 echo 'unset xla' >> tmp.gnu
 echo 'set y2la offset -1 "Roughness"' >> tmp.gnu
 echo 'se tit "Minor iterations"' >> tmp.gnu
+echo "set $psp" >> tmp.gnu
 echo 'set log y' >> tmp.gnu
-#echo 'p"inv.stats_up" u 2:3 w p '$lwsz' tit "RMS","inv.stats_up" u 2:6 axes x1y2 w p '$lwsz' ti "Rough"' >> tmp.gnu
+#echo 'p"inv.stats_up" u 2:3 '$lp' tit "RMS","inv.stats_up" u 2:6 axes x1y2 '$lp' ti "Rough"' >> tmp.gnu
 cat tmp.gnu_minor1 >> tmp.gnu
 # unten rechts minor
 echo 'set origin 0.5,0' >> tmp.gnu
@@ -113,7 +118,7 @@ echo 'set origin 0.48,0' >> tmp.gnu
 echo 'set y2la offset -1 "Lambda"' >> tmp.gnu
 echo 'set xla offset 0,.5 "Iteration #"' >> tmp.gnu
 echo 'se notit' >> tmp.gnu
-#echo 'p"inv.stats_up" u 2:4 w p '$lwsz' tit "Stepsize","inv.stats_up" u 2:5 axes x1y2 w p '$lwsz' ti "Lambda"' >> tmp.gnu
+#echo 'p"inv.stats_up" u 2:4 '$lp' tit "Stepsize","inv.stats_up" u 2:5 axes x1y2 '$lp' ti "Lambda"' >> tmp.gnu
 cat tmp.gnu_minor2 >> tmp.gnu
 
 gnuplot < tmp.gnu
