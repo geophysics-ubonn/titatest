@@ -8,6 +8,7 @@ c     Letzte Aenderung   10-Mar-2007
       
 c.....................................................................
       
+      USE datmod
       USE femmod
 
       IMPLICIT none
@@ -17,7 +18,6 @@ c.....................................................................
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'konv.fin'
 c     diff+<
       INCLUDE 'model.fin'

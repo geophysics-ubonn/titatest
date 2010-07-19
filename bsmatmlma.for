@@ -12,12 +12,12 @@ c
 c.........................................................................
       USE alloci
       USE femmod ! fuer ldc..
+      USE datmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'

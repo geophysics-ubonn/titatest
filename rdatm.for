@@ -7,11 +7,12 @@ c     Andreas Kemna                                            11-Oct-1993
 c     Letzte Aenderung   22-Feb-2006
 
 c.....................................................................
+      USE datmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'electr.fin'
 
 c.....................................................................
@@ -51,6 +52,16 @@ c     Ggf. Fehlermeldung
          errnr = 49
          goto 1000
       end if
+
+      ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
+     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),
+     1     stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation volt '
+         errnr = 94
+         goto 1000
+      END IF
+      
 
 c     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
       do i=1,nanz

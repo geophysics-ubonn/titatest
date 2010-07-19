@@ -11,6 +11,7 @@ c     Letzte Aenderung   16-Jul-2007
 c.....................................................................
       USE variomodel
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
@@ -20,7 +21,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'model.fin'

@@ -10,12 +10,13 @@ c     Letzte Aenderung   06-Nov-1997
 c.....................................................................
 
       USE alloci
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'dat.fin'
 
 c.....................................................................
 

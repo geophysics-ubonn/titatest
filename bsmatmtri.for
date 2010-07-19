@@ -12,12 +12,12 @@ c     Letzte Aenderung   RM                                    29-Jul-2009
 c
 c.........................................................................
       USE alloci
+      USE datmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'

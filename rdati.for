@@ -10,12 +10,12 @@ c.....................................................................
       USE make_noise
       USE alloci, only:rnd_r,rnd_p
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
@@ -87,6 +87,15 @@ c     Ggf. Fehlermeldung
          goto 1000
       end if
 
+      ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
+     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),
+     1     stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation volt '
+         errnr = 94
+         goto 1000
+      END IF
+
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
       IF ( lnse ) THEN
@@ -115,9 +124,8 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
             END DO
          END IF
       END IF
+      
 
-c$$$      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
-c$$$     1     ACHAR(9)//ACHAR(9)//ACHAR(9)
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'data set ',

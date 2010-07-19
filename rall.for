@@ -13,6 +13,7 @@ c.....................................................................
       USE make_noise
       USE variomodel
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
@@ -23,7 +24,6 @@ c.....................................................................
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'

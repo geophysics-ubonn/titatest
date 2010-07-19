@@ -7,13 +7,13 @@ c     Letzte Aenderung   10-Mar-2007
 
 c.....................................................................
 
+      USE datmod
       USE alloci
 
       IMPLICIT none
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
 
 c.....................................................................

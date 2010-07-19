@@ -13,13 +13,13 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'

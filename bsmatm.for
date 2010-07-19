@@ -8,11 +8,12 @@ c     Letzte Aenderung   04-Nov-2008
 c.....................................................................
 
       USE alloci
+      USE datmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'

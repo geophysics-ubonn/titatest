@@ -11,13 +11,13 @@ c     Letzte Aenderung    RM                                   23-Nov-2009
 c     
 c.........................................................................
       USE alloci
+      USE datmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:

@@ -19,6 +19,8 @@ c.....................................................................
       USE alloci
       USE tic_toc
       USE femmod
+      USE datmod
+
 c     USE portlib
 
       IMPLICIT none
@@ -30,7 +32,6 @@ c     USE portlib
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'

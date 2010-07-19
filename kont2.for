@@ -6,13 +6,14 @@ c     Andreas Kemna                                            16-Apr-1996
 c     Letzte Aenderung   11-Nov-1997
 
 c.....................................................................
+      USE datmod
 
       IMPLICIT none
+
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'dat.fin'
 c     mw
       INCLUDE 'inv.fin'
 

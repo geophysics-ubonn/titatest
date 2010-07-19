@@ -9,6 +9,7 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
@@ -16,7 +17,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
 
 c.....................................................................

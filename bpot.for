@@ -10,13 +10,13 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE datmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
 
 c.....................................................................
 

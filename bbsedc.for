@@ -11,11 +11,13 @@ c     Letzte Aenderung                   31-Mar-2010
 c.....................................................................
 
       USE alloci
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
 

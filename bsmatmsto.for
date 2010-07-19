@@ -15,12 +15,12 @@ c....................................................................
       USE alloci
       USE tic_toc
       USE variomodel
+      USE datmod
 
       IMPLICIT none
       
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
