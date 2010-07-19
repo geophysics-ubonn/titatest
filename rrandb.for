@@ -7,11 +7,13 @@ c     Letzte Aenderung   15-Jul-2007
 
 c.....................................................................
 
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'randb.fin'
 
 c.....................................................................

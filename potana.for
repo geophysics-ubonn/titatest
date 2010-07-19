@@ -7,6 +7,8 @@ c     Andreas Kemna                                            04-Jan-1996
 c     Letzte Aenderung   11-Nov-1997
       
 c.....................................................................
+      USE femmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
@@ -14,7 +16,6 @@ c.....................................................................
       INCLUDE 'waven.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'fem.fin'
 
 c.....................................................................
 

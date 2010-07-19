@@ -9,12 +9,14 @@ c     Letzte Aenderung   20-Aug-2007
 c.....................................................................
       USE make_noise
       USE alloci, only:rnd_r,rnd_p
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'dat.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 

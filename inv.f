@@ -18,6 +18,7 @@ c.....................................................................
 
       USE alloci
       USE tic_toc
+      USE femmod
 c     USE portlib
 
       IMPLICIT none
@@ -31,7 +32,6 @@ c     USE portlib
       INCLUDE 'sigma.fin'
       INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
@@ -65,6 +65,7 @@ c     diff+<
      1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 c     diff+>
       if (errnr.ne.0) goto 999
+
 
 c     Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 c     zur Berechnung der gemischten Randbedingung bestimmen
@@ -147,7 +148,7 @@ c     diff+<
       call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0)
 c     diff+>
       if (errnr.ne.0) goto 999
-
+!!$      CALL SYSTEM('sleep 1000')
 c     'sens' zuweisen
       if (ldc) then
          ALLOCATE(sensdc(nanz,manz),kpotdc(sanz,eanz,kwnanz),stat=errnr)
@@ -159,6 +160,7 @@ c     'sens' zuweisen
          errnr = 97 
          goto 999
       end if
+
 c-------------
 c     get current time
       CALL tic(c1)
@@ -167,15 +169,24 @@ c.................................................
 c     MODELLING
 c     'a', 'hpot' und 'kpot' zuweisen
  10   if (ldc) then
-         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),stat=errnr)
+         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),bdc(sanz),
+     1        stat=errnr)
       else
-         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),stat=errnr)
+         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),b(sanz),stat=errnr)
       end if
       if (errnr.ne.0) then
          fetxt = 'allocation problem a and hpot'
          errnr = 97 
          goto 999
       end if
+      IF (.NOT.ALLOCATED (pot)) THEN
+         ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
+         if (errnr.ne.0) then
+            fetxt = 'allocation problem pot to fak'
+            errnr = 97 
+            goto 999
+         end if
+      END IF
 
 c     Kontrollausgaben
       WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
@@ -288,11 +299,10 @@ c     Spannungswerte berechnen
 
 c     'a' und 'hpot' freigeben
       if (ldc) then
-         DEALLOCATE(adc,hpotdc)
+         DEALLOCATE(adc,hpotdc,bdc)
       else
-         DEALLOCATE(a,hpot)
+         DEALLOCATE(a,hpot,b)
       end if
-
       if (lsetup) then
 
 c     Ggf. background auf ratio-Daten "multiplizieren"

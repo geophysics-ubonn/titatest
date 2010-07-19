@@ -13,6 +13,8 @@ c.....................................................................
 
       USE alloci
       USE tic_toc
+      USE femmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
@@ -23,7 +25,6 @@ c.....................................................................
       INCLUDE 'sigma.fin'
       INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
 
@@ -185,6 +186,13 @@ c     'a', 'hpot' und 'kpot' zuweisen
       ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),
      1     kpot(sanz,eanz,kwnanz),stat=errnr)
       if (errnr.ne.0) then
+         fetxt = 'allocation problem a and hpot'
+         errnr = 97 
+         goto 999
+      end if
+      ALLOCATE(pot(sanz),pota(sanz),b(sanz),fak(sanz),stat=errnr)
+      if (errnr.ne.0) then
+         fetxt = 'allocation problem pot to fak'
          errnr = 97 
          goto 999
       end if

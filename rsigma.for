@@ -8,7 +8,10 @@ c     Letzte Aenderung   07-Nov-1997
 c.....................................................................
       USE make_noise
       USE alloci,only:rnd_r,rnd_p
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
@@ -16,7 +19,6 @@ c.....................................................................
       INCLUDE 'konv.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
-      INCLUDE 'fem.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

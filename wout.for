@@ -8,14 +8,16 @@ c     Letzte Aenderung   10-Mar-2007
       
 c.....................................................................
       
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'dat.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'konv.fin'
 c     diff+<
       INCLUDE 'model.fin'

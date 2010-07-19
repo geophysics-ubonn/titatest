@@ -9,13 +9,15 @@ c     Letzte Aenderung   22-Sep-1998
 
 c.....................................................................
 
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'fem.fin'
 
 c.....................................................................
 
@@ -59,6 +61,15 @@ c.....................................................................
       lbeta  = .false.
       lrandb = .false.
       iel    = 0
+
+      ALLOCATE (elbg(elanz,(selmax*(selmax+1))/2,kwnanz),stat=errnr)
+      ALLOCATE (relbg(relanz,(selmax*(selmax+1))/2),stat=errnr)
+      ALLOCATE (kg(relanz,eanz,kwnanz),stat=errnr)
+      if (errnr.ne.0) then
+         fetxt = 'allocation problem sens and kpot'
+         errnr = 97 
+         goto 1000
+      end if
 
       CALL bsytop
 

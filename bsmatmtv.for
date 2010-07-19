@@ -11,6 +11,7 @@ c     Letzte Aenderung   RM                                    23-Nov-2009
 c     
 c.........................................................................
       USE alloci
+      USE femmod
       
       IMPLICIT none
 
@@ -20,7 +21,6 @@ c.........................................................................
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
-      INCLUDE 'fem.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 

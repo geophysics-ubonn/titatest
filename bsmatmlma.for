@@ -11,6 +11,7 @@ c     Letzte Aenderung   RM                                    29-Jul-2009
 c     
 c.........................................................................
       USE alloci
+      USE femmod ! fuer ldc..
       
       IMPLICIT none
 
@@ -19,7 +20,6 @@ c.........................................................................
       INCLUDE 'dat.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
-      INCLUDE 'fem.fin' ! fuer ldc..
       INCLUDE 'inv.fin'
       INCLUDE 'err.fin'
 !.....................................................................

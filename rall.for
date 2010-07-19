@@ -12,7 +12,10 @@ c
 c.....................................................................
       USE make_noise
       USE variomodel
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
@@ -22,7 +25,6 @@ c.....................................................................
       INCLUDE 'sigma.fin'
       INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'

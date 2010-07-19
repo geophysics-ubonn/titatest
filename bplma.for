@@ -11,12 +11,13 @@ c     Letzte Aenderung   RM                                    24-Feb-2010
 c
 c.....................................................................
       USE alloci
+      USE femmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 

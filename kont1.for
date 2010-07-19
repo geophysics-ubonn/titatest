@@ -10,8 +10,10 @@ c     Letzte Aenderung   16-Jul-2007
       
 c.....................................................................
       USE variomodel
+      USE femmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
@@ -19,7 +21,6 @@ c.....................................................................
       INCLUDE 'sigma.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'dat.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'model.fin'

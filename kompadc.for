@@ -10,15 +10,16 @@ c     Letzte Aenderung   16-Jul-2007
 c.....................................................................
 
       USE alloci
+      USE femmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'fem.fin'
 
 c.....................................................................
 
