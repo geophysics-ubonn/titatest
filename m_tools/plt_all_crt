@@ -68,9 +68,9 @@ if [ -e $invdir/cov1_m.diag_im ];then
     pltpdf="$pltpdf cov1_m_diag_im.pdf"
     clean
 fi
-if [ -e $invdir/res_m.diag_re ];then
-    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag_re > tmp.dat
-    cp tmp.dat $invdir/res_m.diagre
+if [ -e $invdir/res_m.diag ];then
+    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag > tmp.dat
+    cp tmp.dat $invdir/res_m.diag
     echo $invdir/res_m.diagre > inv.lastmod
     echo "Resolution Matrix" > tmp.fenster
     echo 'RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
