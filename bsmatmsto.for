@@ -85,7 +85,7 @@ c     Belege die Matrix
      1        ACCESS='sequential',FORM='unformatted')
          READ (ifp) i
          IF (i == manz) THEN
-            PRINT*,'seems appropriate inverse smatm'
+            WRITE(*,'(a)')'ok!'
             READ (ifp) smatm
          END IF
          CLOSE (ifp)

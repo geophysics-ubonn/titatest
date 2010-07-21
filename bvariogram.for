@@ -48,7 +48,9 @@ c     gam(lag)=1/N(lag)/2 * sum_k^N(lag) (tail - head)**2.
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: gam_x,gam_y,gam
 c     variogram model
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: mgam_x,mgam_y,mgam
-      CHARACTER(80) :: tmgam,tmgam_x,tmgam_y,mti,tgam
+      CHARACTER(80) :: tmgam,tmgam_x,tmgam_y,mti,tgam,tcov
+! mti stores a string for variogram statistics, like korrelation length
+! tgam stores the output string of get_vario
       CHARACTER (11) :: tg
 c-----------------------------------------------------------------------
 
@@ -85,15 +87,20 @@ c     get memory
       ngam_x = 0;ngam_y = 0;ngam = 0
       gam_x = 0.;gam_y = 0.;gam = 0.
 
-      CALL get_vario(Ix,Iy,fetxt,0)
-      par_vari = 1.
-c     for postscript
+! gets the current variogram function parameters
+      CALL get_vario(Ix,Iy,fetxt,0) 
+! now prepare title string of gnuplot plot
+      WRITE (mti,'(3(a,F3.1))')'Integral length a=',
+     1     SQRT(Ix**2.+Iy**2.),', ax=',Ix,', ay=',Iy
+c     for postscript 
       tg = '{/Symbol g}'
       WRITE (tgam,'(a)')tg//'(h)='//TRIM(fetxt) 
-      WRITE (mti,'(3(a,F3.1))')'Korrelation length a=',
-     1     (Ix+Iy)*.5,', ax=',Ix,', ay=',Iy
+      CALL get_vario(Ix,Iy,fetxt,1) ! gets teh 
+c     for postscript
+      WRITE (tcov,'(a)')'C(h)='//TRIM(fetxt)
       
 c     compute synthetic variogram model
+      par_vari = 1.
       DO i=1,nlag
          lag(i) = i*lag_unit
          h = lag(i)
@@ -230,11 +237,11 @@ c     sets parameter variance..
       OPEN (ifp,FILE='variogram.gnu',STATUS='replace',ERR=999)
       WRITE (ifp,'(a)')'set st da l'
       WRITE (ifp,'(a)')'set grid'
-      WRITE (ifp,'(a)')"set out 'variograms.ps'"
+      WRITE (ifp,'(a)')"set out 'variograms.eps'"
       WRITE (ifp,'(a)')'set term pos col sol enh 20'
       WRITE (ifp,'(a)')'set key bot right Left'
       WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//
-     1     TRIM(tgam)//'"'
+     1     TRIM(tgam)//'\n'//TRIM(tcov)//'"'
       WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
       WRITE (ifp,'(a,2(F10.2,a))')
      1     'set xrange [',grid_min,':',grid_max/2.,']'

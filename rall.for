@@ -187,6 +187,7 @@ c     diff+<
          IF (lstart) THEN
             dstart = dm0
             PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
+            IF (ldiff)PRINT*,'Reference model regularization!'
          ELSE
             PRINT*,'omitting prior:',ACHAR(9)//TRIM(dm0)
             dm0 = ''

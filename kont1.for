@@ -152,9 +152,9 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
          WRITE (*,'(a)')ACHAR(9)//
      1        'Covariance('//TRIM(fetxt)//')'
          WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)//
-     1        'Korrelation lengths Ix/Iy',Ix,'/',Iy
+     1        'Integral lengths Ix/Iy',Ix,'/',Iy
          WRITE (*,'(2(a,F5.2))')ACHAR(9)//
-     1        'Korrelation lengths Ix/Iy',Ix,'/',Iy
+     1        'Integral lengths Ix/Iy',Ix,'/',Iy
       END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,'(/a)',err=999)
