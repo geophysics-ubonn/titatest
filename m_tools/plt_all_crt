@@ -1,5 +1,6 @@
 #!/bin/bash
 
+pltdir=crt_plots
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
 fi
@@ -136,14 +137,6 @@ echo '\unitlength1mm' >> $texfile
 echo '\topmargin-2cm' >> $texfile
 echo '\headheight0cm' >> $texfile
 echo '\footskip3cm' >> $texfile
-#echo '\setlength{\parindent}{0pt}' >> $texfile
-#echo '\setlength{\topmargin}{0cm}' >> $texfile
-#echo '\setlength{\headsep}{-.5cm}' >> $texfile
-#echo '\setlength{\headheight}{0cm}' >> $texfile
-#echo '\textheight=25cm' >> $texfile
-#echo '\setlength{\oddsidemargin}{.5cm}' >> $texfile
-#echo '\setlength{\evensidemargin}{.5cm}' >> $texfile
-#echo '\textwidth=17cm' >> $texfile
 echo '\begin{document}' >> $texfile
 echo '\pagestyle{fancy}' >> $texfile
 #if [ -n "$1" ];then
@@ -151,31 +144,21 @@ echo '\pagestyle{fancy}' >> $texfile
 #else
 	echo '\fancyhead[C]{\Large\bf CRTomo Iteration no. '$it'}' >> $texfile
 #fi
-#echo '\begin{figure}' >> $texfile
 rm -f cropped.pdf
 echo $pltpdf
 let i=1
 for x in $pltpdf;do
   my_pdfcrop ./ $x
   y=`basename $x '.pdf'`;
-#  echo '\\begin{minipage}{7.5cm}' >> $texfile
-#  echo '\subfigure[][]{' >> $texfile
-#  echo '\includegraphics[width=.5\textwidth,height=.33\textheight]{'$x'}' >> $texfile
   echo '\includegraphics[width=.5\textwidth]{'$x'}' >> $texfile
-#  echo '' >> $texfile
-#  echo '\caption[]{'$x'}' >> $texfile
-#  echo '\\end{minipage}' >> $texfile
-# echo '\hspace{-1mm}' >> $texfile
-#  echo '\\vskip5mm' >> $texfile
-#  let k=$i%8
-#  if [ $k -eq 0 ]; then
-#    echo '\clearpage' >> $texfile
-#  fi
   let i=$i+1
 done
 
-#echo '\end{figure}' >> $texfile
 echo '\clearpage' >> $texfile
+if [ -e variograms.eps ];then
+    echo '\fancyhead[C]{\large Exp. Variogram }' >> $texfile
+    echo '\includegraphics[height=\textheight]{variograms.eps}' >> $texfile
+fi
 
 echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
 
@@ -188,3 +171,11 @@ echo '\end{document}' >> $texfile
 
 pdflatex $texfile
 
+if [ -d $pltdir ];then
+    echo $pltdir exits
+else
+    mkdir $pltdir
+fi
+cp *.pdf *.eps $pltdir
+
+clean

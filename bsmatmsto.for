@@ -24,6 +24,7 @@ c....................................................................
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
+      INCLUDE 'path.fin'
       INCLUDE 'err.fin'
 c....................................................................
 c     Hilfsmatrix
@@ -37,7 +38,7 @@ c     Korrelation lengths and variance (var)
 c     Hilfsvariablen
       integer              :: i,j,l,smaxs,ifp,c1
 c     smatm file name
-      CHARACTER(10)        :: fsmat
+      CHARACTER(124)        :: fsmat
 c     clearscreen
       CHARACTER(80)        :: csz
 
@@ -49,7 +50,7 @@ c     get time
 
       var = 1.
 
-      fsmat = 'inv.smatmi'
+      fsmat = ramd(1:lnramd)//slash(1:1)//'inv.smatmi'
 
       DO i=1,79
          csz(i:i+1)=' '
@@ -137,37 +138,9 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
                PRINT*,'Spalte::',smatm(:,abs(errnr))
                errnr = 108
             END IF
-         ELSE ! default..
+         ELSE                   ! default..
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Factorization...'
-c$$$            CALL DPOTRF('U',manz,smatm,manz,errnr)
-c$$$            IF (errnr/=0) THEN
-c$$$               fetxt='there was something wrong..'
-c$$$               PRINT*,'Zeile(',abs(errnr),
-c$$$     1              ')::',smatm(abs(errnr),:)
-c$$$               PRINT*,'Spalte::',smatm(:,abs(errnr))
-c$$$               errnr = 108
-c$$$            END IF
-c$$$            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-c$$$     1           'Inverting...'
-c$$$            CALL DPOTRI('U',manz,smatm,manz,errnr)
-c$$$            IF (errnr/=0) THEN
-c$$$               fetxt='there was something wrong..'
-c$$$               PRINT*,'Zeile(',abs(errnr),
-c$$$     1              ')::',smatm(abs(errnr),:)
-c$$$               PRINT*,'Spalte::',smatm(:,abs(errnr))
-c$$$               errnr = 108
-c$$$            END IF
-c$$$            WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
-c$$$     1           'Filling lower C_m...'
-c$$$            DO i= 1,manz
-c$$$               WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')
-c$$$     1              ACHAR(13)//ACHAR(9)//ACHAR(9)//
-c$$$     1              ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
-c$$$               DO j = i+1,manz
-c$$$                  smatm(j,i)=smatm(i,j)
-c$$$               END DO
-c$$$            END DO
             ALLOCATE (work(manz))
             CALL CHOLD(smatm,work,manz,errnr)
             IF (errnr/=0) THEN
