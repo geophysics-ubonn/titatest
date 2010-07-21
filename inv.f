@@ -71,6 +71,7 @@ c     diff+>
 c     Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 c     zur Berechnung der gemischten Randbedingung bestimmen
       call precal()
+
       if (errnr.ne.0) goto 999
 
       if (.not.lbeta) then

@@ -8,7 +8,6 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
-
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math

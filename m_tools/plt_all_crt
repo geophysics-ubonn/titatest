@@ -1,5 +1,6 @@
 #!/bin/bash
 
+pltdir=crt_plots
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
 else
@@ -72,9 +73,9 @@ if [ -e $invdir/cov1_m.diag_im ];then
     pltpdf="$pltpdf cov1_m_diag_im.pdf"
     clean
 fi
-if [ -e $invdir/res_m.diag_re ];then
-    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag_re > tmp.dat
-    cp tmp.dat $invdir/res_m.diagre
+if [ -e $invdir/res_m.diag ];then
+    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag > tmp.dat
+    cp tmp.dat $invdir/res_m.diag
     echo $invdir/res_m.diagre > inv.lastmod
     echo "Resolution Matrix" > tmp.fenster
     echo 'RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
@@ -140,14 +141,6 @@ echo '\unitlength1mm' >> $texfile
 echo '\topmargin-2cm' >> $texfile
 echo '\headheight0cm' >> $texfile
 echo '\footskip3cm' >> $texfile
-#echo '\setlength{\parindent}{0pt}' >> $texfile
-#echo '\setlength{\topmargin}{0cm}' >> $texfile
-#echo '\setlength{\headsep}{-.5cm}' >> $texfile
-#echo '\setlength{\headheight}{0cm}' >> $texfile
-#echo '\textheight=25cm' >> $texfile
-#echo '\setlength{\oddsidemargin}{.5cm}' >> $texfile
-#echo '\setlength{\evensidemargin}{.5cm}' >> $texfile
-#echo '\textwidth=17cm' >> $texfile
 echo '\begin{document}' >> $texfile
 echo '\pagestyle{fancy}' >> $texfile
 #if [ -n "$1" ];then
@@ -155,37 +148,22 @@ echo '\pagestyle{fancy}' >> $texfile
 #else
 	echo '\fancyhead[C]{\Large\bf CRTomo Iteration no. '$it'}' >> $texfile
 #fi
-#echo '\begin{figure}' >> $texfile
 rm -f cropped.pdf
 echo $pltpdf
 let i=1
 for x in $pltpdf;do
   my_pdfcrop ./ $x
   y=`basename $x '.pdf'`;
-#  echo '\\begin{minipage}{7.5cm}' >> $texfile
-#  echo '\subfigure[][]{' >> $texfile
-#  echo '\includegraphics[width=.5\textwidth,height=.33\textheight]{'$x'}' >> $texfile
   echo '\includegraphics[width=.5\textwidth]{'$x'}' >> $texfile
-#  echo '' >> $texfile
-#  echo '\caption[]{'$x'}' >> $texfile
-#  echo '\\end{minipage}' >> $texfile
-# echo '\hspace{-1mm}' >> $texfile
-#  echo '\\vskip5mm' >> $texfile
-#  let k=$i%8
-#  if [ $k -eq 0 ]; then
-#    echo '\clearpage' >> $texfile
-#  fi
   let i=$i+1
 done
 
-if [ -e variograms.ps ];then
-    ps2pdf variograms.ps variograms.pdf
-    echo '\clearpage' >> $texfile
-    echo '\includegraphics[height=\textheight]{variograms}' >> $texfile
-fi
-
-#echo '\end{figure}' >> $texfile
 echo '\clearpage' >> $texfile
+if [ -e variograms.eps ];then
+    echo '\fancyhead[C]{\large Exp. Variogram }' >> $texfile
+    echo '\includegraphics[height=\textheight]{variograms.eps}' >> $texfile
+    echo '\clearpage' >> $texfile
+fi
 
 echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
 if [ -e inv_stat.eps ];then
@@ -200,3 +178,11 @@ echo '\end{document}' >> $texfile
 
 pdflatex $texfile
 
+if [ -d $pltdir ];then
+    echo $pltdir exits
+else
+    mkdir $pltdir
+fi
+cp *.pdf *.eps $pltdir
+
+clean
