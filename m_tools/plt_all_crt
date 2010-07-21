@@ -2,6 +2,9 @@
 
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
+else
+    echo no inversion was running 
+    exit
 fi
 if [ -e inv.lastmod ];then
     echo found inv.lastmod
@@ -9,6 +12,7 @@ else
     echo no inversion results found.. exiting 
     exit
 fi
+plot_cur_crtomo=`which plot_cur_crtomo`
 cp inv.lastmod crt.lastmod
 mymag=`cat inv.lastmod`
 mymag=`basename $mymag '.mag'`
@@ -16,20 +20,20 @@ echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 clean
 echo 'Amplitude' > tmp.fenster
-plot_cur_crtomo
+$plot_cur_crtomo
 pltpdf=$mymag'_mag.pdf'
 clean
 if [ -e $invdir/$mymag'.pha' ];then
     echo $invdir/$mymag'.pha' > inv.lastmod
     echo "Phase" > tmp.fenster
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf $mymag"'_pha.pdf'
     clean
 fi
 echo $invdir/coverage.mag > inv.lastmod
 echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
 echo 'log_{10}(c)[SI]' > tmp.cbarn
-plot_cur_crtomo
+$plot_cur_crtomo
 pltpdf="$pltpdf coverage_mag.pdf"
 clean
 if [ -e $invdir/ata.diag ];then
@@ -37,7 +41,7 @@ if [ -e $invdir/ata.diag ];then
     echo "Squared coverage" > tmp.fenster
     echo 'Cov=A^TC_d^{-1}A' > tmp.fenster
     echo 'log_{10}(Cov_{jj})[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf ata_diag.pdf"
     clean
 fi
@@ -46,7 +50,7 @@ if [ -e $invdir/ata_reg.diag ] ;then
     echo "Regularized squared coverage" > tmp.fenster
     echo "RCov=A^TC_d^{-1}A + \lambda R^TR" > tmp.fenster
     echo 'log_{10}(RCov_{jj})[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf ata_reg_diag.pdf"
     clean
 fi
@@ -55,7 +59,7 @@ if [ -e $invdir/cov1_m.diag_re ];then
     echo "Model Covariance Matrix" > tmp.fenster
     echo 'MCM1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
     echo 'log_{10}(MCM1_{jj}^{1/2})[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf cov1_m_diag_re.pdf"
     clean
 fi
@@ -64,7 +68,7 @@ if [ -e $invdir/cov1_m.diag_im ];then
     echo "Model Covariance Matrix" > tmp.fenster
     echo 'MCM1=(A^TC_d^{-1}A + \lambda R^TR)^{-1}' > tmp.fenster
     echo 'Im(log_{10}(MCM1_{jj}^{1/2}))[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf cov1_m_diag_im.pdf"
     clean
 fi
@@ -75,7 +79,7 @@ if [ -e $invdir/res_m.diag_re ];then
     echo "Resolution Matrix" > tmp.fenster
     echo 'RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
     echo 'RES_{jj}[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf res_m_diagre.pdf"
     clean
 fi
@@ -86,7 +90,7 @@ if [ -e $invdir/res_m.diag_im ];then
     echo "Resolution Matrix" > tmp.fenster
     echo 'RES=(A^TC_d^{-1}A + \lambda R^TR)^{-1}A^TC_d^{-1}A' > tmp.fenster
     echo 'Im(RES_{jj})[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf res_m_diagim.pdf"
     clean
 fi
@@ -95,7 +99,7 @@ if [ -e $invdir/cov2_m.diag_re ];then
     echo "Model Covariance Matrix" > tmp.fenster
     echo 'MCM2=MCM1 A^TC_d^{-1}A MCM1' > tmp.fenster
     echo 'log_{10}(MCM2_{jj}^{1/2})[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf cov2_m_diag_re.pdf"
     clean
 fi
@@ -104,7 +108,7 @@ if [ -e $invdir/cov2_m.diag_im ];then
     echo "Model Covariance Matrix" > tmp.fenster
     echo 'MCM2=MCM1 A^TC_d^{-1}A MCM1' > tmp.fenster
     echo 'Im(log_{10}(MCM2_{jj}^{1/2}))[SI]' > tmp.cbarn
-    plot_cur_crtomo
+    $plot_cur_crtomo
     pltpdf="$pltpdf cov2_m_diag_im.pdf"
     clean
 fi
@@ -174,14 +178,22 @@ for x in $pltpdf;do
   let i=$i+1
 done
 
+if [ -e variograms.ps ];then
+    ps2pdf variograms.ps variograms.pdf
+    echo '\clearpage' >> $texfile
+    echo '\includegraphics[height=\textheight]{variograms}' >> $texfile
+fi
+
 #echo '\end{figure}' >> $texfile
 echo '\clearpage' >> $texfile
 
 echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
-
-echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
+if [ -e inv_stat.eps ];then
+    echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
+fi
 
 echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
+
 
 echo '\end{document}' >> $texfile
 

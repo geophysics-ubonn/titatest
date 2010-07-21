@@ -911,6 +911,8 @@ c     'sens' und 'kpot' freigeben
          DEALLOCATE(sens,kpot)
       end if
       IF (ALLOCATED(smatm)) DEALLOCATE (smatm)
+      IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
+      IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
 c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5
 

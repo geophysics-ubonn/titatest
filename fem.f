@@ -184,13 +184,13 @@ c     Berechnung der gemischten Randbedingung bestimmen
 
 c     'a', 'hpot' und 'kpot' zuweisen
       ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),
-     1     kpot(sanz,eanz,kwnanz),stat=errnr)
+     1     kpot(sanz,eanz,kwnanz),b(sanz),stat=errnr)
       if (errnr.ne.0) then
          fetxt = 'allocation problem a and hpot'
          errnr = 97 
          goto 999
       end if
-      ALLOCATE(pot(sanz),pota(sanz),b(sanz),fak(sanz),stat=errnr)
+      ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
       if (errnr.ne.0) then
          fetxt = 'allocation problem pot to fak'
          errnr = 97 
@@ -286,7 +286,7 @@ c     nur echte Spannungen ausgeben...
       end if
 
 c     'a' und 'hpot' freigeben
-      DEALLOCATE(a,hpot)
+      DEALLOCATE(a,hpot,b)
 
 c     Ggf. Sensitivitaeten aller Messungen berechnen und ausgeben
       if (lsens) then
@@ -321,7 +321,7 @@ c     'sens' freigeben
       end if
 
 c     'kpot' freigeben
-      DEALLOCATE(kpot)
+      DEALLOCATE(kpot,pot,pota,fak)
 
 c     Ggf. weiteren Datensatz modellieren
       if (lagain) goto 5
