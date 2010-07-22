@@ -95,10 +95,11 @@ c     get memory
 c     for postscript 
       tg = '{/Symbol g}'
       WRITE (tgam,'(a)')tg//'(h)='//TRIM(fetxt) 
-      CALL get_vario(Ix,Iy,fetxt,1) ! gets teh 
+      IF (ltri == 15) THEN ! only meaningful for stochastical regu..
+         CALL get_vario(Ix,Iy,fetxt,1) ! gets teh 
 c     for postscript
-      WRITE (tcov,'(a)')'C(h)='//TRIM(fetxt)
-      
+         WRITE (tcov,'(a)')'C(h)='//TRIM(fetxt)
+      END IF
 c     compute synthetic variogram model
       par_vari = 1.
       DO i=1,nlag
@@ -240,8 +241,13 @@ c     sets parameter variance..
       WRITE (ifp,'(a)')"set out 'variograms.eps'"
       WRITE (ifp,'(a)')'set term pos col sol enh 20'
       WRITE (ifp,'(a)')'set key bot right Left'
-      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//
-     1     TRIM(tgam)//'\n'//TRIM(tcov)//'"'
+      IF (ltri == 15) THEN ! only meaningful for stochastical regu..
+         WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//
+     1        TRIM(tgam)//'\n'//TRIM(tcov)//'"'
+      ELSE
+         WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//
+     1        TRIM(tgam)//'"'
+      END IF
       WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
       WRITE (ifp,'(a,2(F10.2,a))')
      1     'set xrange [',grid_min,':',grid_max/2.,']'

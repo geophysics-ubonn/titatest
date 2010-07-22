@@ -64,10 +64,10 @@ CONTAINS
        READ (*,'(a)')cszv
        IF (cszv /= '')READ (cszv,*)omev
        WRITE (cszv,'(a,F2.1)')'va*(h/a)**',omev
-    CASE DEFAULT! exponential (default)
+    CASE DEFAULT! exponential
        Ix = Ix/3.
        Iy = Iy/3.
-       WRITE (cszv,'(a)')'va*(1-EXP(-(3h/a))) (default)'
+       WRITE (cszv,'(a)')'va*(1-EXP(-(3h/a)))'
     END SELECT
 
     SELECT CASE (c2)
@@ -82,8 +82,8 @@ CONTAINS
        WRITE (cszc,'(a,F2.1,a)')'EXP(-va*(h/a)**',omec,')'
     CASE (4)!Lemma
        WRITE (cszc,'(a)')'EXP(-variogram(h))'
-    CASE DEFAULT!Exponential1 (default)
-       WRITE (cszc,'(a)')'va*EXP(-3h/a) (default)'
+    CASE DEFAULT!Exponential1
+       WRITE (cszc,'(a)')'va*EXP(-3h/a)'
     END SELECT
     
   END SUBROUTINE set_vario

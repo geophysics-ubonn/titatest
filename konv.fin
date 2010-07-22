@@ -145,6 +145,8 @@ c Mega schalter, wird binaer getestet
         integer         * 4	mswitch
 c Schalter für ols Loeser
   	logical         * 4     lgauss
+c Schalter ob experimentelles variogram berechnet werden soll
+  	logical         * 4     lvario
 c.....................................................................
 
         common/ckonv/   lam,
@@ -204,4 +206,5 @@ cdiff+>
      1 			lcov2,
      1 			mswitch,
      1			lgauss,
-     1			lsens
+     1			lsens,
+     1			lvario

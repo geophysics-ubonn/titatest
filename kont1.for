@@ -58,8 +58,12 @@ c     diff+<
       write(fpinv,'(a80)',err=999) dfm0
 c     diff+>
       write(fpinv,'(a16)',err=999) '***PARAMETERS***'
-      write(fpinv,'(i4,t18,a24)',err=999) nx,'! # cells in x-direction'
-      write(fpinv,'(i4,t18,a24)',err=999) nz,'! # cells in z-direction'
+      IF (ltri == 0) THEN
+         write(fpinv,'(i4,t18,a24)',err=999) nx,
+     1        '! # cells in x-direction'
+         write(fpinv,'(i4,t18,a24)',err=999) nz,
+     1        '! # cells in z-direction'
+      END IF
       write(fpinv,'(g11.5,t18,a36)',err=999) alfx,
      1     '! smoothing parameter in x-direction'
       write(fpinv,'(g11.5,t18,a36)',err=999) alfz,
@@ -138,23 +142,27 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       IF (ltri>4.AND.ltri<15)
      1     write(fpinv,*,err=999)'  Stabilizer beta  : ',betamgs
       write(fpinv,*,err=999)'Stochastic regu     : ',(ltri==15)
-      IF (ltri == 15) THEN
+
+      IF (lvario) THEN
+         WRITE (fpinv,'(a)',err=999)'Experimental Variogram::'
          WRITE (fpinv,'(a,I4)',err=999)ACHAR(9)//
      1        'nx-switch  : ',nx
          CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
-         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
-     1        'Variogram('//TRIM(fetxt)//')'
-         WRITE (*,'(/a)')ACHAR(9)//
-     1        'Variogram('//TRIM(fetxt)//')'
-         CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
-         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
-     1        'Covariance('//TRIM(fetxt)//')'
-         WRITE (*,'(a)')ACHAR(9)//
-     1        'Covariance('//TRIM(fetxt)//')'
          WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)//
      1        'Integral lengths Ix/Iy',Ix,'/',Iy
-         WRITE (*,'(2(a,F5.2))')ACHAR(9)//
+         WRITE (*,'(/2(a,F5.2))')ACHAR(9)//
      1        'Integral lengths Ix/Iy',Ix,'/',Iy
+         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1        'Variogram('//TRIM(fetxt)//')'
+         WRITE (*,'(a)')ACHAR(9)//
+     1        'Variogram('//TRIM(fetxt)//')'
+         IF (ltri == 15) THEN
+            CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
+            WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1           'Covariance('//TRIM(fetxt)//')'
+            WRITE (*,'(a)')ACHAR(9)//
+     1           'Covariance('//TRIM(fetxt)//')'
+         END IF
       END IF
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
       write(fpinv,'(/a)',err=999)
@@ -169,7 +177,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
          write(fpinv,'(1x,a)',err=999,ADVANCE='no')
      1        'taking easy lam_0 : '
          IF (nz<-1) write(fpinv,*,err=999) -REAL(nz)
-         IF (nz==-1) write(fpinv,*,err=999) REAL(manz)
+         IF (nz==-1) write(fpinv,*,err=999)MAX(REAL(manz),REAL(nanz))
       END IF
 
       write(fpinv,'(/a)',err=999) '***FIXED***'

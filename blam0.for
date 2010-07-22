@@ -34,7 +34,7 @@ c.....................................................................
 c     Start-Regularisierungsparameter bestimmen
       IF (nz<0) THEN
          IF (nz<-1) lammax = -REAL(nz)
-         IF (nz==-1) lammax = REAL(manz)
+         IF (nz==-1) lammax = MAX(REAL(manz),REAL(nanz))
          WRITE (*,'(2x,a,F12.1)')'taking easy lam_0 ',lammax
          RETURN
       END IF

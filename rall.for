@@ -437,13 +437,17 @@ c     Elementeinteilung einlesen
          manz = elanz ! wichtig an dieser stelle..
          CALL bnachbar ! blegt nachbar
          CALL besp_elem
+         lvario = .TRUE.
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
       END IF
+      
+      lvario = lvario.OR.       ! if already set or
+     1     (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
 
-      IF (lsto.OR.(itmax == 0).AND.(lstart.OR.lprior)) 
-     1     CALL set_vario (nx,alfx,alfz,esp_mit,esp_med)
+      IF (lvario) CALL set_vario (nx,alfx,alfz,esp_mit,esp_med) ! nx is than
+!     the variogram and covariance function type, see variomodel.f90
 
       if (manz.ne.elanz) then
          fetxt = ' '

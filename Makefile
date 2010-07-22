@@ -134,8 +134,8 @@ ctm:
 		cd ./CutMcK ; make
 
 install:	$(C1) $(crt) $(crm)				
-		$(CP) CRTomo $(WPATH)
-		$(CP) CRMod $(WPATH)
+		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
+		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 		cd ./m_tools ; make install
 		cd ./CutMcK ; make install
 
