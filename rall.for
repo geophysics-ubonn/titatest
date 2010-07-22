@@ -183,8 +183,8 @@ c     diff+<
       read(fpcfg,'(a80)',end=1001,err=999) dfm0
 
       IF (dm0 /= '') THEN
-         INQUIRE(FILE=TRIM(dm0),EXIST=lstart)
-         IF (lstart) THEN
+         INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
+         IF (lstart) THEN ! set the starting model
             dstart = dm0
             PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
             IF (ldiff)PRINT*,'Reference model regularization!'
@@ -194,16 +194,16 @@ c     diff+<
          END IF
       END IF
       IF (ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
-         lprior = .TRUE.
-         ldiff = .FALSE.
+         lprior = .TRUE. ! reference model regu only if there is no
+         ldiff = .FALSE. ! time difference inversion
       END IF
 c     diff+>
       fetxt = 'trying noise model seed'
       read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
 !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
-      lnse2 = .NOT.lprior
+      lnse2 = .NOT.lprior       ! kein prior?
 !     Daten Rauschen unabhängig vom Fehlermodell?
-      lnsepri = lprior ! if we have seed and std we assume to add noise to prior
+      lnsepri = lprior          ! if we have seed and std we assume to add noise to prior
  99   fetxt = 'rall -> Gitter nx'
       read(fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
@@ -290,11 +290,11 @@ c check if the final phase should start with homogenous model
       lffhom = (stabp0 < 0)
       IF (lffhom) stabp0 = -stabp0
       
-      lnse = ( stabw0 < 0 ) 
+      lnse = ( stabw0 < 0 ) ! couple error and noise model
       IF ( lnse ) THEN
          stabw0 = -stabw0
          IF (lnse2) print*,'overriding seperate noise model'
-         lnse2 = .FALSE.
+         lnse2 = .FALSE. ! overrides the lnse2 switch
 c     copy error model into noise model
          nstabw0 = stabw0
          nstabm0 = stabm0
@@ -308,8 +308,12 @@ c     copy error model into noise model
          BACKSPACE(fpcfg)
          WRITE (*,'(a)',ADVANCE='no')' Rauschen '//
      1        'Gekoppelt an Fehlermodell '
+      ELSE
+c     check if there is at least crt.noisemod containig noise info
+         IF (iseedpri == 0) iseedpri = 1
+         fetxt = 'crt.noisemod'
+         INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
       END IF
-
  107  IF (lnse2) THEN
 
          iseed = iseedpri
