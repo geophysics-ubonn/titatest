@@ -79,8 +79,8 @@ c$$$         END DO
 
          CALL CHOLD(cov_m_dc,dig,manz,errnr)
          IF (errnr /= 0) THEN
-            PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
-            PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+            fetxt='CHOLD mcm :: matrix not pos definite..'
+            PRINT*,'Zeile(',abs(errnr),')'
             errnr = 108
             RETURN
          END IF

@@ -55,7 +55,7 @@ SUBROUTINE chold(a,p,n,ierr)
         IF (i == j) THEN
 
            IF (s <= 0) THEN
-              PRINT*,'WARNING: chold - not positive definite'
+              PRINT*,'CHOLD:: - not positive definite', s
               ierr = -i
               RETURN
            END IF

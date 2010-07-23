@@ -135,8 +135,8 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
                fetxt='there was something wrong..'
                PRINT*,'Zeile(',abs(errnr),
      1              ')::',smatm(abs(errnr),:)
-               PRINT*,'Spalte::',smatm(:,abs(errnr))
                errnr = 108
+               RETURN
             END IF
          ELSE                   ! default..
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
@@ -144,11 +144,10 @@ c     Berechne nun die Inverse der Covarianzmatrix!!!
             ALLOCATE (work(manz))
             CALL CHOLD(smatm,work,manz,errnr)
             IF (errnr/=0) THEN
-               fetxt='there was something wrong..'
-               PRINT*,'Zeile(',abs(errnr),
-     1              ')::',smatm(abs(errnr),:)
-               PRINT*,'Spalte::',smatm(:,abs(errnr))
+               fetxt='CHOLD smatm :: matrix not pos definite..'
+               PRINT*,'Zeile(',abs(errnr),')'
                errnr = 108
+               RETURN
             END IF
             WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//
      1           'Inverting...'

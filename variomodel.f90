@@ -12,6 +12,8 @@ MODULE variomodel
 !!!$ c2 accounts for the covariance model
   REAL,PRIVATE,SAVE                 :: omev,omec
 !!$! power model exponent for variogram and covariance
+  REAL,PRIVATE,SAVE                 :: tfac
+!!$! exponent factor for covariance function according to exp(-tfac(variogram))
   CHARACTER (30),PRIVATE,SAVE       :: cszv,cszc  
 !!$ strings of model type, cszv for variogram model
 !!$ cszc for covariance model (can be decoupeled)
@@ -34,7 +36,8 @@ CONTAINS
 
     omev = 1.5 ! 0<ome<2
     omec = omev
-    
+    tfac = omev
+
     c2 = INT(type/10)
     c1 = type-c2*10
 
@@ -63,7 +66,7 @@ CONTAINS
     CASE (3) ! power
        READ (*,'(a)')cszv
        IF (cszv /= '')READ (cszv,*)omev
-       WRITE (cszv,'(a,F2.1)')'va*(h/a)**',omev
+       WRITE (cszv,'(a,F3.1)')'va*(h/a)**',omev
     CASE DEFAULT! exponential
        Ix = Ix/3.
        Iy = Iy/3.
@@ -79,9 +82,12 @@ CONTAINS
        PRINT*,'Change power model exponent?[',omec,']'
        READ (*,'(a)')cszc
        IF (cszc /= '')READ (cszc,*)omec
-       WRITE (cszc,'(a,F2.1,a)')'EXP(-va*(h/a)**',omec,')'
+       WRITE (cszc,'(a,F3.1,a)')'EXP(-va*(h/a)**',omec,')'
     CASE (4)!Lemma
-       WRITE (cszc,'(a)')'EXP(-variogram(h))'
+       PRINT*,'Change exponent factor?[',tfac,']'
+       READ (*,'(a)')cszc
+       IF (cszc /= '')READ (cszc,*)tfac
+       WRITE (cszc,'(a,F3.1,a)')'EXP(-',tfac,'*variogram(h))'
     CASE DEFAULT!Exponential1
        WRITE (cszc,'(a)')'va*EXP(-3h/a)'
     END SELECT
@@ -109,19 +115,22 @@ CONTAINS
   REAL (KIND (0D0)) FUNCTION mvario (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
-    REAL (KIND (0D0))             :: rh,ra,r
+    REAL (KIND (0D0))             :: rh,ra,r,r2 ! distances
 
     mvario = 0.
+
     r = SQRT((lagx / Ix)**2. + (lagy / Iy)**2.)
+    r2 = r**1.9999999 ! one more 9 and gauss will make C no more pos def
+
     rh = SQRT(lagx**2. + lagy**2.)
     ra = SQRT(Ix**2. + Iy**2.)
 
     SELECT CASE (c1)
     CASE (1)
-       mvario = varianz * (1. - EXP(-r**2.))
+       mvario = varianz * (1. - EXP(-r2))
     CASE (2)
        IF (rh <= ra) THEN
-          mvario = varianz * (1.5*r - .5*r**3.)
+          mvario = varianz * (1.5*r - .5*r**3D0)
        ELSE
           mvario = varianz
        END IF
@@ -136,20 +145,23 @@ CONTAINS
   REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
-    REAL (KIND (0D0))             :: r,rh,ra ! distances
+    REAL (KIND (0D0))             :: r,rh,ra,r2 ! distances
+    
+    mcova = 0.
     
     r = SQRT((lagx / Ix)**2. + (lagy / Iy)**2.) ! not sure of this
+    r2 = r**1.9999999 ! one more 9 and gauss will make C no more pos def
+    
     rh = SQRT(lagx**2. + lagy**2.)
     ra = SQRT(Ix**2. + Iy**2.)
-    mcova = 0.
 
     SELECT CASE (c2)
 
     CASE (1)
-       mcova = varianz*EXP(-r**2.)
+       mcova = varianz * EXP(-r2)
     CASE (2)
        IF (rh <= ra) THEN
-          mcova = varianz * (1. - 1.5*r + .5*r**3.)
+          mcova = varianz * (1. - 1.5*r + .5*r**3D0)
        ELSE
           mcova = 0.
        END IF
@@ -157,11 +169,11 @@ CONTAINS
        mcova = varianz*r**omec
        mcova = EXP(-mcova)
     CASE (4)
-       mcova = EXP(-mvario(lagx,lagy,varianz))
+       mcova = EXP(-5.*mvario(lagx,lagy,varianz))
     CASE DEFAULT
        mcova = varianz * EXP(-r)
     END SELECT
-
+    !    IF (mcova < 1.d-9) mcova = 0.
   END FUNCTION mcova
   
 END MODULE variomodel
