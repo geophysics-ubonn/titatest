@@ -138,8 +138,8 @@ CONTAINS
     CASE (1)
        mvario = varianz * (1. - EXP(-r2))
     CASE (2)
-       IF (rh <= ra) THEN
-          mvario = varianz * (1.5*r - .5*r**3.)
+       IF (rh < ra) THEN
+          mvario = varianz * (r * (1.5 - .5*r2))
        ELSE
           mvario = varianz
        END IF
@@ -170,8 +170,8 @@ CONTAINS
     CASE (1)
        mcova = varianz * EXP(-r2)
     CASE (2)
-       IF (rh <= ra) THEN
-          mcova = varianz * (1. - 1.5*r + .5*r**3.)
+       IF (rh < ra) THEN
+          mcova = varianz * (1. - r * (1.5 - .5*r2) )
        ELSE
           mcova = 0.
        END IF
@@ -179,7 +179,7 @@ CONTAINS
        mcova = varianz*r**omec
        mcova = EXP(-mcova)
     CASE (4)
-       mcova = EXP(-5.*mvario(lagx,lagy,varianz))
+       mcova = EXP(-tfac*mvario(lagx,lagy,varianz))
     CASE DEFAULT
        mcova = varianz * EXP(-r)
     END SELECT
