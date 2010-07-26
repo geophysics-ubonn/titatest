@@ -306,7 +306,7 @@ c     copy error model into noise model
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
-         WRITE (*,'(a)',ADVANCE='no')' Rauschen '//
+         WRITE (*,'(a)')' Rauschen '//
      1        'Gekoppelt an Fehlermodell '
       ELSE
 c     check if there is at least crt.noisemod containig noise info
@@ -339,6 +339,8 @@ c     check if there is at least crt.noisemod containig noise info
          CALL write_noisemodel(nstabw0,nstabm0,
      1        nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
          IF (errnr /= 0) GOTO 999
+      ELSE
+         PRINT*,'No Data noise!!'
       END IF
 
       IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
