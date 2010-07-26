@@ -71,10 +71,17 @@ c.....................................................................
 
          IF (ltri == 0) THEN
             CALL bpdc(bvecdc,pvec)
-         ELSE IF (ltri < 10) THEN
-            call bpdctri(bvecdc,pvec)
-         ELSE
-            call bpdcsto(bvecdc,pvec)
+
+         ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1           (ltri > 4 .AND. ltri < 15)) THEN
+            CALL bpdctri(bvecdc,pvec)
+
+         ELSE IF (ltri == 3.OR.ltri == 4) THEN
+            CALL bpdclma(bvecdc,pvec)
+
+         ELSE IF (ltri == 15) THEN
+            CALL bpdcsto(bvecdc,pvec)
+
          END IF
 
          dr1 = 0d0

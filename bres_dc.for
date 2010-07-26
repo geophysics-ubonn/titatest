@@ -1,13 +1,15 @@
       SUBROUTINE bres_dc(kanal)
 c     
 c     Unterprogramm berechnet Aufloesungsmatrix
-c     RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 c     Fuer beliebige Triangulierung
+c     RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
+c     wobei (A^TC_d^-1A + C_m^-1) bereits invertiert wurde (cov_m_dc)
+c
+c     Copyright Andreas Kemna 2009
+c     Andreas Kemna / Roland Martin                            02-Nov-2009
 c     
-c     Andreas Kemna                                            02-Nov-2009
-c     
-c     Letzte Aenderung    RM                                   23-Nov-2009
-c     
+c     Letzte Aenderung    RM                                   20-Feb-2010
+c
 c.........................................................................
       USE alloci
       
@@ -39,19 +41,22 @@ c$$$  calc RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
          dig(i) = ata_reg_dc(i,i)
       END DO
       
-      dig_min = MINVAL(ABS(dig))
-      dig_max = MAXVAL(ABS(dig))
-      
-      PRINT*,dig_min,dig_max
-      
-      dig = dig/dig_max
+      dig_min = MINVAL(dig)
+      dig_max = MAXVAL(dig)
+
       WRITE (kanal,*)manz
       DO i=1,manz
-         WRITE (kanal,*)LOG10(ABS(dig(i))),dig(i)*dig_max
+         WRITE (kanal,*)ABS(dig(i)),LOG10(dig(i))
       END DO
-      CLOSE (kanal)
-      errnr = 0
+
+      WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+      WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+      CLOSE(kanal)
+
       DEALLOCATE (dig)
+
+      errnr = 0
  999  RETURN
 
       END

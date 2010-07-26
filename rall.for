@@ -1,18 +1,22 @@
       subroutine rall(kanal,delem,delectr,dstrom,drandb,
 c     diff-     1                  dsigma,dvolt,dsens,dstart,lsens,lagain)
 c     diff+<
-     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,
-     1     lsens,lagain)
+     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 c     diff+>
       
 c     Unterprogramm zum Einlesen der benoetigten Variablen.
 
 c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   20-Aug-2007
-
+c
 c.....................................................................
       USE make_noise
+      USE variomodel
+      USE femmod
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
@@ -20,9 +24,7 @@ c.....................................................................
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
@@ -49,10 +51,6 @@ c     diff+<
 c     diff+>
      1     drandb
 
-c     Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
-c     werden soll
-      logical         * 4     lsens
-
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
       logical         * 4     lsto
@@ -62,7 +60,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,iregus
+      integer         * 4     i,iregus,ifp1
 
 c     Pi
       real            * 8     pi
@@ -115,6 +113,10 @@ c     "ratio-dataset" ?
       lratio = .false.
 c     ak        lratio = .true.
       llamf = .FALSE.
+c final phase improvement setzt phase zueruck auf homogenes modell
+      lffhom = .FALSE.
+c     Daten Rauschen vom Fehlermodell entkoppeln ?
+      lnse2 = .FALSE.
 c###### values..
 c     FIXED PARAMETER
 c     Slash
@@ -140,7 +142,7 @@ c     CG-Epsilon
 c     Mindest-step-length
       stpmin = 1d-3
 c     Minimale stepsize (bdpar)
-      bdmin = 1d-3
+      bdmin = 0.0d0
 c     Regularisierungsparameter
 c     ak Default
       nlam   = 30
@@ -154,7 +156,7 @@ c     ak        fstop  = 0.8d0
 c     ak Strasbrg/Werne/Grimberg
 c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
-      iseedpri = 0; stabmpri = 0.
+      iseedpri = 0; modl_stdn = 0.; iseed = 1;
       mswitch = 0
       iregus = 0
 c#########################################################
@@ -167,8 +169,8 @@ c Read in input values..
       fetxt = 'rall -> spannungs file'
       read(fpcfg,'(a80)',end=1001,err=999) dstrom
       fetxt = 'rall -> Inversionsverzeichnis'
-      read(fpcfg,'(a60)',end=1001,err=999) ramd
-      INQUIRE (FILE=ramd,EXIST= exi)
+      read(fpcfg,'(a80)',end=1001,err=999) ramd
+      INQUIRE (FILE=TRIM(ramd),EXIST= exi)
       IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
 c     diff+<
       fetxt = 'rall -> Differenz inversion'
@@ -181,24 +183,29 @@ c     diff+<
       read(fpcfg,'(a80)',end=1001,err=999) dfm0
 
       IF (dm0 /= '') THEN
-         INQUIRE(FILE=TRIM(dm0),EXIST=lstart)
-         IF (lstart) THEN
+         INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
+         IF (lstart) THEN ! set the starting model
             dstart = dm0
             PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
+            IF (ldiff)PRINT*,'Reference model regularization!'
          ELSE
             PRINT*,'omitting prior:',ACHAR(9)//TRIM(dm0)
             dm0 = ''
          END IF
       END IF
       IF (ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
-         lprior = .TRUE.
-         ldiff = .FALSE.
+         lprior = .TRUE. ! reference model regu only if there is no
+         ldiff = .FALSE. ! time difference inversion
       END IF
 c     diff+>
-      fetxt = 'rall -> Gitter nx'
-      read(fpcfg,*,end=1001,err=99) iseedpri,stabmpri
-      lnsepri = lprior ! if we have seed and std we assume to add noise to prior
- 99   read(fpcfg,*,end=1001,err=999) nx
+      fetxt = 'trying noise model seed'
+      read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
+!     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
+      lnse2 = .NOT.lprior       ! kein prior?
+!     Daten Rauschen unabhängig vom Fehlermodell?
+      lnsepri = lprior          ! if we have seed and std we assume to add noise to prior
+ 99   fetxt = 'rall -> Gitter nx'
+      read(fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
       read(fpcfg,*,end=1001,err=999) nz
       fetxt = 'rall -> Anisotropie /x'
@@ -227,19 +234,19 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) stabpB
       fetxt = 'rall -> Relative Fehler Phasen'
       read(fpcfg,*,end=1001,err=999) stabpA2
-      fetxt = 'rall -> Absoluter Fehler Phasen'
+      fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
       read(fpcfg,*,end=1001,err=999) stabp0
-      fetxt = 'rall -> Homogenes startmodell?'
+      fetxt = 'rall -> Homogenes Startmodell?'
       read(fpcfg,*,end=1001,err=999) lrho0
       fetxt = 'rall -> rho_0'
       read(fpcfg,*,end=1001,err=999) bet0
       fetxt = 'rall -> phase_0'
       read(fpcfg,*,end=1001,err=999) pha0
-      fetxt = 'rall -> Noch ne Inversion'
+      fetxt = 'rall -> Noch eine Inversion'
       read(fpcfg,*,end=1001,err=999) lagain
       fetxt = 'rall -> 2D oder 2.5D ?'
       read(fpcfg,*,end=1001,err=999) swrtr
-      fetxt = 'rall -> weirtere Quelle?'
+      fetxt = 'rall -> weitere Quelle?'
       read(fpcfg,*,end=1001,err=999) lsink
       fetxt = 'rall -> Nummer der Quelle'
       read(fpcfg,*,end=1001,err=999) nsink
@@ -248,23 +255,6 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       fetxt = 'rall -> Datei mit Randwerten'
       read(fpcfg,'(a80)',end=1001,err=999) drandb
       read(fpcfg,'(I2)',end=100,err=100) ltri
-      
-      lsto = (ltri==10)
-      GOTO 101
-
- 100  BACKSPACE(fpcfg)
-
- 101  IF (lsto) PRINT*,'Stochastische Regularisierung'
-      
-      IF (ltri == 2) THEN
-         READ(fpcfg,*,end=102,err=102) betamgs
-	 GOTO 103
- 102     betamgs = 0.1          ! default value for MGS
-         BACKSPACE(fpcfg)
-
- 103     PRINT*,'Minimum gradient support regularisierung beta =',
-     1        betamgs
-      END IF
 
       IF (ltri >= 20) THEN
          llamf = .TRUE.
@@ -276,23 +266,85 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
  105     PRINT*,'Fixing Lambda =', lamfix
          ltri = ltri - 20
       END IF
+
+      lsto = (ltri==15)
       
+      GOTO 101
+
+ 100  BACKSPACE (fpcfg)
+
+
+ 101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
-      lnse = ( stabw0 < 0 ) 
+      IF (ltri > 4 .AND. ltri < 15) THEN
+         READ(fpcfg,*,end=102,err=102) betamgs
+	 GOTO 103
+ 102     betamgs = 0.1          ! default value for MGS
+         BACKSPACE (fpcfg)
+
+ 103     PRINT*,'Regularisation with support stabilizer beta =',
+     1        betamgs
+      END IF      
+
+c check if the final phase should start with homogenous model      
+      lffhom = (stabp0 < 0)
+      IF (lffhom) stabp0 = -stabp0
+      
+      lnse = ( stabw0 < 0 ) ! couple error and noise model
       IF ( lnse ) THEN
          stabw0 = -stabw0
+         IF (lnse2) print*,'overriding seperate noise model'
+         lnse2 = .FALSE. ! overrides the lnse2 switch
+c     copy error model into noise model
+         nstabw0 = stabw0
+         nstabm0 = stabm0
+         nstabpA1 = stabpA1
+         nstabpA2 = stabpA2
+         nstabp0 = stabp0
+
          READ(fpcfg,*,end=106,err=106) iseed
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
- 107     WRITE (*,'(a,F4.1,a,I7)',ADVANCE='no')
-     1        'Verrausche Daten mit RMS ::',stabw0,' /% seed:',
-     1        iseed
+         WRITE (*,'(a)')' Rauschen '//
+     1        'Gekoppelt an Fehlermodell '
+      ELSE
+c     check if there is at least crt.noisemod containig noise info
+         IF (iseedpri == 0) iseedpri = 1
+         fetxt = 'crt.noisemod'
+         INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
+      END IF
+ 107  IF (lnse2) THEN
+
+         iseed = iseedpri
+         WRITE (*,'(a,I7)',ADVANCE='no')
+     1        'Entkoppeltes Daten Rauschen:: seed:',iseed
+         
+         nstabw0 = modl_stdn
+         
+         fetxt = 'get noise model from crt.noisemod'
+         CALL get_noisemodel(nstabw0,nstabm0,nstabpA1,
+     1        nstabpB,nstabpA2,nstabp0,errnr)
+         IF (errnr /= 0) GOTO 999
+
+         modl_stdn = 0.
+         iseedpri = 0
+         
+         lnse = .TRUE. ! add noise
+
       END IF
 
-      IF ((nx==0.OR.nz==0).AND.ltri==0) ltri=1 ! at least smoothness
-       
-      
+      IF (lnse) THEN 
+         fetxt = 'write out noise model'
+         CALL write_noisemodel(nstabw0,nstabm0,
+     1        nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
+         IF (errnr /= 0) GOTO 999
+      ELSE
+         PRINT*,'No Data noise!!'
+      END IF
+
+      IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
+
 c     Ggf. Fehlermeldungen
       if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
          fetxt = ' '
@@ -344,15 +396,19 @@ c     fetxt = ' '
 c     errnr = 90
 c     goto 999
       end if
-      
+
 c Mega switch testing..
-      lsens = BTEST(mswitch,0) !ueberdeckung schreiben
-      lcov1 = BTEST(mswitch,1) ! posterior modell covariance matrix 1
-      lres  = BTEST(mswitch,2) ! rsolution matrix berechnen
-      lcov2 = BTEST(mswitch,3) ! posterior modell covariance matrix 2
+      lsens = BTEST(mswitch,0) ! +1 ueberdeckung schreiben
+      lcov1 = BTEST(mswitch,1) ! +2 posterior modell covariance matrix 1
+      lres  = BTEST(mswitch,2) ! +4 rsolution matrix berechnen
+      lcov2 = BTEST(mswitch,3) ! +8 posterior modell covariance matrix 2
+
+      lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
+c
+      lsens = .TRUE. ! default immer coverages schreiben..
 c
       if (lratio) then
          lrho0  = .true.
@@ -376,7 +432,7 @@ c     Dateien
       lnramd = index(ramd,' ')-1
       dsigma = ramd(1:lnramd)//slash(1:1)//'rho.dat'
       dvolt  = ramd(1:lnramd)//slash(1:1)//'volt.dat'
-      dsens  = ramd(1:lnramd)//slash(1:1)//'sens.dat'
+      dsens  = ramd(1:lnramd)//slash(1:1)//'coverage.mag'
 
 c     Elementeinteilung einlesen
       WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
@@ -387,10 +443,17 @@ c     Elementeinteilung einlesen
          manz = elanz ! wichtig an dieser stelle..
          CALL bnachbar ! blegt nachbar
          CALL besp_elem
+         lvario = .TRUE.
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
       END IF
+      
+      lvario = lvario.OR.       ! if already set or
+     1     (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
+
+      IF (lvario) CALL set_vario (nx,alfx,alfz,esp_mit,esp_med) ! nx is than
+!     the variogram and covariance function type, see variomodel.f90
 
       if (manz.ne.elanz) then
          fetxt = ' '
@@ -427,6 +490,16 @@ c      PRINT*,'data in'
          lsr    = .false.
          kwnanz = 1
          kwn(1) = 0d0
+         do i=1,typanz
+            IF (typ(i) == 11) THEN
+               PRINT*,'hier am besten aussteigen '//
+     1              'da es im 2D keine gemischten RB gibt'
+               fetxt = 'hier am besten aussteigen '//
+     1              'da es im 2D keine gemischten RB gibt'
+               errnr = 110
+               GOTO 999
+            END IF
+         END DO
       else
          call rwaven()
          if (errnr.ne.0) goto 999

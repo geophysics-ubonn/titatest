@@ -11,11 +11,12 @@ c     Letzte Aenderung   13-Nov-1997
 c.....................................................................
 
       USE alloci
+      USE femmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'fem.fin'
 
 c.....................................................................
 

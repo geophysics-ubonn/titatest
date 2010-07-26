@@ -1,161 +1,164 @@
-        subroutine bbsedc(kanal,datei)
+      subroutine bbsedc(kanal,datei)
 
-c Unterprogramm zur Berechnung der Summe der Sensitivitaeten aller
-c Messungen (normiert)
-c ('kpotdc' als Hilfsfeld benutzt).
+c     Unterprogramm zur Berechnung der Summe der Sensitivitaeten aller
+c     Messungen (normiert)
+c     Berechnet nun coverage als Summe der Absolutbetraege..
+c     ('kpotdc' als Hilfsfeld benutzt).
 
-c Andreas Kemna                                            02-Mar-1995
-c                                       Letzte Aenderung   10-Mar-2007
-
-c.....................................................................
-
-        USE alloci
-        IMPLICIT none
-        INCLUDE 'parmax.fin'
-        INCLUDE 'err.fin'
-        INCLUDE 'elem.fin'
-        INCLUDE 'dat.fin'
-        INCLUDE 'model.fin'
-        INCLUDE 'inv.fin'
+c     Andreas Kemna                                         02-Mar-1995
+c     Letzte Aenderung                   31-Mar-2010
 
 c.....................................................................
 
-c EIN-/AUSGABEPARAMETER:
+      USE alloci
+      USE datmod
 
-c Kanalnummer
-        integer         * 4     kanal
+      IMPLICIT none
 
-c Datei
-        character       * 80    datei
-
-c.....................................................................
-
-c PROGRAMMINTERNE PARAMETER:
-
-c Hilfsvariablen
-        real            * 8     xdum,ydum,dum
-
-c Indexvariablen
-        integer         * 4     i,j,k,l,i2
-
-c Aktuelle Elementnummer
-        integer         * 4     iel
-
-c Anzahl der Knoten im aktuellen Elementtyp
-        integer         * 4     nkel
+      INCLUDE 'parmax.fin'
+      INCLUDE 'err.fin'
+      INCLUDE 'elem.fin'
+      INCLUDE 'model.fin'
+      INCLUDE 'inv.fin'
 
 c.....................................................................
 
-c Werte berechnen
-        dum = 0d0
+c     EIN-/AUSGABEPARAMETER:
 
-        do j=1,manz
-            l  = j/smax + 1
-            i2 = mod(j,smax)
+c     Kanalnummer
+      integer         * 4     kanal
 
-            kpotdc(i2,l,1) = 0d0
-            kpotdc(i2,l,2) = 0d0
-            kpotdc(i2,l,3) = 0d0
-            kpotdc(i2,l,4) = 0d0
+c     Datei
+      character       * 80    datei
 
-            do i=1,nanz
-                kpotdc(i2,l,1) = kpotdc(i2,l,1) +
-     1                           sensdc(i,j)*sensdc(i,j)*
-     1                           wmatd(i)*dble(wdfak(i))
-            end do
+c.....................................................................
 
-            dum = dmax1(dum,kpotdc(i2,l,1))
-        end do
+c     PROGRAMMINTERNE PARAMETER:
 
-c Summe der Sensitivitaeten normieren
-        if (dum.gt.1d-12) then
-            do j=1,manz
-                l = j/smax + 1
-                i = mod(j,smax)
-                kpotdc(i,l,1) = kpotdc(i,l,1) / dum
-            end do
-        end if
+c     Hilfsvariablen
+      real            * 8     xdum,ydum,dum,dum2,dummax
 
-c Schwerpunktkoordinaten der (ggf. zusammengesetzten) Elemente bestimmen
-        iel = 0
+c     Indexvariablen
+      integer         * 4     i,j,k,l,i2
 
-        do i=1,typanz
-            if (typ(i).gt.10) goto 10
+c     Aktuelle Elementnummer
+      integer         * 4     iel
 
-            nkel = selanz(i)
+c     Anzahl der Knoten im aktuellen Elementtyp
+      integer         * 4     nkel
 
-            do j=1,nelanz(i)
-                iel  = iel + 1
+c.....................................................................
 
-                xdum = 0d0
-                ydum = 0d0
+c     Werte berechnen
+      dum = 0d0
 
-                do k=1,nkel
-                    xdum = xdum + sx(snr(nrel(iel,k)))
-                    ydum = ydum + sy(snr(nrel(iel,k)))
-                end do
+      do j=1,manz
+         l  = j/smax + 1
+         i2 = mod(j,smax)
 
-                l  = mnr(iel)/smax + 1
-                i2 = mod(mnr(iel),smax)
+         kpotdc(i2,l,1) = 0d0
+         kpotdc(i2,l,2) = 0d0
+         kpotdc(i2,l,3) = 0d0
+         kpotdc(i2,l,4) = 0d0
 
-                kpotdc(i2,l,2) = kpotdc(i2,l,2) + xdum/dble(nkel)
-                kpotdc(i2,l,3) = kpotdc(i2,l,3) + ydum/dble(nkel)
-                kpotdc(i2,l,4) = kpotdc(i2,l,4) + 1d0
-            end do
-        end do
+         do i=1,nanz
+            dum2 = SQRT(sensdc(i,j)*sensdc(i,j)*
+     1           wmatd(i)*dble(wdfak(i)))
+            kpotdc(i2,l,1) = kpotdc(i2,l,1) + dum2
+         end do
 
-10      continue
-
-        do j=1,manz
+         dum = dmax1(dum,kpotdc(i2,l,1))
+      end do
+      dummax = dum
+c     Summe der Sensitivitaeten normieren
+      if (dum.gt.1d-12) then
+         do j=1,manz
             l = j/smax + 1
             i = mod(j,smax)
-            kpotdc(i,l,2) = kpotdc(i,l,2) / kpotdc(i,l,4)
-            kpotdc(i,l,3) = kpotdc(i,l,3) / kpotdc(i,l,4)
-        end do
+            kpotdc(i,l,1) = kpotdc(i,l,1) / dum
+         end do
+      end if
 
-c 'datei' oeffnen
-        fetxt = datei
-        errnr = 1
-        open(kanal,file=fetxt,status='replace',err=999)
-        errnr = 4
+c     Schwerpunktkoordinaten der (ggf. zusammengesetzten) Elemente bestimmen
+      iel = 0
 
-c Anzahl der Werte
-        write(kanal,*,err=1000) manz
+      do i=1,typanz
+         if (typ(i).gt.10) goto 10
 
-c Koordinaten und Sensitivitaetsbetraege schreiben
-c (logarithmierter (Basis 10) normierter Betrag)
-        do j=1,manz
-            l   = j/smax + 1
-            i   = mod(j,smax)
-            dum = kpotdc(i,l,1)
+         nkel = selanz(i)
 
-            if (dum.gt.0d0) then
-                write(kanal,*,err=1000) real(kpotdc(i,l,2)),
-     1                                  real(kpotdc(i,l,3)),
-     1                                  real(dlog10(dum))
-            else
-                write(kanal,*,err=1000) real(kpotdc(i,l,2)),
-     1                                  real(kpotdc(i,l,3)),
-     1                                  -1.e2
-            end if
-        end do
+         do j=1,nelanz(i)
+            iel  = iel + 1
 
-cak
-c Maximale Sensitivitaet schreiben
-        write(kanal,*,err=1000) dum
-c 'datei' schliessen
-        close(kanal)
+            xdum = 0d0
+            ydum = 0d0
 
-        errnr = 0
-        return
+            do k=1,nkel
+               xdum = xdum + sx(snr(nrel(iel,k)))
+               ydum = ydum + sy(snr(nrel(iel,k)))
+            end do
+
+            l  = mnr(iel)/smax + 1
+            i2 = mod(mnr(iel),smax)
+
+            kpotdc(i2,l,2) = kpotdc(i2,l,2) + xdum/dble(nkel)
+            kpotdc(i2,l,3) = kpotdc(i2,l,3) + ydum/dble(nkel)
+            kpotdc(i2,l,4) = kpotdc(i2,l,4) + 1d0
+         end do
+      end do
+
+ 10   continue
+
+      do j=1,manz
+         l = j/smax + 1
+         i = mod(j,smax)
+         kpotdc(i,l,2) = kpotdc(i,l,2) / kpotdc(i,l,4)
+         kpotdc(i,l,3) = kpotdc(i,l,3) / kpotdc(i,l,4)
+      end do
+
+c     'datei' oeffnen
+      fetxt = datei
+      errnr = 1
+      open(kanal,file=fetxt,status='replace',err=999)
+      errnr = 4
+
+c     Anzahl der Werte
+      write(kanal,*,err=1000) manz
+
+c     Koordinaten und Sensitivitaetsbetraege schreiben
+c     (logarithmierter (Basis 10) normierter Betrag)
+      do j=1,manz
+         l   = j/smax + 1
+         i   = mod(j,smax)
+         dum = kpotdc(i,l,1)
+
+         if (dum.gt.0d0) then
+            write(kanal,*,err=1000) real(kpotdc(i,l,2)),
+     1           real(kpotdc(i,l,3)),
+     1           real(dlog10(dum))
+         else
+            write(kanal,*,err=1000) real(kpotdc(i,l,2)),
+     1           real(kpotdc(i,l,3)),
+     1           -1.e2
+         end if
+      end do
+
+c     ak
+c     Maximale Sensitivitaet schreiben
+      write(kanal,*,err=1000)'Max:',dummax
+c     'datei' schliessen
+      close(kanal)
+
+      errnr = 0
+      return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-c Fehlermeldungen
+c     Fehlermeldungen
 
-999     return
+ 999  return
 
-1000    close(kanal)
-        return
+ 1000 close(kanal)
+      return
 
-        end
+      end

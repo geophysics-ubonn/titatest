@@ -1,5 +1,5 @@
 %%
-
+clear all;
 close all;
 % Definitions
 elecmark='bo';
@@ -299,9 +299,10 @@ for iscale=1:length(Ix)
         if (saveplot==1)
             fls=sprintf('%s_%s',mystr,ctype);
             fleps=strcat(fls,'.eps');
+            flpng=strcat(fls,'.png');
             set(myfig,'PaperPositionMode','auto');
             print('-depsc2','-r400',fleps)
-            %    print('-dpdf','-r400',flpdf) %%%geht nicht
+            print('-dpng','-r400',flpng)
             %print('-depsc2','-r600',file_save)
             if (exim==0), unix(myepscr); end
         end

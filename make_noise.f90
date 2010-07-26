@@ -1,14 +1,16 @@
 !!$ $Id: make_noise.f90 1.4 2008/07/29 14:05:36 Roland Martin Exp $
 MODULE Make_noise
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$  make_noise.f90
 !!$
 !!$  Contains subroutines and functions to generate ensembles of
 !!$  random numbers which shoud be portable (e.g. Press, et al. 1998)
 !!$  the distributions are of popular algorithms
 !!$
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
   IMPLICIT none
+  PUBLIC :: get_noisemodel
+  PUBLIC :: write_noisemodel
   PUBLIC :: Random_Init
   PUBLIC :: Random_Gauss
   PUBLIC :: Random_Exponential
@@ -36,9 +38,118 @@ MODULE Make_noise
   ! a bunch of magic numbers...
   REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM1=1./M1
   REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM2=1./M2
+!!!$ character container..
+  CHARACTER (128),PRIVATE :: csz
 
   CONTAINS
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
+!!$ Try to get a noise model from the File crt.noisemod
+!!$ and fills the parameters for the noise model
+!!$---------------------------------------------------------------------
+
+    SUBROUTINE get_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ widerstand noise model output parameters
+      REAL(KIND(0D0)),INTENT(INOUT)   :: wa,w0
+!!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
+      REAL(KIND(0D0)),INTENT(INOUT)   :: pa1,pb,pa2,p0
+      CHARACTER (80) :: buff
+      INTEGER        :: ifp,ierr
+      LOGICAL        :: exi
+      ierr = 1
+      CALL get_unit(ifp)
+      buff = 'crt.noisemod'
+      INQUIRE (FILE=TRIM(buff),EXIST=exi)
+
+      IF (exi) THEN
+         PRINT*,'reading NOISE model '//TRIM(buff)
+         CALL get_unit(ifp)
+         OPEN(ifp,FILE=TRIM(buff),STATUS='old')
+         csz = 'Relativer Fehler Widerstand [%]('//TRIM(buff)//')'
+         READ (ifp,*) wa
+         WRITE (*,*)TRIM(csz)//':',wa
+         csz = 'Absoluter Fehler Widerstand [Ohm m] ('//TRIM(buff)//')'
+         READ (ifp,*) w0
+         WRITE (*,*)TRIM(csz)//':',w0
+         csz = 'Phasenfehlerparameter A1 [mRad/Ohm/m]('//TRIM(buff)//')'
+         READ (ifp,*) pa1
+         WRITE (*,*)TRIM(csz)//':',pa1
+         csz = 'Phasenfehlerparameter B []('//TRIM(buff)//')'
+         READ (ifp,*) pb
+         WRITE (*,*)TRIM(csz)//':',pb
+         csz = 'Relativer Fehler Phasen A2 [%]('//TRIM(buff)//')'
+         READ (ifp,*) pa2
+         WRITE (*,*)TRIM(csz)//':',pa2
+         csz = 'Absoluter Fehler Phasen p0 [mRad] ('//TRIM(buff)//')'
+         READ (ifp,*) p0
+         WRITE (*,*)TRIM(csz)//':',p0
+         CLOSE (ifp)
+      ELSE
+         pb = wa
+         PRINT*,'Taking standard deviation',wa
+         w0 = 0.;pb = 0.; pa2 = 0.;p0 = 0.
+      END IF
+
+      IF (wa < 0) THEN
+         PRINT*,'A < 0!!'
+         RETURN
+      ELSE IF (w0 < 0) THEN
+         PRINT*,'B < 0!!'
+         RETURN
+      ELSE IF (pa1 < 0) THEN
+         PRINT*,'A1 < 0!!'
+         RETURN
+      ELSE IF (pb < 0) THEN
+         PRINT*,'B1 < 0!!'
+         RETURN
+      ELSE IF (pa2 < 0) THEN
+         PRINT*,'A2 < 0!!'
+         RETURN
+      ELSE IF (p0 < 0) THEN
+         PRINT*,'p0 < 0!!'
+         RETURN
+      END IF
+
+      ierr = 0
+      
+    END SUBROUTINE get_noisemodel
+!!!$--------------------------------------------------------------------
+!!!$ write out the current noise model into crt.noisemod
+!!!$ old data would be overwritten, but with the old data
+!!!$--------------------------------------------------------------------
+
+    SUBROUTINE write_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ widerstand noise model output parameters
+      REAL(KIND(0D0)),INTENT(IN)   :: wa,w0
+!!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
+      REAL(KIND(0D0)),INTENT(IN)   :: pa1,pb,pa2,p0
+      INTEGER        :: ifp,ierr
+3     FORMAT(G10.3,5X,'#',1X,A)
+
+      
+      ierr = 1
+
+      CALL get_unit(ifp)
+
+      csz = 'crt.noisemod'
+      OPEN(ifp,FILE=TRIM(csz),STATUS='replace')
+      csz = 'Relativer Fehler Widerstand A (noise) [%] von dR=AR+B'
+      WRITE (ifp,3) wa,TRIM(csz)
+      csz = 'Absoluter Fehler Widerstand B (noise) [Ohm m]'
+      WRITE (ifp,3) w0,TRIM(csz)
+      csz = 'Phasenfehlerparameter A1 (noise) [mRad/Ohm/m] von'//&
+           ' dp=A1*R^B1+A2*p+p0'
+      WRITE (ifp,3) pa1,TRIM(csz)
+      csz = 'Phasenfehlerparameter B1 (noise) []'
+      WRITE (ifp,3) pb,TRIM(csz)
+      csz = 'Relativer Fehler Phasen A2 (noise) [%]'
+      WRITE (ifp,3) pa2,TRIM(csz)
+      csz = 'Absoluter Fehler Phasen p0 (noise) [mRad]'
+      WRITE (ifp,3) p0,TRIM(csz)
+      CLOSE (ifp)
+
+      ierr = 0
+    END SUBROUTINE write_noisemodel
+!!$---------------------------------------------------------------------
 !!$ initialize portable pseudo random numbers 
 !!$ (set the pseudo random numbers)
 !!$
@@ -59,7 +170,7 @@ MODULE Make_noise
          Rnd(i)=(DBLE(ix1)+DBLE(ix2)*RM2)*RM1
       END DO
     END SUBROUTINE Random_Init
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Draw a random number from the pseudo random sequence
 !!$
     REAL (KIND(0D0)) FUNCTION Random_Draw()
@@ -76,10 +187,10 @@ MODULE Make_noise
          EXIT
       END DO
     END FUNCTION Random_Draw
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Flat (uniform) distribution
-!!$ Returns a uniformly distributed random real number between [min,max]
-!!$
+!!$ Returns a uniformly distributed random real number between 
+!!$ [min,max]
     REAL (KIND (0D0)) FUNCTION Random_Double(min, max)
       REAL (KIND (0D0)), INTENT(IN), OPTIONAL :: min, max
       REAL (KIND (0D0)) :: x
@@ -93,10 +204,10 @@ MODULE Make_noise
      END IF
      
    END FUNCTION Random_Double
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Integer (uniform) distribution
-!!$ Returns a uniformly distributed random integer number between [min,max]
-!!$
+!!$ Returns a uniformly distributed random integer number between 
+!!$ [min,max]
    INTEGER FUNCTION Random_Int(min, max)
    INTEGER, INTENT(IN), OPTIONAL :: min, max
    REAL (KIND (0D0)) :: x
@@ -110,11 +221,11 @@ MODULE Make_noise
      END IF
      
    END FUNCTION Random_Int
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Gaussian Distribution
 !!$ Returns a normally distributed deviate with mean and sigma
-!!$ The routine uses the Box-Muller transformation of uniform deviates.
-!!$
+!!$ The routine uses the Box-Muller transformation of uniform 
+!!$ deviates.
    REAL (KIND (0D0)) FUNCTION Random_Gauss(mean, sigma)
    INTEGER, INTENT(IN), OPTIONAL :: mean, sigma
    REAL (KIND (0D0)) :: x, y, z
@@ -122,22 +233,21 @@ MODULE Make_noise
      DO
         x = 2.0 * Random_Double() - 1.0
         y = 2.0 * Random_Double() - 1.0
-        z = x*x + y*y
+        z = x * x + y * y
         if( z <= 1.0 ) exit
      END DO
 
      IF(PRESENT(mean) .AND. PRESENT(sigma)) THEN
-        Random_Gauss = mean + sigma*x*sqrt(-2.0*log(z)/z)
+        Random_Gauss = mean + sigma * x * sqrt(-2.0 * log(z) / z)
      ELSE
-        Random_Gauss = x*sqrt(-2.0*log(z)/z)
+        Random_Gauss = x * sqrt(-2.0 * log(z) / z)
      END IF
 
    END FUNCTION Random_Gauss
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Exponential (decay) distribution
 !!$ Returns a random number between times t1 and t2 
 !!$ according to f(t) = exp (-t/tau)
-!!$
    REAL (KIND (0D0)) FUNCTION Random_Exponential(tau, tmin, tmax)
    REAL (KIND (0D0)), INTENT(IN) :: tau
    REAL (KIND (0D0)), INTENT(IN), OPTIONAL :: tmin, tmax
@@ -154,7 +264,7 @@ MODULE Make_noise
      Random_Exponential = -tau*log(r2 + Random_Double() * (r1-r2) )
    
    END FUNCTION Random_Exponential
-!!$------------------------------------------------------------------------
+!!$---------------------------------------------------------------------
 !!$ Breit-Wigner Distribution
 !!$ Returns a random number from a Breit-Wigner distribution 
 !!$ for center mean Full Width Half Maximum fwhm

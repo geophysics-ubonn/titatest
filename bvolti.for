@@ -9,13 +9,14 @@ c     Letzte Aenderung   13-Nov-1997
 c.....................................................................
 
       USE alloci
+      USE femmod
+      USE datmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'dat.fin'
-      INCLUDE 'fem.fin'
 
 c.....................................................................
 

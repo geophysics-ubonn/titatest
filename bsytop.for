@@ -32,7 +32,7 @@ c-----------------------------------------------------------------------
 
          iel = iel + nelanz(i)
 
-         IF (typ(i)==12) CYCLE  ! suche nach "no flow"
+         IF (typ(i) /= 11) CYCLE  ! suche nach "no flow"
 
          nkel = selanz(i)
          sytop = 0.

@@ -8,13 +8,14 @@ c     Letzte Aenderung   07-Mar-2003
 c.....................................................................
 
       USE alloci
+      USE femmod
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -31,13 +32,15 @@ c     Indexvariablen
 c.....................................................................
 
 c     Start-Regularisierungsparameter bestimmen
-      lammax = 0d0
       IF (nz<0) THEN
          IF (nz<-1) lammax = -REAL(nz)
-         IF (nz==-1) lammax = REAL(manz)
-         WRITE (*,'(a,G10.2)')'taking easy lam_0 ',lammax
-         return
+         IF (nz==-1) lammax = MAX(REAL(manz),REAL(nanz))
+         WRITE (*,'(2x,a,F12.1)')'taking easy lam_0 ',lammax
+         RETURN
       END IF
+
+      lammax = 0d0
+
       if (ldc) then
          do j=1,manz
             write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//

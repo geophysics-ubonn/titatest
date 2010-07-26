@@ -1,20 +1,23 @@
       subroutine bsmatmtri      !tri
 c
 c     Unterprogramm belegt die Rauhigkeitsmatrix....
-c     Fuer beliebige Triangulierung
+c     fuer beliebige Triangulierung 
+c     Angelehnt an R. Blaschek (2008)
 c
-c     Copyright by Andreas Kemna                               2009
-c     Created by Roland Blaschek/Roland Martin               29-Jul-2009
-c     Last edited                                            18-Dec-2009
+c     Copyright by Andreas Kemna 2009
+c     
+c     Andreas Kemna / Roland Martin                            23-Jun-2009
+c     
+c     Letzte Aenderung   RM                                    29-Jul-2009
 c
 c.........................................................................
       USE alloci
+      USE datmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
@@ -24,14 +27,13 @@ c.........................................................................
 !     PROGRAMMINTERNE PARAMETER:
 
 !     Hilfsvariablen 
-      real            * 8     alfdis,dum
-      integer         * 4     i,j,l,k,iflnr,ijdum,smaxs,ik
-      REAL            * 8     edglen(selmax)   ! Kantenlaenge
-      REAL            * 8     dist(selmax)     ! Abstand der Schwerpunkte
-      REAL            * 8     sp(0:selmax,2)   ! Schwerpunktkoordinaten
-      REAL            * 8 ang   !Winkel fuer anisotrope Glaettung
-      REAL            * 8 alfxz !Anisotrope Glaettung
-      
+      REAL(KIND(0D0)) :: dum    ! dummy stores numbers
+      INTEGER         :: i,l,k,smaxs,ik,anz
+      REAL(KIND(0D0)) :: edglen ! Kantenlaenge
+      REAL(KIND(0D0)) :: dist   ! Abstand der Schwerpunkte
+      REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
+      REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
+      REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
 !.....................................................................
       
       smaxs=MAXVAL(selanz)
@@ -45,51 +47,55 @@ c.........................................................................
       END IF
 
       smatm = 0d0               ! initialize smatm
-      iflnr =0
+
       IF (elanz/=manz)PRINT*,'elanz/=manzSMATMTRI may be wrong'
       DO i=1,elanz
 
-         sp(0:smaxs,:) = 0.
+         sp1 = 0.
          
-         DO k=1,smaxs           ! Schwerpunkt des mittleren Elementes
-            sp(0,1) = sp(0,1) + sx(snr(nrel(i,k)))
-            sp(0,2) = sp(0,2) + sy(snr(nrel(i,k)))
+         DO k=1,smaxs           ! Schwerpunkt berechnen 
+            sp1(1) = sp1(1) + sx(snr(nrel(i,k)))
+            sp1(2) = sp1(2) + sy(snr(nrel(i,k)))
          END DO
          
-         sp(0,1) = sp(0,1)/smaxs
-         sp(0,2) = sp(0,2)/smaxs ! Mittelpunkt des aktuellen Elements
-         
+         sp1(1) = sp1(1)/smaxs
+         sp1(2) = sp1(2)/smaxs ! Mittelpunkt des aktuellen Elements
+
          DO k=1,smaxs ! jedes flaechenele hat mind einen nachbarn
 
             ik = MOD(k,smaxs) + 1
 
-            edglen(k) = SQRT((sx(snr(nrel(i,k))) - 
+            edglen = SQRT((sx(snr(nrel(i,k))) - 
      1           sx(snr(nrel(i,ik))))**2 +
      1           (sy(snr(nrel(i,k))) -
      1           sy(snr(nrel(i,ik))))**2) ! edge
             
 
             IF (nachbar(i,k)>0) THEN !nachbar existiert 
-               
+               sp2 = 0.
+
                DO l=1,smaxs
-                  sp(k,1) = sp(k,1) + sx(snr(nrel(nachbar(i,k),l)))
-                  sp(k,2) = sp(k,2) + sy(snr(nrel(nachbar(i,k),l)))
+                  sp2(1) = sp2(1) + sx(snr(nrel(nachbar(i,k),l)))
+                  sp2(2) = sp2(2) + sy(snr(nrel(nachbar(i,k),l)))
                END DO
                
-               sp(k,1) = sp(k,1)/smaxs ! schwerpunkt des nachbar elements
-               sp(k,2) = sp(k,2)/smaxs
-               
-               dist(k) = SQRT((sp(0,1) - sp(k,1))**2 + 
-     1              (sp(0,2) - sp(k,2))**2)
-               
-               ang = DATAN2((sp(0,2) - sp(k,2)),(sp(0,1) - sp(k,1))) !winkel
-               
-               alfxz = DSQRT((alfx*DCOS(ang))**2 + (alfz*DSIN(ang))**2)
-               
-               smatm(i,k) = -edglen(k)/dist(k)*alfxz
-               
-               smatm(i,smaxs+1) = smatm(i,smaxs+1) + 
-     1              edglen(k)/dist(k)*alfxz !Hauptdiagonale
+               sp2(1) = sp2(1)/smaxs ! schwerpunkt des nachbar elements
+               sp2(2) = sp2(2)/smaxs
+
+!     Geometrischer Teil...
+               dist = SQRT((sp1(1) - sp2(1))**2. + 
+     1              (sp1(2) - sp2(2))**2.)
+
+               ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Winkel
+
+               alfgeo = DSQRT((alfx*DCOS(ang))**2. + 
+     1              (alfz*DSIN(ang))**2.)
+
+               dum = edglen / dist * alfgeo
+
+               smatm(i,k) = -dum
+
+               smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !Hauptdiagonale
 
             END IF
 

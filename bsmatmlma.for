@@ -8,10 +8,14 @@ c     Letzte Aenderung                                         18-Dec-2009
 c     
 c.........................................................................
       USE alloci
+      USE femmod ! fuer ldc..
+      USE datmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
+      INCLUDE 'elem.fin'
+      INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'err.fin'
@@ -20,8 +24,7 @@ c.........................................................................
 !     PROGRAMMINTERNE PARAMETER:
 
 !     Hilfsvariablen 
-      real            * 8     alfdis,dum
-      integer         * 4     i,j,l,k,iflnr,ijdum,smaxs,ik
+      INTEGER         :: i,l,k,j
 !.....................................................................
       
       IF (.NOT.ALLOCATED (smatm))
@@ -31,11 +34,17 @@ c.........................................................................
          errnr = 97
          RETURN
       END IF
-      
+
       smatm = 0d0               ! initialize smatm
-      IF (ltri==5) THEN         ! marquardt type..
-         smatm(:,1) = 1.0
+
+      IF (ltri==3) THEN
+         
+         PRINT*,'pure Levenberg (LA)'
+         smatm = 1.0 ! Levenberg Damping
+
       ELSE
+
+         PRINT*,' Levenberg-Marquardt (LMA)'
          IF (lip) THEN
             DO j=1,manz
                DO i=1,nanz
@@ -61,8 +70,9 @@ c.........................................................................
 !     wmatdp bei lip
                END DO
             END DO
-         END IF
+         ENDIF
+
       END IF
-      
+
       END
 

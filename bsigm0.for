@@ -6,13 +6,15 @@ c     Andreas Kemna                                            02-May-1995
 c     Letzte Aenderung   15-Jan-2001
 
 c.....................................................................
+      USE femmod
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
 c     diff+<
       INCLUDE 'model.fin'

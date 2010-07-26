@@ -16,14 +16,27 @@ fp=fopen('tmp.elecname','r');
 elecfile=fscanf(fp,'%s',1);
 fclose(fp);
 
-fp=fopen('tmp.lastmod','r');
+checkme = exist ('inv.lastmod','file');
+if checkme~=0
+  fp=fopen('inv.lastmod','r');
 modfile=fscanf(fp,'%s',1);
 fclose(fp);
+ else
+   
+ end
+
 fenster='';
 checkme = exist ('tmp.fenster','file');
 if checkme~=0
     fp=fopen('tmp.fenster','r');
     fenster=fgetl(fp);
+    fclose(fp);
+end
+fenstert='';
+checkme = exist ('tmp.fenstert','file');
+if checkme~=0
+    fp=fopen('tmp.fenstert','r');
+    fenstert=fgetl(fp);
     fclose(fp);
 end
 cmin=0;camx=0;
@@ -133,11 +146,14 @@ vertices(:,2)=syp;
 [p,fls,appi,m]=fileparts(modfile);
 fp=fopen(modfile,'r');
 line=fgetl(fp);
-nm=sscanf(line,'%d',1);
+[buff,count]=sscanf(line,'%d %f',2);
+nm=buff(1);
+nrms=buff(2);
 if (nm~=nelem)
     sprintf('There seems something wrong since the Element numbers %d \n',nelem);
     sprintf('do not match the number of Model cells %d !!!\n',nm); 
 end
+mcov=strmatch(fls,'coverage');
 pha=strmatch(appi,'.pha');
 mag=strmatch(appi,'.mag');
 modl=strmatch(appi,'.modl');
@@ -159,7 +175,7 @@ fclose(fp);
 %%
 if length(cbarn) == 0
     if length(pha) ~= 0
-        cbarn='Phase [mRad]';
+        cbarn='Phase -[mRad]';
     elseif length(mag) ~= 0
         cbarn='log_{10}(\rho) [\Omega m]';
     elseif length(modl) ~= 0
@@ -188,7 +204,14 @@ fclose(fp);
 % open figure with name
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
-    name = fenster;
+  if ((length(mag) ~= 0 || length(pha) ~= 0)&& length(mcov) == 0)
+     name = sprintf('%s (RMS %.4f)',fenster,nrms);
+  else
+     name = fenster;
+  end
+end
+if length(fenstert) ~= 0
+    name = sprintf('%s \n %s',name,fenstert);
 end
 fp=fopen('tmp.fenster','w');
 fprintf(fp,'%s \n',name);
@@ -214,8 +237,8 @@ else
     climits=[romin romax];
 end
 
-%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
-patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
+patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat','Edgecolor','none')
+%patch('Faces',TRI,'Vertices',vertices,'CData',rho','FaceColor','flat')
 caxis(climits)
 
 set(gca,'fontsize',fns,'TickDir','out')
@@ -238,14 +261,16 @@ end
 ylim(ylimits);
 
 h=colorbar('vert');
-
 set(h,'fontsize',fns)
-set(h,'XaxisLocation','bottom')
+set(h,'XaxisLocation','top')
 %cbarn=sprintf('$$\\mathsf{%s}$$',cbarn);
-cbarn2=sprintf('\n%s\n',cbarn);
+cbarn2=sprintf('%s\n',cbarn);
 %set(get(h,'xlabel'),'interpreter','latex','String',cbarn2,'fontsize',fns)
-set(get(h,'xlabel'),'String',cbarn2,'fontsize',fns)
+set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);
+axis tight
+axis image
+
 hold on
 for i=1:nelec
     plot(elecpos(i,1),elecpos(i,2),elecmark,...
@@ -253,11 +278,12 @@ for i=1:nelec
         'MarkerSize',marksize);
 end
 
-fleps=strcat(fls,app,'.eps');
-set(fig,'PaperPositionMode','auto');
-print('-depsc2','-r400',fleps)
-
+%set(fig,'PaperPositionMode','auto');
+print('-depsc2','-r400',strcat(fls,appi,'.eps'));
+%print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
+print('-dpng','-r400',strcat(fls,appi,'.png'));
 close (fig);
+
 %write out some config files..
 [p,fls,app,m]=fileparts(modfile);
 

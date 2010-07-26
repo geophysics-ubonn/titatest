@@ -1,0 +1,128 @@
+#!/bin/bash
+
+# declare font size for the legends
+font='"Helvetica" 14' # general font and its size of the title and axes
+# major iterations
+lw='w lp lw 2.5'   # linetype and width of the major iteration plots
+lfw='Times,12' # legend font
+lfws='spacing 1.2'
+psw='pointsize 1.0' # pointsize
+#minor iterations
+lp='w lp lw 1.5'   # linetype and width of the minor iteration plots
+lfp='Times,8' # legend font
+lfps='spacing .8'
+psp='pointsize 0.6' # pointsize
+
+if [ -e "crtomo.cfg" ];then
+    echo found crtomo.cfg
+else
+    echo no crtomo.cfg ound
+    exit
+fi
+# getting the pathname for the inversion results
+invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
+echo invdir $invdir
+# combining the pathname and the specific file inv.ctr
+invf=$invdir/inv.ctr
+
+# get the major iterations, without FPI
+awk '/IT/&&!/PIT/{if($2==0){print $1 $2 $3}else{print}}' $invf > inv.stats_it
+# counting the major iterations
+nit=`wc -l inv.stats_it|awk '{print $1}'`
+#prepare to seperate minor (update) and major iterations
+let nnit=$nit-1; # sets the number of counteable iterations
+echo $nit major iterations
+echo 'p\' > tmp.gnu_minor1 # prepare a loose gnuplot file
+echo 'p\' > tmp.gnu_minor2 # with plot commands
+# we now like to make two things
+# first would be to get the update iteration results by invoking 
+# the appropriate sed command.
+# this command line is saved into the csz variable
+for (( i=0 ; i < nnit ; i++ ));do # i saves the actual iteration number
+    let j=$i+1; # this is the next major iteration
+    fit='tmp.minor_it_'$j # that is the file which contains the update results
+    echo $i $j; # note that the filename is incremented by j
+    if [ $i -lt 9 ];then # case whether we have the proper digits
+# sed string with three blanks inbetween
+	csz="/IT\ \ \ $i/,/IT\ \ \ $j/p"; 
+    elif [ $i -eq 9 ];then
+# sed string with three and two blanks inbetween
+	csz="/IT\ \ \ $i/,/IT\ \ $j/p";
+    else
+# sed string with two blanks inbetween
+	csz="/IT\ \ $i/,/IT\ \ $j/p";
+    fi
+#invoking sed with the appropriate command 
+# the result is stored into different files, as said above
+    sed -n "$csz" $invf|awk '/UP/{print}' > $fit  
+#    echo $csz # debug
+    if [ $j -eq $nnit ];then # check whether we have another iteration
+# concanate the gnuplot command into a file which we can append into our main
+# gnuplto script afterwards
+	echo '"'$fit'"u 2:3 '$lp' tit "RMS # '$j'","'$fit'" u 2:6 axes x1y2 '$lp' ti "Rough # '$j'"' >> tmp.gnu_minor1 
+# concanate the lower right plot commands
+# please note the ,\ at the end of each line
+	echo '"'$fit'"u 2:4 '$lp' tit "Step # '$j'","'$fit'" u 2:5 axes x1y2 '$lp' ti "Lam # '$j'"' >> tmp.gnu_minor2
+    else
+# this here is the last plot commands
+	echo '"'$fit'"u 2:3 '$lp' tit "RMS # '$j'","'$fit'" u 2:6 axes x1y2 '$lp' ti "Rough # '$j'",\' >> tmp.gnu_minor1 
+	echo '"'$fit'"u 2:4 '$lp' tit "Step # '$j'","'$fit'" u 2:5 axes x1y2 '$lp' ti "Lam # '$j'",\' >> tmp.gnu_minor2
+    fi
+done
+
+#awk '/UP/{print}' $invf > inv.stats_up
+# this stes up a standard gnuplot file
+echo 'set st da l' > tmp.gnu
+echo 'se gr' >> tmp.gnu
+echo "set term pos enh col sol $font" >> tmp.gnu
+echo 'se out "inv_stat.eps"' >> tmp.gnu
+echo 'set xtics nomirror' >> tmp.gnu
+echo 'set ytics nomirror' >> tmp.gnu
+echo 'set y2tics' >> tmp.gnu
+echo 'set y2tics nomirror' >> tmp.gnu
+
+echo 'set log y' >> tmp.gnu
+echo 'set log y2' >> tmp.gnu
+# we like to have every result on one page
+# the left row shows the major iterations with RMS/Roughness to the top
+# and Stepsize/Lambda to the bottom
+echo 'set multiplot' >> tmp.gnu
+echo 'set size 0.52,0.5' >> tmp.gnu
+# top left major iterations
+echo 'set origin 0,0.5' >> tmp.gnu
+echo 'se tit "Major iterations"' >> tmp.gnu
+echo 'se key inside right top nobox noreverse font "'$lfw'"' $lfws >> tmp.gnu
+echo "set $psw" >> tmp.gnu
+echo 'set yla offset 3 "RMS"' >> tmp.gnu
+echo 'p"inv.stats_it" u 2:3 '$lw' tit "RMS","inv.stats_it" u 2:6 axes x1y2 '$lw' ti "Rough"' >> tmp.gnu
+# bottom links major 
+echo 'set origin 0,0' >> tmp.gnu
+#echo 'set nolog y' >> tmp.gnu
+echo 'set notit' >> tmp.gnu
+echo 'set xla offset 0,.5 "Iteration #"' >> tmp.gnu
+echo 'set yla offset 1 "Stepsize"' >> tmp.gnu
+echo 'p"inv.stats_it" u 2:4 '$lw' tit "Step","inv.stats_it" u 2:5 axes x1y2 '$lw' ti "Lam"' >> tmp.gnu
+# oben rechts minor
+echo 'set origin 0.5,0.5' >> tmp.gnu
+echo 'set size 0.5,0.5' >> tmp.gnu
+echo 'unset yla' >> tmp.gnu
+echo 'unset xla' >> tmp.gnu
+echo 'set y2la offset -1 "Roughness"' >> tmp.gnu
+echo 'se tit "Minor iterations"' >> tmp.gnu
+echo 'se key inside right top nobox noreverse font "'$lfp'"' $lfps >> tmp.gnu
+echo "set $psp" >> tmp.gnu
+echo 'set log y' >> tmp.gnu
+#echo 'p"inv.stats_up" u 2:3 '$lp' tit "RMS","inv.stats_up" u 2:6 axes x1y2 '$lp' ti "Rough"' >> tmp.gnu
+cat tmp.gnu_minor1 >> tmp.gnu
+# unten rechts minor
+echo 'set origin 0.5,0' >> tmp.gnu
+echo 'set origin 0.48,0' >> tmp.gnu
+#echo 'set nolog y' >> tmp.gnu
+echo 'set y2la offset -1 "Lambda"' >> tmp.gnu
+echo 'set xla offset 0,.5 "Iteration #"' >> tmp.gnu
+echo 'se notit' >> tmp.gnu
+#echo 'p"inv.stats_up" u 2:4 '$lp' tit "Stepsize","inv.stats_up" u 2:5 axes x1y2 '$lp' ti "Lambda"' >> tmp.gnu
+cat tmp.gnu_minor2 >> tmp.gnu
+
+gnuplot < tmp.gnu
+

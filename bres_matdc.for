@@ -1,14 +1,14 @@
       SUBROUTINE bres_matdc
       
       USE alloci
+      USE femmod
+      USE datmod
       
       IMPLICIT none
       
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 

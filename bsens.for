@@ -8,14 +8,15 @@ c     Letzte Aenderung   04-Dez-1998
 c.....................................................................
 
       USE alloci
+      USE femmod
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'fem.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
 
 c.....................................................................

@@ -109,6 +109,15 @@ c     Knotennummern der Elemente einlesen
          do j=1,nelanz(i)
             read(kanal,*,end=1001,err=1000)
      1           (nrel(idum+j,k),k=1,selanz(i))
+c$$$            IF (typ(i) > 10) THEN ! randele zeiger kann man auch so belegen
+c$$$               iflnr = iflnr + 1
+c$$$               IF (iflnr > relanz) THEN
+c$$$                  fetxt = 'relem:: iflnr > relanz!'
+c$$$                  errnr = 9
+c$$$                  goto 1000
+c$$$               END IF                  
+c$$$               rnr(iflnr) = nrel(idum+j,1)
+c$$$            END IF
          end do
          idum = idum + nelanz(i)
       end do

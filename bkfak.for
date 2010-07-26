@@ -7,13 +7,14 @@ c     Andreas Kemna                                            02-May-1996
 c     Letzte Aenderung   29-Apr-2003
 
 c.....................................................................
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'dat.fin'
 
 c.....................................................................
 
@@ -128,8 +129,8 @@ c     tmp                dum = 1d-12
          kfak(i) = 4d0*pi / dum
          
       end do
-
       WRITE (fp,'(I8,2X,G12.4)')(i,kfak(i),i=1,nanz)
+      CLOSE (fp)
 
       errnr = 0
       return

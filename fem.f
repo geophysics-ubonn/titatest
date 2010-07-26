@@ -12,6 +12,10 @@ c     Letzte Aenderung   02-May-2008
 c.....................................................................
 
       USE alloci
+      USE tic_toc
+      USE femmod
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
@@ -20,9 +24,7 @@ c.....................................................................
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
 
@@ -52,9 +54,6 @@ c     Schalter ob Potentialwerte ausgegeben werden sollen
 c     Schalter ob Spannungswerte ausgegeben werden sollen
       logical         * 4     lvolt
 
-c     Schalter ob Sensitivitaeten ausgegeben werden sollen
-      logical         * 4     lsens
-
 c     Schalter ob weiterer Datensatz modelliert werden soll
       logical         * 4     lagain
 
@@ -65,12 +64,12 @@ c     Schalter ob nur analytisch modelliert werden soll (default ohne)
       logical         * 4     lana
 
 c     Indexvariablen
-      integer         * 4     j,k,l,c1,c2,se,mi,st,ta
+      integer         * 4     j,k,l,c1
 
       character       *256    ftext
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      CALL SYSTEM_CLOCK (c1,j)
+      CALL tic(c1)
 c     'crmod.cfg' oeffnen
       fetxt = 'crmod.cfg'
       errnr = 1
@@ -103,6 +102,7 @@ c     Kontrollausgabe
 c     'crmod.cfg' einlesen
       fetxt = 'crmod.cfg'
       errnr = 3
+      mswitch = 0
       read(12,*,end=1001,err=999)
       read(12,'(a80)',end=1001,err=999) delem
       read(12,'(a80)',end=1001,err=999) delectr
@@ -184,8 +184,15 @@ c     Berechnung der gemischten Randbedingung bestimmen
 
 c     'a', 'hpot' und 'kpot' zuweisen
       ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),
-     1     kpot(sanz,eanz,kwnanz),stat=errnr)
+     1     kpot(sanz,eanz,kwnanz),b(sanz),stat=errnr)
       if (errnr.ne.0) then
+         fetxt = 'allocation problem a and hpot'
+         errnr = 97 
+         goto 999
+      end if
+      ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
+      if (errnr.ne.0) then
+         fetxt = 'allocation problem pot to fak'
          errnr = 97 
          goto 999
       end if
@@ -279,7 +286,7 @@ c     nur echte Spannungen ausgeben...
       end if
 
 c     'a' und 'hpot' freigeben
-      DEALLOCATE(a,hpot)
+      DEALLOCATE(a,hpot,b)
 
 c     Ggf. Sensitivitaeten aller Messungen berechnen und ausgeben
       if (lsens) then
@@ -314,7 +321,7 @@ c     'sens' freigeben
       end if
 
 c     'kpot' freigeben
-      DEALLOCATE(kpot)
+      DEALLOCATE(kpot,pot,pota,fak)
 
 c     Ggf. weiteren Datensatz modellieren
       if (lagain) goto 5
@@ -323,17 +330,12 @@ c     'crmod.cfg' schliessen
       close(12)
 
 c     Kontrollausgabe
-      write(*,*)
-      write(*,'(a)',ADVANCE='no')' Modelling completed in'
 
-      CALL SYSTEM_CLOCK (c2,j)
-      k=(c2-c1)/j               ! Gesamt Sekunden
-      mi=INT(k/60)              ! Minuten
-      st=INT(k/60/60)           ! Stunden
-      ta=INT(k/60/60/24)        ! Tage
-      se=k-mi*60-st*60*60-ta*60*60*24 ! Sekunden
- 110  FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
-      WRITE (*,110)ta,st,mi,se
+      fetxt = 'solution time'
+      CALL TOC(c1,fetxt)
+
+      write(*,*)
+      write(*,'(a)',ADVANCE='no')' Modelling completed'
 
       STOP '0'
       

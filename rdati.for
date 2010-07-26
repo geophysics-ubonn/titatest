@@ -9,12 +9,14 @@ c     Letzte Aenderung   20-Aug-2007
 c.....................................................................
       USE make_noise
       USE alloci, only:rnd_r,rnd_p
+      USE femmod
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
@@ -85,15 +87,30 @@ c     Ggf. Fehlermeldung
          goto 1000
       end if
 
+      ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
+     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),
+     1     stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation volt '
+         errnr = 94
+         goto 1000
+      END IF
+
 c     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
       IF ( lnse ) THEN
+         WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
          CALL get_unit(ifp1)
-         OPEN (ifp1,FILE='tmp.mynoise_rho',STATUS='replace')
-         CALL get_unit(ifp2)
-         IF (.NOT. ldc) OPEN (ifp2,FILE='tmp.mynoise_pha',
-     1        STATUS='replace')
-         WRITE (*,'(A)',advance='no')' Initializing noise '
+         OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
+         WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//
+     1        ACHAR(9)//ACHAR(9)//'bet(old)'//ACHAR(9)//'bet(new)'
+         IF (.NOT. ldc) THEN
+            CALL get_unit(ifp2)
+            OPEN (ifp2,FILE='inv.mynoise_pha',STATUS='replace')
+            WRITE(ifp2,'(a)')'#  rnd_p'//ACHAR(9)//'eps_p'//
+     1           ACHAR(9)//ACHAR(9)//'pha(old)'//ACHAR(9)//'pha(new)'
+         END IF
+
          ALLOCATE (rnd_r(nanz))
          CALL Random_Init(iseed)
          DO i=1,nanz
@@ -107,9 +124,8 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
             END DO
          END IF
       END IF
+      
 
-      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//ACHAR(9)//
-     1     ACHAR(9)//ACHAR(9)//ACHAR(9)
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
@@ -217,20 +233,34 @@ c     ak                    write(*,*) i
 
             stabw = 1d-2*stabw0 + stabm0/bet
 
-            IF ( lnse ) THEN
-               eps_r = 1d-2*stabw0 * bet + stabm0
+            IF ( lnse ) THEN ! add synthetic noise
+
+               eps_r = 1d-2*nstabw0 * bet + nstabm0
+
                WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
      1              rnd_r(i),eps_r,bet
-               bet = bet + rnd_r(i) * eps_r
-               WRITE(ifp1,'(G14.4)')bet
+
                IF (.NOT. ldc) THEN
-                  eps_p = (stabpA1*eps_r**stabpB + 
-     1                 1d-2*stabpA2*dabs(pha) + stabp0) * 1d-3
+                  
+                  eps_p = (nstabpA1*eps_r**nstabpB + 
+     1                 1d-2*nstabpA2*dabs(pha) + nstabp0)
+
+c$$$                  eps_p = (nstabpA1*bet**nstabpB + 
+c$$$     1                 1d-2*nstabpA2*dabs(pha) + nstabp0)
+
                   WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
      1                 rnd_p(i),eps_p,pha
-                  pha = pha + rnd_p(i) * eps_p
+
+                  pha = pha + rnd_p(i) * eps_p ! add noise
+
                   WRITE(ifp2,'(G14.4)')pha
                END IF
+
+               bet = bet + rnd_r(i) * eps_r ! add noise
+
+               WRITE(ifp1,'(G14.4)')bet
+
+
             END IF
 
          end if
@@ -259,11 +289,12 @@ c     ak                    write(*,*) i
          end if
 
          dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-         wmatd(i) = 1d0/(stabw*stabw)
+         wmatdr(i) = 1d0/(stabw**2.)
+         wmatd(i) = wmatdr(i)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
-         IF (lfphai) THEN
-c RM            wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
-            wmatdp(i)=1d0/(stabwp*stabwp)
+         IF (.NOT.ldc) THEN
+            wmatd(i)=1d0/(stabw**2.+stabwp**2.)
+            wmatdp(i)=1d0/(stabwp**2.)
          END IF
          wdfak(i) = 1
 
@@ -302,13 +333,15 @@ c     ak
 
 c     'datei' schliessen
       close(kanal)
-      IF (lnse) THEN
+      IF ( lnse ) THEN
          close(ifp1)
          IF (.not.ldc) close (ifp2)
       END IF
       errnr = 0
       IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
       IF (ALLOCATED (rnd_p)) DEALLOCATE (rnd_p)
+
+
       return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

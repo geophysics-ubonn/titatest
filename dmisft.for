@@ -6,11 +6,13 @@ c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   15-Jan-2001
       
 c.....................................................................
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'parmax.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
@@ -88,10 +90,13 @@ c     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
          
          idum   = idum   + wdlok(i)
          nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
-         betrms = betrms + wmatd(i)*dble(wdlok(i))*
+
+         betrms = betrms + wmatdr(i)*dble(wdlok(i))*
      1        dble(cdum)*dble(cdum)
-         pharms = pharms + wmatd(i)*dble(wdlok(i))*
+
+         pharms = pharms + wmatdp(i)*dble(wdlok(i))*
      1        dimag(cdum)*dimag(cdum)
+
       end do
       
 c     Ggf. Fehlermeldung

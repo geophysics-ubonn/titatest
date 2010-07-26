@@ -12,13 +12,15 @@ c
 c.....................................................................
 
       USE alloci
+      USE femmod
+      USE datmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
@@ -39,7 +41,6 @@ c     Hilfsvariablen
       real            * 8     dum
 
 c     Hilfsfelder
-      logical         * 4     lfeld(mmax)
       complex         * 16    bvec(mmax)
 
 c     Indexvariablen
@@ -47,21 +48,7 @@ c     Indexvariablen
       integer         * 4     smaxs !
 c.....................................................................
 
-c     Parametervektor belegen
       smaxs=MAXVAL(selanz)
-
-      do j=1,manz
-         lfeld(j) = .false.
-      end do
-
-      do k=1,elanz
-         j = mnr(k)
-
-         if (.not.lfeld(j)) then
-            lfeld(j) = .true.
-            par(j)   = cdlog(sigma(k))
-         end if
-      end do
 
       if (.not.llam) then
 
@@ -105,8 +92,15 @@ c     diff+<
                end if
 c     diff+>
             end do
+c Damping--
+         else if (ltri == 3.OR.ltri == 4) THEN
+
+            WRITE(*,'(a)',ADVANCE='no')
+     1           'update:: damping has no part in the gradient'
+
 c     triang>
-         else if (ltri < 10) then
+         else if (ltri == 1.OR.ltri == 2.OR.
+     1           (ltri > 4 .AND. ltri < 15)) then
             do i=1,manz
                cdum = dcmplx(0d0)
                DO ij=1,smaxs
@@ -130,7 +124,8 @@ c     triang>
                end if
             end do
 
-         else
+         else if (ltri == 15) THEN
+
             if (.not.lprior) then
                bvec(1:manz) = 
      1              MATMUL(DCMPLX(smatm),par(1:manz))
@@ -163,20 +158,27 @@ c     Skalierungsfaktoren bestimmen
             end if
 
 c     triang< 
-            if (ltri==0) then
+            IF (ltri==0) THEN
                dum    = dum + lam*smatm(j,1)
-            else if (ltri < 10) then
+
+            ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1              (ltri > 4 .AND. ltri < 15)) THEN
                dum    = dum + lam*smatm(j,smaxs+1)
-            else
+
+            ELSE IF (ltri == 3.OR.ltri == 4) THEN
+               dum = dum + lam * smatm(j,1)
+
+            ELSE IF (ltri == 15) THEN
                dum    = dum + lam*smatm(j,j)
-            end if
+
+            END IF
 c     triang> 
             
             fak(j) = 1d0/dsqrt(dum)
 
          end do
 
-c     Konstantenvektor berechen und skalieren
+c     Konstantenvektor berechen und skalieren (RHS)
          do j=1,manz
 
             cdum = dcmplx(0d0)
@@ -223,8 +225,17 @@ c     diff+<
                end if
             end if
 c     diff+>
-            bvec(j) = cdum - dcmplx(lam)*bvec(j)
+            IF (ltri == 3.OR.ltri == 4) THEN
+
+               bvec(j) = cdum
+
+            ELSE
+
+               bvec(j) = cdum - dcmplx(lam)*bvec(j)
+            END IF
+
             bvec(j) = bvec(j)*dcmplx(fak(j))
+
          end do
 
 c     Modellverbesserung mittels konjugierter Gradienten bestimmen
@@ -279,9 +290,7 @@ c     i.e Stepsize = ||\delta m||
       do j=1,manz
          bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
       end do
-
+      bdpar = bdpar * step
 c$$$      bdpar = dsqrt(bdpar/dble(manz))
-
-      return
 
       end

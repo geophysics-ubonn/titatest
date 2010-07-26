@@ -122,6 +122,8 @@ c Schalter ob positive Phasen auf Null korrigiert werden sollen
         logical         * 4     lphi0
 c Schalter ob "final phase improvement" durchgefuehrt werden soll
         logical         * 4     lfphai
+c Schalter ob "final phase improvement" mit homogenem phasenwert startet
+        logical         * 4     lffhom
 c	triang>
 c Schalter für die Triangularisierungsinversion
         integer         * 4	ltri
@@ -130,6 +132,9 @@ c Schalter ob prior model vorhanden
         logical         * 4	lprior
 c Schalter ob prior model verrauschen
         logical         * 4	lnsepri
+c Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
+c werden soll
+        logical         * 4     lsens
 c Schalter fuer Resolution matrix
         logical         * 4	lres
 c Schalter fuer posterior cov
@@ -138,6 +143,10 @@ c Schalter fuer posterior cov
         logical         * 4	lcov2
 c Mega schalter, wird binaer getestet
         integer         * 4	mswitch
+c Schalter für ols Loeser
+  	logical         * 4     lgauss
+c Schalter ob experimentelles variogram berechnet werden soll
+  	logical         * 4     lvario
 c.....................................................................
 
         common/ckonv/   lam,
@@ -186,6 +195,7 @@ c.....................................................................
 cdiff+<
      1                  ldiff,
 cdiff+>
+     1			lffhom,
      1                  lphi0,
      1                  lfphai,
      1			ltri,
@@ -194,4 +204,7 @@ cdiff+>
      1 			lres,
      1 			lcov1,
      1 			lcov2,
-     1 			mswitch
+     1 			mswitch,
+     1			lgauss,
+     1			lsens,
+     1			lvario

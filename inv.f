@@ -12,11 +12,15 @@ c     14 - cjg.ctr    -> fpcjg
 c     15 - eps.ctr    -> fpeps
 
 c     Andreas Kemna                                            02-May-1995
-c     Letzte Aenderung                                         29-Jul-2009
+c     Letzte Aenderung                                         03-Jan-2010
 
 c.....................................................................
 
       USE alloci
+      USE tic_toc
+      USE femmod
+      USE datmod
+
 c     USE portlib
 
       IMPLICIT none
@@ -28,14 +32,12 @@ c     USE portlib
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
-      INTEGER                :: i,c1,c2
+      INTEGER                :: c1,i
       REAL(KIND(0D0))        :: lamalt
       LOGICAL                :: ols
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -61,14 +63,15 @@ c     Benoetigte Variablen einlesen
       call rall(kanal,delem,delectr,dstrom,drandb,
 c     diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
 c     diff+<
-     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,
-     1     lsens,lagain)
+     1     dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 c     diff+>
       if (errnr.ne.0) goto 999
+
 
 c     Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 c     zur Berechnung der gemischten Randbedingung bestimmen
       call precal()
+
       if (errnr.ne.0) goto 999
 
       if (.not.lbeta) then
@@ -97,8 +100,8 @@ c     Ggf. Fehlermeldungen
 
 c     Startmodell belegen
       call bsigm0(kanal,dstart)
-      if (errnr.ne.0) goto 999        
-
+      if (errnr.ne.0) goto 999
+        
 c     Startparameter setzen
       it     = 0
       itr    = 0
@@ -124,12 +127,20 @@ c     Kontrolldateien oeffnen
       close(fpinv)
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
       open(fprun,file=fetxt,status='replace',err=999)
-      close(fpinv)
+!!$      close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
       fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
       open(fpcjg,file=fetxt,status='replace',err=999)
       close(fpcjg)
       fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
       open(fpeps,file=fetxt,status='replace',err=999)
+      IF (ldc) THEN
+         WRITE (fpeps,'(a)')'1/eps_r'
+         WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
+      ELSE
+         WRITE (fpeps,'(3(a,10x))')'1/eps','1/eps_r','1/eps_p'
+         WRITE (fpeps,'(3(G12.5,2x))')
+     1        (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),i=1,nanz)
+      END IF
       close(fpeps)
       errnr = 4
 
@@ -139,33 +150,45 @@ c     diff+<
       call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0)
 c     diff+>
       if (errnr.ne.0) goto 999
-
+!!$      CALL SYSTEM('sleep 1000')
 c     'sens' zuweisen
       if (ldc) then
-         ALLOCATE(sensdc(nanz,manz),stat=errnr)
+         ALLOCATE(sensdc(nanz,manz),kpotdc(sanz,eanz,kwnanz),stat=errnr)
       else
-         ALLOCATE(sens(nanz,manz),stat=errnr)
+         ALLOCATE(sens(nanz,manz),kpot(sanz,eanz,kwnanz),stat=errnr)
       end if
       if (errnr.ne.0) then
+         fetxt = 'allocation problem sens and kpot'
          errnr = 97 
          goto 999
       end if
 
+c-------------
+c     get current time
+      CALL tic(c1)
 c.................................................
 
 c     MODELLING
 c     'a', 'hpot' und 'kpot' zuweisen
  10   if (ldc) then
-         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),
-     1        kpotdc(sanz,eanz,kwnanz),stat=errnr)
+         ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),bdc(sanz),
+     1        stat=errnr)
       else
-         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),
-     1        kpot(sanz,eanz,kwnanz),stat=errnr)
+         ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),b(sanz),stat=errnr)
       end if
       if (errnr.ne.0) then
+         fetxt = 'allocation problem a and hpot'
          errnr = 97 
          goto 999
       end if
+      IF (.NOT.ALLOCATED (pot)) THEN
+         ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
+         if (errnr.ne.0) then
+            fetxt = 'allocation problem pot to fak'
+            errnr = 97 
+            goto 999
+         end if
+      END IF
 
 c     Kontrollausgaben
       WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
@@ -278,11 +301,10 @@ c     Spannungswerte berechnen
 
 c     'a' und 'hpot' freigeben
       if (ldc) then
-         DEALLOCATE(adc,hpotdc)
+         DEALLOCATE(adc,hpotdc,bdc)
       else
-         DEALLOCATE(a,hpot)
+         DEALLOCATE(a,hpot,b)
       end if
-
       if (lsetup) then
 
 c     Ggf. background auf ratio-Daten "multiplizieren"
@@ -366,9 +388,7 @@ c     Kontrollausgaben
                close(fpinv)
 
 c     Wichtungsfeld umspeichern
-               do j=1,nanz
-                  wmatd(j) = wmatdp(j)
-               end do
+               wmatd(1:nanz) = wmatdp(1:nanz)
 
                lip    = .true.
                lsetip = .true.
@@ -379,13 +399,21 @@ c     Wichtungsfeld umspeichern
                step   = 1d0
 
 c     ak
-               fetxt = 'cp -f tmp.lastmod tmp.lastmod_rho'
+               fetxt = 'cp -f inv.lastmod inv.lastmod_rho'
                CALL SYSTEM (TRIM(fetxt))
-               do j=1,elanz
-                  sigma(j) = dcmplx(
-     1                 dcos(pha0/1d3)*cdabs(sigma(j)) ,
-     1                 -dsin(pha0/1d3)*cdabs(sigma(j)) )
-               end do
+               IF (lffhom) THEN
+                  write(*,*)
+     1                 ' ******* Restarting phase model ********'
+                  write(fprun,*)
+     1                 ' ******* Restarting phase model ********'
+                  do j=1,elanz
+                     sigma(j) = dcmplx(
+     1                    dcos(pha0/1d3)*cdabs(sigma(j)) ,
+     1                    -dsin(pha0/1d3)*cdabs(sigma(j)) )
+                  end do
+                  
+                  GOTO 10       ! neues calc
+               END IF
 c     ak
 
 c     Daten-RMS berechnen
@@ -405,6 +433,7 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
             if (errnr.ne.0) goto 999
          end if
       end if
+
 
       if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
 c     Iterationsindex hochzaehlen
@@ -446,8 +475,9 @@ c     SENSITIVITAETEN berechnen
          else
             call bsensi()
          end if
-
-         if (lsetup.OR.ltri == 3.OR.ltri == 4) then
+         
+         if (lsetup.OR.(ltri > 4 .AND. ltri < 10)) then
+                        
 c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
 c     if (lsens) then
 c     if (ldc) then
@@ -459,32 +489,57 @@ c     if (errnr.ne.0) goto 999
 c     end if
 c     ak
 c     Rauhigkeitsmatrix belegen
-            WRITE (*,'(/a)',ADVANCE='no')'Regularization::'
+            IF (it == 1) WRITE (*,'(/a)',ADVANCE='no')
+     1           'Regularization::'
+
             IF (ltri == 0) THEN
+
                WRITE (*,'(a)')' Rectangular smooth'
                call bsmatm
-            ELSE IF (ltri == 1) THEN
+
+            ELSE IF (ltri == 1.OR.ltri == 2) THEN
+
                WRITE (*,'(a)')' Triangular smooth'
                CALL bsmatmtri
-            ELSE IF (ltri >= 2 .AND. ltri < 5) THEN
-               IF (ltri == 2) WRITE (*,'(a)')
-     1              ' Triangular pure MGS '
-               IF (ltri == 3) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS'
-               IF (ltri == 4) WRITE (*,'(a)')
-     1              ' Triangular sens weighted MGS mean'
+
+            ELSE IF (ltri == 3.OR.ltri==4) THEN
+
+               WRITE (*,'(a)',ADVANCE='no')' Using damping'
+               CALL bsmatmlma
+
+            ELSE IF (ltri > 4 .AND. ltri < 10) THEN
+
+               IF (it == 1) THEN
+                  IF (ltri == 5) WRITE (*,'(a)')
+     1                 ' Triangular pure MGS (alpha)'
+                  IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
+     1                 ' Triangular sens weighted MGS (alpha)'
+                  IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
+     1                 ' Triangular sens weighted MGS mean (alpha)'
+               ELSE
+                  WRITE (*,'(a)')' Updating MGS functional'
+               END IF
+
                CALL bsmatmmgs
-            ELSE IF (ltri == 5) THEN
-               WRITE (*,'(a)')' Triangular Total (beta) variance'
-               CALL bsmatmtv
+
             ELSE IF (ltri == 10) THEN
-               WRITE (*,'(a)')' Triangular Stochastic'
+
+               WRITE (*,'(a)')' Triangular Total variance (alpha)'
+               CALL bsmatmtv
+
+            ELSE IF (ltri == 15) THEN
+
+               WRITE (*,'(a)')' Triangular Stochastic (beta)'
                CALL bsmatmsto
                if (errnr.ne.0) goto 999
+
             ELSE
+
                WRITE (*,'(a)')' Error:: '//
-     1              'Regularization can just be 0,1,2,3,4 or 10'
+     1              'Regularization can just be '//
+     1              '0,1,3,4,5,6,7,8,9,10 or 15'
                STOP
+
             END IF 
          end if
       else
@@ -502,12 +557,12 @@ c     Felder zuruecksetzen
          print*,'Only precalcs'
          GOTO 30
       END IF 
-c     'kpot' freigeben
-      if (ldc) then
-         DEALLOCATE(kpotdc)
-      else
-         DEALLOCATE(kpot)
-      end if
+c$$$c     'kpot' freigeben wird nicht mehr freigegeben
+c$$$      if (ldc) then
+c$$$         DEALLOCATE(kpotdc)
+c$$$      else
+c$$$         DEALLOCATE(kpot)
+c$$$      end if
 
 c     REGULARISIERUNG / STEP-LENGTH einstellen
       if (.not.lstep) then
@@ -599,7 +654,6 @@ c     Ggf. Daten-RMS speichern
          end if
       else
          lstep = .false.
-         print*,'hi'
          
 c     Parabolische Interpolation zur Bestimmung der optimalen step-length
          call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
@@ -622,15 +676,28 @@ c     Kontrollausgaben
       write(fprun,*)' Iteration ',it,', ',itr,
      1     ' : Updating'
 
+c Modell parameter mit aktuellen Leitfaehigkeiten belegen
+
+      CALL bpar
+      if (errnr.ne.0) goto 999
+
 c     UPDATE anbringen
       call update(dpar2,cgres2)
+      if (errnr.ne.0) goto 999
 
-c     Leitfaehigkeiten belegen und Roughness bestimmen
+c Leitfaehigkeiten mit verbessertem Modell belegen
+      CALL bsigma
+      if (errnr.ne.0) goto 999
+
+c     Roughness bestimmen
       IF (ltri == 0) THEN
-         call brough()
-      ELSE IF (ltri < 10) THEN
+         CALL brough()
+      ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1        (ltri > 4 .AND. ltri < 15)) THEN
          CALL broughtri
-      ELSE
+      ELSE IF (ltri == 3.OR.ltri == 4) THEN
+         CALL broughlma
+      ELSE IF (ltri == 15) THEN
          CALL broughsto
       END IF
 
@@ -645,7 +712,7 @@ c.................................................
 c     OUTPUT
  30   call wout(kanal,dsigma,dvolt)
       if (errnr.ne.0) goto 999
-      
+
 c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       if (lsens) then
          if (ldc) then
@@ -655,17 +722,26 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
          end if
          if (errnr.ne.0) goto 999
       end if
+      IF (lvario) CALL bvariogram ! calculate experimental variogram
+      
       IF (lcov1) THEN
+         WRITE(*,'(a)')'Calculating model uncertainty..'
+         WRITE (fprun,'(a)')'Calculating model uncertainty..'
          IF (it<2) lam = lamalt
-
+         lam = lamalt
          WRITE (*,'(/a,G10.3,a/)')
      1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
          IF (BTEST(mswitch,5)) THEN 
             READ (*,*)fetxt
             IF (fetxt/='')READ(fetxt,*)lam
+            WRITE (*,*)'Set lambda to ',lam
          END IF
+
+         WRITE (fprun,*)'Taking lam=',lam
+
          WRITE(*,'(a)')ACHAR(13)//
      1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
+         WRITE(fprun,'(a)')'MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
          IF (ldc) THEN
 
@@ -680,7 +756,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
             if (errnr.ne.0) goto 999
 
-            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)
+            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)            
             IF (errnr /= 0) THEN
                errnr = 97
                GOTO 999
@@ -694,11 +770,11 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             IF (errnr/=0) THEN
                WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
                errnr = 97
-               RETURN
+               GOTO 999
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm_dc(kanal) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
+            CALL bmcm_dc(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
             if (errnr.ne.0) goto 999
 
          ELSE
@@ -728,11 +804,11 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             IF (errnr/=0) THEN
                WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
                errnr = 97
-               RETURN
+               GOTO 999
             END IF
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm(kanal)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
+            CALL bmcm(kanal,lgauss)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
             if (errnr.ne.0) goto 999
 
          END IF
@@ -741,26 +817,32 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
             
             ols = .FALSE.
             
+            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
+
             WRITE(*,'(a)')ACHAR(13)//
      1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
      1           ' A^TC_d^-1A'
+            WRITE(fprun,'(a)')'RES = (A^TC_d^-1A + C_m^-1)^-1'//
+     1           ' A^TC_d^-1A'
 
-            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
 
             IF (ldc) THEN
-               CALL bres_dc(kanal,ols)
+               CALL bres_dc(kanal)
                if (errnr.ne.0) goto 999
             ELSE
-               CALL bres(kanal,ols)
+               CALL bres(kanal)
                if (errnr.ne.0) goto 999
             END IF
 
             IF (lcov2) THEN
+
+               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
+
                WRITE(*,'(a)')ACHAR(13)//
      1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
      1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
-
-               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
+               WRITE(fprun,'(a)')'MCM_2 = (A^TC_d^-1A + C_m^-1)'//
+     1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
 
                IF (ldc) THEN
                   CALL bmcm2_dc(kanal)
@@ -812,15 +894,9 @@ c     Kontrollausgaben
       end if
       
 c     Run-time abfragen und ausgeben
-      izeit     = etime(tazeit)
-      izeit     = izeit/60.
-      tazeit(2) = amod(izeit,60.)
-      tazeit(1) = (izeit-tazeit(2))/60.
-      
-      write(*,'(a10,i3,a3,i3,a3)')
-     1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
-      write(fprun,'(a10,i3,a3,i3,a3)',err=999)
-     1     ' CPU time:',int(tazeit(1)),'hrs',int(tazeit(2)),'min'
+      fetxt = ' CPU time: '
+      CALL toc(c1,fetxt)
+      write(fprun,'(a)',err=999)TRIM(fetxt)
       
 c     Kontrolldateien schliessen
       close(fprun)
@@ -835,6 +911,8 @@ c     'sens' und 'kpot' freigeben
          DEALLOCATE(sens,kpot)
       end if
       IF (ALLOCATED(smatm)) DEALLOCATE (smatm)
+      IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
+      IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
 c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5
 

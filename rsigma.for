@@ -8,7 +8,10 @@ c     Letzte Aenderung   07-Nov-1997
 c.....................................................................
       USE make_noise
       USE alloci,only:rnd_r,rnd_p
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
@@ -16,7 +19,6 @@ c.....................................................................
       INCLUDE 'konv.fin'
       INCLUDE 'model.fin'
       INCLUDE 'inv.fin'
-      INCLUDE 'fem.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:
@@ -50,7 +52,7 @@ c     'datei' oeffnen
       IF (lnsepri) THEN
          PRINT*,''
          CALL get_unit(ifp1)
-         PRINT*,'iseedpri / std. err.',iseedpri,stabmpri
+         PRINT*,'iseedpri / std. err.',iseedpri,modl_stdn
          OPEN (ifp1,FILE='tmp.mynoise_mprior_rho',STATUS='replace')
          WRITE (*,'(A)',advance='no')' Initializing noise '
          ALLOCATE (rnd_r(elanz))
@@ -98,13 +100,13 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
             IF (bet > 0.) THEN  
 !     TODO: meaningful phase check.. 
                IF (lnsepri) THEN
-                  eps_r = 1d-2*stabmpri * bet
+                  eps_r = 1d-2*modl_stdn * bet
                   WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')
      1                 rnd_r(i),eps_r,bet
                   bet = bet + rnd_r(i) * eps_r
                   WRITE(ifp1,'(G14.4)')bet
                   IF (.NOT. ldc) THEN
-                     eps_p = 1d-2*stabmpri*dabs(pha)
+                     eps_p = 1d-2*modl_stdn*dabs(pha)
                      WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')
      1                    rnd_p(i),eps_p,pha
                     pha = pha + rnd_p(i) * eps_p

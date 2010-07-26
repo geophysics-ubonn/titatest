@@ -1,0 +1,16 @@
+\section{General remarks}\label{sect:intro_general}
+
+\subsection{\crm}\label{sub:intro_crm}
+The forward modelling tool \crm \index{\crm} is a finite-element-based program for 2.5D modelling in electrically conductive and polarizable media.
+It calculates the electric potential due to a low-frequency (pseudo-dc) electric current point-source in a cross-scetion perpendicular to the strike direction of a two-dimensionallly heterogeneous medium.
+Since the potential is integrated along the direction of the strike in the wavenumber-frequency domain, it is a 2.5D approximation.
+The medium, typically represents the Earth's subsurface, but may also represent other objects as confined tanks or vessels.
+The finite-element method grants a huge range of flexibility in meshing the underlying medium.
+
+For any given two-dimensional complex resistivity (comprising magnitude and phase) distribution, the modelled response is either a set of complex potential distributions in the considered cross-sectional planefor a given set of one- and/or two-pole current injection confugurations; a set of impedance values for a given set of two-, three- and/or four-pole measurement confugurations (one or two poles for current injection, another one or two poles for voltages measurement); and/or a set of complex sensitivity distributions in the cross-sectional plane corresponding to the given set of measurement configurations.
+If polarizability of the medium is disregarded, the underlying resistivity distribution, as well as the modelled potential
+
+
+\subsection{\crt}\label{sub:intro_crt}
+The inverse modelling tool \crt \index{\crt} is the corresponding tomographic program to \crm.
+

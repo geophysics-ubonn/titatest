@@ -1,7 +1,7 @@
 #!/bin/bash
 
 tools="plotCRTmod_batch.m epstopdf matlab mogrify";
-
+matarg='-nodesktop -nosplash'
 echo "checking for tools"
 forcecheck(){
 	Ret_val=`which $1`
@@ -38,9 +38,15 @@ for x in $tools;do
 	esac
 	i=$[$i+1];
 done
-
+if [ -e "crtomo.cfg" ];then
+    echo found crtomo.cfg
+else
+    echo no crtomo.cfg ound
+    exit
+fi
 awk '{if (NR==2){print}}' crtomo.cfg > tmp.meshname
 awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
+
 if [ -e "tmp.fenster" ];then
     fenster=`cat tmp.fenster`
 else
@@ -56,20 +62,26 @@ else
     c2=`pwd|awk '/3_decades/{printf("%.1f\t%.1f",0.5,3.5)}'` 
     c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'` 
 fi
+
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
-echo "$mtlb < $plotmod >& /dev/null"
-$mtlb < $plotmod >& /dev/null
+if [ -e inv.lastmod ];then
+    echo found inv.lastmod
+else
+    echo no inv.lastmod present..
+    exit
+fi
 
-tmp=`cat tmp.lastmod`
+$mtlb $matarg < $plotmod >& /dev/null
+
+tmp=`cat inv.lastmod`
 myeps=`basename $tmp`'.eps'
-mypdf=`basename $myeps '.eps'`'.pdf'
+mypdf=`basename $myeps '.eps'|tr '.' '_'`'.pdf'
 echo image conversion... $myeps $mypdf
 $epsp $myeps -o=$mypdf >& /dev/null
-$mogri -format jpg $myeps
 echo "done $1"
 
-#pdfcr=`which pdfcrop`
-#forcecheck $pdfcr
-#$pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
+pdfcr=`which pdfcrop`
+forcecheck $pdfcr
+$pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null

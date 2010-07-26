@@ -5,9 +5,9 @@ c     zur Realisierung der Triangulationsregularisierung
 c     sowie der kleinsten moeglichen Skalenlaenge der
 c     stochastischen Regularisierung
 c     
-c     Copyright by Andreas Kemna
+c     Copyright by Andreas Kemna 2009
 c     
-c     Erste Version von Roland Martin                              29-Jul-2009
+c     Erste Version von Roland Martin                          29-Jul-2009
 c     
 c     Letzte Aenderung                                         07-Aug-2009
 c     

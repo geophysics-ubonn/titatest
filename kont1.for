@@ -9,16 +9,18 @@ c     Andreas Kemna                                            16-Apr-1996
 c     Letzte Aenderung   16-Jul-2007
       
 c.....................................................................
+      USE variomodel
+      USE femmod
+      USE datmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'dat.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'model.fin'
@@ -35,7 +37,8 @@ c     diff+<
      1     dfm0,
 c     diff+>
      1     drandb
-
+      REAL(KIND(0D0)) :: Ix,Iy
+ 
       fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
       OPEN(fpinv,file=fetxt,status='old',POSITION='append',err=999)
       
@@ -55,8 +58,12 @@ c     diff+<
       write(fpinv,'(a80)',err=999) dfm0
 c     diff+>
       write(fpinv,'(a16)',err=999) '***PARAMETERS***'
-      write(fpinv,'(i4,t18,a24)',err=999) nx,'! # cells in x-direction'
-      write(fpinv,'(i4,t18,a24)',err=999) nz,'! # cells in z-direction'
+      IF (ltri == 0) THEN
+         write(fpinv,'(i4,t18,a24)',err=999) nx,
+     1        '! # cells in x-direction'
+         write(fpinv,'(i4,t18,a24)',err=999) nz,
+     1        '! # cells in z-direction'
+      END IF
       write(fpinv,'(g11.5,t18,a36)',err=999) alfx,
      1     '! smoothing parameter in x-direction'
       write(fpinv,'(g11.5,t18,a36)',err=999) alfz,
@@ -90,6 +97,9 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(g11.5,t18,a93)',err=999) stabp0,
      1     '! phase error model parameter A3 (mrad)       '//
      1     '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
+      write(fpinv,'(a,1X,l1)',err=999)
+     1     '! (NEW) restart final phase with homogenous phase model?',
+     1     lffhom
       write(fpinv,'(l1,t18,a38)',err=999) lrho0,
      1     '! homogeneous background resistivity ?'
       write(fpinv,'(g11.5,t18,a30)',err=999) bet0,
@@ -105,32 +115,73 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,'(l1,t18,a19)',err=999) lrandb2,
      1     '! boundary values ?'
       write(fpinv,'(a80)',err=999) drandb
-      write(fpinv,'(a)',err=999)      '***Model stats***'
-      write(fpinv,*,err=999)'# Model parameters : ',manz
-      write(fpinv,*,err=999)'# Data points      : ',nanz
-      write(fpinv,*,err=999)'Add data noise ?   : ',lnse
-      write(fpinv,*,err=999)'    seed           : ',iseed
-      write(fpinv,*,err=999)'Add model noise ?  : ',lnsepri
-      write(fpinv,*,err=999)'    seed           : ',iseedpri
-      write(fpinv,*,err=999)'    Variance       : ',stabmpri
-      write(fpinv,*,err=999)'Regular grid       : ',(ltri==0)
-      write(fpinv,*,err=999)'Triangular regu    : ',(ltri==1)
-      write(fpinv,*,err=999)'Minimum grad supp  : ',(ltri==2)
-      write(fpinv,*,err=999)'MGS sens           : ',(ltri==3)
-      write(fpinv,*,err=999)'MGS sens mean      : ',(ltri==4)
-      IF (ltri >= 2 .AND. ltri < 5)
-     1     write(fpinv,*,err=999)'         MGS beta  : ',betamgs
-      write(fpinv,*,err=999)'Levenberg damping  : ',(ltri==5)
-      write(fpinv,*,err=999)'Marquardt damping  : ',(ltri==6)
-      write(fpinv,*,err=999)'Stochastic regu    : ',(ltri==10)
+      write(fpinv,'(/a)',err=999)      '***Model stats***'
+      write(fpinv,*,err=999)'# Model parameters  : ',manz
+      write(fpinv,*,err=999)'# Data points       : ',nanz
+      write(fpinv,*,err=999)'Add data noise ?    : ',lnse
+      write(fpinv,*,err=999)'Couple to Err. Modl?: ',.NOT.lnse2
+      write(fpinv,*,err=999)'    seed            : ',iseed
+      write(fpinv,*,err=999)'    Variance        : ',nstabw0
+      write(fpinv,*,err=999)'Add model noise ?   : ',lnsepri
+      write(fpinv,*,err=999)'    seed            : ',iseedpri
+      write(fpinv,*,err=999)'    Variance        : ',modl_stdn
+      write(fpinv,'(/a)',err=999)
+     1     '******** Regularization Part *********'
+      write(fpinv,*,err=999)'Regular grid smooth : ',(ltri==0)
+      write(fpinv,*,err=999)'Triangular regu     : ',(ltri==1)
+      write(fpinv,*,err=999)'Triangular regu2    : ',(ltri==2)
+      write(fpinv,*,err=999)'Levenberg damping   : ',(ltri==3)
+      write(fpinv,*,err=999)'Marquardt damping   : ',(ltri==4)
+      write(fpinv,*,err=999)'Minimum grad supp   : ',(ltri==5)
+      write(fpinv,*,err=999)'MGS beta/sns1 (RM)  : ',(ltri==6)
+      write(fpinv,*,err=999)'MGS beta/sns2 (RM)  : ',(ltri==7)
+      write(fpinv,*,err=999)'MGS beta/sns1 (RB)  : ',(ltri==8)
+      write(fpinv,*,err=999)'MGS beta/sns2 (RB)  : ',(ltri==9)
+      write(fpinv,*,err=999)'TV (Huber)          : ',(ltri==10)
+
+      IF (ltri>4.AND.ltri<15)
+     1     write(fpinv,*,err=999)'  Stabilizer beta  : ',betamgs
+      write(fpinv,*,err=999)'Stochastic regu     : ',(ltri==15)
+
+      IF (lvario) THEN
+         WRITE (fpinv,'(a)',err=999)'Experimental Variogram::'
+         WRITE (fpinv,'(a,I4)',err=999)ACHAR(9)//
+     1        'nx-switch  : ',nx
+         CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
+         WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)//
+     1        'Integral lengths Ix/Iy',Ix,'/',Iy
+         WRITE (*,'(/2(a,F5.2))')ACHAR(9)//
+     1        'Integral lengths Ix/Iy',Ix,'/',Iy
+         WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1        'Variogram('//TRIM(fetxt)//')'
+         WRITE (*,'(a)')ACHAR(9)//
+     1        'Variogram('//TRIM(fetxt)//')'
+         IF (ltri == 15) THEN
+            CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
+            WRITE (fpinv,'(a)',err=999)ACHAR(9)//
+     1           'Covariance('//TRIM(fetxt)//')'
+            WRITE (*,'(a)')ACHAR(9)//
+     1           'Covariance('//TRIM(fetxt)//')'
+         END IF
+      END IF
+
       write(fpinv,*,err=999)'Fixed lambda       : ',llamf,lamfix
+      write(fpinv,'(/a)',err=999)
+     1     '******** Additional output *********'
       write(fpinv,*,err=999)'Read start model   : ',lstart
-      write(fpinv,*,err=999)'Write coverage     : ',BTEST(mswitch,0)
+      write(fpinv,*,err=999)'Write coverage     : ',lsens
       write(fpinv,*,err=999)'Write MCM 1        : ',lcov1
       write(fpinv,*,err=999)'Write resolution   : ',lres
       write(fpinv,*,err=999)'Write MCM 2        : ',lcov2
+      write(fpinv,*,err=999)'Using Gauss ols    : ',lgauss
+      IF (nz<0) THEN
+         write(fpinv,'(1x,a)',err=999,ADVANCE='no')
+     1        'taking easy lam_0 : '
+         IF (nz<-1) write(fpinv,*,err=999) -REAL(nz)
+         IF (nz==-1) write(fpinv,*,err=999)MAX(REAL(manz),REAL(nanz))
+      END IF
 
-      write(fpinv,'(a)',err=999) '***FIXED***'
+      write(fpinv,'(/a)',err=999) '***FIXED***'
       if (swrtr.eq.1) then
          write(fpinv,'(a,t50,i2)',err=999) ' # wavenumbers :',kwnanz
          write(fpinv,'(a,t50,g11.5,t62,a1)',err=999)
@@ -173,16 +224,17 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
      1     '------------------------------------------------',
      1     '-------------'
       write(fpinv,*,err=999)
+c     Robuste Inversion
       if (lrobust) then
-         write(fpinv,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1t77,a8,t89,a8,t101,a8,t113,a10)',err=999)
-     1        'it.','data RMS','stepsize',' lambda ',' roughn.',
+         write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,
+     1t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)',err=999)
+     1        'ID','it.','data RMS','stepsize',' lambda ',' roughn.',
      1        'CG-steps',' mag RMS',' pha RMS','- # data',
      1        'L1-ratio','steplength'
       else
-         write(fpinv,'(t1,a3,t7,a8,t19,a8,t30,a8,t42,a8,t54,a8,t65,a8,
-     1t77,a8,t89,a8,t101,a10)',err=999)
-     1        'it.','data RMS','stepsize',' lambda ',' roughn.',
+         write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,
+     1t69,a8,t81,a8,t93,a8,t105,a10)',err=999)
+     1        'ID','it.','data RMS','stepsize',' lambda ',' roughn.',
      1        'CG-steps',' mag RMS',' pha RMS','- # data',
      1        'steplength'
       end if

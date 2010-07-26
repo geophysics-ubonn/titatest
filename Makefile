@@ -8,10 +8,9 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
-
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -mcmodel=medium
+FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
 #FFLAG90         = -C -mcmodel=medium
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
@@ -23,6 +22,7 @@ FLIBF77         = -lm
 # definition der default targets..
 #  BLAS und LAPACK tools
 LALIB		= -llapack -lblas
+LALIB		= 
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # macht CRTomo
@@ -31,8 +31,10 @@ PR1		= crt
 PR2		= crm
 # macht CutMckee
 PR3		= ctm
+
 # kopiert die matlab tools
 PRM		= mtools
+MACHINE		= $(shell uname -n)
 ################################################################
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
@@ -40,8 +42,10 @@ all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
 # this is for evry one here
 ferr		= get_error.o
 # CRTomo objects
-f90crt		= alloci.o chold.o gauss_dble.o gauss_cmplx.o get_unit.o \
-		  linv.o make_noise.o
+f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
+		  make_noise.o tic_toc.o variomodel.o \
+		  chold.o cholz.o linvd.o linvz.o femmod.o \
+		  datmod.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -61,24 +65,26 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
 		  wpot.o wsens.o bsmatmmgs.o bsytop.o bsmatmtv.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
-		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o
+		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o \
+		  bsmatmlma.o bplma.o bpdclma.o broughlma.o \
+		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
-f90crm		= alloci.o
+f90crm		= alloci.o tic_toc.o make_noise.o femmod.o datmod.o
 fcrm		= fem.o
-forcrm		= bbsens.o besp_elem.o bessi0.o bessi1.o \
+forcrm		= bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bvolt.o bvolti.o chareal.o chkpol.o \
 		  choldc.o chol.o elem1.o bsytop.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
-		  mdian1.o parfit.o potana.o precal.o \
-		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  kompadc.o kompbdc.o kompb.o \
+		  potana.o precal.o \
+		  randb2.o randb.o randdc.o rdatm.o \
 		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o
+		  wpot.o wsens.o get_unit.o
 ################################################################
 # rules
 %.o:		%.for
@@ -114,12 +120,12 @@ cbn:
 crt:		$(C1) $(f90crt) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRTomo \
 		$(f90crt) $(forcrt) $(fcrt) $(ferr) $(LALIB)
-		$(CP) CRTomo $(WPATH)
+		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE) 
 
-crm:		$(C1) $(f90crt) $(forcrm) $(fcrm) $(ferr)
+crm:		$(C1) $(f90crm) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o CRMod \
-		$(f90crt) $(forcrm) $(fcrm) $(ferr) $(LALIB)
-		$(CP) CRMod $(WPATH)
+		$(f90crm) $(forcrm) $(fcrm) $(ferr) $(LALIB)
+		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 
 mtools:
 		cd ./m_tools ; make
@@ -128,8 +134,8 @@ ctm:
 		cd ./CutMcK ; make
 
 install:	$(C1) $(crt) $(crm)				
-		$(CP) CRTomo $(WPATH)
-		$(CP) CRMod $(WPATH)
+		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
+		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 		cd ./m_tools ; make install
 		cd ./CutMcK ; make install
 

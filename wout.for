@@ -8,14 +8,16 @@ c     Letzte Aenderung   10-Mar-2007
       
 c.....................................................................
       
+      USE datmod
+      USE femmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'dat.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'konv.fin'
 c     diff+<
       INCLUDE 'model.fin'
@@ -106,13 +108,13 @@ c     'dsigma' modifizieren
 c     Betraege ausgeben
       idum  = index(htxt,' ')
       fetxt = htxt(1:idum-4)//'mag'
-      OPEN (kanal,FILE='tmp.lastmod',STATUS='replace')
+      OPEN (kanal,FILE='inv.lastmod',STATUS='replace')
       WRITE (kanal,*)TRIM(fetxt)
       CLOSE (kanal)
       errnr = 1
       open(kanal,file=fetxt,status='replace',err=999)
       errnr = 4
-      write(kanal,*,err=1000) elanz
+      write(kanal,*,err=1000) elanz,ACHAR(9),betrms
 
       do i=1,elanz
 c     diff+<
@@ -145,7 +147,9 @@ c     diff+>
       OPEN (kanal,FILE=fetxt,status='replace')
       WRITE (kanal,'(I7)',err=1000) elanz
       DO i=1,elanz
-         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),0.0
+         dum = dcmplx(1d0)/sigma(i)
+         dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
+         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
       END DO
       CLOSE (kanal)
 c     Ggf. Phasen ausgeben
@@ -154,7 +158,7 @@ c     Ggf. Phasen ausgeben
          errnr = 1
          open(kanal,file=fetxt,status='replace',err=999)
          errnr = 4
-         write(kanal,*,err=1000) elanz
+         write(kanal,*,err=1000) elanz,ACHAR(9),pharms
 
          do i=1,elanz
             dum = dcmplx(1d0)/sigma(i)

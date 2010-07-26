@@ -38,7 +38,7 @@ c     'datei' oeffnen
       open(kanal,file=fetxt,status='old',err=999)
       CALL get_unit(ifp)
 
-      OPEN (ifp,FILE='tmp.elecpositions',STATUS='replace')
+      OPEN (ifp,FILE='inv.elecpositions',STATUS='replace')
 
       errnr = 3
 

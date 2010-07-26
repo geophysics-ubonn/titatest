@@ -1,19 +1,25 @@
       subroutine bpsto(bvec,pvec)
 
-c     Unterprogramm berechnet b = B * p . Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-
-c     Andreas Kemna                                            29-Feb-1996
-c     Letzte Aenderung   30-Jun-2009
-
+c     Unterprogramm berechnet b = B * p .
+c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+c     Fuer komplexes Modell
+c
+c     Copyright by Andreas Kemna 2009
+c     
+c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c
+c     Letzte Aenderung   RM                                    30-Jun-2009
+c
 c.....................................................................
 
       USE alloci
+      USE femmod
+      USE datmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'dat.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'fem.fin'
       INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
