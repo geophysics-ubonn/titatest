@@ -124,21 +124,18 @@ CONTAINS
   REAL (KIND (0D0)) FUNCTION mvario (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
-    REAL (KIND (0D0))             :: rh,ra,r,r2 ! distances
+    REAL (KIND (0D0))             :: r,r2 ! distances
 
     mvario = 0.
 
     r = SQRT((lagx / Ix_v)**2. + (lagy / Iy_v)**2.)
     r2 = r*r
 
-    rh = SQRT(lagx**2. + lagy**2.)
-    ra = SQRT(Ix_v**2. + Iy_v**2.)
-
     SELECT CASE (c1)
     CASE (1)
        mvario = varianz * (1. - EXP(-r2))
     CASE (2)
-       IF (rh < ra) THEN
+       IF (r < 1.) THEN
           mvario = varianz * (r * (1.5 - .5*r2))
        ELSE
           mvario = varianz
@@ -154,7 +151,7 @@ CONTAINS
   REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
-    REAL (KIND (0D0))             :: r,rh,ra,r2 ! distances
+    REAL (KIND (0D0))             :: r,r2 ! distances
     
     mcova = 0.
     
@@ -163,14 +160,11 @@ CONTAINS
     !! and C of gauss model will not be pos def
     r2 = r*r ! just to be sure -.-
     
-    rh = SQRT(lagx**2. + lagy**2.)
-    ra = SQRT(Ix_c**2. + Iy_c**2.)
-
     SELECT CASE (c2)
     CASE (1)
        mcova = varianz * EXP(-r2)
     CASE (2)
-       IF (rh < ra) THEN
+       IF ( r < 1. ) THEN
           mcova = varianz * (1. - r * (1.5 - .5*r2) )
        ELSE
           mcova = 0.
