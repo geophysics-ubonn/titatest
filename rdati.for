@@ -11,13 +11,13 @@ c.....................................................................
       USE alloci, only:rnd_r,rnd_p
       USE femmod
       USE datmod
+      USE invmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -88,8 +88,8 @@ c     Ggf. Fehlermeldung
       end if
 
       ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
-     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),
-     1     stat=errnr)
+     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),
+     1     wmatd(nanz),wdfak(nanz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation volt '
          errnr = 94

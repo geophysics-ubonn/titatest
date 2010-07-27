@@ -46,6 +46,3 @@ c Felder zum Zwischenspeichern
         complex         * 16    sigma2(elmax)
         complex         * 16    sgmaa2(nmax)
         real            * 8     wmatd2(nmax)
-
-        complex         * 16    dpar2(mmax)
-        real            * 4     cgres2(mmax+1)

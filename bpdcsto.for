@@ -1,4 +1,4 @@
-      subroutine bpdcsto(bvec,pvec)
+      subroutine bpdcsto()
 
 c     Unterprogramm berechnet b = B * p . 
 c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
@@ -7,54 +7,50 @@ c     Copyright by Andreas Kemna 2009
 c     
 c     Andreas Kemna / Roland Martin                            10-Jun-2009
 c
-c     Letzte Aenderung   RM                                    30-Jun-2009
+c     Letzte Aenderung   RM                                    30-Jul-2010
 c
 c.....................................................................
 
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Vektoren
-      real            * 8     bvec(mmax)
-      real            * 8     pvec(mmax)
-      real            * 8     pvecdum(manz)
+      INCLUDE 'err.fin'
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Hilfsvektor
-      real            * 8     ap(nmax)
 
 c     Hilfsvariablen
       real            * 8     dum
       integer         * 4     i,j
 
 c.....................................................................
+      ALLOCATE (pvec2dc(manz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation pvec2dc in bpdcsto'
+         errnr = 94
+         RETURN
+      END IF
 
 c     A * p  berechnen (skaliert)
       do i=1,nanz
-         ap(i) = 0d0
+         apdc(i) = 0d0
 
          if (ldc) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*sensdc(i,j)*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
             end do
          else if (lip) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*dble(sens(i,j))*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
             end do
          end if
       end do
@@ -62,14 +58,10 @@ c     A * p  berechnen (skaliert)
 c     R^m * p  berechnen (skaliert)
 caa   Abgeändert auf (4 Zeilen)
       do i=1,manz
-         pvecdum(i)=pvec(i)*fak(i)
-c     PRINT*,'pvec bp::',i,pvec(i),fak(i)
+         pvec2dc(i)=pvecdc(i)*fak(i)
       end do
 
-      bvec(1:manz)=MATMUL(smatm,pvecdum(1:manz))
-
-c     PRINT*,'bvec cg::',bvec(1:manz)
-
+      bvecdc = MATMUL(smatm,pvec2dc)
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz
@@ -78,18 +70,19 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          if (ldc) then
             do i=1,nanz
                dum = dum + sensdc(i,j)*
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          else if (lip) then
             do i=1,nanz
                dum = dum + dble(sens(i,j))*
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          end if
 
-         bvec(j) = dum + lam*bvec(j)
-         bvec(j) = bvec(j)*fak(j)
+         bvecdc(j) = dum + lam*bvecdc(j)
+         bvecdc(j) = bvecdc(j)*fak(j)
       end do
 
-      return
+      DEALLOCATE (pvec2dc)
+
       end

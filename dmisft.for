@@ -6,6 +6,8 @@ c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   15-Jan-2001
       
 c.....................................................................
+
+      USE invmod
       USE datmod
 
       IMPLICIT none
@@ -13,7 +15,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'parmax.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

@@ -1,4 +1,4 @@
-      subroutine cjggra(bvec)
+      subroutine cjggra()
 
 c     Unterprogramm berechnet Modellverbesserung mittels konjugierter
 c     Gradienten.
@@ -7,25 +7,18 @@ c     Andreas Kemna                                            01-Mar-1996
 c     Letzte Aenderung   04-Jul-2009
 c.....................................................................
 
+      USE invmod
+      USE cjgmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
+      INCLUDE 'err.fin'
 
 c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Konstantenvektor
-      complex         * 16    bvec(mmax)
-
-c.....................................................................
-
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Vektoren
-      complex         * 16    rvec(mmax),pvec(mmax)
 
 c     Skalare
       complex         * 16    beta
@@ -36,12 +29,18 @@ c     Hilfsvariablen
       integer         * 4     j,k
 
 c.....................................................................
+      
+      ALLOCATE (rvec(manz),pvec(manz),ap(manz),
+     1     stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation rvec in cjggdc'
+         errnr = 94
+         RETURN
+      END IF
 
-      do j=1,manz
-         dpar(j) = dcmplx(0d0)
-         rvec(j) = bvec(j)
-         pvec(j) = dcmplx(0d0)
-      end do
+      dpar = 0.
+      rvec = bvec
+      pvec = 0.
 
       do k=1,ncgmax
          ncg = k-1
@@ -73,11 +72,14 @@ c     ak                beta = beta*dcmplx(-alpha/dr1)
          end do
          
          IF (ltri == 0) THEN
-            CALL bp(bvec,pvec)
-         ELSE IF (ltri < 10) THEN
-            call bptri(bvec,pvec)
-         ELSE
-            call bpsto(bvec,pvec)
+            CALL bp
+         ELSE IF (ltri == 1.OR.ltri == 2.OR.
+     1           (ltri > 4 .AND. ltri < 15)) THEN
+            call bptri
+         ELSE IF (ltri == 3.OR.ltri == 4) THEN
+            CALL bplma
+         ELSE IF (ltri == 15) THEN
+            call bpsto
          END IF
 
          dr1 = 0d0
@@ -103,5 +105,6 @@ c     Residuum speichern
 c     Anzahl an CG-steps speichern
  10   cgres(1) = real(ncg)
 
-      return
+      DEALLOCATE (rvec,pvec,ap)
+
       end

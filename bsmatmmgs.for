@@ -13,6 +13,7 @@ c.........................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
       
       IMPLICIT none
 
@@ -20,7 +21,6 @@ c.........................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'sigma.fin'       ! for sigma
       INCLUDE 'err.fin'
 

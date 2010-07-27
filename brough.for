@@ -8,12 +8,14 @@ c     Letzte Aenderung   15-Jan-2001
 
 c.....................................................................
       USE alloci 
+      USE invmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

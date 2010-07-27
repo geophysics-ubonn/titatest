@@ -1,4 +1,4 @@
-      subroutine bpdctri(bvec,pvec)
+      subroutine bpdctri()
 c     
 c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
@@ -12,28 +12,18 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'elem.fin'
 !.....................................................................
 
-!     EIN-/AUSGABEPARAMETER:
-
-!     Vektoren
-      real            * 8     bvec(mmax)
-      real            * 8     pvec(mmax)
-
-!.....................................................................
-
 !     PROGRAMMINTERNE PARAMETER:
-
-!     Hilfsvektor
-      real            * 8     ap(nmax)
 
 !     Hilfsvariablen
       real            * 8     dum
@@ -45,15 +35,15 @@ c.....................................................................
       smaxs=MAXVAL(selanz)
 
       do i=1,nanz
-         ap(i) = 0d0
+         apdc(i) = 0d0
 
          if (ldc) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*sensdc(i,j)*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
             end do
          else if (lip) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*dble(sens(i,j))*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
             end do
          end if
       end do
@@ -62,10 +52,10 @@ c.....................................................................
       DO i=1,manz
          dum = 0d0
          DO j=1,smaxs
-            IF (nachbar(i,j)/=0) dum=dum+pvec(nachbar(i,j))* 
+            IF (nachbar(i,j)/=0) dum=dum+pvecdc(nachbar(i,j))* 
      1           smatm(i,j)*fak(nachbar(i,j))
          END DO
-         bvec(i)=dum+pvec(i)*smatm(i,smaxs+1)*fak(i)
+         bvecdc(i)=dum+pvecdc(i)*smatm(i,smaxs+1)*fak(i)
       END DO
 
 !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -75,19 +65,18 @@ c.....................................................................
          if (ldc) then
             do i=1,nanz
                dum = dum + sensdc(i,j)* 
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          else if (lip) then
             do i=1,nanz
                dum = dum + dble(sens(i,j))* 
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          end if
 
-         bvec(j) = dum + lam*bvec(j)
+         bvecdc(j) = dum + lam*bvecdc(j)
 
-         bvec(j) = bvec(j)*fak(j)
+         bvecdc(j) = bvecdc(j)*fak(j)
       end do
 
-      return
       end

@@ -11,12 +11,14 @@ c     Letzte Aenderung   RM                                    24-Feb-2010
 c
 c.....................................................................
       USE alloci,only:smatm
+      USE invmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

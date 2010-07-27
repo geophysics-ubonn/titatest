@@ -10,11 +10,11 @@ c     Letzte Aenderung    RM                                   20-Feb-2010
 c     
 c.........................................................................
       USE alloci
+      USE invmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'model.fin'
       INCLUDE 'elem.fin'

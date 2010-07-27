@@ -81,12 +81,6 @@ c Norm des Verbesserungsvektors (stepsize)
 c Minimale step size 
         real            * 8     bdmin
 
-c CG-Epsilon
-        real            * 8     eps
-
-c CG-Residuen
-        real            * 4     cgres(mmax+1)
-
 c Felddimensionen in x- und z-Richtung
         integer         * 4     nx,nz
 
@@ -98,12 +92,6 @@ c Iterationsindex
 
 c Index des Regularisierungsschritts
         integer         * 4     itr
-
-c Maximale Anzahl an CG-Steps
-        integer         * 4     ncgmax
-
-c CG-Index
-        integer         * 4     ncg
 
 c Parameter zur Glaettung in x- und z-Richtung
 c (=0 bedeutet keine Glaettung in der jeweiligen Richtung)
@@ -171,20 +159,16 @@ c.....................................................................
      1                  mqrms,
      1                  bdpar,
      1			bdmin,
-     1                  eps,
      1                  alfx,
      1                  alfz,
      1			betamgs,
      1                  l1min,
      1                  l1rat,
-     1                  cgres,
      1                  nx,
      1                  nz,
      1                  itmax,
      1                  it,
      1                  itr,
-     1                  ncgmax,
-     1                  ncg,
      1                  nlam,
      1                  llam,
      1                  ldlami,

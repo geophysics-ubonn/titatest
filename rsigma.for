@@ -6,9 +6,11 @@ c     Andreas Kemna                                            20-Dec-1993
 c     Letzte Aenderung   07-Nov-1997
       
 c.....................................................................
+
       USE make_noise
       USE alloci,only:rnd_r,rnd_p
       USE femmod
+      USE invmod
 
       IMPLICIT none
 
@@ -18,7 +20,6 @@ c.....................................................................
       INCLUDE 'sigma.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

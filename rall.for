@@ -10,10 +10,13 @@ c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   20-Aug-2007
 c
 c.....................................................................
+
       USE make_noise
       USE variomodel
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
@@ -25,7 +28,6 @@ c.....................................................................
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
 
@@ -187,13 +189,13 @@ c     diff+<
          IF (lstart) THEN ! set the starting model
             dstart = dm0
             PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
-            IF (ldiff)PRINT*,'Reference model regularization!'
          ELSE
             PRINT*,'omitting prior:',ACHAR(9)//TRIM(dm0)
             dm0 = ''
          END IF
       END IF
-      IF (ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
+      IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
+         PRINT*,'Reference model regularization!'
          lprior = .TRUE. ! reference model regu only if there is no
          ldiff = .FALSE. ! time difference inversion
       END IF
@@ -427,7 +429,6 @@ c     ak
 c     diff+>
 c     ak        if (ldc.or.stabp0.ge.stabw0) lfphai=.false.
       if (ldc) lfphai=.false.
-
 c     Dateien
       lnramd = index(ramd,' ')-1
       dsigma = ramd(1:lnramd)//slash(1:1)//'rho.dat'
@@ -448,7 +449,21 @@ c     Elementeinteilung einlesen
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
       END IF
-      
+      ALLOCATE (par(manz),dpar(manz),dpar2(manz),cgres(manz+1),
+     1     cgres2(manz+1),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation model data'
+         errnr = 94
+         goto 999
+      END IF
+      IF (lstart .OR. ldiff .OR. lprior) THEN
+         ALLOCATE (m0(manz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation m0'
+            errnr = 94
+            goto 999
+         END IF
+      END IF
       lvario = lvario.OR.       ! if already set or
      1     (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
 
@@ -473,6 +488,7 @@ c     ak        ncgmax = manz
       ncgmax = manz/10
 c     Elektrodenverteilung und Daten einlesen sowie Wellenzahlwerte
 c     bestimmen
+
       call relectr(kanal,delectr)
       if (errnr.ne.0) goto 999
 
@@ -510,9 +526,14 @@ c     read boundary values
          call rrandb(kanal,drandb)
          if (errnr.ne.0) goto 999
       end if
-
 c     diff+<
       if (ldiff) then
+         ALLOCATE (d0(nanz),fm0(nanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation diff data '
+            errnr = 94
+            goto 999
+         END IF
          open(kanal,file=dd0,status='old')
          read(kanal,*) nanz0
          do j=1,nanz0

@@ -12,6 +12,7 @@ c.....................................................................
       USE variomodel
       USE femmod
       USE datmod
+      USE cjgmod
 
       IMPLICIT none
 

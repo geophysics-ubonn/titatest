@@ -6,7 +6,11 @@ c     Andreas Kemna                                            16-Apr-1996
 c     Letzte Aenderung   11-Nov-1997
 
 c.....................................................................
+
       USE datmod
+c     mw
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
@@ -14,8 +18,6 @@ c.....................................................................
       INCLUDE 'path.fin'
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-c     mw
-      INCLUDE 'inv.fin'
 
 c.....................................................................
 

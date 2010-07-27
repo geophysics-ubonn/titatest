@@ -9,6 +9,8 @@ c
 c     Letzte Aenderung                                         23-Mar-2010
 c     
 c.....................................................................
+
+      USE invmod         ! fuer par
       USE variomodel
 
       IMPLICIT none
@@ -16,7 +18,6 @@ c.....................................................................
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'elem.fin'        ! fuer grid_min,grid_max,etc
       INCLUDE 'konv.fin'        ! fuer alfx/alfz
-      INCLUDE 'inv.fin'         ! fuer par
       INCLUDE 'model.fin'       ! fuer manz
       INCLUDE 'sigma.fin'       ! fuer sigma
       INCLUDE 'err.fin'

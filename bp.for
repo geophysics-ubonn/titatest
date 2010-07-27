@@ -1,5 +1,5 @@
-      subroutine bp(bvec,pvec)
-
+      subroutine bp()
+ 
 c     Unterprogramm berechnet b = B * p .
 
 c     Andreas Kemna                                            29-Feb-1996
@@ -10,28 +10,18 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c     EIN-/AUSGABEPARAMETER:
-
-c     Vektoren
-      complex         * 16    bvec(mmax)
-      complex         * 16    pvec(mmax)
-
-c.....................................................................
-
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Hilfsvektor
-      complex         * 16    ap(nmax)
 
 c     Hilfsvariablen
       complex         * 16    cdum
@@ -77,5 +67,4 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          bvec(j) = bvec(j)*dcmplx(fak(j))
       end do
 
-      return
       end
