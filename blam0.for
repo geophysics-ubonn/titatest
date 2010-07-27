@@ -10,12 +10,12 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

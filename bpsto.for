@@ -1,4 +1,4 @@
-      subroutine bpsto(bvec,pvec)
+      subroutine bpsto()
 
 c     Unterprogramm berechnet b = B * p .
 c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
@@ -15,35 +15,29 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
+      INCLUDE 'err.fin'
 
 c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Vektoren
-      complex         * 16    bvec(mmax)
-      complex         * 16    pvec(mmax)
-      complex         * 16     pvecdum(manz)
-
-c.....................................................................
-
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Hilfsvektor
-      complex         * 16    ap(nmax)
-
 c     Hilfsvariablen
       complex         * 16    cdum
       integer         * 4     i,j
 
 c.....................................................................
+      ALLOCATE (pvec2(manz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation pvec2 in bpsto'
+         errnr = 94
+         RETURN
+      END IF
 
 c     A * p  berechnen (skaliert)
       do i=1,nanz
@@ -57,10 +51,10 @@ c     A * p  berechnen (skaliert)
 c     coaa R^m * p  berechnen (skaliert)
 
       do j=1,manz
-         pvecdum(i)=pvec(i)*dcmplx(fak(i))
+         pvec2(i)=pvec(i)*dcmplx(fak(i))
       end do
 
-      bvec(1:manz)=MATMUL(dcmplx(smatm),pvecdum(1:manz))  
+      bvec = MATMUL(dcmplx(smatm),pvec2)  
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz
@@ -75,5 +69,6 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          bvec(j) = bvec(j)*dcmplx(fak(j))
       end do
 
-      return
+      DEALLOCATE (pvec2)
+
       end

@@ -10,11 +10,11 @@ c
 c.........................................................................
       USE alloci
       USE datmod
+      USE invmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'model.fin'
       INCLUDE 'err.fin'
 !.....................................................................

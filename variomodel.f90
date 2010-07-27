@@ -7,9 +7,11 @@ MODULE variomodel
   PUBLIC :: mvario
   PUBLIC :: mcova
 
-  INTEGER(KIND = 4),PRIVATE,SAVE    :: c1,c2 ! is set on first call
 !!!$ c1 accounts for the variogram model
 !!!$ c2 accounts for the covariance model
+  INTEGER(KIND = 4),PRIVATE,SAVE    :: c1,c2 ! switches are set on first call
+!!!$ the switches are needed internal to discriminate between the various 
+!!!$ variogram and covariance functions.
   REAL(KIND(0D0)),PRIVATE,SAVE      :: omev,omec
 !!$! power model exponent for variogram and covariance
   REAL(KIND(0D0)),PRIVATE,SAVE      :: tfac
@@ -18,13 +20,14 @@ MODULE variomodel
 !!$ strings of model type, cszv for variogram model
 !!$ cszc for covariance model (can be decoupeled)
   REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_v,Iy_v
-!!$ Integral scales for variogram function
+!!$ Integral scales (range) for variogram function
   REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_c,Iy_c
-!!$ Integral scales for covariance function
-!!!$ this may look a littel strange but in fact there are some
+!!$ Integral scales for covariance function.
+!!!$ It may look a littel strange but in fact there are some
 !!!$ variogram models (Exponential and Gauss) which need 
-!!!$ the Correlation length to be /3 of it. so be careful to mistake
-!!!$ these numbers wrong.--
+!!!$ the Correlation length to be /3 (EXP) or /3^2 (GAU) of it. 
+!!!$ So, be careful to mistake these numbers wrong. 
+!!!$ See also the GSlib manual
   REAL(KIND(0D0)),PRIVATE,SAVE      :: axs,ays
 !!$ True integral scale from user..
 
@@ -40,9 +43,9 @@ CONTAINS
 
     omev = 1.5 ! 0<ome<2
     omec = omev
-    tfac = omev
+    tfac = omev ! just a "educated guess"
 
-    c2 = INT(type/10)
+    c2 = INT(type/10) ! this sets the switches from outside
     c1 = type-c2*10
 
     IF (ax == 0.) THEN ! taking default values if no value
@@ -54,12 +57,12 @@ CONTAINS
        ays = esp_med
        PRINT*,'Choosing median ESP distance as scale length:',esp_med
     ELSE
-       axs = ax ! save user values
+       axs = ax ! save user values into SAVED
        ays = ay
     END IF
 
-    Ix_v = axs;Ix_c = axs ! sets integral scales--
-    Iy_v = ays;Iy_c = ays
+    Ix_v = axs;Ix_c = axs ! sets integral scales (range) for 
+    Iy_v = ays;Iy_c = ays ! internal usage
 
     SELECT CASE (c1) ! string for variogram function
     CASE (1) !Gaussian 
@@ -68,7 +71,7 @@ CONTAINS
        WRITE (cszv,'(a)')'va(1-EXP(-(3h/a)**2))'
     CASE (2) ! Spherical
        WRITE (cszv,'(a)')'va((1.5(h/a)-.5(h/a)**3),1)'
-    CASE (3) ! power
+    CASE (3) ! Power
        READ (*,'(a)')cszv
        IF (cszv /= '')READ (cszv,*)omev
        WRITE (cszv,'(a,F3.1)')'va(h/a)**',omev
@@ -129,55 +132,52 @@ CONTAINS
     mvario = 0.
 
     r = SQRT((lagx / Ix_v)**2. + (lagy / Iy_v)**2.)
-    r2 = r*r
+    r2 = r*r ! just to be sure to have less numerical issues
 
     SELECT CASE (c1)
     CASE (1)
-       mvario = varianz * (1. - EXP(-r2))
+       mvario = varianz * (1. - EXP(-r2)) !from GSlib
     CASE (2)
        IF (r < 1.) THEN
-          mvario = varianz * (r * (1.5 - .5*r2))
+          mvario = varianz * (r * (1.5 - .5*r2)) !from GSlib
        ELSE
           mvario = varianz
        END IF
     CASE (3)
-       mvario = varianz * r**omec
+       mvario = varianz * r**omec !from GSlib
     CASE DEFAULT
-       mvario = varianz*(1. - EXP(-r))
+       mvario = varianz*(1. - EXP(-r)) !from GSlib
     END SELECT
     
   END FUNCTION mvario
 
   REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
-    ! lag = distance/korrelation (lag)
+    ! lag = distance/korrelation (lag) varianz = variance (sill)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
     REAL (KIND (0D0))             :: r,r2 ! distances
-    
     mcova = 0.
     
-    r = SQRT((lagx / Ix_c)**2. + (lagy / Iy_c)**2.) ! not sure of this
-    r2 = r**1.999999 ! 9 up to seventh digit 
-    !! and C of gauss model will not be pos def
-    r2 = r*r ! just to be sure -.-
+    r = SQRT((lagx / Ix_c)**2. + (lagy / Iy_c)**2.)
+    r2 = r*r 
     
     SELECT CASE (c2)
     CASE (1)
-       mcova = varianz * EXP(-r2)
+       mcova = varianz * EXP(-r2) !from GSlib
     CASE (2)
        IF ( r < 1. ) THEN
-          mcova = varianz * (1. - r * (1.5 - .5*r2) )
+          mcova = varianz * (1. - r * (1.5 - .5*r2) ) !from GSlib
        ELSE
           mcova = 0.
        END IF
     CASE (3)
-       mcova = varianz*r**omec
-       mcova = EXP(-mcova)
+       mcova = varianz*r**omec !from GSlib
+       mcova = EXP(-mcova) ! own interpretation
     CASE (4)
-       mcova = EXP(-tfac*mvario(lagx,lagy,varianz))
+       mcova = EXP(-tfac*mvario(lagx,lagy,varianz)) ! this is from a lemma
     CASE DEFAULT
-       mcova = varianz * EXP(-r)
+       mcova = varianz * EXP(-r) !from GSlib
     END SELECT
-    !    IF (mcova < 1.d-9) mcova = 0.
+
   END FUNCTION mcova
   
 END MODULE variomodel

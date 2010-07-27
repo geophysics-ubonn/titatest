@@ -7,9 +7,11 @@ c     Erstellt von Roland Martin                               18-Dec-2009
 c     Letzte Aenderung                                         18-Dec-2009
 c     
 c.........................................................................
+
       USE alloci
       USE femmod ! fuer ldc..
       USE datmod
+      USE invmod
       
       IMPLICIT none
 
@@ -17,7 +19,6 @@ c.........................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'err.fin'
 !.....................................................................
 

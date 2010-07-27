@@ -20,7 +20,8 @@ c.....................................................................
       USE tic_toc
       USE femmod
       USE datmod
-
+      USE invmod
+      USE cjgmod
 c     USE portlib
 
       IMPLICIT none
@@ -33,7 +34,6 @@ c     USE portlib
       INCLUDE 'waven.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
@@ -101,7 +101,7 @@ c     Ggf. Fehlermeldungen
 c     Startmodell belegen
       call bsigm0(kanal,dstart)
       if (errnr.ne.0) goto 999
-        
+
 c     Startparameter setzen
       it     = 0
       itr    = 0
@@ -511,11 +511,11 @@ c     Rauhigkeitsmatrix belegen
 
                IF (it == 1) THEN
                   IF (ltri == 5) WRITE (*,'(a)')
-     1                 ' Triangular pure MGS (alpha)'
+     1                 ' Triangular pure MGS (beta)'
                   IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
-     1                 ' Triangular sens weighted MGS (alpha)'
+     1                 ' Triangular sens weighted MGS (beta)'
                   IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
-     1                 ' Triangular sens weighted MGS mean (alpha)'
+     1                 ' Triangular sens weighted MGS mean (beta)'
                ELSE
                   WRITE (*,'(a)')' Updating MGS functional'
                END IF
@@ -682,7 +682,8 @@ c Modell parameter mit aktuellen Leitfaehigkeiten belegen
       if (errnr.ne.0) goto 999
 
 c     UPDATE anbringen
-      call update(dpar2,cgres2)
+      call update
+      fetxt =''
       if (errnr.ne.0) goto 999
 
 c Leitfaehigkeiten mit verbessertem Modell belegen
@@ -913,6 +914,18 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED(smatm)) DEALLOCATE (smatm)
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
+      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
+     1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wdfak)
+      IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2,cgres,cgres2)
+      IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
+      IF (ALLOCATED (m0)) DEALLOCATE (m0)
+      IF (ALLOCATED (ata)) DEALLOCATE (ata)
+      IF (ALLOCATED (ata_dc)) DEALLOCATE (ata_dc)
+      IF (ALLOCATED (ata_reg)) DEALLOCATE (ata_reg)
+      IF (ALLOCATED (ata_reg_dc)) DEALLOCATE (ata_reg_dc)
+      IF (ALLOCATED (cov_m)) DEALLOCATE (cov_m)
+      IF (ALLOCATED (cov_m_dc)) DEALLOCATE (cov_m_dc)
+
 c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5
 

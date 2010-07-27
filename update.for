@@ -1,4 +1,4 @@
-      subroutine update(dpar2,cgres2)
+      subroutine update()
 c     
 c     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
 c     mittels 'Smoothness Least Squares Method' und konjugierten
@@ -14,6 +14,8 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
@@ -21,16 +23,8 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Felder zum Zwischenspeichern
-      complex         * 16    dpar2(mmax)
-      real            * 4     cgres2(mmax+1)
+      INCLUDE 'err.fin'
 
 c.....................................................................
 
@@ -39,9 +33,6 @@ c     PROGRAMMINTERNE PARAMETER:
 c     Hilfsvariablen
       complex         * 16    cdum
       real            * 8     dum
-
-c     Hilfsfelder
-      complex         * 16    bvec(mmax)
 
 c     Indexvariablen
       integer         * 4     i,j,k,ij,in
@@ -56,8 +47,16 @@ c     Felder speichern
          dpar2 = dpar
 
          i = int(cgres(1))+1
-         cgres2(1:i) = cgres(1:i)
-
+         cgres2 = cgres
+C     felder allozieren
+         IF (.NOT.ALLOCATED (bvec)) 
+     1        ALLOCATE (bvec(manz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation bvec in update'
+            errnr = 94
+            RETURN
+         END IF
+ 
 c     Smoothnessvektor berechnen
 c     triang>
          if (ltri==0) then
@@ -125,13 +124,10 @@ c     triang>
             end do
 
          else if (ltri == 15) THEN
-
             if (.not.lprior) then
-               bvec(1:manz) = 
-     1              MATMUL(DCMPLX(smatm),par(1:manz))
+               bvec = MATMUL(DCMPLX(smatm),par)
             else
-               bvec(1:manz) = 
-     1              MATMUL(dcmplx(smatm),(par(1:manz) - m0(1:manz)))
+               bvec = MATMUL( dcmplx(smatm),( par - m0 ) )
             end if
          END IF
 c     triang<
@@ -240,16 +236,14 @@ c     diff+>
 
 c     Modellverbesserung mittels konjugierter Gradienten bestimmen
          if (ldc.or.lip) then
-            call cjggdc(bvec)
+            call cjggdc
          else
-            call cjggra(bvec)
+            call cjggra
          end if
 
 c     Ggf. Verbesserung umspeichern
          if (lip) then
-            do j=1,manz
-               dpar(j) = dcmplx(0d0,dble(dpar(j)))
-            end do
+            dpar = DCMPLX(0D0,DBLE(dpar))
          end if
 
 c     Verbesserung skalieren
@@ -261,28 +255,22 @@ c     Verbesserung skalieren
 
 
 c     Felder zuruecksetzen
-         do j=1,manz
-            dpar(j) = dpar2(j)
-         end do
+         dpar = dpar2
 
          i = int(cgres2(1))+1
 
-         do k=1,i
-            cgres(k) = cgres2(k)
-         end do
+         cgres(1:i) = cgres2(1:i)
          
       end if
-      do j=1,manz
-         
+      IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
 c     Verbesserung anbringen
-         par(j) = par(j) + dpar(j)*dcmplx(step)
+      par = par + dpar * DCMPLX(step)
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 c     if (lphi0.and.dimag(par(j)).lt.0d0)
 c     1        par(j) = dcmplx(dble(par(j)))
 c     akc Ggf. (Leitfaehigkeits-)Phasen < 1 mrad korrigieren
 c     ak            if (lphi0.and.dimag(par(j)).lt.1d-3)
 c     ak     1          par(j) = dcmplx(dble(par(j)),1d-3)
-      end do
 
 c     i.e Stepsize = ||\delta m||
       bdpar = 0d0

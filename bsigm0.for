@@ -6,8 +6,10 @@ c     Andreas Kemna                                            02-May-1995
 c     Letzte Aenderung   15-Jan-2001
 
 c.....................................................................
+
       USE femmod
       USE datmod
+      USE invmod
 
       IMPLICIT none
 
@@ -15,7 +17,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'sigma.fin'
-      INCLUDE 'inv.fin'
 c     diff+<
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'

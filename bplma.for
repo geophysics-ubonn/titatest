@@ -1,4 +1,4 @@
-      subroutine bplma(bvec,pvec)
+      subroutine bplma()
 c
 c     Unterprogramm berechnet b = B * p . 
 c     Angepasst an Levenberg-Marquardt-Daempfung
@@ -10,31 +10,22 @@ c
 c     Letzte Aenderung   RM                                    24-Feb-2010
 c
 c.....................................................................
+
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
 
-c     EIN-/AUSGABEPARAMETER:
-
-c     Vektoren
-      complex         * 16    bvec(mmax)
-      complex         * 16    pvec(mmax)
-
-c.....................................................................
-
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Hilfsvektor
-      complex         * 16    ap(nmax)
 
 c     Hilfsvariablen
       complex         * 16    cdum
@@ -70,5 +61,4 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          bvec(j) = bvec(j)*dcmplx(fak(j))
       end do
 
-      return
       end

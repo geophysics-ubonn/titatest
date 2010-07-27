@@ -1,4 +1,4 @@
-      subroutine bptri(bvec,pvec)
+      subroutine bptri()
 c     
 c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
@@ -12,29 +12,19 @@ c...................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'elem.fin'
 
 !.....................................................................
 
-!     EIN-/AUSGABEPARAMETER:
-
-!     Vektoren
-      complex         * 16    bvec(mmax)
-      complex         * 16    pvec(mmax)
-
-!.....................................................................
-
 !     PROGRAMMINTERNE PARAMETER:
-
-!     Hilfsvektor
-      complex         * 16    ap(nmax)
 
 !     Hilfsvariablen
       complex         * 16    cdum
@@ -83,8 +73,6 @@ c...................................................................
          
          bvec(j) = bvec(j)*dcmplx(fak(j))
       end do
-      
 
-      return
       end
 

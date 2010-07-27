@@ -1,4 +1,4 @@
-      subroutine cjggdc(bvec)
+      subroutine cjggdc()
 
 c     Unterprogramm berechnet Modellverbesserung mittels konjugierter
 c     Gradienten.
@@ -7,26 +7,19 @@ c     Andreas Kemna                                            01-Mar-1996
 c     Letzte Aenderung                                         29-Jul-2009
 c.....................................................................
 
+      USE invmod
+      USE cjgmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
-
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Konstantenvektor
-      complex         * 16    bvec(mmax)
+      INCLUDE 'err.fin'
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Vektoren
-      real            * 8     rvec(mmax),pvec(mmax)
-      real            * 8     bvecdc(mmax)
 
 c     Skalare
       real            * 8     beta,alpha,
@@ -36,25 +29,27 @@ c     Hilfsvariablen
       integer         * 4     j,k
 
 c.....................................................................
-
-      do j=1,manz
-         if (lip) then
-            bvecdc(j) = dimag(bvec(j))
-         else
-            bvecdc(j) = dble(bvec(j))
-         end if
-         dpar(j) = dcmplx(0d0)
-         rvec(j) = bvecdc(j)
-         pvec(j) = 0d0
-      end do
+      ALLOCATE (rvecdc(manz),pvecdc(manz),apdc(manz),
+     1     bvecdc(manz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation rvec in cjggdc'
+         errnr = 94
+         RETURN
+      END IF
+       
+      if (lip) then
+         bvecdc = dimag(bvec)
+      else
+         bvecdc = dble(bvec)
+      end if
+      dpar = DCMPLX(0D0)
+      rvecdc = bvecdc
+      pvecdc = 0.
 
       do k=1,ncgmax
          ncg = k-1
 
-         dr = 0d0
-         do j=1,manz
-            dr = dr + rvec(j)*rvec(j)
-         end do
+         dr = DOT_PRODUCT(rvecdc,rvecdc)
 
          if (k.eq.1) then
             dr0  = dr*eps
@@ -65,35 +60,30 @@ c.....................................................................
 
          if (dr.le.dr0) goto 10
 
-         do j=1,manz
-            pvec(j) = rvec(j) + beta*pvec(j)
-         end do
+         pvecdc = rvecdc + beta * pvecdc
 
          IF (ltri == 0) THEN
-            CALL bpdc(bvecdc,pvec)
+            CALL bpdc
 
          ELSE IF (ltri == 1.OR.ltri == 2.OR.
      1           (ltri > 4 .AND. ltri < 15)) THEN
-            CALL bpdctri(bvecdc,pvec)
+            CALL bpdctri
 
          ELSE IF (ltri == 3.OR.ltri == 4) THEN
-            CALL bpdclma(bvecdc,pvec)
+            CALL bpdclma
 
          ELSE IF (ltri == 15) THEN
-            CALL bpdcsto(bvecdc,pvec)
+            CALL bpdcsto
 
          END IF
 
-         dr1 = 0d0
-         do j=1,manz
-            dr1 = dr1 + pvec(j)*bvecdc(j)
-         end do
+         dr1 = DOT_PRODUCT(pvecdc,bvecdc)
 
          alpha = dr/dr1
 
          do j=1,manz
-            dpar(j) = dpar(j) + dcmplx(alpha*pvec(j))
-            rvec(j) = rvec(j) - alpha*bvecdc(j)
+            dpar(j) = dpar(j) + dcmplx(alpha*pvecdc(j))
+            rvecdc(j) = rvecdc(j) - alpha*bvecdc(j)
          end do
 
          dr1 = dr
@@ -107,5 +97,6 @@ c     Residuum speichern
 c     Anzahl an CG-steps speichern
  10   cgres(1) = real(ncg)
 
-      return
+      DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+
       end

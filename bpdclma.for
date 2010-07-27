@@ -1,4 +1,4 @@
-      subroutine bpdclma(bvec,pvec)
+      subroutine bpdclma()
 c
 c     Unterprogramm berechnet b = B * p . 
 c     Angepasst an Levenberg-Marquardt-Daempfung
@@ -14,28 +14,17 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE invmod
+      USE cjgmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     Vektoren
-      real            * 8     bvec(mmax)
-      real            * 8     pvec(mmax)
-
-c.....................................................................
-
 c     PROGRAMMINTERNE PARAMETER:
-
-c     Hilfsvektor
-      real            * 8     ap(nmax)
 
 c     Hilfsvariablen
       real            * 8     dum
@@ -45,27 +34,23 @@ c.....................................................................
 
 c     A * p  berechnen (skaliert)
       do i=1,nanz
-         ap(i) = 0d0
+         apdc(i) = 0d0
 
          if (ldc) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*sensdc(i,j)*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
             end do
          else if (lip) then
             do j=1,manz
-               ap(i) = ap(i) + pvec(j)*dble(sens(i,j))*fak(j)
+               apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
             end do
          end if
       end do
 
 c     R^m * p  berechnen (skaliert)
       do i=1,manz
-         bvec(i)=pvec(i)*fak(i)*smatm(i,1) ! damping stuff..
-c     PRINT*,'pvec bp::',i,pvec(i),fak(i)
+         bvecdc(i)=pvecdc(i)*fak(i)*smatm(i,1) ! damping stuff..
       end do
-
-c     PRINT*,'bvec cg::',bvec(1:manz)
-
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz
@@ -74,18 +59,17 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          if (ldc) then
             do i=1,nanz
                dum = dum + sensdc(i,j)*
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          else if (lip) then
             do i=1,nanz
                dum = dum + dble(sens(i,j))*
-     1              wmatd(i)*dble(wdfak(i))*ap(i)
+     1              wmatd(i)*dble(wdfak(i))*apdc(i)
             end do
          end if
 
-         bvec(j) = dum + lam*bvec(j)
-         bvec(j) = bvec(j)*fak(j)
+         bvecdc(j) = dum + lam*bvecdc(j)
+         bvecdc(j) = bvecdc(j)*fak(j)
       end do
 
-      return
       end

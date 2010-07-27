@@ -12,6 +12,7 @@ c.....................................................................
       USE tic_toc
       USE variomodel
       USE datmod
+      USE invmod
 
       IMPLICIT none
       
@@ -19,7 +20,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'inv.fin'
       INCLUDE 'path.fin'
       INCLUDE 'err.fin'
 c....................................................................
