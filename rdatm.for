@@ -36,7 +36,9 @@ c     Indexvariable
 c     Elektrodennummern
       integer         * 4     elec1,elec2,
      1     elec3,elec4
-
+c check whether the file format is crtomo konform or not..
+      logical           ::    crtf
+c
 c.....................................................................
 
 c     'datei' oeffnen
@@ -47,6 +49,14 @@ c     'datei' oeffnen
 
 c     Anzahl der Messwerte lesen
       read(kanal,*,end=1001,err=1000) nanz
+c check if data file format is CRTOmo konform..
+      read(kanal,*,end=1001,err=1000) elec1
+      BACKSPACE(kanal)
+
+      elec3=elec1-10000 ! are we still positive?
+
+      crtf=(elec3 > 0) ! crtomo konform?
+
 c     Ggf. Fehlermeldung
       if (nanz.gt.nmax) then
          fetxt = ' '
@@ -55,8 +65,7 @@ c     Ggf. Fehlermeldung
       end if
 
       ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
-     1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),
-     1     stat=errnr)
+     1     kfak(nanz),vnr(nanz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation volt '
          errnr = 94
@@ -68,7 +77,15 @@ c     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
       do i=1,nanz
          WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(13)//
      1        'Getting voltage ',i
-         read(kanal,*,end=1001,err=1000) strnr(i),vnr(i)
+         IF (crtf) THEN
+            read(kanal,*,end=1001,err=1000)
+     1           strnr(i),vnr(i)
+         ELSE
+            read(kanal,*,end=1001,err=1000)
+     1           elec1,elec2,elec3,elec4
+            strnr(i) = elec1*10000 + elec2
+            vnr(i)   = elec3*10000 + elec4
+         END IF
 c     Einheitsstrom annehmen
          strom(i) = 1d0
 

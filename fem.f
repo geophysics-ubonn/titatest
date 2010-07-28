@@ -15,15 +15,15 @@ c.....................................................................
       USE tic_toc
       USE femmod
       USE datmod
+      USE sigmamod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
@@ -160,8 +160,13 @@ c     Alles einlesen
          lana = .false.
       END IF
       lsr = lana
-      print*,''
-
+c     Startmodell belegen
+      ALLOCATE (sigma(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation fem sigma'
+         errnr = 94
+         goto 999
+      END IF
       call rsigma(kanal,dsigma)
       if (errnr.ne.0) goto 999
 
@@ -336,6 +341,11 @@ c     Kontrollausgabe
 
       write(*,*)
       write(*,'(a)',ADVANCE='no')' Modelling completed'
+
+      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
+     1     kfak,vnr)
+      IF (ALLOCATED (sigma)) DEALLOCATE (sigma)
+      IF (ALLOCATED (enr)) DEALLOCATE (enr)
 
       STOP '0'
       
