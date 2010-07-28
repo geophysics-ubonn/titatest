@@ -11,7 +11,7 @@ c     Letzte Aenderung                                         20-Nov-2009
 c     
 c.....................................................................
 
-      USE elemmod        ! fuer sytop und den ganzen rest 
+      USE elemmod               ! fuer sytop und den ganzen rest 
 
       IMPLICIT none
 
@@ -30,37 +30,38 @@ c-----------------------------------------------------------------------
       iel = 0
       DO i=1,typanz
 
-         iel = iel + nelanz(i)
+         IF (typ(i) == 12) THEN ! suche nach "no flow"
 
-         IF (typ(i) /= 12) CYCLE  ! suche nach "no flow"
+            nkel = selanz(i)
+            sytop = 0.
 
-         nkel = selanz(i)
-         sytop = 0.
+            DO j=1,nelanz(i)
 
-         DO j=1,nelanz(i)
+               iel = iel + 1
 
-            iel = iel + 1
+               sp=0
+               DO ik=1,nkel
+                  PRINT*,iel,sx(snr(nrel(iel,ik))),sy(snr(nrel(iel,ik)))
+                  sp = sp + sy(snr(nrel(iel,ik)))
+               END DO
+               sp = sp/DBLE(nkel)
 
-            sp=0
-            DO ik=1,nkel
-               PRINT*,ik,sp,sy(snr(nrel(iel,ik))),sx(snr(nrel(iel,ik)))
-               sp = sp + sy(snr(nrel(iel,ik)))
+
+               IF (j == 1) THEN 
+                  sytop = sp
+               ELSE             !errechne den mittelwert (diret)
+                  sytop = (sytop*dble(j-1)+sp)/dble(j)
+               END IF
+
             END DO
-            sp = sp/DBLE(nkel)
+         ELSE
 
+            iel = iel + nelanz(i)
 
-            IF (j == 1) THEN 
-               sytop = sp
-            ELSE                !errechne den mittelwert (diret)
-               sytop = (sytop*dble(j-1)+sp)/dble(j)
-            END IF
-
-!            PRINT*,sp,sytop,j
-
-         END DO
+         END IF
       END DO
 
-!      PRINT*,sytop
+!     PRINT*,sytop
 
 
       END SUBROUTINE bsytop
