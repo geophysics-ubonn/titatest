@@ -26,7 +26,8 @@ c.....................................................................
       USE electrmod
       USE modelmod
       USE elemmod
-      
+      USE wavenmod
+
 c     USE portlib
 
       IMPLICIT none
@@ -35,7 +36,6 @@ c     USE portlib
       INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
@@ -940,6 +940,9 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
       IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
       IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
+      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
 
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
       IF (ALLOCATED (enr)) DEALLOCATE (enr)

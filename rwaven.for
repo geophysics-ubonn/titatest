@@ -14,7 +14,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -92,10 +91,16 @@ c     Wellenzahlen bestimmen
 c     ak        ganz   = int(real(6d0*dlog10(amax)))
       ganz   = int(real(6d0*dlog10(amax/amin)))
       ganz   = max0(ganz,2)
-      ganz   = min0(ganz,kwnmax-lanz)
       kwnanz = ganz+lanz
       kwn0   = 1d0/(2d0*amin)
 
+      ALLOCATE (kwn(kwnanz),kwnwi(kwnanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation kwn'
+         errnr = 94
+         RETURN
+      END IF
+ 
 c     Gauss-Integeration
       call gauleg(0d0,1d0,kwn(1),kwnwi(1),ganz)
       

@@ -19,12 +19,12 @@ c.....................................................................
       USE electrmod
       USE modelmod
       USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'waven.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
 
@@ -147,6 +147,12 @@ c     Alles einlesen
          lana = .FALSE.
          lsr = .FALSE.
          kwnanz = 1
+         ALLOCATE (kwn(kwnanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation kwn'
+            errnr = 94
+            GOTO 999
+         END IF
          kwn(1) = 0d0
       else
          call rwaven()
@@ -357,7 +363,8 @@ c     Kontrollausgabe
       IF (ALLOCATED (sigma)) DEALLOCATE (sigma)
       IF (ALLOCATED (enr)) DEALLOCATE (enr)
       IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
-
+      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
       STOP '0'
       
 c.....................................................................
