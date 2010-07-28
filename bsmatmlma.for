@@ -16,11 +16,11 @@ c.........................................................................
       USE datmod
       USE invmod
       USE modelmod       ! mit nachbar und ldir
+      USE elemmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 !.....................................................................

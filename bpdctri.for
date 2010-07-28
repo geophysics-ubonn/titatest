@@ -15,12 +15,12 @@ c.....................................................................
       USE invmod
       USE cjgmod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'elem.fin'
 !.....................................................................
 
 !     PROGRAMMINTERNE PARAMETER:

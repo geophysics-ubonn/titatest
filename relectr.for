@@ -8,12 +8,12 @@ c     Letzte Aenderung   24-Oct-1996
 c.....................................................................
 
       USE electrmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

@@ -8,11 +8,11 @@ c     Letzte Aenderung   08-Nov-1997
 c.....................................................................
 
       USE sigmamod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

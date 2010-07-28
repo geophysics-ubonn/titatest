@@ -18,11 +18,10 @@ c.....................................................................
       USE cjgmod
       USE sigmamod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 

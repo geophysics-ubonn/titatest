@@ -18,12 +18,12 @@ c.....................................................................
       USE sigmamod
       USE electrmod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
@@ -346,6 +346,11 @@ c     Kontrollausgabe
 
       write(*,*)
       write(*,'(a)',ADVANCE='no')' Modelling completed'
+
+
+      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
 
       IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
      1     kfak,vnr)

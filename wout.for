@@ -13,17 +13,14 @@ c.....................................................................
       USE invmod
       USE sigmamod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
-c     diff+<
-c     diff+>
-
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

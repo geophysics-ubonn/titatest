@@ -9,12 +9,12 @@ c.....................................................................
 
       USE alloci
       USE electrmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
 
 c.....................................................................

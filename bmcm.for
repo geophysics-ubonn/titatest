@@ -14,12 +14,12 @@ c....................................................................
       USE alloci
       USE tic_toc
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:

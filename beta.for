@@ -8,11 +8,11 @@ c     Letzte Aenderung                                      20-Nov-2009
 c.....................................................................
 
       USE electrmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'err.fin'
 

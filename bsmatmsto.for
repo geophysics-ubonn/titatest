@@ -18,11 +18,11 @@ c....................................................................
       USE datmod
       USE invmod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
       
       INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'path.fin'
       INCLUDE 'err.fin'

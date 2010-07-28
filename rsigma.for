@@ -13,12 +13,12 @@ c.....................................................................
       USE invmod
       USE sigmamod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
 c.....................................................................
 

@@ -14,12 +14,12 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'randb.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

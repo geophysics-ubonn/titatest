@@ -10,11 +10,11 @@ c.....................................................................
 
       USE femmod
       USE electrmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
       
 c.....................................................................
 

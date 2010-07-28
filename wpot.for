@@ -9,12 +9,11 @@ c.....................................................................
 
       USE femmod
       USE datmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

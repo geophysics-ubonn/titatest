@@ -11,10 +11,9 @@ c     Letzte Aenderung                                         20-Nov-2009
 c     
 c.....................................................................
 
-      IMPLICIT none
+      USE elemmod        ! fuer sytop und den ganzen rest 
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer sytop und den ganzen rest 
+      IMPLICIT none
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen

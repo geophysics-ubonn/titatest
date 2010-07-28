@@ -14,12 +14,12 @@ c....................................................................
       USE datmod
       USE invmod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

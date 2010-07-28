@@ -10,11 +10,13 @@ c
 c     Letzte Aenderung                                         07-Aug-2009
 c     
 c.....................................................................
-      use alloci
+
+      USE alloci
+      USE elemmod        ! fuer nachbar, nrel etc. 
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen

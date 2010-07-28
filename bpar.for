@@ -14,11 +14,11 @@ c.....................................................................
       USE invmod   ! fuer par
       USE sigmamod ! fuer sigma
       USE modelmod ! fuer manz und mnr
+      USE elemmod  ! fuer elanz
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin' ! fuer maximale zahlenwerte..
-      INCLUDE 'elem.fin'  ! fuer elanz
       INCLUDE 'err.fin' ! fuer fetxt und errnr
 c.....................................................................
 

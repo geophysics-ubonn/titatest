@@ -13,12 +13,12 @@ c.........................................................................
       USE alloci
       USE invmod
       USE modelmod
+      USE elemmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:

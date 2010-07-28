@@ -12,11 +12,12 @@ c     Letzte Aenderung   07-Mar-2003
 c.....................................................................
 
       USE alloci
+      USE elemmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

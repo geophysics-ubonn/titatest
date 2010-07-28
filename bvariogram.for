@@ -14,11 +14,11 @@ c.....................................................................
       USE variomodel
       USE sigmamod       ! fuer sigma
       USE modelmod       ! fuer manz
+      USE elemmod        ! fuer grid_min,grid_max,etc
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer grid_min,grid_max,etc
       INCLUDE 'konv.fin'        ! fuer alfx/alfz
       INCLUDE 'err.fin'
 

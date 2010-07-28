@@ -16,13 +16,13 @@ c.....................................................................
       USE cjgmod
       USE sigmamod
       USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'

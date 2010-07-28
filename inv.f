@@ -25,15 +25,16 @@ c.....................................................................
       USE sigmamod
       USE electrmod
       USE modelmod
-
+      USE elemmod
+      
 c     USE portlib
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
 
@@ -935,6 +936,11 @@ c     'sens' und 'kpot' freigeben
       end if
       IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
+
+      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
       IF (ALLOCATED (enr)) DEALLOCATE (enr)
       IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
