@@ -18,7 +18,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'konv.fin'        ! fuer alfx/alfz
       INCLUDE 'err.fin'
 

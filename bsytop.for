@@ -26,12 +26,13 @@ c     Schwerpunktskoordinaten des randelements
       REAL(KIND(0D0)) :: sp
 c-----------------------------------------------------------------------
 
+      sytop = 0.
       iel = 0
       DO i=1,typanz
 
          iel = iel + nelanz(i)
 
-         IF (typ(i) /= 11) CYCLE  ! suche nach "no flow"
+         IF (typ(i) /= 12) CYCLE  ! suche nach "no flow"
 
          nkel = selanz(i)
          sytop = 0.
@@ -42,19 +43,25 @@ c-----------------------------------------------------------------------
 
             sp=0
             DO ik=1,nkel
+               PRINT*,ik,sp,sy(snr(nrel(iel,ik))),sx(snr(nrel(iel,ik)))
                sp = sp + sy(snr(nrel(iel,ik)))
             END DO
             sp = sp/DBLE(nkel)
 
 
-            IF (j == 1) THEN !errechne direkt den mittelwert
+            IF (j == 1) THEN 
                sytop = sp
-            ELSE
+            ELSE                !errechne den mittelwert (diret)
                sytop = (sytop*dble(j-1)+sp)/dble(j)
             END IF
 
+!            PRINT*,sp,sytop,j
+
          END DO
       END DO
+
+!      PRINT*,sytop
+
 
       END SUBROUTINE bsytop
       

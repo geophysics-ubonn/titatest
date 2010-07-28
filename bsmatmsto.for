@@ -22,7 +22,6 @@ c....................................................................
 
       IMPLICIT none
       
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'path.fin'
       INCLUDE 'err.fin'

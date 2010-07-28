@@ -9,7 +9,6 @@
       
       IMPLICIT none
       
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
 
 

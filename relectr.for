@@ -12,7 +12,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -55,12 +54,6 @@ c     Anzahl der Elektroden einlesen
       END IF
 
       WRITE (ifp,*)eanz
-c     Ggf. Fehlermeldung
-      if (eanz.gt.emax) then
-         fetxt = ' '
-         errnr = 12
-         goto 1000
-      end if
 
 c     Knotennummern der Elektroden einlesen
       do i=1,eanz

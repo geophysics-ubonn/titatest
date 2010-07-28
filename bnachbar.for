@@ -19,7 +19,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'err.fin'       ! fuer manz
 
 c     PROGRAMMINTERNE PARAMETER:----------------------------------------

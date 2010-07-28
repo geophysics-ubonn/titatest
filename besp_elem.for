@@ -16,8 +16,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
       INTEGER :: i,j,ik,jk,fp
@@ -31,7 +29,7 @@ c-----------------------------------------------------------------------
 
       IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))
 
-      smaxs = selanz(1)
+      smaxs = MAXVAL(selanz)
 
       grid_min = 10**5.; grid_max = 0.
       grid_minx = 10**5.; grid_maxx = 0.

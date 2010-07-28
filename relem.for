@@ -11,7 +11,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'konv.fin'
 
@@ -83,6 +82,7 @@ c     bestimmen
          end if
       end do
       smaxs = MAXVAL(selanz)
+      PRINT*,smaxs
 !!$ get memory for the element integer field      
       ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
       IF (errnr /= 0) THEN

@@ -66,7 +66,7 @@ c.....................................................................
       ALLOCATE (relbg(relanz,(selmax*(selmax+1))/2),stat=errnr)
       ALLOCATE (kg(relanz,eanz,kwnanz),stat=errnr)
       if (errnr.ne.0) then
-         fetxt = 'allocation problem sens and kpot'
+         fetxt = 'allocation problem elbg relbg or kg'
          errnr = 97 
          goto 1000
       end if

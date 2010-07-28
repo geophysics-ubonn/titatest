@@ -18,7 +18,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin' ! fuer maximale zahlenwerte..
       INCLUDE 'err.fin' ! fuer fetxt und errnr
 c.....................................................................
 
