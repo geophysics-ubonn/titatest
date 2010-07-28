@@ -10,12 +10,12 @@ c.....................................................................
       USE datmod
       USE electrmod
       USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'waven.fin'
 
 c.....................................................................
 

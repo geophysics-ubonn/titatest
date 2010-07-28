@@ -13,11 +13,11 @@ c.....................................................................
       USE electrmod
       USE modelmod
       USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'waven.fin'
       INCLUDE 'err.fin'
 c.....................................................................
 

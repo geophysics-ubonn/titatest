@@ -17,13 +17,13 @@ c.....................................................................
       USE sigmamod
       USE modelmod
       USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
 c.....................................................................
