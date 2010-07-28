@@ -15,18 +15,17 @@ c.........................................................................
       USE femmod
       USE datmod
       USE invmod
+      USE modelmod       ! mit nachbar und ldir
+      USE elemmod
       
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
       REAL(KIND(0D0)) :: dum
-      INTEGER         :: i,j,l,k,smaxs,ik,anz
+      INTEGER         :: i,j,l,k,ik,anz
       REAL(KIND(0D0)) :: edglen ! Kantenlaenge
       REAL(KIND(0D0)) :: dist   ! Abstand der Schwerpunkte
       REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
@@ -78,7 +77,6 @@ c.........................................................................
 !     Summe der Sensitivitaeten normieren
       WRITE(*,*) 'dum snsmn',dum,snsmn
 
-      smaxs=MAXVAL(selanz)
       IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
       smatm = 0d0               ! initialize smatm
 

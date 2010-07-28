@@ -11,11 +11,10 @@ c.....................................................................
       USE femmod
       USE datmod
       USE invmod
+      USE modelmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

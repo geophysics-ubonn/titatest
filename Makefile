@@ -45,7 +45,9 @@ ferr		= get_error.o
 f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  make_noise.o tic_toc.o variomodel.o \
 		  chold.o cholz.o linvd.o linvz.o femmod.o \
-		  datmod.o invmod.o cjgmod.o sigmamod.o
+		  datmod.o invmod.o cjgmod.o sigmamod.o \
+		  electrmod.o modelmod.o elemmod.o wavenmod.o \
+		  randbmod.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -70,7 +72,8 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
 f90crm		= alloci.o tic_toc.o make_noise.o femmod.o datmod.o \
-		  invmod.o sigmamod.o
+		  invmod.o sigmamod.o electrmod.o modelmod.o \
+		  elemmod.o wavenmod.o randbmod.o
 fcrm		= fem.o
 forcrm		= bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \

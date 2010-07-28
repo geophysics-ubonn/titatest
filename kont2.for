@@ -16,7 +16,6 @@ c     mw
 
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

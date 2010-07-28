@@ -9,21 +9,21 @@ c
 c     Letzte Aenderung    RM                                   20-Feb-2010
 c     
 c.........................................................................
+
       USE alloci
       USE invmod
+      USE modelmod
+      USE elemmod
       
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'model.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
       INTEGER                       :: kanal ! io number
 !     Hilfsvariablen 
-      INTEGER                       :: i,j,k,smaxs
+      INTEGER                       :: i,j,k
       REAL,DIMENSION(:),ALLOCATABLE :: dig
       REAL                          :: dig_min,dig_max
 !.....................................................................
@@ -35,8 +35,6 @@ c$$$  A^TC_d^-1A+lamC_m
       errnr = 4
 
       ALLOCATE(dig(manz))
-
-      smaxs=MAXVAL(selanz)
 
       IF (ltri == 0) THEN
          DO j=1,manz

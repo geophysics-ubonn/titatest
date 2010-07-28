@@ -14,13 +14,12 @@ c.....................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'elem.fin'
 !.....................................................................
 
 !     PROGRAMMINTERNE PARAMETER:
@@ -28,11 +27,9 @@ c.....................................................................
 !     Hilfsvariablen
       real            * 8     dum
       integer         * 4     i,j
-      integer         * 4     smaxs
 !.....................................................................
 !     WRITE(*,*) "BPDCtri",errnr 
 !     A * p  berechnen (skaliert)
-      smaxs=MAXVAL(selanz)
 
       do i=1,nanz
          apdc(i) = 0d0

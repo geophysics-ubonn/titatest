@@ -13,13 +13,12 @@ c.....................................................................
       USE alloci
       USE datmod
       USE invmod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
 
 c.....................................................................
 
@@ -53,8 +52,8 @@ c     Werte berechnen
       dum = 0d0
 
       do j=1,manz
-         l  = j/smax + 1
-         i2 = mod(j,smax)
+         l  = j/sanz + 1
+         i2 = mod(j,sanz)
 
          kpotdc(i2,l,1) = 0d0
          kpotdc(i2,l,2) = 0d0
@@ -73,8 +72,8 @@ c     Werte berechnen
 c     Summe der Sensitivitaeten normieren
       if (dum.gt.1d-12) then
          do j=1,manz
-            l = j/smax + 1
-            i = mod(j,smax)
+            l = j/sanz + 1
+            i = mod(j,sanz)
             kpotdc(i,l,1) = kpotdc(i,l,1) / dum
          end do
       end if
@@ -98,8 +97,8 @@ c     Schwerpunktkoordinaten der (ggf. zusammengesetzten) Elemente bestimmen
                ydum = ydum + sy(snr(nrel(iel,k)))
             end do
 
-            l  = mnr(iel)/smax + 1
-            i2 = mod(mnr(iel),smax)
+            l  = mnr(iel)/sanz + 1
+            i2 = mod(mnr(iel),sanz)
 
             kpotdc(i2,l,2) = kpotdc(i2,l,2) + xdum/dble(nkel)
             kpotdc(i2,l,3) = kpotdc(i2,l,3) + ydum/dble(nkel)
@@ -110,8 +109,8 @@ c     Schwerpunktkoordinaten der (ggf. zusammengesetzten) Elemente bestimmen
  10   continue
 
       do j=1,manz
-         l = j/smax + 1
-         i = mod(j,smax)
+         l = j/sanz + 1
+         i = mod(j,sanz)
          kpotdc(i,l,2) = kpotdc(i,l,2) / kpotdc(i,l,4)
          kpotdc(i,l,3) = kpotdc(i,l,3) / kpotdc(i,l,4)
       end do
@@ -128,8 +127,8 @@ c     Anzahl der Werte
 c     Koordinaten und Sensitivitaetsbetraege schreiben
 c     (logarithmierter (Basis 10) normierter Betrag)
       do j=1,manz
-         l   = j/smax + 1
-         i   = mod(j,smax)
+         l   = j/sanz + 1
+         i   = mod(j,sanz)
          dum = kpotdc(i,l,1)
 
          if (dum.gt.0d0) then

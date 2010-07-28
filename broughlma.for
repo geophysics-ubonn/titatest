@@ -14,12 +14,11 @@ c.....................................................................
       USE alloci,only:smatm
       USE invmod
       USE sigmamod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

@@ -13,20 +13,17 @@ c.....................................................................
       USE invmod         ! fuer par
       USE variomodel
       USE sigmamod       ! fuer sigma
+      USE modelmod       ! fuer manz
+      USE elemmod        ! fuer grid_min,grid_max,etc
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer grid_min,grid_max,etc
       INCLUDE 'konv.fin'        ! fuer alfx/alfz
-      INCLUDE 'model.fin'       ! fuer manz
       INCLUDE 'err.fin'
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
       INTEGER :: i,j,ik,jk,ifp
-c     Maximale knotenanzahl nicht entarteter Elemente
-      INTEGER :: smaxs
 c     Schwerpunktskoordinaten der Flaechenelemente und gitterabstaende
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2
 c     th = Tail - Head; hx,hy,h distances in each direction
@@ -57,7 +54,6 @@ c-----------------------------------------------------------------------
 
       errnr = 4
 
-      smaxs = selanz(1)
 c     define linear equidistant lag vector
 
       lag_unit = grid_min

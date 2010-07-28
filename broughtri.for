@@ -12,12 +12,11 @@ c.....................................................................
       USE sigmamod
       USE alloci
       USE invmod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
 !.....................................................................
@@ -25,13 +24,12 @@ c.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 
 !     Hilfsvariablen
-      integer         * 4     i,j,k,smaxs
+      integer         * 4     i,j,k
       complex         * 16    cdum
 ! cdum describes (R^TR)m
 !.....................................................................
 !     Roughness bestimmen
       rough = 0d0
-      smaxs=MAXVAL(selanz)
       IF (.NOT.lprior) THEN
          DO i=1,manz
             cdum = dcmplx(0d0)

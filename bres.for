@@ -11,13 +11,13 @@ c
 c     Letzte Aenderung    RM                             30-Mar-2010
 c     
 c....................................................................
+
       USE alloci
+      USE modelmod
       
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'err.fin'
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:

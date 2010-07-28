@@ -12,14 +12,13 @@ c.....................................................................
       USE alloci
       USE femmod
       USE sigmamod
+      USE electrmod
+      USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'waven.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 

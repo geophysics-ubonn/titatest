@@ -7,10 +7,11 @@ c     Letzte Aenderung   24-Oct-1996
 
 c.....................................................................
 
+      USE elemmod
+
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -31,7 +32,7 @@ c     Indexvariablen
       integer         * 4     i,j,k
 
 c     Hilfsvariable
-      integer         * 4     idum,iflnr
+      integer         * 4     idum,ifln,iflnr
 
 c.....................................................................
 
@@ -47,25 +48,29 @@ c     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
 c     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
       read(kanal,*,end=1001,err=1000) sanz,typanz,mb
 
-c     Ggf. Fehlermeldungen
-      if (sanz.gt.smax) then
-         fetxt = ' '
-         errnr = 5
-         goto 1000
-      else if (typanz.gt.typmax) then
-         fetxt = ' '
-         errnr = 6
-         goto 1000
-      else if (mb.gt.mbmax) then
-         fetxt = ' '
-         errnr = 7
-         goto 1000
-      end if
+!!$ now get some memory for the fields..
+!!$ first the sanz fields
+      ALLOCATE (sx(sanz),sy(sanz),snr(sanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation sx failed'
+         errnr = 94
+         GOTO 999
+      END IF
+
+      ALLOCATE (typ(typanz),nelanz(typanz),selanz(typanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation selanz failed'
+         errnr = 94
+         GOTO 999
+      END IF
 
 c     Elementtypen, Anzahl der Elemente eines bestimmten Typs sowie
 c     Anzahl der Knoten in einem Elementtyp einlesen
       read(kanal,*,end=1001,err=1000)
      1     (typ(i),nelanz(i),selanz(i),i=1,typanz)
+
+!!$ set number of node points for regular elements
+      smaxs = MAXVAL(selanz)
 
 c     Anzahl der Elemente (ohne Randelemente) und Anzahl der Randelemente
 c     bestimmen
@@ -78,37 +83,47 @@ c     bestimmen
          else
             elanz  = elanz  + nelanz(i)
          end if
-
-c     Ggf. Fehlermeldung
-         if (selanz(i).gt.selmax) then
-            fetxt = ' '
-            errnr = 8
-            goto 1000
-         end if
       end do
 
-c     Ggf. Fehlermeldungen
-      if (elanz.gt.elmax) then
-         fetxt = ' '
-         errnr = 9
-         goto 1000
-      else if (relanz.gt.relmax) then
-         fetxt = ' '
-         errnr = 10
-         goto 1000
-      end if
-
+!!$ get memory for the element integer field      
+      ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation nrel failed'
+         errnr = 94
+         GOTO 999
+      END IF
+!!$ get memory for the regular element midpoint coordinates
+      ALLOCATE (spx(elanz),spy(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation spx failed'
+         errnr = 94
+         GOTO 999
+      END IF
+      spx = 0.;spy = 0.
 c     Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
 c     einlesen
       read(kanal,*,end=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
-
 c     Knotennummern der Elemente einlesen
-      idum = 0
-      iflnr= 0
+      idum = 0;ifln = 0;iflnr = 0
       do i=1,typanz
          do j=1,nelanz(i)
             read(kanal,*,end=1001,err=1000)
      1           (nrel(idum+j,k),k=1,selanz(i))
+
+            IF (typ(i) < 10) THEN ! set midpoints
+
+               ifln = ifln + 1
+
+               DO k = 1,selanz(i)
+                  spx(ifln) = spx(ifln) + sx(snr(nrel(idum+j,k)))
+                  spy(ifln) = spy(ifln) + sy(snr(nrel(idum+j,k)))
+               END DO
+
+               spx(ifln) = spx(ifln) / selanz(i)
+               spy(ifln) = spy(ifln) / selanz(i)
+
+            END IF
+
 c$$$            IF (typ(i) > 10) THEN ! randele zeiger kann man auch so belegen
 c$$$               iflnr = iflnr + 1
 c$$$               IF (iflnr > relanz) THEN

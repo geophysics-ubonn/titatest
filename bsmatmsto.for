@@ -13,12 +13,11 @@ c.....................................................................
       USE variomodel
       USE datmod
       USE invmod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
       
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'path.fin'
       INCLUDE 'err.fin'
@@ -32,7 +31,7 @@ c     Korrelation lengths and variance (var)
 !     gibt es evtl schon eine inverse?
       logical              :: ex,exc         
 c     Hilfsvariablen
-      integer              :: i,j,l,smaxs,ifp,c1
+      integer              :: i,j,l,ifp,c1
 c     smatm file name
       CHARACTER(124)        :: fsmat
 c     clearscreen
@@ -66,8 +65,6 @@ c     get time
          RETURN
       END IF
 
-      smaxs=MAXVAL(selanz)
-      
 c     Belege die Matrix
 
       smatm = var

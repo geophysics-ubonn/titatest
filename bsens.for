@@ -10,15 +10,14 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE electrmod
+      USE modelmod
+      USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
-
+      INCLUDE 'err.fin'
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
@@ -45,7 +44,7 @@ c     Indexvariablen
       integer         * 4     i,j,k
 
 c     Hilfsfeld
-      complex         * 16    hsens(kwnmax)
+      COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 c     Hilfsvariablen
       integer         * 4     nzp,nnp
@@ -57,14 +56,15 @@ c     Pi
 c.....................................................................
 
       pi = dacos(-1d0)
-
+! get memory for hsens
+      ALLOCATE (hsens(kwnanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation hsens'
+         errnr = 94
+         RETURN
+      END IF
 c     Sensitivitaetenfeld auf Null setzen
-      do i=1,nanz
-         do j=1,manz
-            sens(i,j) = dcmplx(0d0)
-         end do
-      end do
-
+      sens = 0.
 c     Messwert hochzaehlen
       do i=1,nanz
          iel = 0
@@ -157,6 +157,7 @@ c     Sensitivitaeten aufaddieren
 
  10      continue
       end do
+      
+      DEALLOCATE (hsens)
 
-      return
       end

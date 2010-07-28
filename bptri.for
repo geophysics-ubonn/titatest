@@ -14,13 +14,12 @@ c...................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'elem.fin'
 
 !.....................................................................
 
@@ -29,13 +28,9 @@ c...................................................................
 !     Hilfsvariablen
       complex         * 16    cdum
       integer         * 4     i,j,idum
-      integer         * 4     smaxs ! maximale knotenanzahl
-
 !.....................................................................
 !     
 !     A * p  berechnen (skaliert)
-
-      smaxs=MAXVAL(selanz)
 
       do i=1,nanz
          ap(i) = dcmplx(0d0)
@@ -52,10 +47,11 @@ c...................................................................
          DO j=1,smaxs
             idum=nachbar(i,j)
             IF (idum/=0) cdum = cdum + pvec(idum)*
-     1           DCMPLX(smatm(i,j))*fak(idum)
+     1           DCMPLX(smatm(i,j)) * DCMPLX(fak(idum)) ! off diagonals
          END DO
 
-         bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,smaxs+1))*fak(i)
+         bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * 
+     1        DCMPLX(fak(i)) ! + main diagonal
 
       END DO
       

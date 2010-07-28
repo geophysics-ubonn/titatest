@@ -15,17 +15,16 @@ c.....................................................................
       USE datmod
       USE cjgmod
       USE sigmamod
+      USE modelmod
+      USE elemmod
+      USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'randb.fin'
-      INCLUDE 'model.fin'
 c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
@@ -129,6 +128,7 @@ c     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?
       write(fpinv,*,err=999)'    Variance        : ',modl_stdn
       write(fpinv,'(/a)',err=999)
      1     '******** Regularization Part *********'
+      write(fpinv,*,err=999)'Regularization      : ',ltri
       write(fpinv,*,err=999)'Regular grid smooth : ',(ltri==0)
       write(fpinv,*,err=999)'Triangular regu     : ',(ltri==1)
       write(fpinv,*,err=999)'Triangular regu2    : ',(ltri==2)

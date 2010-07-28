@@ -1,4 +1,4 @@
-      subroutine elem4(xk,yk,elmas,elmam,elve)
+      subroutine elem4()
 
 c     Unterprogramm liefert die Elementmatrizen 'elmas(6,6)' und 'elmam(6,6)'
 c     sowie den Elementvektor 'elve(6)' fuer ein Dreieckelement mit quadra-
@@ -11,27 +11,13 @@ c     Letzte Aenderung   25-Jul-2003
 
 c.....................................................................
 
+
+      USE elemmod,only:xk,yk,elmam,elmas,elve
+
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+      
       INCLUDE 'err.fin'
       
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     x-Koordinaten der Eckknotenpunkte
-      real            * 8     xk(selmax)
-
-c     y-Koordinaten der Eckknotenpunkte
-      real            * 8     yk(selmax)
-
-c     Elementmatrizen
-      real            * 8     elmas(selmax,selmax),
-     1     elmam(selmax,selmax)
-
-c     Elementvektor
-      real            * 8     elve(selmax)
-
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:

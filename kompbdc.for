@@ -9,13 +9,11 @@ c     Letzte Aenderung   16-Jul-2007
 c.....................................................................
 
       USE femmod
+      USE electrmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

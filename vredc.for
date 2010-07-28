@@ -13,18 +13,18 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
+      INCLUDE 'err.fin'
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      real            * 8     potdc(smax)
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: potdc
       integer         * 4     idi,i0
       integer         * 4     m1,jlow
       real            * 8     s
@@ -33,6 +33,14 @@ c     Indexvariablen
       integer         * 4     i,j
 
 c.....................................................................
+
+      ALLOCATE (potdc(sanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation potdc failed'
+         errnr = 94
+         RETURN
+      END IF
+      
 
       m1 = mb+1
 
@@ -66,5 +74,5 @@ c.....................................................................
          pot(i) = dcmplx(potdc(i))
       end do
 
-      return
+      DEALLOCATE (potdc)
       end

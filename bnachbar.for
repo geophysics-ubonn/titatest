@@ -12,12 +12,13 @@ c
 c     Letzte Aenderung                                         07-Aug-2009
 c     
 c.....................................................................
-      use alloci
+
+      USE alloci
+      USE modelmod       ! fuer manz
+      USE elemmod        ! fuer nachbar, nrel etc. 
+
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
-      INCLUDE 'model.fin'       ! fuer manz
       INCLUDE 'err.fin'       ! fuer manz
 
 c     PROGRAMMINTERNE PARAMETER:----------------------------------------
@@ -25,11 +26,7 @@ c     Indexvariablen
       INTEGER :: i,j,ik,jk
 c     Knotennummer der Kanten zaehler von element i und j
       INTEGER :: ik1,ik2,jk1,jk2
-c     Maximale knotenanzahl nicht entarteter Elemente
-      INTEGER :: smaxs
 c-----------------------------------------------------------------------
-
-      smaxs = MAXVAL(selanz)
 
       IF (.NOT.ALLOCATED (nachbar)) 
      1     ALLOCATE (nachbar(manz,smaxs+1),STAT=errnr)

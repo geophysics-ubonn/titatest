@@ -1,4 +1,4 @@
-      subroutine elem5(xk,yk,elmas,elmam,elve)
+      subroutine elem5()
 
 c     Unterprogramm liefert die Elementmatrizen 'elmas(4,4)' und 'elmam(4,4)'
 c     sowie den Elementvektor 'elve(4)' fuer ein Parallelogrammelement mit
@@ -9,26 +9,11 @@ c     Letzte Aenderung   10-Nov-1997
       
 c.....................................................................
 
+      USE elemmod,only:xk,yk,elmam,elmas,elve
+
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+
       INCLUDE 'err.fin'
-
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     x-Koordinaten der Eckknotenpunkte
-      real            * 8     xk(selmax)
-
-c     y-Koordinaten der Eckknotenpunkte
-      real            * 8     yk(selmax)
-
-c     Elementmatrizen
-      real            * 8     elmas(selmax,selmax),
-     1     elmam(selmax,selmax)
-
-c     Elementvektor
-      real            * 8     elve(selmax)
 
 c.....................................................................
 

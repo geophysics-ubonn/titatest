@@ -23,17 +23,19 @@ c.....................................................................
       USE invmod
       USE cjgmod
       USE sigmamod
+      USE electrmod
+      USE modelmod
+      USE elemmod
+      USE wavenmod
+      USE randbmod
+
 c     USE portlib
 
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+
       INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
@@ -934,20 +936,38 @@ c     'sens' und 'kpot' freigeben
       end if
       IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
+
+      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
+      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
+
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
+      IF (ALLOCATED (enr)) DEALLOCATE (enr)
+      IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
       IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
      1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
       IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
       IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
       IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
+
       IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
       IF (ALLOCATED (m0)) DEALLOCATE (m0)
+
       IF (ALLOCATED (ata)) DEALLOCATE (ata)
       IF (ALLOCATED (ata_dc)) DEALLOCATE (ata_dc)
       IF (ALLOCATED (ata_reg)) DEALLOCATE (ata_reg)
       IF (ALLOCATED (ata_reg_dc)) DEALLOCATE (ata_reg_dc)
       IF (ALLOCATED (cov_m)) DEALLOCATE (cov_m)
       IF (ALLOCATED (cov_m_dc)) DEALLOCATE (cov_m_dc)
+
+      IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
+      IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
+      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
+      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
+      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
 
 c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5

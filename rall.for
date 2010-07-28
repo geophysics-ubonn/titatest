@@ -18,18 +18,17 @@ c.....................................................................
       USE invmod
       USE cjgmod
       USE sigmamod
+      USE electrmod
+      USE modelmod
+      USE elemmod
+      USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'randb.fin'
 
 c.....................................................................
 
@@ -56,6 +55,8 @@ c     diff+>
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
       logical         * 4     lsto
+c check whether the file format is crtomo konform or not..
+      logical           ::    crtf
 
 c.....................................................................
 
@@ -68,8 +69,10 @@ c     Pi
       real            * 8     pi
 
 c     diff+<
-      real            * 8     dum(nmax),dum2(nmax),dum3
-      integer         * 4     ic(nmax),ip(nmax),idum(nmax),nanz0,j,j0
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
+      REAL(KIND(0D0))                            :: dum3
+      INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
+      integer         * 4     nanz0,j,j0
 c     diff+>
 
 c     ak Inga
@@ -256,6 +259,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) lrandb2
       fetxt = 'rall -> Datei mit Randwerten'
       read(fpcfg,'(a80)',end=1001,err=999) drandb
+      fetxt = 'triangularization switch'
       read(fpcfg,'(I2)',end=100,err=100) ltri
 
       IF (ltri >= 20) THEN
@@ -269,7 +273,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
          ltri = ltri - 20
       END IF
 
-      lsto = (ltri==15)
+      lsto = (ltri == 15)
       
       GOTO 101
 
@@ -464,15 +468,19 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 !     the variogram and covariance function type, see variomodel.f90
 
       if (manz.ne.elanz) then
-         fetxt = ' '
+         fetxt = 'manz /= elanz .. is not implemented yet'
          errnr = 50
          goto 999
-      else if (manz.gt.mmax) then
-         fetxt = ' '
-         errnr = 63
-         goto 999
       end if
+!!$ get memory for mnr..
+      ALLOCATE (mnr(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation mnr failed'
+         errnr = 94
+         goto 999
+      END IF
 
+!!$ set mnr.. this may be altered if we have zonal approach..
       do i=1,elanz
          mnr(i) = i
       end do
@@ -491,8 +499,9 @@ c     bestimmen
          WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
      1     nsink,sx(snr(nsink)),sy(snr(nsink))
       END IF
+
       call rdati (kanal,dstrom)
-c      PRINT*,'data in'
+
       if (errnr.ne.0) goto 999
 
       if (swrtr.eq.0) then
@@ -529,14 +538,28 @@ c     diff+<
          END IF
          open(kanal,file=dd0,status='old')
          read(kanal,*) nanz0
+         read(kanal,*,err=999) elec1
+         BACKSPACE(kanal)
+
+         elec3=elec1-10000      ! are we still positive?
+         crtf=(elec3 > 0)       ! crtomo konform?
+         
+         ALLOCATE (dum(nanz0),dum2(nanz0),idum(nanz0),
+     1        ic(nanz0),ip(nanz0),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation dum'
+            errnr = 94
+            goto 999
+         END IF
+
          do j=1,nanz0
-
-            read(kanal,*) ic(j),ip(j),dum(j)
-c     ak Inga
-c     ak                read(kanal,*) elec1,elec2,elec3,elec4,dum(j)
-c     ak                ic(j) = elec1*10000 + elec2
-c     ak                ip(j) = elec3*10000 + elec4
-
+            IF (crtf) THEN
+               read(kanal,*) ic(j),ip(j),dum(j)
+            ELSE
+               read(kanal,*) elec1,elec2,elec3,elec4,dum(j)
+               ic(j) = elec1*10000 + elec2
+               ip(j) = elec3*10000 + elec4
+            END IF
          end do
          close(kanal)
 
@@ -585,6 +608,7 @@ c     wdfak(j) = wdfak(j+1)
             m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
          end do
          close(kanal)
+         DEALLOCATE (dum,dum2,idum,ic,ip)
       end if
 c     diff+>
       

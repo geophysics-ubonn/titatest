@@ -7,11 +7,12 @@ c     Letzte Aenderung   24-Oct-1996
 
 c.....................................................................
 
+      USE electrmod
+      USE elemmod
+
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 
@@ -44,13 +45,15 @@ c     'datei' oeffnen
 
 c     Anzahl der Elektroden einlesen
       read(kanal,*,end=1001,err=1000) eanz
-      WRITE (ifp,*)eanz
-c     Ggf. Fehlermeldung
-      if (eanz.gt.emax) then
-         fetxt = ' '
-         errnr = 12
+!!!$ memory allocation
+      ALLOCATE (enr(eanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation enr'
+         errnr = 94
          goto 1000
-      end if
+      END IF
+
+      WRITE (ifp,*)eanz
 
 c     Knotennummern der Elektroden einlesen
       do i=1,eanz

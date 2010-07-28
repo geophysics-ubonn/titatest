@@ -10,17 +10,15 @@ c
 c     Letzte Aenderung                                         07-Aug-2009
 c     
 c.....................................................................
-      use alloci
-      IMPLICIT none
 
-      INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
-      INCLUDE 'elem.fin'        ! fuer nachbar, nrel etc. 
+      USE alloci
+      USE elemmod        ! fuer nachbar, nrel etc. 
+
+      IMPLICIT none
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
       INTEGER :: i,j,ik,jk,fp
-c     Maximale knotenanzahl nicht entarteter Elemente
-      INTEGER :: smaxs
 c     Schwerpunktskoordinaten der Flaechenelemente
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,ax,ay,ar
 c     ESP Abstaende
@@ -28,8 +26,6 @@ c     ESP Abstaende
 c-----------------------------------------------------------------------
 
       IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))
-
-      smaxs = selanz(1)
 
       grid_min = 10**5.; grid_max = 0.
       grid_minx = 10**5.; grid_maxx = 0.

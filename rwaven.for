@@ -6,15 +6,15 @@ c     Andreas Kemna                                            20-Dec-1993
 c     Letzte Aenderung   19-Jun-1998
 
 c.....................................................................
+
       USE datmod
+      USE electrmod
+      USE elemmod
+      USE wavenmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      INCLUDE 'waven.fin'
 
 c.....................................................................
 
@@ -29,7 +29,7 @@ c     Elektrodennummern
 c     Hilfsvariablen
       integer		  * 4     ganz,lanz
       real            * 8     kwn0,dum,
-     1     xk(4),yk(4),
+     1     xke(4),yke(4),
      1     x21,y21
 
 c.....................................................................
@@ -50,15 +50,15 @@ c     Messelektroden bestimmen
 
 c     Abstaende bestimmen
          do j=1,4
-            if (elec(j).gt.0) xk(j) = sx(snr(enr(elec(j))))
-            if (elec(j).gt.0) yk(j) = sy(snr(enr(elec(j))))
+            if (elec(j).gt.0) xke(j) = sx(snr(enr(elec(j))))
+            if (elec(j).gt.0) yke(j) = sy(snr(enr(elec(j))))
          end do
 
          if (elec(3).gt.0) then
             do j=1,2
                if (elec(j).gt.0) then
-                  x21  = xk(3)-xk(j)
-                  y21  = yk(3)-yk(j)
+                  x21  = xke(3)-xke(j)
+                  y21  = yke(3)-yke(j)
                   dum  = dsqrt(x21*x21+y21*y21)
                   amin = dmin1(dum,amin)
                   amax = dmax1(dum,amax)
@@ -69,8 +69,8 @@ c     Abstaende bestimmen
          if (elec(4).gt.0) then
             do j=1,2
                if (elec(j).gt.0) then
-                  x21  = xk(4)-xk(j)
-                  y21  = yk(4)-yk(j)
+                  x21  = xke(4)-xke(j)
+                  y21  = yke(4)-yke(j)
                   dum  = dsqrt(x21*x21+y21*y21)
                   amin = dmin1(dum,amin)
                   amax = dmax1(dum,amax)
@@ -91,10 +91,16 @@ c     Wellenzahlen bestimmen
 c     ak        ganz   = int(real(6d0*dlog10(amax)))
       ganz   = int(real(6d0*dlog10(amax/amin)))
       ganz   = max0(ganz,2)
-      ganz   = min0(ganz,kwnmax-lanz)
       kwnanz = ganz+lanz
       kwn0   = 1d0/(2d0*amin)
 
+      ALLOCATE (kwn(kwnanz),kwnwi(kwnanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation kwn'
+         errnr = 94
+         RETURN
+      END IF
+ 
 c     Gauss-Integeration
       call gauleg(0d0,1d0,kwn(1),kwnwi(1),ganz)
       

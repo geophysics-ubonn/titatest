@@ -12,18 +12,14 @@ c.....................................................................
       USE femmod
       USE invmod
       USE sigmamod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
-c     diff+<
-      INCLUDE 'model.fin'
-c     diff+>
-
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:
@@ -48,10 +44,6 @@ c     Anzahl der Knoten im aktuellen Elementtyp
 c     Indexvariablen
       integer         * 4     i,j,k
 
-c     Hilfsfelder
-      real            * 8     xkoord(elmax),
-     1     ykoord(elmax)
-
 c     Hilfsvariablen
       real            * 8     xdum,ydum
       integer         * 4     idum,idum2,lit
@@ -69,30 +61,6 @@ c     diff+>
       logical         * 4     exi
       CHARACTER       * 2     ci
 c.....................................................................
-
-c     Schwerpunktkoordinaten der Elemente bestimmen
-      iel = 0
-
-      do i=1,typanz
-         if (typ(i).gt.10) goto 10
-
-         nkel = selanz(i)
-
-         do j=1,nelanz(i)
-            iel  = iel + 1
-
-            xdum = 0d0
-            ydum = 0d0
-
-            do k=1,nkel
-               xdum = xdum + sx(snr(nrel(iel,k)))
-               ydum = ydum + sy(snr(nrel(iel,k)))
-            end do
-
-            xkoord(iel) = xdum/dble(nkel)
-            ykoord(iel) = ydum/dble(nkel)
-         end do
-      end do
 
 c     'dsigma' modifizieren
 
@@ -121,18 +89,18 @@ c     diff+<
          if (.not.ldiff) then
 c     diff+>
             dum = dcmplx(1d0)/sigma(i)
-c     ak            write(kanal,*,err=1000) real(xkoord(i)),real(ykoord(i)),
+c     ak            write(kanal,*,err=1000) real(spx(i)),real(spy(i)),
 c     ak     1                              real(cdabs(dum))
-            write(kanal,*,err=1000) real(xkoord(i)),real(ykoord(i)),
+            write(kanal,*,err=1000) real(spx(i)),real(spy(i)),
      1           real(dlog10(cdabs(dum)))
-c     ro            write(kanal,*,err=1000) real(ykoord(i)),real(xkoord(i)),
+c     ro            write(kanal,*,err=1000) real(spy(i)),real(spx(i)),
 c     ro     1                              real(cdabs(dum))
 c     diff+<
          else
             dum3 = cdabs(dcmplx(1d0)/sigma(i))
             dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
             write(kanal,'(7(f10.4,2x))',err=1000)
-     1           real(xkoord(i)),real(ykoord(i)),
+     1           real(spx(i)),real(spy(i)),
      1           real(dlog10(dum3)),
      1           real(1d2*(dum3/dum2-1d0)),
      1           real(dum3-dum2),
@@ -164,12 +132,12 @@ c     Ggf. Phasen ausgeben
             dum = dcmplx(1d0)/sigma(i)
             write(kanal,*,err=1000)
 c     ak Default
-     1           real(xkoord(i)),real(ykoord(i)),
+     1           real(spx(i)),real(spy(i)),
      1           real(1d3*datan2(dimag(dum),dble(dum)))
 c     ak MMAJ
-c     ak     1                      real(xkoord(i)),real(ykoord(i)),
+c     ak     1                      real(spx(i)),real(spy(i)),
 c     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
-c     ro     1                      real(ykoord(i)),real(xkoord(i)),
+c     ro     1                      real(spy(i)),real(spx(i)),
 c     ro     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
          end do
          close(kanal)

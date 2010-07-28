@@ -8,13 +8,12 @@ c     Letzte Aenderung   15-Jul-2007
 c.....................................................................
 
       USE femmod
+      USE elemmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'randb.fin'
 
 c.....................................................................
 
@@ -47,13 +46,13 @@ c     DC CASE
 
 c     Anzahl der Randwerte einlesen (Dirichlet)
          read(kanal,*,end=1001,err=1000) rwdanz
-
-c     Ggf. Fehlermeldung
-         if (rwdanz.gt.rwdmax) then
-            fetxt = ' '
-            errnr = 13
+         
+         ALLOCATE (rwdnr(rwdanz),rwddc(rwdanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rwdnr '
+            errnr = 94
             goto 1000
-         end if
+         END IF
 
 c     Knotennummern der Randwerte sowie Randwerte einlesen (Dirichlet)
          do i=1,rwdanz
@@ -70,12 +69,12 @@ c     Ggf. Fehlermeldung
 c     Anzahl der Randwerte einlesen (Neumann)
          read(kanal,*,end=1001,err=1000) rwnanz
 
-c     Ggf. Fehlermeldung
-         if (rwnanz.gt.relmax) then
-            fetxt = ' '
-            errnr = 33
+         ALLOCATE (rwndc(rwnanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rwdnr '
+            errnr = 94
             goto 1000
-         end if
+         END IF
 
 c     Randwerte einlesen (Neumann)
          if (rwnanz.gt.0)
@@ -87,12 +86,12 @@ c     COMPLEX CASE
 c     Anzahl der Randwerte einlesen (Dirichlet)
          read(kanal,*,end=1001,err=1000) rwdanz
 
-c     Ggf. Fehlermeldung
-         if (rwdanz.gt.rwdmax) then
-            fetxt = ' '
-            errnr = 13
+         ALLOCATE (rwdnr(rwdanz),rwd(rwdanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rwdnr '
+            errnr = 94
             goto 1000
-         end if
+         END IF
 
 c     Knotennummern der Randwerte sowie Randwerte einlesen (Dirichlet)
          do i=1,rwdanz
@@ -109,12 +108,12 @@ c     Ggf. Fehlermeldung
 c     Anzahl der Randwerte einlesen (Neumann)
          read(kanal,*,end=1001,err=1000) rwnanz
 
-c     Ggf. Fehlermeldung
-         if (rwnanz.gt.relmax) then
-            fetxt = ' '
-            errnr = 33
+         ALLOCATE (rwn(rwnanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rwdnr '
+            errnr = 94
             goto 1000
-         end if
+         END IF
 
 c     Randwerte einlesen (Neumann)
          if (rwnanz.gt.0)

@@ -15,17 +15,16 @@ c.....................................................................
       USE tic_toc
       USE femmod
       USE datmod
+      USE sigmamod
+      USE electrmod
+      USE modelmod
+      USE elemmod
+      USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
-      INCLUDE 'waven.fin'
-      INCLUDE 'sigma.fin'
-      INCLUDE 'model.fin'
-      INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -147,6 +146,12 @@ c     Alles einlesen
          lana = .FALSE.
          lsr = .FALSE.
          kwnanz = 1
+         ALLOCATE (kwn(kwnanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation kwn'
+            errnr = 94
+            GOTO 999
+         END IF
          kwn(1) = 0d0
       else
          call rwaven()
@@ -160,8 +165,13 @@ c     Alles einlesen
          lana = .false.
       END IF
       lsr = lana
-      print*,''
-
+c     Startmodell belegen
+      ALLOCATE (sigma(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation fem sigma'
+         errnr = 94
+         goto 999
+      END IF
       call rsigma(kanal,dsigma)
       if (errnr.ne.0) goto 999
 
@@ -291,14 +301,19 @@ c     'a' und 'hpot' freigeben
 c     Ggf. Sensitivitaeten aller Messungen berechnen und ausgeben
       if (lsens) then
 
-c     Modelleinteilung gemaess Elementeinteilung belegen
-         manz = elanz
-
-         if (manz.gt.mmax) then
-            fetxt = ' '
-            errnr = 63
+         if (manz.ne.elanz) then
+            fetxt = 'manz /= elanz .. is not implemented yet'
+            errnr = 50
             goto 999
          end if
+!     !$ get memory for mnr..
+         ALLOCATE (mnr(elanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation mnr failed'
+            errnr = 94
+            goto 999
+         END IF
+c     Modelleinteilung gemaess Elementeinteilung belegen
 
          do j=1,elanz
             mnr(j) = j
@@ -336,6 +351,25 @@ c     Kontrollausgabe
 
       write(*,*)
       write(*,'(a)',ADVANCE='no')' Modelling completed'
+
+
+      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
+      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
+     1     kfak,vnr)
+      IF (ALLOCATED (sigma)) DEALLOCATE (sigma)
+      IF (ALLOCATED (enr)) DEALLOCATE (enr)
+      IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
+      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
+
+      IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
+      IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
+      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
+      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
+      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
 
       STOP '0'
       

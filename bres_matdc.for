@@ -4,12 +4,11 @@
       USE femmod
       USE datmod
       USE invmod
+      USE modelmod
+      USE elemmod
       
       IMPLICIT none
       
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
 

@@ -16,12 +16,11 @@ c.........................................................................
       USE datmod
       USE invmod
       USE sigmamod       ! for sigma
+      USE modelmod       ! mit nachbar und ldir
+      USE elemmod
       
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 
@@ -29,7 +28,7 @@ c.........................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 
       REAL(KIND(0D0)) :: dum,dum2
-      INTEGER         :: i,j,l,k,smaxs,ik,anz
+      INTEGER         :: i,j,l,k,ik,anz
       REAL(KIND(0D0)) :: edglen ! Kantenlaenge
       REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
       REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
@@ -94,7 +93,6 @@ c$$$      snsmn = snsmn / DBLE(manz)
 
       WRITE(*,*) 'dum snsmn',dum,snsmn
 
-      smaxs=MAXVAL(selanz) ! triangles or rectangles
       IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),
      1     STAT=errnr)
 

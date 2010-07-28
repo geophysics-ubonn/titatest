@@ -8,11 +8,9 @@ c     Letzte Aenderung   08-Nov-1997
 c.....................................................................
 
       USE sigmamod
+      USE elemmod,only:sx,sy,snr,typanz,nelanz,typ,nrel
 
       IMPLICIT none
-
-      INCLUDE 'parmax.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

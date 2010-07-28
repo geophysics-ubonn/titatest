@@ -17,11 +17,10 @@ c.....................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE modelmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 
@@ -32,29 +31,22 @@ c     Hilfsvariablen
       integer         * 4     i,j
 
 c.....................................................................
-      ALLOCATE (pvec2(manz),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation pvec2 in bpsto'
-         errnr = 94
-         RETURN
-      END IF
-
 c     A * p  berechnen (skaliert)
       do i=1,nanz
          ap(i) = dcmplx(0d0)
-
          do j=1,manz
             ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
          end do
       end do
 
-c     coaa R^m * p  berechnen (skaliert)
-
+c     R^m * p  berechnen (skaliert)
       do j=1,manz
-         pvec2(i)=pvec(i)*dcmplx(fak(i))
+         bvec(j) = 0.
+         DO i = 1,manz
+            bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * 
+     1           DCMPLX(fak(j))
+         END DO
       end do
-
-      bvec = MATMUL(dcmplx(smatm),pvec2)  
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz
@@ -68,7 +60,5 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          bvec(j) = cdum + dcmplx(lam)*bvec(j)
          bvec(j) = bvec(j)*dcmplx(fak(j))
       end do
-
-      DEALLOCATE (pvec2)
 
       end

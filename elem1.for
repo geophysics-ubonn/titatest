@@ -1,4 +1,4 @@
-      subroutine elem1(xk,yk,elmam,elve)
+      subroutine elem1()
 
 c     Unterprogramm liefert die Elementmatrix 'elmam(2,2)' und den Element-
 c     vektor 'elve(2)' fuer ein Randelement mit linearem Ansatz ( Element-
@@ -8,26 +8,11 @@ c     Andreas Kemna                                            11-Oct-1993
 c     Letzte Aenderung   22-Sep-1998
 
 c.....................................................................
+      
+      USE elemmod,only:xk,yk,elmam,elve
 
       IMPLICIT none
-      INCLUDE 'parmax.fin'
       
-c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     x-Koordinate des Anfangs- und Endpunktes
-      real            * 8     xk(selmax)
-
-c     y-Koordinate des Anfangs- und Endpunktes
-      real            * 8     yk(selmax)
-
-c     Elementmatrix
-      real            * 8     elmam(selmax,selmax)
-
-c     Elementvektor
-      real            * 8     elve(selmax)
-
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:

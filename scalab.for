@@ -12,12 +12,11 @@ c.....................................................................
 
       USE alloci
       USE femmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 
 c.....................................................................
 

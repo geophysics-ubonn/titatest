@@ -11,14 +11,13 @@ c.....................................................................
       USE datmod
       USE invmod
       USE sigmamod
+      USE modelmod
+      USE elemmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'elem.fin'
 c     diff+<
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 c     diff+>
 
