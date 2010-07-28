@@ -8,7 +8,7 @@ c     Letzte Aenderung   08-Nov-1997
 c.....................................................................
 
       USE sigmamod
-      USE elemmod
+      USE elemmod,only:sx,sy,snr,typanz,nelanz,typ,nrel
 
       IMPLICIT none
 

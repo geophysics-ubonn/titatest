@@ -10,7 +10,7 @@ c.....................................................................
 
       USE datmod
       USE electrmod
-      USE elemmod
+      USE elemmod,only:sx,sy,snr
 
       IMPLICIT none
 
