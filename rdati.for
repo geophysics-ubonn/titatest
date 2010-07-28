@@ -76,7 +76,6 @@ c check if data file format is CRTOmo konform..
       BACKSPACE(kanal)
 
       elec3=elec1-10000 ! are we still positive?
-
       crtf=(elec3 > 0) ! crtomo konform?
 
       ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),

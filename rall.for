@@ -56,6 +56,8 @@ c     diff+>
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
       logical         * 4     lsto
+c check whether the file format is crtomo konform or not..
+      logical           ::    crtf
 
 c.....................................................................
 
@@ -256,6 +258,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       read(fpcfg,*,end=1001,err=999) lrandb2
       fetxt = 'rall -> Datei mit Randwerten'
       read(fpcfg,'(a80)',end=1001,err=999) drandb
+      fetxt = 'triangularization switch'
       read(fpcfg,'(I2)',end=100,err=100) ltri
 
       IF (ltri >= 20) THEN
@@ -269,7 +272,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
          ltri = ltri - 20
       END IF
 
-      lsto = (ltri==15)
+      lsto = (ltri == 15)
       
       GOTO 101
 
@@ -495,8 +498,9 @@ c     bestimmen
          WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
      1     nsink,sx(snr(nsink)),sy(snr(nsink))
       END IF
+
       call rdati (kanal,dstrom)
-c      PRINT*,'data in'
+
       if (errnr.ne.0) goto 999
 
       if (swrtr.eq.0) then
@@ -533,14 +537,20 @@ c     diff+<
          END IF
          open(kanal,file=dd0,status='old')
          read(kanal,*) nanz0
+         read(kanal,*,err=999) elec1
+         BACKSPACE(kanal)
+
+         elec3=elec1-10000      ! are we still positive?
+         crtf=(elec3 > 0)       ! crtomo konform?
+
          do j=1,nanz0
-
-            read(kanal,*) ic(j),ip(j),dum(j)
-c     ak Inga
-c     ak                read(kanal,*) elec1,elec2,elec3,elec4,dum(j)
-c     ak                ic(j) = elec1*10000 + elec2
-c     ak                ip(j) = elec3*10000 + elec4
-
+            IF (crtf) THEN
+               read(kanal,*) ic(j),ip(j),dum(j)
+            ELSE
+               read(kanal,*) elec1,elec2,elec3,elec4,dum(j)
+               ic(j) = elec1*10000 + elec2
+               ip(j) = elec3*10000 + elec4
+            END IF
          end do
          close(kanal)
 

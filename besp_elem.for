@@ -19,8 +19,6 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
       INTEGER :: i,j,ik,jk,fp
-c     Maximale knotenanzahl nicht entarteter Elemente
-      INTEGER :: smaxs
 c     Schwerpunktskoordinaten der Flaechenelemente
       REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,ax,ay,ar
 c     ESP Abstaende
@@ -28,8 +26,6 @@ c     ESP Abstaende
 c-----------------------------------------------------------------------
 
       IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))
-
-      smaxs = MAXVAL(selanz)
 
       grid_min = 10**5.; grid_max = 0.
       grid_minx = 10**5.; grid_maxx = 0.

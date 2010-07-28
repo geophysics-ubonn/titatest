@@ -41,7 +41,6 @@ c-----------------------------------------------------------------------
 
                sp=0
                DO ik=1,nkel
-                  PRINT*,iel,sx(snr(nrel(iel,ik))),sy(snr(nrel(iel,ik)))
                   sp = sp + sy(snr(nrel(iel,ik)))
                END DO
                sp = sp/DBLE(nkel)
@@ -61,8 +60,7 @@ c-----------------------------------------------------------------------
          END IF
       END DO
 
-!     PRINT*,sytop
-
+      IF (sytop /= 0.) PRINT*,'SYTOP::',sytop
 
       END SUBROUTINE bsytop
       

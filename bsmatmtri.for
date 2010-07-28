@@ -27,7 +27,7 @@ c.........................................................................
 
 !     Hilfsvariablen 
       REAL(KIND(0D0)) :: dum    ! dummy stores numbers
-      INTEGER         :: i,l,k,smaxs,ik,anz
+      INTEGER         :: i,l,k,ik,anz
       REAL(KIND(0D0)) :: edglen ! Kantenlaenge
       REAL(KIND(0D0)) :: dist   ! Abstand der Schwerpunkte
       REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
@@ -35,8 +35,6 @@ c.........................................................................
       REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
 !.....................................................................
       
-      smaxs=MAXVAL(selanz)
-
       IF (.NOT.ALLOCATED (smatm))
      1  ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
       IF (errnr/=0) THEN

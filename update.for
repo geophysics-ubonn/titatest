@@ -35,10 +35,7 @@ c     Hilfsvariablen
 
 c     Indexvariablen
       integer         * 4     i,j,k,ij,in
-      integer         * 4     smaxs !
 c.....................................................................
-
-      smaxs=MAXVAL(selanz)
 
       if (.not.llam) then
 
@@ -124,9 +121,9 @@ c     triang>
 
          else if (ltri == 15) THEN
             if (.not.lprior) then
-               bvec = MATMUL(DCMPLX(smatm),par)
+               bvec = MATMUL( DCMPLX(smatm),par)
             else
-               bvec = MATMUL( dcmplx(smatm),( par - m0 ) )
+               bvec = MATMUL( DCMPLX(smatm),( par - m0 ) )
             end if
          END IF
 c     triang<
@@ -261,7 +258,9 @@ c     Felder zuruecksetzen
          cgres(1:i) = cgres2(1:i)
          
       end if
+
       IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
+
 c     Verbesserung anbringen
       par = par + dpar * DCMPLX(step)
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren

@@ -34,7 +34,7 @@ MODULE elemmod
    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sy
 
 !!!$ Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
-!!$   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: spx,spy
+   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: spx,spy
 
 !!!$Knotennummern der Elemente (Reihenfolge !)
    INTEGER(KIND = 4),PUBLIC,DIMENSION(:,:),ALLOCATABLE :: nrel
@@ -49,7 +49,7 @@ MODULE elemmod
    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: rnr
 
 !!!$ Groeste Anzahl der Knoten der Flaechenelemente
-!!$   INTEGER(KIND = 4),PUBLIC                            :: smaxs
+   INTEGER(KIND = 4),PUBLIC                            :: smaxs
 
 !!!$Gitter statistiken..
 !!!$Min/Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten

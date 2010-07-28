@@ -26,11 +26,7 @@ c     Indexvariablen
       INTEGER :: i,j,ik,jk
 c     Knotennummer der Kanten zaehler von element i und j
       INTEGER :: ik1,ik2,jk1,jk2
-c     Maximale knotenanzahl nicht entarteter Elemente
-      INTEGER :: smaxs
 c-----------------------------------------------------------------------
-
-      smaxs = MAXVAL(selanz)
 
       IF (.NOT.ALLOCATED (nachbar)) 
      1     ALLOCATE (nachbar(manz,smaxs+1),STAT=errnr)
