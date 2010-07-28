@@ -16,7 +16,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -38,38 +37,36 @@ c     Aktueller Elementtyp
 c     Anzahl der Knoten im aktuellen Elementtyp
       integer         * 4     nkel
 
-c     x-Koordinaten der Eckknotenpunkte
-      real            * 8     xk(selmax)
-
-c     y-Koordinaten der Eckknotenpunkte
-      real            * 8     yk(selmax)
-
-c     Elementmatrizen
-      real            * 8     elmas(selmax,selmax),
-     1     elmam(selmax,selmax)
-
-c     Elementvektor
-      real            * 8     elve(selmax)
 
 c     Indexvariablen
-      integer         * 4     i,j,
-     1     imn,m,n,
-     1     l,k
+      integer         * 4     i,j,imn,m,n,l,k
 
 c.....................................................................
 
       lbeta  = .false.
       lrandb = .false.
       iel    = 0
-
-      ALLOCATE (elbg(elanz,(selmax*(selmax+1))/2,kwnanz),stat=errnr)
-      ALLOCATE (relbg(relanz,(selmax*(selmax+1))/2),stat=errnr)
+      
+      ALLOCATE (xk(smaxs),yk(smaxs),elmas(smaxs,smaxs),
+     1     elmam(smaxs,smaxs),elve(smaxs),stat=errnr)
+      IF (errnr /= 0) then
+         fetxt = 'allocation problem elbg elmam'
+         errnr = 97 
+         GOTO 1000
+      END IF
+      ALLOCATE (elbg(elanz,(smaxs*(smaxs+1))/2,kwnanz),stat=errnr)
+      IF (errnr /= 0) then
+         fetxt = 'allocation problem elbg elbg'
+         errnr = 97 
+         GOTO 1000
+      END IF
+      ALLOCATE (relbg(relanz,(smaxs*(smaxs+1))/2),stat=errnr)
       ALLOCATE (kg(relanz,eanz,kwnanz),stat=errnr)
-      if (errnr.ne.0) then
+      IF (errnr /= 0) then
          fetxt = 'allocation problem elbg relbg or kg'
          errnr = 97 
-         goto 1000
-      end if
+         GOTO 1000
+      END IF
 
       CALL bsytop
 
@@ -95,7 +92,7 @@ c     Ggf. Fehlermeldung
                end if
 
                lbeta = .true.
-               call elem1(xk,yk,elmam,elve)
+               call elem1
 
 c     Randelementbeitraege berechnen
                imn = 0
@@ -119,7 +116,7 @@ c     Konfigurationsfaktoren zur Berechnung der gemischten Randbedingung
 c     berechnen
                do l=1,eanz
                   do k=1,kwnanz
-                     kg(rel,l,k) = beta(l,k,xk,yk)
+                     kg(rel,l,k) = beta(l,k)
                      if (errnr.ne.0) goto 1000
                   end do
                end do
@@ -144,7 +141,7 @@ c     (vier Teildreiecke mit linearem Ansatz)
             else if (ntyp.eq.8) then
 
                do k=1,kwnanz
-                  call elem8(xk,yk,elmas,elve,kwn(k))
+                  call elem8(elmas,elve,kwn(k),smaxs)
                   if (errnr.ne.0) goto 1000
 
 c     Elementbeitraege berechnen
@@ -163,13 +160,13 @@ c     Elementbeitraege berechnen
 c     Dreieckelement, linearer Ansatz
                if (ntyp.eq.3) then
 
-                  call elem3(xk,yk,elmas,elmam,elve)
+                  call elem3
                   if (errnr.ne.0) goto 1000
 
 c     Parallelogrammelement, bilinearer Ansatz
                else if (ntyp.eq.5) then
 
-                  call elem5(xk,yk,elmas,elmam,elve)
+                  call elem5
                   if (errnr.ne.0) goto 1000
 
 c     Fehlermeldung

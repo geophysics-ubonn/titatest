@@ -14,7 +14,6 @@ c.....................................................................
 
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -29,8 +28,8 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsfelder
-      real            * 8     eps2(nmax),psi(nmax)
-      integer         * 4     wdlok(nmax)
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: eps2,psi
+      INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
 c     Hilfsvariablen
       integer         * 4     i,idum
@@ -58,6 +57,13 @@ c     RMS-WERTE BERECHNEN
       betrms = 0d0
       pharms = 0d0
       idum   = 0
+!     get memory for wdlok and psi
+      ALLOCATE (wdlok(nanz),psi(nanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation psi'
+         errnr = 94
+         RETURN
+      END IF
 
       do i=1,nanz
          wdlok(i) = 1
@@ -115,7 +121,14 @@ c     Ggf. Fehlermeldung
 
 c     Ggf. ROBUST INVERSION (nach Doug' LaBrecque)
       if (lrobust) then
-
+         
+!     get memory for wdlok
+         ALLOCATE (eps2(nanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation eps2'
+            errnr = 94
+            RETURN
+         END IF
 c     'estimated weights' und 1-Normen berechnen
          norm  = 0d0
          norm2 = 0d0
@@ -160,7 +173,10 @@ c     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
                wmatd(i) = dum
             end do
          end if
+         IF (ALLOCATED(eps2)) DEALLOCATE (eps2)
       end if
+
+      IF (ALLOCATED(wdlok)) DEALLOCATE (wdlok,psi)
 
       errnr = 0
       return

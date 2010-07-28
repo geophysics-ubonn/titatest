@@ -14,7 +14,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -40,7 +39,7 @@ c     ausgegeben werden sollen
 
 c     Nummern der Knotenpunkte, an denen transformierte Potentialwerte
 c     ausgegeben werden sollen
-      integer         * 4     knr(smax)
+      INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: knr
 
 c     Indexvariablen
       integer         * 4     i,k
@@ -68,14 +67,20 @@ c     Ggf. Fehlermeldung
 
 c     Anzahl der Knotenpunkte einlesen
       read(kanal,*,end=1001,err=1000) kanz
-
+      
 c     Ggf. Fehlermeldung
       if (kanz.gt.sanz) then
          fetxt = ' '
          errnr = 52
          goto 1000
       end if
-
+      ALLOCATE (knr(kanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation hsens'
+         errnr = 94
+         GOTO 1000
+      END IF
+ 
 c     Knotennummern einlesen
       do i=1,kanz
          read(kanal,*,end=1001,err=1000) knr(i)

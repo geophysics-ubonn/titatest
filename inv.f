@@ -27,12 +27,12 @@ c.....................................................................
       USE modelmod
       USE elemmod
       USE wavenmod
+      USE randbmod
 
 c     USE portlib
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
@@ -962,6 +962,12 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (ata_reg_dc)) DEALLOCATE (ata_reg_dc)
       IF (ALLOCATED (cov_m)) DEALLOCATE (cov_m)
       IF (ALLOCATED (cov_m_dc)) DEALLOCATE (cov_m_dc)
+
+      IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
+      IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
+      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
+      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
+      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
 
 c     Ggf. weiteren Datensatz invertieren
       if (lagain) goto 5

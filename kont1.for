@@ -18,14 +18,13 @@ c.....................................................................
       USE modelmod
       USE elemmod
       USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'randb.fin'
 c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 

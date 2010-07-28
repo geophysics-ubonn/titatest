@@ -20,7 +20,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 

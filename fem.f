@@ -20,12 +20,11 @@ c.....................................................................
       USE modelmod
       USE elemmod
       USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'randb.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
@@ -365,6 +364,13 @@ c     Kontrollausgabe
       IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
       IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
       IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
+
+      IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
+      IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
+      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
+      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
+      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+
       STOP '0'
       
 c.....................................................................

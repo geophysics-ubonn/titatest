@@ -22,14 +22,13 @@ c.....................................................................
       USE modelmod
       USE elemmod
       USE wavenmod
+      USE randbmod
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'randb.fin'
 
 c.....................................................................
 
@@ -70,8 +69,10 @@ c     Pi
       real            * 8     pi
 
 c     diff+<
-      real            * 8     dum(nmax),dum2(nmax),dum3
-      integer         * 4     ic(nmax),ip(nmax),idum(nmax),nanz0,j,j0
+      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
+      REAL(KIND(0D0))                            :: dum3
+      INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
+      integer         * 4     nanz0,j,j0
 c     diff+>
 
 c     ak Inga
@@ -542,6 +543,14 @@ c     diff+<
 
          elec3=elec1-10000      ! are we still positive?
          crtf=(elec3 > 0)       ! crtomo konform?
+         
+         ALLOCATE (dum(nanz0),dum2(nanz0),idum(nanz0),
+     1        ic(nanz0),ip(nanz0),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation dum'
+            errnr = 94
+            goto 999
+         END IF
 
          do j=1,nanz0
             IF (crtf) THEN
@@ -599,6 +608,7 @@ c     wdfak(j) = wdfak(j+1)
             m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
          end do
          close(kanal)
+         DEALLOCATE (dum,dum2,idum,ic,ip)
       end if
 c     diff+>
       

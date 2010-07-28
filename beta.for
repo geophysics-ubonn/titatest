@@ -1,4 +1,4 @@
-      real * 8 function beta(nelec,k,xk,yk)
+      real * 8 function beta(nelec,k)
 
 c     Function zur Berechnung der 'mixed boundary conditions'.
 
@@ -13,7 +13,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -25,12 +24,6 @@ c     Aktuelle Elektrodennummer
 
 c     Aktueller Wellenzahlindex
       integer         * 4     k
-
-c     x-Koordinaten der Eckknotenpunkte
-      real            * 8     xk(selmax)
-
-c     y-Koordinaten der Eckknotenpunkte
-      real            * 8     yk(selmax)
 
 c.....................................................................
 

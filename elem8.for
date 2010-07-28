@@ -1,4 +1,4 @@
-      subroutine elem8(xk,yk,kelmas,kelve,kwert)
+      subroutine elem8(kelmas,kelve,kwert,smaxs)
 
 c     Unterprogramm liefert die Elementmatrix 'kelmas(4,4)' und den Element-
 c     vektor 'kelve(4)' fuer ein zusammengesetztes Viereckelement
@@ -9,28 +9,22 @@ c     Letzte Aenderung   26-Jan-1998
       
 c.....................................................................
 
+      USE elemmod,only:xk,yk
+
       IMPLICIT none
-      INCLUDE 'parmax.fin'
+
       INCLUDE 'err.fin'
 
 c.....................................................................
-
-c     EIN-/AUSGABEPARAMETER:
-
-c     x-Koordinaten der Eckknotenpunkte
-      real            * 8     xk(selmax)
-
-c     y-Koordinaten der Eckknotenpunkte
-      real            * 8     yk(selmax)
-
+      INTEGER (KIND = 4)                     :: smaxs
 c     Elementmatrix nach der Kondensation
-      real            * 8     kelmas(selmax,selmax)
+      REAL(KIND(0D0)),DIMENSION(smaxs,smaxs) :: kelmas
 
 c     Elementvektor nach der Kondensation
-      real            * 8     kelve(selmax)
+      REAL(KIND(0D0)),DIMENSION(smaxs)       :: kelve
 
 c     Wellenzahlwert
-      real            * 8     kwert
+      REAL(KIND(0D0))                        :: kwert
 
 c.....................................................................
 

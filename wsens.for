@@ -14,8 +14,6 @@ c.....................................................................
 
       IMPLICIT none
       
-      
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -44,12 +42,6 @@ c     Hilfsvariablen
       real            * 8     xdum,ydum,
      1     sensmax
       complex         * 16    summe
-      integer         * 4     is(mmax)
-
-c     Schwerpunktkoordinaten
-      real            * 8     xs(mmax),
-     1     ys(mmax)
-
 c     Indexvariablen
       integer         * 4     i,j,k
 
@@ -77,45 +69,6 @@ c     'datei' modifizieren
          errnr = 15
          goto 999
       end if
-
-c     Schwerpunktkoordinaten der (ggf. zusammengesetzten) Elemente bestimmen
-      do i=1,manz
-         xs(i) = 0d0
-         ys(i) = 0d0
-         is(i) = 0
-      end do
-
-      iel = 0
-
-      do i=1,typanz
-         if (typ(i).gt.10) goto 10
-
-         nkel = selanz(i)
-
-         do j=1,nelanz(i)
-            iel  = iel + 1
-
-            xdum = 0d0
-            ydum = 0d0
-
-            do k=1,nkel
-               xdum = xdum + sx(snr(nrel(iel,k)))
-               ydum = ydum + sy(snr(nrel(iel,k)))
-            end do
-
-            xs(mnr(iel)) = xs(mnr(iel)) + xdum / dble(nkel)
-            ys(mnr(iel)) = ys(mnr(iel)) + ydum / dble(nkel)
-
-            is(mnr(iel)) = is(mnr(iel)) + 1
-         end do
-      end do
-
- 10   continue
-
-      do i=1,manz
-         xs(i) = xs(i) / dble(is(i))
-         ys(i) = ys(i) / dble(is(i))
-      end do
 
 c     Ausgabeschleife
       do i=1,nanz
@@ -151,7 +104,7 @@ c     Koordinaten und Sensitivitaeten schreiben
 c     (Real- und Imaginaerteil)
          do j=1,manz
             write(kanal,*,err=1000)
-     1           real(xs(j)),real(ys(j)),
+     1           real(spx(j)),real(spy(j)),
      1           real(dble(sens(i,j))),real(dimag(sens(i,j)))
          end do
 
