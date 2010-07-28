@@ -19,6 +19,8 @@ MODULE datmod
   COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: volt
 !!$c Scheinbare Leitfaehigkeiten
   COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: sigmaa
+!!$c storage
+  COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: sgmaa2
 !!$c Konfigurationsfaktoren
   REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: kfak
 !!$c Wichtungsvektor der Phasen

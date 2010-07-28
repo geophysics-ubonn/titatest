@@ -89,9 +89,10 @@ c     Ggf. Fehlermeldung
 
       ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
      1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),
-     1     wmatd(nanz),wdfak(nanz),stat=errnr)
+     1     wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),
+     1     stat=errnr)
       IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation volt '
+         fetxt = 'Error memory allocation data space'
          errnr = 94
          goto 1000
       END IF

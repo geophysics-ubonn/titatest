@@ -7,10 +7,12 @@ c     Letzte Aenderung   08-Nov-1997
 
 c.....................................................................
 
+      USE sigmamod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'sigma.fin'
 
 c.....................................................................
 

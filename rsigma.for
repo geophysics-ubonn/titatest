@@ -11,13 +11,13 @@ c.....................................................................
       USE alloci,only:rnd_r,rnd_p
       USE femmod
       USE invmod
+      USE sigmamod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'model.fin'
 c.....................................................................

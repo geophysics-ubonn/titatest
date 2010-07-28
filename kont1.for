@@ -9,10 +9,12 @@ c     Andreas Kemna                                            16-Apr-1996
 c     Letzte Aenderung   16-Jul-2007
       
 c.....................................................................
+
       USE variomodel
       USE femmod
       USE datmod
       USE cjgmod
+      USE sigmamod
 
       IMPLICIT none
 
@@ -20,7 +22,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'

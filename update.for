@@ -16,12 +16,12 @@ c.....................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE sigmamod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'

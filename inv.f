@@ -22,6 +22,7 @@ c.....................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE sigmamod
 c     USE portlib
 
       IMPLICIT none
@@ -32,7 +33,6 @@ c     USE portlib
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
@@ -99,8 +99,29 @@ c     Ggf. Fehlermeldungen
       end if
 
 c     Startmodell belegen
+      ALLOCATE (sigma(elanz),sigma2(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation fem sigma'
+         errnr = 94
+         goto 999
+      END IF
       call bsigm0(kanal,dstart)
       if (errnr.ne.0) goto 999
+
+c     get memory for model parameters
+      ALLOCATE (par(manz),dpar(manz),dpar2(manz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation model/update data'
+         errnr = 94
+         goto 999
+      END IF
+c     get memory for CG parameters
+      ALLOCATE (cgres(manz+1),cgres2(manz+1),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation cgres data'
+         errnr = 94
+         goto 999
+      END IF
 
 c     Startparameter setzen
       it     = 0
@@ -911,12 +932,14 @@ c     'sens' und 'kpot' freigeben
       else
          DEALLOCATE(sens,kpot)
       end if
-      IF (ALLOCATED(smatm)) DEALLOCATE (smatm)
+      IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
       IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
-     1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wdfak)
-      IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2,cgres,cgres2)
+     1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
+      IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
+      IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
+      IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
       IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
       IF (ALLOCATED (m0)) DEALLOCATE (m0)
       IF (ALLOCATED (ata)) DEALLOCATE (ata)

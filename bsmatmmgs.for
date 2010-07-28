@@ -10,10 +10,12 @@ c
 c     Last edited  RM                                          18-Dec-2009
 c     
 c.........................................................................
+
       USE alloci
       USE femmod
       USE datmod
       USE invmod
+      USE sigmamod       ! for sigma
       
       IMPLICIT none
 
@@ -21,7 +23,6 @@ c.........................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
-      INCLUDE 'sigma.fin'       ! for sigma
       INCLUDE 'err.fin'
 
 !.....................................................................

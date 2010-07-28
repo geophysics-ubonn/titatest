@@ -9,6 +9,7 @@ c     Letzte Aenderung                                         29-Jul-2009
 c
 c.....................................................................
 
+      USE sigmamod
       USE alloci
       USE invmod
 
@@ -17,7 +18,6 @@ c.....................................................................
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'konv.fin'
 
 !.....................................................................

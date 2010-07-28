@@ -17,6 +17,7 @@ c.....................................................................
       USE datmod
       USE invmod
       USE cjgmod
+      USE sigmamod
 
       IMPLICIT none
 
@@ -26,7 +27,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
@@ -448,13 +448,6 @@ c     Elementeinteilung einlesen
       ELSE
 c     Modelleinteilung gemaess Elementeinteilung belegen
          manz = nx*nz           ! nur für strukturierte gitter
-      END IF
-      ALLOCATE (par(manz),dpar(manz),dpar2(manz),cgres(manz+1),
-     1     cgres2(manz+1),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation model data'
-         errnr = 94
-         goto 999
       END IF
       IF (lstart .OR. ldiff .OR. lprior) THEN
          ALLOCATE (m0(manz),stat=errnr)
