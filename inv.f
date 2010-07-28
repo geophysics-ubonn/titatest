@@ -24,6 +24,8 @@ c.....................................................................
       USE cjgmod
       USE sigmamod
       USE electrmod
+      USE modelmod
+
 c     USE portlib
 
       IMPLICIT none
@@ -33,7 +35,6 @@ c     USE portlib
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
@@ -936,6 +937,7 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
       IF (ALLOCATED (enr)) DEALLOCATE (enr)
+      IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
       IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
      1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
       IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)

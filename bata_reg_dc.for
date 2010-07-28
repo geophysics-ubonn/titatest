@@ -9,14 +9,15 @@ c
 c     Letzte Aenderung    RM                               31-Mar-2010
 c     
 c.........................................................................
+
       USE alloci
       USE invmod
+      USE modelmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
 !.....................................................................

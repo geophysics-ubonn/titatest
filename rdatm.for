@@ -13,7 +13,6 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
 
 c.....................................................................
@@ -56,13 +55,6 @@ c check if data file format is CRTOmo konform..
       elec3=elec1-10000 ! are we still positive?
 
       crtf=(elec3 > 0) ! crtomo konform?
-
-c     Ggf. Fehlermeldung
-      if (nanz.gt.nmax) then
-         fetxt = ' '
-         errnr = 49
-         goto 1000
-      end if
 
       ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
      1     kfak(nanz),vnr(nanz),stat=errnr)

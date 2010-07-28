@@ -17,12 +17,12 @@ c....................................................................
       USE variomodel
       USE datmod
       USE invmod
+      USE modelmod
 
       IMPLICIT none
       
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'path.fin'
       INCLUDE 'err.fin'

@@ -9,11 +9,11 @@ c.....................................................................
 
       USE invmod
       USE cjgmod
+      USE modelmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 

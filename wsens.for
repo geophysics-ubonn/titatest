@@ -9,12 +9,13 @@ c.....................................................................
 
       USE datmod
       USE alloci
+      USE modelmod
 
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
 
 c.....................................................................
 

@@ -19,6 +19,7 @@ c.....................................................................
       USE cjgmod
       USE sigmamod
       USE electrmod
+      USE modelmod
 
       IMPLICIT none
 
@@ -27,7 +28,6 @@ c.....................................................................
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
 
@@ -464,15 +464,19 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 !     the variogram and covariance function type, see variomodel.f90
 
       if (manz.ne.elanz) then
-         fetxt = ' '
+         fetxt = 'manz /= elanz .. is not implemented yet'
          errnr = 50
          goto 999
-      else if (manz.gt.mmax) then
-         fetxt = ' '
-         errnr = 63
-         goto 999
       end if
+!!$ get memory for mnr..
+      ALLOCATE (mnr(elanz),stat=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation mnr failed'
+         errnr = 94
+         goto 999
+      END IF
 
+!!$ set mnr.. this may be altered if we have zonal approach..
       do i=1,elanz
          mnr(i) = i
       end do

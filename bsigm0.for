@@ -11,6 +11,7 @@ c.....................................................................
       USE datmod
       USE invmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
@@ -18,7 +19,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
 c     diff+<
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 c     diff+>
 

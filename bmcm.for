@@ -10,14 +10,15 @@ c
 c     Letzte Aenderung    RM                             30-Mar-2010
 c     
 c....................................................................
+
       USE alloci
       USE tic_toc
+      USE modelmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'err.fin'
 !....................................................................

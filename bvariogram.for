@@ -13,13 +13,13 @@ c.....................................................................
       USE invmod         ! fuer par
       USE variomodel
       USE sigmamod       ! fuer sigma
+      USE modelmod       ! fuer manz
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'      ! fuer die felddefinitionen in elem.fin
       INCLUDE 'elem.fin'        ! fuer grid_min,grid_max,etc
       INCLUDE 'konv.fin'        ! fuer alfx/alfz
-      INCLUDE 'model.fin'       ! fuer manz
       INCLUDE 'err.fin'
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------

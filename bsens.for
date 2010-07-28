@@ -11,13 +11,13 @@ c.....................................................................
       USE femmod
       USE datmod
       USE electrmod
+      USE modelmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'err.fin'
 c.....................................................................
 

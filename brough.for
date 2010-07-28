@@ -11,12 +11,12 @@ c.....................................................................
       USE alloci 
       USE invmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

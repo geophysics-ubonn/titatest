@@ -15,6 +15,7 @@ c.....................................................................
       USE datmod
       USE cjgmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
@@ -25,7 +26,6 @@ c.....................................................................
       INCLUDE 'waven.fin'
       INCLUDE 'konv.fin'
       INCLUDE 'randb.fin'
-      INCLUDE 'model.fin'
 c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 

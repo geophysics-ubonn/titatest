@@ -8,14 +8,15 @@ c
 c     Letzte Aenderung    RM                                   20-Feb-2010
 c
 c.........................................................................
+
       USE alloci
       USE datmod
       USE invmod
+      USE modelmod
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:

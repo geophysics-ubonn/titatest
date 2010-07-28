@@ -12,6 +12,7 @@ c.....................................................................
       USE femmod
       USE invmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
@@ -19,7 +20,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
-      INCLUDE 'model.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

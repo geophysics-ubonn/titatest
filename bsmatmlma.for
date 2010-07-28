@@ -15,12 +15,12 @@ c.........................................................................
       USE femmod ! fuer ldc..
       USE datmod
       USE invmod
+      USE modelmod       ! mit nachbar und ldir
       
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'model.fin'       ! mit nachbar und ldir
       INCLUDE 'konv.fin'
       INCLUDE 'err.fin'
 !.....................................................................

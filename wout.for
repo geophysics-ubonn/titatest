@@ -12,6 +12,7 @@ c.....................................................................
       USE femmod
       USE invmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
@@ -21,7 +22,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'konv.fin'
 c     diff+<
-      INCLUDE 'model.fin'
 c     diff+>
 
 c.....................................................................

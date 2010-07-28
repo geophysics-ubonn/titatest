@@ -17,11 +17,11 @@ c....................................................................
       USE datmod
       USE invmod
       USE sigmamod
+      USE modelmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
-      INCLUDE 'model.fin'
       INCLUDE 'err.fin'
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:
