@@ -12,15 +12,16 @@ c
 c     Letzte Aenderung    RM                             30-Mar-2010
 c     
 c....................................................................
+
       USE alloci
       USE datmod
       USE invmod
+      USE sigmamod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'err.fin'
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:

@@ -10,6 +10,7 @@ c.....................................................................
       USE alloci
       USE femmod
       USE datmod
+      USE sigmamod
 
       IMPLICIT none
 
@@ -17,7 +18,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'model.fin'
 
 c.....................................................................

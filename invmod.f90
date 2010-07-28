@@ -24,6 +24,8 @@ MODULE invmod
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: fm0
 !!$c data weighting (data covariance) matrix (diag)
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd
+!!$c storage
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd2
 !!$c parameter variance
   REAL(KIND(0D0)),PUBLIC                               :: par_vari
 !!$c Hilfsfeld, bestimmt welche Daten beruecksichtigt (=1) bzw. nicht

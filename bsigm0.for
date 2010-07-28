@@ -10,13 +10,13 @@ c.....................................................................
       USE femmod
       USE datmod
       USE invmod
+      USE sigmamod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'sigma.fin'
 c     diff+<
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'

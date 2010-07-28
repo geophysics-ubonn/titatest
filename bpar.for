@@ -10,11 +10,12 @@ c
 c     Letzte Aenderung                                         23-Mar-2010
 c     
 c.....................................................................
+
       USE invmod   ! fuer par
+      USE sigmamod ! fuer sigma
 
       IMPLICIT none
       INCLUDE 'parmax.fin' ! fuer maximale zahlenwerte..
-      INCLUDE 'sigma.fin' ! fuer sigma
       INCLUDE 'model.fin' ! fuer manz und mnr
       INCLUDE 'elem.fin'  ! fuer elanz
       INCLUDE 'err.fin' ! fuer fetxt und errnr

@@ -7,7 +7,9 @@ c     Andreas Kemna                                            04-Jan-1996
 c     Letzte Aenderung   11-Nov-1997
       
 c.....................................................................
+
       USE femmod
+      USE sigmamod
 
       IMPLICIT none
 
@@ -15,7 +17,6 @@ c.....................................................................
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'electr.fin'
-      INCLUDE 'sigma.fin'
 
 c.....................................................................
 

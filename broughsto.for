@@ -11,6 +11,8 @@ c
 c     Letzte Aenderung   RM                                    30-Jun-2009
 c     
 c.....................................................................
+
+      USE sigmamod
       USE alloci,only:smatm
       USE invmod
 
@@ -19,7 +21,6 @@ c.....................................................................
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'model.fin'
-      INCLUDE 'sigma.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................
