@@ -23,6 +23,7 @@ c.....................................................................
       USE invmod
       USE cjgmod
       USE sigmamod
+      USE electrmod
 c     USE portlib
 
       IMPLICIT none
@@ -31,7 +32,6 @@ c     USE portlib
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
@@ -935,13 +935,16 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
       IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
       IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
+      IF (ALLOCATED (enr)) DEALLOCATE (enr)
       IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,
      1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
       IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
       IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
       IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
+
       IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
       IF (ALLOCATED (m0)) DEALLOCATE (m0)
+
       IF (ALLOCATED (ata)) DEALLOCATE (ata)
       IF (ALLOCATED (ata_dc)) DEALLOCATE (ata_dc)
       IF (ALLOCATED (ata_reg)) DEALLOCATE (ata_reg)

@@ -12,6 +12,7 @@ c.....................................................................
       USE alloci
       USE femmod
       USE sigmamod
+      USE electrmod
 
       IMPLICIT none
 
@@ -19,7 +20,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 

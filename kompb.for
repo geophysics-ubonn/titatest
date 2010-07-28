@@ -9,12 +9,12 @@ c     Letzte Aenderung   15-Jul-2007
 c.....................................................................
 
       USE femmod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       
 c.....................................................................
 

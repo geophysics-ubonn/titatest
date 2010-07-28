@@ -8,12 +8,13 @@ c     Letzte Aenderung   24-Jun-1997
 c.....................................................................
 
       USE alloci
+      USE electrmod
+
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
 
 c.....................................................................

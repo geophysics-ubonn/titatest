@@ -6,10 +6,13 @@ c     Andreas Kemna                                         20-Dec-1993
 c     Letzte Aenderung                                      20-Nov-2009
 
 c.....................................................................
+
+      USE electrmod
+
       IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'err.fin'
 

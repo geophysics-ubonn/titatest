@@ -7,13 +7,14 @@ c     Andreas Kemna                                            11-Oct-1993
 c     Letzte Aenderung   22-Feb-2006
 
 c.....................................................................
+
       USE datmod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 

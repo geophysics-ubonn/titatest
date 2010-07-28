@@ -12,12 +12,12 @@ c.....................................................................
       USE femmod
       USE datmod
       USE invmod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'konv.fin'
 
 c.....................................................................

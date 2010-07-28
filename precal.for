@@ -10,13 +10,13 @@ c     Letzte Aenderung   22-Sep-1998
 c.....................................................................
 
       USE femmod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
 
 c.....................................................................

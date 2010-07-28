@@ -10,13 +10,13 @@ c.....................................................................
 
       USE femmod
       USE sigmamod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'elem.fin'
       INCLUDE 'waven.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 

@@ -11,12 +11,12 @@ c.....................................................................
 
       USE alloci
       USE datmod
+      USE electrmod
 
       IMPLICIT none
 
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 

@@ -18,6 +18,7 @@ c.....................................................................
       USE invmod
       USE cjgmod
       USE sigmamod
+      USE electrmod
 
       IMPLICIT none
 
@@ -25,7 +26,6 @@ c.....................................................................
       INCLUDE 'err.fin'
       INCLUDE 'path.fin'
       INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
       INCLUDE 'waven.fin'
       INCLUDE 'model.fin'
       INCLUDE 'konv.fin'
