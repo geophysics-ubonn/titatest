@@ -9,7 +9,8 @@ c.....................................................................
 
       USE invmod
       USE cjgmod
-      USE modelmod
+      USE modelmod, ONLY : manz
+      USE datmod, ONLY : nanz
 
       IMPLICIT none
 
@@ -29,7 +30,7 @@ c     Hilfsvariablen
 
 c.....................................................................
       
-      ALLOCATE (rvec(manz),pvec(manz),ap(manz),
+      ALLOCATE (rvec(manz),pvec(manz),ap(nanz),
      1     stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation rvec in cjggdc'
@@ -41,35 +42,40 @@ c.....................................................................
       rvec = bvec
       pvec = 0.
 
+      fetxt = 'CG iteration'
+
       do k=1,ncgmax
+
          ncg = k-1
 
-         dr = 0d0
-         do j=1,manz
-            dr = dr + dble(dconjg(rvec(j))*rvec(j))
-         end do
+c$$$         dr = 0d0
+c$$$         do j=1,manz
+c$$$            dr = dr + dble(dconjg(rvec(j))*rvec(j))
+c$$$         end do
+
+         dr = DOT_PRODUCT(DCONJG(rvec),rvec)
 
          if (k.eq.1) then
             dr0  = dr*eps
             beta = dcmplx(0d0)
          else
-            if (dr.le.dr0) goto 10
-
 c     Fletcher-Reeves-Version
             beta = dcmplx(dr/dr1)
-
 c     akc Polak-Ribiere-Version
 c     ak                beta = dcmplx(0d0)
 c     ak                do j=1,manz
 c     ak                    beta = beta + dconjg(bvec(j))*rvec(j)
 c     ak                end do
 c     ak                beta = beta*dcmplx(-alpha/dr1)
-         end if
+         END IF
 
-         do j=1,manz
-            pvec(j) = rvec(j) + beta*pvec(j)
-         end do
+         WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',ADVANCE='no')
+     1        ACHAR(13)//TRIM(fetxt),k,dr,dr0
          
+         if (dr.le.dr0) goto 10
+
+         pvec = rvec + beta * pvec
+
          IF (ltri == 0) THEN
             CALL bp
          ELSE IF (ltri == 1.OR.ltri == 2.OR.
@@ -81,17 +87,17 @@ c     ak                beta = beta*dcmplx(-alpha/dr1)
             call bpsto
          END IF
 
-         dr1 = 0d0
-         do j=1,manz
-            dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
-         end do
+         dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
+c$$$
+c$$$         dr1 = 0d0
+c$$$         do j=1,manz
+c$$$            dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
+c$$$         end do
 
          alpha = dr/dr1
 
-         do j=1,manz
-            dpar(j) = dpar(j) + dcmplx(alpha)*pvec(j)
-            rvec(j) = rvec(j) - dcmplx(alpha)*bvec(j)
-         end do
+         dpar = dpar + DCMPLX(alpha) * pvec
+         rvec = rvec - DCMPLX(alpha) * bvec
 
          dr1 = dr
 

@@ -11,12 +11,12 @@ c     Letzte Aenderung   RM                                    30-Jul-2010
 c
 c.....................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,sensdc,smatm
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
+      USE modelmod , ONLY : manz
 
       IMPLICIT none
 
@@ -28,16 +28,17 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
+      REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: pvec2
       real            * 8     dum
       integer         * 4     i,j
 
 c.....................................................................
-      ALLOCATE (pvec2dc(manz),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation pvec2dc in bpdcsto'
-         errnr = 94
-         RETURN
-      END IF
+c$$$      ALLOCATE (pvec2(manz),stat=errnr)
+c$$$      IF (errnr /= 0) THEN
+c$$$         fetxt = 'Error memory allocation pvec2 in bpdcsto'
+c$$$         errnr = 94
+c$$$         RETURN
+c$$$      END IF
 
 c     A * p  berechnen (skaliert)
       do i=1,nanz
@@ -55,13 +56,19 @@ c     A * p  berechnen (skaliert)
       end do
 
 c     R^m * p  berechnen (skaliert)
-caa   Abgeändert auf (4 Zeilen)
-      do i=1,manz
-         pvec2dc(i)=pvecdc(i)*fak(i)
+c$$$caa   Abgeändert auf (4 Zeilen)
+c$$$      do i=1,manz
+c$$$         pvec2(i)=pvecdc(i)*fak(i)
+c$$$      end do
+      do j = 1 , manz
+         bvecdc(j) = 0.
+         DO i = 1 , manz
+            bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * fak(i)
+         END DO
       end do
 
-      bvecdc = MATMUL(smatm,pvec2dc)
-
+c$$$
+c$$$      bvecdc = MATMUL(smatm,pvec2)
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz
          dum = 0d0
@@ -82,6 +89,6 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
          bvecdc(j) = bvecdc(j)*fak(j)
       end do
 
-      DEALLOCATE (pvec2dc)
+      IF (ALLOCATED (pvec2)) DEALLOCATE (pvec2)
 
       end

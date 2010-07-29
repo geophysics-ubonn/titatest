@@ -51,42 +51,4 @@ MODULE elemmod
 !!!$ Groeste Anzahl der Knoten der Flaechenelemente
   INTEGER(KIND = 4),PUBLIC                            :: smaxs
 
-!!!$Gitter statistiken..
-!!!$Min/Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten
-  REAL(KIND(0D0)),PUBLIC                              :: esp_min,&
-       esp_max
-!!!$Mittelwert/Median und Standardabweichung der ESP
-  REAL(KIND(0D0)),PUBLIC                              :: esp_mit,&
-       esp_med,esp_std
-
-!!!$Min/Maximale  Gitterabstaende
-  REAL(KIND(0D0)),PUBLIC                              :: grid_min,&
-       grid_max
-!!!$Min/Maximaler Gitterabstand in x-,y-richtung
-  REAL(KIND(0D0)),PUBLIC                              :: grid_minx,&
-       grid_maxx
-  REAL(KIND(0D0)),PUBLIC                              :: grid_miny,&
-       grid_maxy
-!!!$switch/number fictitious sink node (only for 2D)
-  LOGICAL,PUBLIC                                      :: lsink
-!!!$ number of grid node for sink
-  INTEGER(KIND = 4),PUBLIC                            :: nsink
-!!$ switch boundary values
-  LOGICAL,PUBLIC                                      :: lrandb2
-
-!!!$mittlere y-Koordinate aller Randelemente vom Typ 12 ("no flow")
-  REAL(KIND(0D0)),PUBLIC                              :: sytop 
-
-!!!$    x-Koordinaten der Eckknotenpunkte
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: xk
-
-!!!$    y-Koordinaten der Eckknotenpunkte
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: yk
-
-!!!$    Elementmatrizen
-  REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: elmas,elmam
-
-!!!$    Elementvektor
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: elve
-
 END MODULE elemmod

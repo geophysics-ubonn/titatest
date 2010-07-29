@@ -135,15 +135,15 @@ mtools:
 		cd ./m_tools ; make
 
 ctm:		
-		cd ./CutMcK ; make
+		cd ./cutmckee ; make
 
 install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 		cd ./m_tools ; make install
-		cd ./CutMcK ; make install
+		cd ./cutmckee ; make install
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o
 		cd ./m_tools ; make clean
-		cd ./CutMcK ; make clean
+		cd ./cutmckee ; make clean

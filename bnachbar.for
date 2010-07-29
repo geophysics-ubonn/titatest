@@ -19,7 +19,7 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'       ! fuer manz
+      INCLUDE 'err.fin'       ! errnr und fetxt
 
 c     PROGRAMMINTERNE PARAMETER:----------------------------------------
 c     Indexvariablen

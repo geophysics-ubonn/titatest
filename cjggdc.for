@@ -9,7 +9,8 @@ c.....................................................................
 
       USE invmod
       USE cjgmod
-      USE modelmod
+      USE modelmod, ONLY : manz
+      USE datmod, ONLY : nanz
 
       IMPLICIT none
 
@@ -21,14 +22,13 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Skalare
-      real            * 8     beta,alpha,
-     1     dr,dr0,dr1
+      REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
 
 c     Hilfsvariablen
       integer         * 4     j,k
 
 c.....................................................................
-      ALLOCATE (rvecdc(manz),pvecdc(manz),apdc(manz),
+      ALLOCATE (rvecdc(manz),pvecdc(manz),apdc(nanz),
      1     bvecdc(manz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation rvec in cjggdc'
@@ -41,11 +41,15 @@ c.....................................................................
       else
          bvecdc = dble(bvec)
       end if
-      dpar = DCMPLX(0D0)
+
+      dpar = DCMPLX(0.)
       rvecdc = bvecdc
       pvecdc = 0.
 
+      fetxt = 'CG iteration'
+
       do k=1,ncgmax
+
          ncg = k-1
 
          dr = DOT_PRODUCT(rvecdc,rvecdc)
@@ -56,6 +60,9 @@ c.....................................................................
          else
             beta = dr/dr1
          end if
+
+         WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',ADVANCE='no')
+     1        ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
          if (dr.le.dr0) goto 10
 
@@ -80,11 +87,10 @@ c.....................................................................
 
          alpha = dr/dr1
 
-         do j=1,manz
-            dpar(j) = dpar(j) + dcmplx(alpha*pvecdc(j))
-            rvecdc(j) = rvecdc(j) - alpha*bvecdc(j)
-         end do
+         dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
+         rvecdc = rvecdc - alpha * bvecdc
 
+c rm update speichern
          dr1 = dr
 
 c     Residuum speichern
