@@ -3,8 +3,8 @@
 c     Unterprogramm berechnet Modellverbesserung mittels konjugierter
 c     Gradienten.
 
-c     Andreas Kemna                                            01-Mar-1996
-c     Letzte Aenderung   04-Jul-2009
+c     Andreas Kemna                                        01-Mar-1996
+c     Last changes   RM                                    Jul-2010
 c.....................................................................
 
       USE invmod

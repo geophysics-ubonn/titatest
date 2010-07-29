@@ -5,18 +5,18 @@ c     Angepasst an Levenberg-Marquardt-Daempfung
 c
 c     Copyright by Andreas Kemna 2010
 c     
-c     Andreas Kemna / Roland Martin                            24-Feb-2010
+c     Created by Roland Martin                            24-Feb-2010
 c
-c     Letzte Aenderung   RM                                    24-Feb-2010
+c     Letzte Aenderung   RM                               Jul-2010
 c
 c.....................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,sensdc,smatm
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
+      USE modelmod , ONLY : manz
 
       IMPLICIT none
 

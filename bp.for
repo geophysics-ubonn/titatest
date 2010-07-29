@@ -1,18 +1,19 @@
       subroutine bp()
- 
+c 
 c     Unterprogramm berechnet b = B * p .
-
-c     Andreas Kemna                                            29-Feb-1996
-c     Letzte Aenderung   10-Nov-1997
-
+c
+c     Andreas Kemna                                        29-Feb-1996
+c      
+c     Last changes      RM                                   Jul-2010
+c     
 c.....................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,smatm
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
+      USE modelmod , ONLY : manz
 
       IMPLICIT none
 

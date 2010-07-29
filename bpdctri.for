@@ -3,19 +3,20 @@ c
 c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
 c     
-c     Andreas Kemna                                            29-Feb-1996
-c     
-c     Letzte Aenderung                                         29-Jul-2009
+c     Copyright by Andreas Kemna         2009
+c     Created by Roland Martin                            29-Jul-2009
+c      
+c     Last changes      RM                                   Jul-2010
 c     
 c.....................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,sensdc,smatm,nachbar
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
-      USE elemmod
+      USE modelmod , ONLY : manz
+      USE elemmod, ONLY : smaxs
 
       IMPLICIT none
 
@@ -50,9 +51,10 @@ c.....................................................................
          dum = 0d0
          DO j=1,smaxs
             IF (nachbar(i,j) /= 0) dum = dum + pvecdc(nachbar(i,j))* 
-     1           smatm(i,j) * fak(nachbar(i,j))
+     1           smatm(i,j) * fak(nachbar(i,j)) ! off diagonals
          END DO
-         bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * fak(i)
+!     main diagonal
+         bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * fak(i) 
       END DO
 
 !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)

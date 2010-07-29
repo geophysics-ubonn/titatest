@@ -1,18 +1,19 @@
       subroutine bpdc()
-
+c
 c     Unterprogramm berechnet b = B * p .
+c
+c     Andreas Kemna                                      29-Feb-1996
+c
+c     Last changes   RM                                  Jul-2010
+c
+c....................................................................
 
-c     Andreas Kemna                                            29-Feb-1996
-c     Letzte Aenderung   09-Jan-1998
-
-c.....................................................................
-
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,sensdc,smatm
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
+      USE modelmod , ONLY : manz
 
       IMPLICIT none
 

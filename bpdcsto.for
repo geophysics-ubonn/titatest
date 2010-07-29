@@ -1,13 +1,14 @@
       subroutine bpdcsto()
-
+c
 c     Unterprogramm berechnet b = B * p . 
-c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+c     Angepasst an die neue Regularisierungsmatrix
+c     (stoch. Kovarianzmatrix)
 c
 c     Copyright by Andreas Kemna 2009
 c     
-c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c     Created by Roland Martin                             10-Jun-2009
 c
-c     Letzte Aenderung   RM                                    30-Jul-2010
+c     Letzte Aenderung   RM                                Jul-2010
 c
 c.....................................................................
 
