@@ -2,8 +2,8 @@
 
 c     Unterprogramm belegt die Rauhigkeitsmatrix.
 
-c     Andreas Kemna                                            29-Feb-1996
-c     Letzte Aenderung   04-Nov-2008
+c     Andreas Kemna                                        29-Feb-1996
+c     Letzte Aenderung   RM                                Jul-2010
 
 c.....................................................................
 
