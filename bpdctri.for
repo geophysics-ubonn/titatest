@@ -4,6 +4,7 @@ c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
 c     
 c     Copyright by Andreas Kemna         2009
+c
 c     Created by Roland Martin                            29-Jul-2009
 c      
 c     Last changes      RM                                   Jul-2010

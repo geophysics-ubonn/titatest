@@ -7,7 +7,7 @@ c     Copyright by Andreas Kemna 2010
 c     
 c     Created by Roland Martin                            24-Feb-2010
 c
-c     Letzte Aenderung   RM                               Jul-2010
+c     Last changes        RM                                Jul-2010
 c
 c.....................................................................
 
