@@ -1,23 +1,23 @@
       subroutine bpsto()
-
+c
 c     Unterprogramm berechnet b = B * p .
-c     Angepasst an die neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-c     Fuer komplexes Modell
+c     Angepasst an die neue Regularisierungsmatrix 
+c     (stoch. Kovarianzmatrix) fuer komplexes Modell
 c
 c     Copyright by Andreas Kemna 2009
 c     
-c     Andreas Kemna / Roland Martin                            10-Jun-2009
+c     Created by Roland Martin                              10-Jun-2009
 c
-c     Letzte Aenderung   RM                                    30-Jun-2009
+c     Last changes   RM                                     Jul-2010
 c
 c.....................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,smatm
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
+      USE modelmod , ONLY : manz
 
       IMPLICIT none
 
@@ -40,13 +40,13 @@ c     A * p  berechnen (skaliert)
       end do
 
 c     R^m * p  berechnen (skaliert)
-      do j=1,manz
+      DO j=1,manz
          bvec(j) = 0.
          DO i = 1,manz
             bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * 
      1           DCMPLX(fak(j))
          END DO
-      end do
+      END DO
 
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       do j=1,manz

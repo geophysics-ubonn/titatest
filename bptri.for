@@ -3,19 +3,21 @@ c
 c     Unterprogramm berechnet b = B * p .
 c     Fuer beliebige Triangulierung
 c     
-c     Andreas Kemna                                            29-Feb-1996
+c     Copyright by Andreas Kemna         2009
+c
+c     Created by Roland Martin                           29-Jul-2009
 c     
-c     Letzte Aenderung                                         29-Jul-2009
+c     Last changes      RM                                  Jul-2010
 c     
 c...................................................................
 
-      USE alloci
-      USE femmod
-      USE datmod
-      USE invmod
+      USE alloci , ONLY : sens,smatm,nachbar
+      USE femmod , ONLY : fak,ldc
+      USE datmod , ONLY : nanz
+      USE invmod , ONLY : lip,wmatd,wdfak
       USE cjgmod
-      USE modelmod
-      USE elemmod
+      USE modelmod , ONLY : manz
+      USE elemmod, ONLY : smaxs
 
       IMPLICIT none
 
