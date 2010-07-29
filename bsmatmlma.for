@@ -1,10 +1,11 @@
       subroutine bsmatmlma      ! levenberg-marquardt damping
 c     
-c     Unterprogramm belegt die Daempfungsmatrix (hier:smatm)
+c     Unterprogramm belegt die Glaettungsmtrix
+c     (hier Daempfungsmatrix (smatm))
 c     
 c     Copyright by Andreas Kemna                               2009
 c     Erstellt von Roland Martin                               18-Dec-2009
-c     Letzte Aenderung                                         18-Dec-2009
+c     Letzte Aenderung RM                                      Jul-2010
 c     
 c.........................................................................
 
