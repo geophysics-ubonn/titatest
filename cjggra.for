@@ -41,7 +41,12 @@ c.....................................................................
       rvec = bvec
       pvec = 0.
 
+      WRITE (*,'(a,t20,a)',ADVANCE='no')ACHAR(13),'CG iteration'
+
       do k=1,ncgmax
+
+         WRITE (*,'(a,t50,I5)',ADVANCE='no')ACHAR(13),k
+
          ncg = k-1
 
          dr = 0d0

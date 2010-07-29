@@ -41,9 +41,8 @@ c.....................................................................
 
 c     Felder speichern
          dpar2 = dpar
-
-         i = int(cgres(1))+1
          cgres2 = cgres
+
 C     felder allozieren
          IF (.NOT.ALLOCATED (bvec)) 
      1        ALLOCATE (bvec(manz),stat=errnr)
@@ -254,6 +253,8 @@ c     Felder zuruecksetzen
          dpar = dpar2
 
          i = int(cgres2(1))+1
+
+         PRINT*,INT(cgres(1))
 
          cgres(1:i) = cgres2(1:i)
          
