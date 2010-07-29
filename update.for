@@ -254,8 +254,6 @@ c     Felder zuruecksetzen
 
          i = int(cgres2(1))+1
 
-         PRINT*,INT(cgres(1))
-
          cgres(1:i) = cgres2(1:i)
          
       end if

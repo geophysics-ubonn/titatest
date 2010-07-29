@@ -40,7 +40,6 @@ c$$$         errnr = 94
 c$$$         RETURN
 c$$$      END IF
 
-      print*,'kontrollpunkt2'
 c     A * p  berechnen (skaliert)
       do i=1,nanz
          apdc(i) = 0d0
@@ -56,8 +55,6 @@ c     A * p  berechnen (skaliert)
          end if
       end do
 
-      PRINT*,'kontrollpunk3'
-
 c     R^m * p  berechnen (skaliert)
 c$$$caa   Abgeändert auf (4 Zeilen)
 c$$$      do i=1,manz
@@ -70,7 +67,6 @@ c$$$      end do
          END DO
       end do
 
-      PRINT*,'kontrollpunk4'
 c$$$
 c$$$      bvecdc = MATMUL(smatm,pvec2)
 c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -94,6 +90,5 @@ c     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
       end do
 
       IF (ALLOCATED (pvec2)) DEALLOCATE (pvec2)
-
 
       end

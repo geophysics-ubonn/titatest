@@ -41,12 +41,12 @@ c.....................................................................
       else
          bvecdc = dble(bvec)
       end if
-      PRINT*,ncgmax,eps
+
       dpar = 0.
       rvecdc = bvecdc
       pvecdc = 0.
 
-      WRITE (*,'(a,t20,a)',ADVANCE='no')ACHAR(13),'CG iteration'
+      fetxt = 'CG iteration'
 
       do k=1,ncgmax
 
@@ -54,7 +54,8 @@ c.....................................................................
 
          dr = DOT_PRODUCT(rvecdc,rvecdc)
 
-         WRITE (*,'(a,t50,I5,t55,G10.4)',ADVANCE='no')ACHAR(13),k,dr
+         WRITE (*,'(a,t40,I5,t55,G10.4)',ADVANCE='no')ACHAR(13)//
+     1        TRIM(fetxt),k,dr
 
          if (k.eq.1) then
             dr0  = dr*eps
