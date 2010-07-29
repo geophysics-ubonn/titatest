@@ -18,9 +18,7 @@ c.....................................................................
 
       IMPLICIT none
 
-      INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
-      INCLUDE 'cutmck.fin'
 
 c.....................................................................
 
@@ -30,34 +28,44 @@ c     Schalter ob Kontrolldateien ('*.ctr') ausgegeben werden sollen
 c     Dateinamen
       character       * 80    delem,delectr
       CHARACTER(256)      ::  ftext
-c Maximaler Grad der Knotenpunkte
+c     Maximaler Grad der Knotenpunkte
       INTEGER,PARAMETER   :: grmax=500
-c Maximale Anzahl vorgegebener Startpunkte im Cuthill-McKee-Algorithmus
+c     Maximale Anzahl vorgegebener Startpunkte im Cuthill-McKee-Algorithmus
       INTEGER,PARAMETER   :: spmax=100
-c Maximale Anzahl der Stufen im Cuthill-McKee-Algorithmus
+c     Maximale Anzahl der Stufen im Cuthill-McKee-Algorithmus
       INTEGER,PARAMETER   :: stmax=100
 
 c     Permutationsvektor der Umnumerierung
       INTEGER,DIMENSION(:),ALLOCATABLE   :: perm
 
-c Knotennummern der Startpunkte
+c     Knotennummern der Startpunkte
       INTEGER,DIMENSION(:),ALLOCATABLE   :: start
 
 c     Hilfsvariablen
       INTEGER,DIMENSION(:,:),ALLOCATABLE :: graph
       INTEGER,DIMENSION(:),ALLOCATABLE   :: grad,neu,neuin,level
 
-      integer         * 4   gradzp,fcm,kbdm,nstart,
+      integer         * 4   gradzp,fcm,kbdm,nstart,spanz,
      1     i,j,k,l,m,idum,is,nzp,nnp,maxgd,mingd,
      1     minbd,mmin,mingr,levs,leve,nlev
 
       LOGICAL,DIMENSION(:),ALLOCATABLE   :: num
       logical         * 1     exi1,exi2,exi3
-      integer         * 4     c1,c2,se,mi,st,ta
+      integer         * 4     c1,c2,se,mi,st,ta,fp
+c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ 4    FORMAT(/'  minimum grade =',I6/'  maximum grade =',I6,
+     1     '  minimum bandwidth =',I6)
+ 6    FORMAT(/'Ergebnisse der Nuenummerierungen '/,'Startpunkt',3x,
+     1     'Bandbreite',3x,'Profil (normal)',3x,'Profil (reverse)')
+ 8    FORMAT(3(I8,4X),I8)
+ 9    FORMAT(//'  minimum bandwidth =',i5,'  for init.node',
+     1     i5//'  vector of permutation ='/)
+ 11   FORMAT((3x,10i5))
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       CALL SYSTEM_CLOCK (c1,i)
       kont   = .FALSE.
-
+      
+      fp = 11
 c     Fehlerdatei oeffnen
       open(10,file='error.dat',status='unknown')
 
@@ -69,12 +77,12 @@ c     'CutMck.cfg' einlesen
       INQUIRE (FILE=fetxt,EXIST=exi1)
       IF (exi1) THEN
          errnr = 1
-         open(11,file=fetxt,status='old',err=1000)
+         open(fp,file=fetxt,status='old',err=1000)
          
          errnr = 3
-         read(11,'(a,/,a)',end=1001,err=1000)
+         read(fp,'(a,/,a)',end=1001,err=1000)
      1        delem,delectr
-         close(11)
+         close(fp)
       ELSE                      !check for defaults
          delem='elem.dat'
          delectr='elec.dat'
@@ -97,71 +105,65 @@ c     'CutMck.cfg' einlesen
       END IF
       print*,'read in elements...'
 c     'delem' einlesen
-      call relem(11,delem)
+      call relem(fp,delem)
       if (errnr.ne.0) goto 1000
       print*,'read in electrodes'
 c     'delectr' einlesen
-      call relectr(11,delectr)
+      call relectr(fp,delectr)
       if (errnr.ne.0) goto 1000
       print*,'ok'
 
-      ALLOCATE (graph(grmax,sanz),perm(sanz),grad(sanz),neu(sanz),&
-      neuin(sanz),level(sanz),start(sanz),rneu(sanz),rneuin(sanz),&
-      num(sanz),permrcm(sanz),permo(sanz))
+      ALLOCATE (graph(grmax,sanz),perm(sanz),grad(sanz),neu(sanz),
+     1     neuin(sanz),level(sanz),start(sanz),num(sanz),stat=errnr)
       
 
 c     Aufbau des Graphen aufgrund der Knotennummern der Elemente
       grad=0;graph=0
 
       idum = 0
+      grad=0.;graph=0.
+      DO l = 1 , typanz
 
-      do l=1,typanz
-         do m=1,nelanz(l)
+         DO m = 1 , nelanz(l)
 
-            do 90 i=1,selanz(l)-1
+            DO i = 1 , selanz(l)-1
+
                nzp = nrel(idum+m,i)
 
-               do 80 j=i+1,selanz(l)
+               DO j=i+1,selanz(l)
+
                   nnp = nrel(idum+m,j)
+
+                  DO k=1,grmax
+
+                     IF (graph(k,nzp) == nnp) GOTO 10
+                     IF (graph(k,nzp) > 0) CYCLE
+
+                     graph(k,nzp)=nnp
+                     grad(nzp)=grad(nzp)+1
+
+                     EXIT
+                  END DO
                   
-                  do 50 k=1,grmax
-                     if (graph(k,nzp).eq.nnp) goto 80
-                     if (graph(k,nzp).gt.0) goto 50
+                  grad(nnp) = grad(nnp)+1
+                  IF (grad(nnp) <= grmax) graph(grad(nnp),nnp)=nzp
+                  
+ 10               CONTINUE
 
-                     graph(k,nzp) = nnp
-                     grad(nzp)    = grad(nzp)+1
+               END DO
 
-                     goto 60
- 50               continue
+            END DO
 
-c     Fehlermeldung
-                  fetxt = ' '
-                  errnr = 22
-                  goto 1000
+         END DO
 
- 60               grad(nnp) = grad(nnp)+1
-                  if (grad(nnp).le.grmax) goto 70
+         idum = idum + nelanz(l)
 
-c     Fehlermeldung
-                  fetxt = ' '
-                  errnr = 22
-                  goto 1000
+      END DO
 
- 70               graph(grad(nnp),nnp) = nzp
-
- 80            continue
- 90         continue
-
-         end do
-         idum = idum+nelanz(l)
-      end do
       PRINT*,'graph erstellt'
       
       mingd = MINVAL(grad(1:sanz))
       maxgd = MAXVAL(grad(1:sanz))
-c$$$      DO i=1,sanz
-c$$$         PRINT*,'Knoten ',i,'grad ',grad(i)
-c$$$      ENDDO
 
       IF (mingd==0) THEN
          PRINT*,'existance of zero nodes.. aborting'
@@ -170,21 +172,14 @@ c$$$      ENDDO
 
       minbd = (maxgd+1)/2
 c     Ggf. Kontrolldatei oeffnen
-      
-      if (kont) then
 
+      IF (kont) THEN
          fetxt = 'cutmck.ctr'
+         OPEN(fp,file=TRIM(fetxt),status='unknown')
+         WRITE(fp,4) mingd,maxgd,minbd
+      END IF
 
-         errnr = 1
-         open(11,file=fetxt,status='unknown',err=1000)
-
-         errnr = 4
-         write(11,4,err=1000) mingd,maxgd,minbd
- 4       format(/'  minimum grade =',i4/'  maximum grade =',i4/
-     1        '  minimum bandwidth =',i4)
-      end if
-
-c     ak
+c     rm
       spanz = INT(elanz / 10)
       spanz = MAX(spanz,1000)
       k = 0
@@ -205,7 +200,7 @@ c     ak
  130  continue
 
       spanz=k-1
-      print*,'errechnete startpkte ',spanz
+      print*,'errechnete startpunkte ',spanz
       if (kont) then
 
          errnr = 4
@@ -285,8 +280,7 @@ c     Bandbreite 'mb'
          end do
 
          if (kont) then
-            write(11,8,err=1000) nstart,mb
- 8          format(i8,8x,i4)
+            write(fp,8,err=1000) nstart,mb
          end if
 
          if (mb.lt.mmin) then
@@ -298,17 +292,12 @@ c     Bandbreite 'mb'
             end do
          end if
          
-      end do ! is
+      end do                    ! is
 
       if (kont) then
-         write(11,9,err=1000) mmin,start(kbdm)
- 9       format(//'  minimum bandwidth =',i5,'  for init.node',
-     1        i5//'  vector of permutation ='/)
-
-         write(11,11,err=1000) (perm(i),i=1,sanz)
- 11      format((3x,10i5))
-
-         close(11)
+         write(fp,9,err=1000) mmin,start(kbdm)
+         write(fp,11,err=1000) (perm(i),i=1,sanz)
+         close(fp)
       end if
 
 c     Minimale Bandbreite setzen
@@ -348,7 +337,7 @@ c     Startwerte umspeichern (zur Kontrolle)
       end do
       PRINT*,' writing out new values '
 c     Elementeinteilung und Elektrodenverteilung schreiben
-c      delem=TRIM(ADJUSTL(delem))//'_ctm'
+c     delem=TRIM(ADJUSTL(delem))//'_ctm'
       fetxt='cp -f '//TRIM(delem)//' '//TRIM(delem)//'.orig'
       CALL SYSTEM (fetxt)
       call welem(11,delem)
@@ -356,7 +345,7 @@ c      delem=TRIM(ADJUSTL(delem))//'_ctm'
 
       fetxt='cp -f '//TRIM(delectr)//' '//TRIM(delectr)//'.orig'
       CALL SYSTEM (fetxt)
-c      delectr=TRIM(ADJUSTL(delectr))//'_ctm'
+c     delectr=TRIM(ADJUSTL(delectr))//'_ctm'
       call welectr(11,delectr)
       if (errnr.ne.0) goto 1000
 

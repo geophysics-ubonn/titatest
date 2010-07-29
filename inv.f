@@ -117,8 +117,8 @@ c     get memory for model parameters
          errnr = 94
          goto 999
       END IF
-c     get memory for CG parameters
-      ALLOCATE (cgres(manz+1),cgres2(manz+1),stat=errnr)
+c     get memory for CG data storage of residuums
+      ALLOCATE (cgres(ncgmax+2),cgres2(ncgmax+2),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation cgres data'
          errnr = 94

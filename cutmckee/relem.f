@@ -80,13 +80,6 @@ c     bestimmen
          else
             elanz  = elanz  + nelanz(i)
          end if
-
-c     Ggf. Fehlermeldung
-         if (selanz(i).gt.selmax) then
-            fetxt = ' '
-            errnr = 8
-            goto 1000
-         end if
       end do
 !     !$ get memory for the element integer field      
       ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
@@ -95,14 +88,6 @@ c     Ggf. Fehlermeldung
          errnr = 94
          GOTO 999
       END IF
-!     !$ get memory for the regular element midpoint coordinates
-      ALLOCATE (spx(elanz),spy(elanz),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation spx failed'
-         errnr = 94
-         GOTO 999
-      END IF
-      spx = 0.;spy = 0.
 
       PRINT*,'check dis out ',4+sanz+elanz+relanz*2
 
@@ -115,8 +100,12 @@ c     einlesen
          IF (sx(snr(k))==sx(snr(1))) j = j+1 !counts vertical grid nodes
          IF (sy(snr(k))==sy(snr(1))) i = i+1 !counts horizontal grid nodes
       END DO
-      WRITE (*,*)'Counted elements nx=',i-1,
-     1     ' ny',j-1,' nxy=',(i-1)*(j-1)
+      IF ((i-1) == 0 .OR. (j-1) == 0) THEN
+         PRINT*,ACHAR(9)//'## GRID not regular ##'
+      ELSE
+         WRITE (*,*)'Counted elements nx=',i-1,
+     1        ' ny',j-1,' nxy=',(i-1)*(j-1)
+      END IF
 c     Knotennummern der Elemente einlesen
       print*,'post knoten position',4+sanz
       idum = 0

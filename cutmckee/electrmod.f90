@@ -6,7 +6,7 @@ MODULE electrmod
 !!$             
 !!$c.....................................................................
 !!$c Anzahl der 
-  INTEGER(KIND = 4),PUBLIC                          ::eanz
+  INTEGER(KIND = 4),PUBLIC                          :: eanz
   
 !!$c Knotennummern der Elektroden
   INTEGER(KIND = 4),PUBLIC,ALLOCATABLE,DIMENSION(:) :: enr
