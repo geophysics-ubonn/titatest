@@ -1,3 +1,15 @@
 *.o
 CRMod
 CRTomo
+crerror.h
+*#
+.#*
+*.log
+*.aux
+*.pdf
+*.loc
+*.lof
+*.idx
+*.directory
+*.lot
+*.toc
