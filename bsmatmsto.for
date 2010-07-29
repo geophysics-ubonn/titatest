@@ -5,7 +5,7 @@ c     Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
 c
 c     Copyright by Andreas Kemna                              2009
 c     Created by Anastasia August / Roland Martin             03-Apr-2009
-c     Last edited                                             18-Dec-2009
+c     Last edited RM                                          Jul-2010
 c.....................................................................
       
       USE alloci

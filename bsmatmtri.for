@@ -8,7 +8,7 @@ c     Copyright by Andreas Kemna 2009
 c     
 c     Andreas Kemna / Roland Martin                            23-Jun-2009
 c     
-c     Letzte Aenderung   RM                                    29-Jul-2009
+c     Letzte Aenderung   RM                                    Jul-2010
 c
 c.........................................................................
       USE alloci
