@@ -3,4 +3,3 @@
 git checkout dev
 git merge testing
 git checkout testing
-git push
