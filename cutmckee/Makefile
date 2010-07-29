@@ -36,7 +36,7 @@ all:		$(PR1) install
 #
 OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o
 
-OBJF90		= get_error.o
+OBJF90		= get_error.o elemmod.o electrmod.o
 ###################################################
 $(OBJ):		%.o : %.f	
 		$(F90) $(FFLAG90) -c $<

@@ -13,11 +13,14 @@ c     ( Vgl. entspr. Hauptprogramm in Schwarz (1991) )
 
 c.....................................................................
 
+      USE elemmod
+      USE electrmod
+
+      IMPLICIT none
+
       INCLUDE 'parmax.fin'
       INCLUDE 'err.fin'
       INCLUDE 'cutmck.fin'
-      INCLUDE 'elem.fin'
-      INCLUDE 'electr.fin'
 
 c.....................................................................
 
@@ -27,24 +30,28 @@ c     Schalter ob Kontrolldateien ('*.ctr') ausgegeben werden sollen
 c     Dateinamen
       character       * 80    delem,delectr
       CHARACTER(256)      ::  ftext
+c Maximaler Grad der Knotenpunkte
+      INTEGER,PARAMETER   :: grmax=500
+c Maximale Anzahl vorgegebener Startpunkte im Cuthill-McKee-Algorithmus
+      INTEGER,PARAMETER   :: spmax=100
+c Maximale Anzahl der Stufen im Cuthill-McKee-Algorithmus
+      INTEGER,PARAMETER   :: stmax=100
+
 c     Permutationsvektor der Umnumerierung
-      integer         * 4     perm(smax)
+      INTEGER,DIMENSION(:),ALLOCATABLE   :: perm
+
+c Knotennummern der Startpunkte
+      INTEGER,DIMENSION(:),ALLOCATABLE   :: start
 
 c     Hilfsvariablen
-      integer         * 4     graph(grmax,smax),
-     1     grad(smax),
-     1     neu(smax),
-     1     neuin(smax),
-     1     level(stmax),
-     1     gradzp,
-     1     fcm,kbdm,nstart,
-     1     i,j,k,l,m,
-     1     idum,is,nzp,nnp,
-     1     maxgd,mingd,
-     1     minbd,mmin,mingr,
-     1     levs,leve,nlev
+      INTEGER,DIMENSION(:,:),ALLOCATABLE :: graph
+      INTEGER,DIMENSION(:),ALLOCATABLE   :: grad,neu,neuin,level
 
-      logical         * 1     num(smax)
+      integer         * 4   gradzp,fcm,kbdm,nstart,
+     1     i,j,k,l,m,idum,is,nzp,nnp,maxgd,mingd,
+     1     minbd,mmin,mingr,levs,leve,nlev
+
+      LOGICAL,DIMENSION(:),ALLOCATABLE   :: num
       logical         * 1     exi1,exi2,exi3
       integer         * 4     c1,c2,se,mi,st,ta
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -97,6 +104,12 @@ c     'delectr' einlesen
       call relectr(11,delectr)
       if (errnr.ne.0) goto 1000
       print*,'ok'
+
+      ALLOCATE (graph(grmax,sanz),perm(sanz),grad(sanz),neu(sanz),&
+      neuin(sanz),level(sanz),start(sanz),rneu(sanz),rneuin(sanz),&
+      num(sanz),permrcm(sanz),permo(sanz))
+      
+
 c     Aufbau des Graphen aufgrund der Knotennummern der Elemente
       grad=0;graph=0
 
