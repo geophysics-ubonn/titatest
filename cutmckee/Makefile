@@ -27,7 +27,8 @@ C1		= cbn
 PROG	        = CutMcK
 # target
 PR1		= ctm
-
+# machine name
+MACHINE		= $(shell uname -n)
 # default targets
 all:		$(PR1) install
 
@@ -36,12 +37,17 @@ all:		$(PR1) install
 #
 OBJ		= cutmck.o relem.o welem.o relectr.o welectr.o
 
-OBJF90		= get_error.o elemmod.o electrmod.o
+OBJF90		= elemmod.o electrmod.o
+
+OBJERR		= get_error.o
 ###################################################
 $(OBJ):		%.o : %.f	
 		$(F90) $(FFLAG90) -c $<
+
+$(OBJF90):	%.o : %.f90	
+		$(F90) $(FFLAG90) -c $<
 # dependencies	
-$(OBJF90):	error.txt get_error.f90
+$(OBJERR):	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
 
@@ -56,14 +62,14 @@ cbn:
 			mkdir ~/bin; \
 		fi
 
-ctm:		$(OBJ) $(OBJF90)
+ctm:		$(OBJF90) $(OBJ) $(OBJERR)
 		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
-		$(OBJ) $(OBJF90) \
+		$(OBJ) $(OBJF90) $(OBJERR) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)
 
 clean:		
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
-			$(PROG)
+		$(PROG)
 
 install:	$(PROG)
-		$(CP) $(PROG) $(WPATH)
+		$(CP) $(PROG) $(WPATH)/$(PROG)_$(MACHINE)

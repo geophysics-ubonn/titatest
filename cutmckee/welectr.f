@@ -1,61 +1,63 @@
-        subroutine welectr(kanal,datei)
+      subroutine welectr(kanal,datei)
 
-c Unterprogramm zum Schreiben der Elektrodenverteilung in 'datei'.
+c     Unterprogramm zum Schreiben der Elektrodenverteilung in 'datei'.
 
-c Andreas Kemna                                            11-Oct-1993
-c                                       Letzte Aenderung   21-Jan-2003
-
-c.....................................................................
-
-        INCLUDE 'parmax.fin'
-        INCLUDE 'err.fin'
-        INCLUDE 'electr.fin'
+c     Andreas Kemna                                            11-Oct-1993
+c     Letzte Aenderung   21-Jan-2003
 
 c.....................................................................
 
-c EIN-/AUSGABEPARAMETER:
+      USE electrmod
+      
+      IMPLICIT none
 
-c Kanalnummer
-        integer         * 4     kanal
-
-c Datei
-        character       * 80    datei
+      INCLUDE 'err.fin'
 
 c.....................................................................
 
-c PROGRAMMINTERNE PARAMETER:
+c     EIN-/AUSGABEPARAMETER:
 
-c Indexvariable
-        integer         * 4     i
+c     Kanalnummer
+      integer         * 4     kanal
+
+c     Datei
+      character       * 80    datei
 
 c.....................................................................
 
-c 'datei' oeffnen
-        fetxt = datei
+c     PROGRAMMINTERNE PARAMETER:
 
-        errnr = 1
-        open(kanal,file=fetxt,status='replace',err=1000)
+c     Indexvariable
+      integer         * 4     i
 
-        errnr = 4
+c.....................................................................
 
-c Anzahl der Elektroden schreiben
-        write(kanal,*,err=1000) eanz
+c     'datei' oeffnen
+      fetxt = datei
 
-c Knotennummern der Elektroden schreiben
-        do i=1,eanz
-            write(kanal,*,err=1000) enr(i)
-        end do
+      errnr = 1
+      open(kanal,file=fetxt,status='replace',err=1000)
 
-c 'datei' schliessen
-        close(kanal)
+      errnr = 4
 
-        errnr = 0
-        return
+c     Anzahl der Elektroden schreiben
+      write(kanal,*,err=1000) eanz
+
+c     Knotennummern der Elektroden schreiben
+      do i=1,eanz
+         write(kanal,*,err=1000) enr(i)
+      end do
+
+c     'datei' schliessen
+      close(kanal)
+
+      errnr = 0
+      return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-c Fehlermeldungen
+c     Fehlermeldungen
 
-1000    return
+ 1000 return
 
-        end
+      end
