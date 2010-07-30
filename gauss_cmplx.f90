@@ -22,14 +22,14 @@ SUBROUTINE Gauss_cmplx (a,n,e_flag)    ! Invert matrix by Gauss method
 
      IF (ABS(a(i,i)) < EPSILON(DBLE(d))) RETURN
 
-     d = 1./a(i,i)
+     d = DCMPLX(1.)/a(i,i)
      temp = a(:,i)
      DO j = 1, n
-        c = a(i,j)*d
-        a(:,j) = a(:,j)-temp*c
+        c = a(i,j) * d
+        a(:,j) = a(:,j) - temp * c
         a(i,j) = c
      END DO
-     a(:,i) = temp*(-d)
+     a(:,i) = temp * (-d)
      a(i,i) = d
   END DO
 

@@ -22,7 +22,7 @@ SUBROUTINE Gauss_dble (a,n,e_flag)    ! Invert matrix by Gauss method
 
      IF (ABS(a(i,i)) < EPSILON(d)) RETURN
 
-     d = 1./a(i,i)
+     d = 1D0/a(i,i)
      temp = a(:,i)
      DO j = 1, n
         c = a(i,j)*d
