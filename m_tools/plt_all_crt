@@ -5,7 +5,7 @@ if [ -z $1 ];then
 else
     fn=$1
 fi
-
+echo "$0 argument $1"
 pltdir=crt_plots
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
