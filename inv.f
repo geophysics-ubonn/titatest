@@ -129,8 +129,8 @@ c     Startparameter setzen
       it     = 0
       itr    = 0
       rmsalt = 0d0
-      lamalt = 1.
-      bdpar = 1.
+      lamalt = 1d0
+      bdpar = 1d0
       lsetup = .true.
       lsetip = .false.
       lip    = .false.
@@ -808,7 +808,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
                errnr = 97
                GOTO 999
             END IF
-            ata = 0D0
+            ata = DCMPLX(0.)
 
             fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
             CALL bata(kanal)    ! A^TC_d^-1A -> ata
