@@ -89,18 +89,18 @@ c     diff+<
          if (.not.ldiff) then
 c     diff+>
             dum = dcmplx(1d0)/sigma(i)
-c     ak            write(kanal,*,err=1000) real(spx(i)),real(spy(i)),
+c     ak            write(kanal,*,err=1000) real(espx(i)),real(espy(i)),
 c     ak     1                              real(cdabs(dum))
-            write(kanal,*,err=1000) real(spx(i)),real(spy(i)),
+            write(kanal,*,err=1000) real(espx(i)),real(espy(i)),
      1           real(dlog10(cdabs(dum)))
-c     ro            write(kanal,*,err=1000) real(spy(i)),real(spx(i)),
+c     ro            write(kanal,*,err=1000) real(espy(i)),real(espx(i)),
 c     ro     1                              real(cdabs(dum))
 c     diff+<
          else
             dum3 = cdabs(dcmplx(1d0)/sigma(i))
             dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
             write(kanal,'(7(f10.4,2x))',err=1000)
-     1           real(spx(i)),real(spy(i)),
+     1           real(espx(i)),real(espy(i)),
      1           real(dlog10(dum3)),
      1           real(1d2*(dum3/dum2-1d0)),
      1           real(dum3-dum2),
@@ -132,12 +132,12 @@ c     Ggf. Phasen ausgeben
             dum = dcmplx(1d0)/sigma(i)
             write(kanal,*,err=1000)
 c     ak Default
-     1           real(spx(i)),real(spy(i)),
+     1           real(espx(i)),real(espy(i)),
      1           real(1d3*datan2(dimag(dum),dble(dum)))
 c     ak MMAJ
-c     ak     1                      real(spx(i)),real(spy(i)),
+c     ak     1                      real(espx(i)),real(espy(i)),
 c     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
-c     ro     1                      real(spy(i)),real(spx(i)),
+c     ro     1                      real(espy(i)),real(espx(i)),
 c     ro     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
          end do
          close(kanal)

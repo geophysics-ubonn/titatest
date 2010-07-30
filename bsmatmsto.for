@@ -25,7 +25,7 @@ c....................................................................
 c     Hilfsmatrix
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
 c     Schwerpunktskoordinaten der Flaechenelemente ij
-      REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2,h,sd_el
+      REAL(KIND(0D0)) :: h,sd_el
 c     Korrelation lengths and variance (var)
       REAL(KIND(0D0))      :: hx,hy,var
 !     gibt es evtl schon eine inverse?
@@ -87,36 +87,21 @@ c     Belege die Matrix
 
       ELSE
 
-         do i = 1 , manz
+         DO i = 1 , manz
             WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',
      1           REAL(i*(100./manz)),'%'
-            spx1 = 0.;spy1 = 0.
-            do l=1,smaxs
-               spx1 = spx1 + sx(snr(nrel(i,l)))
-               spy1 = spy1 + sy(snr(nrel(i,l)))
-            end do
-            spx1 = spx1 / smaxs ! x- schwerpunkt
-            spy1 = spy1 / smaxs ! y- schwerpunkt
 
-            do j = i+1 , manz     ! fills upper triangle
+            DO j = i+1 , manz   ! fills upper triangle
 
-               spx2 = 0.; spy2 = 0.
-               DO l=1,smaxs
-                  spx2 = spx2 + sx(snr(nrel(j,l)))
-                  spy2 = spy2 + sy(snr(nrel(j,l)))
-               END DO
-               spx2 = spx2 / smaxs ! x- schwerpunkt
-               spy2 = spy2 / smaxs ! y- schwerpunkt
-               
-               hx = (spx1 - spx2)
-               hy = (spy1 - spy2)
+               hx = (espx(i) - espx(j))
+               hy = (espy(i) - espy(j))
 
                smatm(i,j) = mcova(hx,hy,var)
 
                smatm(j,i) = smatm(i,j) ! upper triangle
 
-            end do
-         end do
+            END DO
+         END DO
 
 
          PRINT*,'bestimme nun C_m^-1'

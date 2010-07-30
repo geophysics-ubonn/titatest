@@ -93,13 +93,13 @@ c     bestimmen
          GOTO 999
       END IF
 !!$ get memory for the regular element midpoint coordinates
-      ALLOCATE (spx(elanz),spy(elanz),stat=errnr)
+      ALLOCATE (espx(elanz),espy(elanz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation spx failed'
          errnr = 94
          GOTO 999
       END IF
-      spx = 0.;spy = 0.
+      espx = 0.;espy = 0.
 c     Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
 c     einlesen
       read(kanal,*,end=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
@@ -115,12 +115,12 @@ c     Knotennummern der Elemente einlesen
                ifln = ifln + 1
 
                DO k = 1,selanz(i)
-                  spx(ifln) = spx(ifln) + sx(snr(nrel(idum+j,k)))
-                  spy(ifln) = spy(ifln) + sy(snr(nrel(idum+j,k)))
+                  espx(ifln) = espx(ifln) + sx(snr(nrel(idum+j,k)))
+                  espy(ifln) = espy(ifln) + sy(snr(nrel(idum+j,k)))
                END DO
 
-               spx(ifln) = spx(ifln) / selanz(i)
-               spy(ifln) = spy(ifln) / selanz(i)
+               espx(ifln) = espx(ifln) / selanz(i)
+               espy(ifln) = espy(ifln) / selanz(i)
 
             END IF
 

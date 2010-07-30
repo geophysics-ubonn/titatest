@@ -479,11 +479,13 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
          errnr = 94
          goto 999
       END IF
-
 !!$ set mnr.. this may be altered if we have zonal approach..
       do i=1,elanz
          mnr(i) = i
       end do
+!!$ all the model mapping is than beased on a new numbering..
+!!$ zonal approach ?
+
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
       ncgmax = manz/10

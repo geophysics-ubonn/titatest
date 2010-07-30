@@ -34,7 +34,7 @@ MODULE elemmod
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sy
 
 !!!$ Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: spx,spy
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: espx,espy
 
 !!!$Knotennummern der Elemente (Reihenfolge !)
   INTEGER(KIND = 4),PUBLIC,DIMENSION(:,:),ALLOCATABLE :: nrel

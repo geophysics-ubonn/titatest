@@ -104,7 +104,7 @@ c     Koordinaten und Sensitivitaeten schreiben
 c     (Real- und Imaginaerteil)
          do j=1,manz
             write(kanal,*,err=1000)
-     1           real(spx(j)),real(spy(j)),
+     1           real(espx(j)),real(espy(j)),
      1           real(dble(sens(i,j))),real(dimag(sens(i,j)))
          end do
 

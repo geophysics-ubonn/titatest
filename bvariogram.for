@@ -24,10 +24,10 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen
       INTEGER :: i,j,ik,jk,ifp
-c     Schwerpunktskoordinaten der Flaechenelemente und gitterabstaende
-      REAL(KIND(0D0)) :: spx1,spx2,spy1,spy2
 c     th = Tail - Head; hx,hy,h distances in each direction
       REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
+c     Parameter variances in x and y direction
+      REAL(KIND(0D0)) :: par_varix,par_variy
 c     korrelation length for variogram models
       REAL(KIND(0D0)) :: Ix,Iy
 c     smallest variogram distance and tolerance
@@ -121,20 +121,16 @@ c     anisotrop
 
       mid_par = SUM(LOG10(DBLE(sigma(1:elanz)))) / manz
       PRINT*,'sigma mean',mid_par
+
       par_vari = 0.
+      par_varix = mgam_x(nlag_x)
+      par_variy = mgam_y(nlag_y)
 
 c     Experimentelles semi-variogram
       DO i=1,elanz
 
          WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'variogram/',
      1        REAL(i*(100./elanz)),'%'
-
-         spx1=0.;spy1=0.
-         DO ik=1,smaxs
-            spx1 = spx1 + sx(snr(nrel(i,ik)))
-            spy1 = spy1 + sy(snr(nrel(i,ik)))
-         END DO
-         spx1 = spx1/smaxs; spy1 = spy1/smaxs
 
          tail = LOG10(DBLE(sigma(i))) ! lin val
          
@@ -144,17 +140,11 @@ c     Experimentelles semi-variogram
 
             IF (i==j) CYCLE
 
-            spx2=0.;spy2=0.
-            DO jk=1,smaxs
-               spx2 = spx2 + sx(snr(nrel(j,jk)))
-               spy2 = spy2 + sy(snr(nrel(j,jk)))
-            END DO
-            spx2 = spx2/smaxs; spy2 = spy2/smaxs
-
             head = LOG10(DBLE(sigma(j)))
 
-            hx = ABS(spx1 - spx2)
-            hy = ABS(spy1 - spy2)
+            hx = ABS(espx(i) - espx(j))
+            hy = ABS(espy(i) - espy(j))
+
             h = SQRT(hx**2. + hy**2.)
 
             th = (tail - head)**2.
@@ -207,16 +197,18 @@ c     sets parameter variance..
 
       CALL get_unit(ifp)
       OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)
-      WRITE (ifp,'(a,I10)')'#   lag(x-dir)'//ACHAR(9)//
+      WRITE (ifp,'(a,I10a,G10.3)')'#   lag(x-dir)'//ACHAR(9)//
      1     'anisotrop exp. semivariogram    model ##',nlag_x
+     1     ' / parameter variance ',10**par_varix
       DO i=1,nlag_x
          WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)
      1        lag_x(i),gam_x(i),mgam_x(i),ngam_x(i)
       END DO
       CLOSE (ifp)
       OPEN (ifp,FILE='inv.variogram_y',STATUS='replace',ERR=999)
-      WRITE (ifp,'(a,I10)')'#   lag(y-dir)'//ACHAR(9)//
+      WRITE (ifp,'(a,I10a,G10.3)')'#   lag(y-dir)'//ACHAR(9)//
      1     'anisotrop exp. semivariogram   model ##',nlag_y
+     1     ' / parameter variance ',10**par_variy
       DO i=1,nlag_y
          WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)
      1        lag_y(i),gam_y(i),mgam_y(i),ngam_y(i)

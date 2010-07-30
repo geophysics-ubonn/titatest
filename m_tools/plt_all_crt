@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ -z $1 ];then
+    fn='Amplitude'
+else
+    fn=$1
+fi
+
 pltdir=crt_plots
 if [ -e crtomo.cfg ];then
 	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
@@ -20,7 +26,7 @@ mymag=`basename $mymag '.mag'`
 echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 clean
-echo 'Amplitude' > tmp.fenster
+echo "$fn" > tmp.fenster
 $plot_cur_crtomo
 pltpdf=$mymag'_mag.pdf'
 clean
