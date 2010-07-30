@@ -198,7 +198,7 @@ c     sets parameter variance..
       CALL get_unit(ifp)
       OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)
       WRITE (ifp,'(a,I10a,G10.3)')'#   lag(x-dir)'//ACHAR(9)//
-     1     'anisotrop exp. semivariogram    model ##',nlag_x
+     1     'anisotrop exp. semivariogram    model ##',nlag_x,
      1     ' / parameter variance ',10**par_varix
       DO i=1,nlag_x
          WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)
@@ -207,7 +207,7 @@ c     sets parameter variance..
       CLOSE (ifp)
       OPEN (ifp,FILE='inv.variogram_y',STATUS='replace',ERR=999)
       WRITE (ifp,'(a,I10a,G10.3)')'#   lag(y-dir)'//ACHAR(9)//
-     1     'anisotrop exp. semivariogram   model ##',nlag_y
+     1     'anisotrop exp. semivariogram   model ##',nlag_y,
      1     ' / parameter variance ',10**par_variy
       DO i=1,nlag_y
          WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)
