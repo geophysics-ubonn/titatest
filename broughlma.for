@@ -16,10 +16,10 @@ c.....................................................................
       USE sigmamod
       USE modelmod
       USE elemmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
 
 c.....................................................................
 

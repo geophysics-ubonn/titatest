@@ -19,11 +19,12 @@ c.....................................................................
       USE sigmamod
       USE modelmod
       USE elemmod
+      USE cg_mod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
-      INCLUDE 'err.fin'
 
 c.....................................................................
 

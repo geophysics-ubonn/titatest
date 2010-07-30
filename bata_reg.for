@@ -14,11 +14,11 @@ c.........................................................................
       USE invmod
       USE modelmod
       USE elemmod
+      USE errmod
+      USE konvmod
       
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
-      INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
       INTEGER                       :: kanal ! io number

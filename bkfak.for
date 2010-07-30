@@ -11,10 +11,10 @@ c.....................................................................
       USE datmod
       USE electrmod
       USE elemmod,only:sx,sy,snr
+      USE errmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 
 c.....................................................................
 

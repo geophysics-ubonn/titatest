@@ -18,10 +18,10 @@ c....................................................................
       USE invmod
       USE sigmamod
       USE modelmod
+      USE errmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 !....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 

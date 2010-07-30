@@ -15,10 +15,10 @@ c.....................................................................
       USE sigmamod ! fuer sigma
       USE modelmod ! fuer manz und mnr
       USE elemmod  ! fuer elanz
+      USE errmod ! fuer fetxt und errnr
 
       IMPLICIT none
 
-      INCLUDE 'err.fin' ! fuer fetxt und errnr
 c.....................................................................
 
 c.....................................................................

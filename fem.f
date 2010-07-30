@@ -21,11 +21,11 @@ c.....................................................................
       USE elemmod
       USE wavenmod
       USE randbmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
-      INCLUDE 'konv.fin'
 
 c.....................................................................
 

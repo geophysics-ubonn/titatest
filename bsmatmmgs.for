@@ -18,11 +18,11 @@ c.........................................................................
       USE sigmamod       ! for sigma
       USE modelmod       ! mit nachbar und ldir
       USE elemmod
+      USE errmod
+      USE konvmod
       
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
-      INCLUDE 'err.fin'
 
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:

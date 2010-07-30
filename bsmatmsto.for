@@ -15,12 +15,12 @@ c.....................................................................
       USE invmod
       USE modelmod
       USE elemmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
       
-      INCLUDE 'konv.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'err.fin'
 c....................................................................
 c     Hilfsmatrix
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work

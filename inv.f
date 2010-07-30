@@ -28,15 +28,15 @@ c.....................................................................
       USE elemmod
       USE wavenmod
       USE randbmod
+      USE konvmod
+      USE errmod
 
 c     USE portlib
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
       INCLUDE 'invhp.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'konv.fin'
 
       CHARACTER(256)         :: ftext
       INTEGER                :: c1,i

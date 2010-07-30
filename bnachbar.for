@@ -16,10 +16,10 @@ c.....................................................................
       USE alloci
       USE modelmod       ! fuer manz
       USE elemmod        ! fuer nachbar, nrel etc. 
+      USE errmod       ! errnr und fetxt
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'       ! errnr und fetxt
 
 c     PROGRAMMINTERNE PARAMETER:----------------------------------------
 c     Indexvariablen

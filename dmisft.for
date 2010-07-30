@@ -9,12 +9,12 @@ c.....................................................................
 
       USE invmod
       USE datmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'konv.fin'
 
 c.....................................................................
 

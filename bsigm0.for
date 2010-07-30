@@ -13,12 +13,12 @@ c.....................................................................
       USE sigmamod
       USE modelmod
       USE elemmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 c     diff+<
-      INCLUDE 'konv.fin'
 c     diff+>
 
 c.....................................................................

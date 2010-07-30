@@ -15,10 +15,10 @@ c.....................................................................
       USE modelmod
       USE elemmod
       USE wavenmod
+      USE errmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:

@@ -13,10 +13,10 @@ c.........................................................................
       USE datmod
       USE invmod
       USE modelmod
+      USE errmod
       
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 

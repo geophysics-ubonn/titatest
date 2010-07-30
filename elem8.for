@@ -10,10 +10,10 @@ c     Letzte Aenderung   26-Jan-1998
 c.....................................................................
 
       USE elemmod,only:xk,yk
+      USE errmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
 
 c.....................................................................
       INTEGER (KIND = 4)                     :: smaxs

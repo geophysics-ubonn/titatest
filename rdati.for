@@ -13,11 +13,11 @@ c.....................................................................
       USE datmod
       USE invmod
       USE electrmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
-      INCLUDE 'konv.fin'
 
 c.....................................................................
 

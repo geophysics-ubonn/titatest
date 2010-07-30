@@ -17,10 +17,10 @@ c.........................................................................
       USE invmod
       USE modelmod       ! mit nachbar und ldir
       USE elemmod
+      USE konvmod
       
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 

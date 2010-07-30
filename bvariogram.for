@@ -15,11 +15,11 @@ c.....................................................................
       USE sigmamod       ! fuer sigma
       USE modelmod       ! fuer manz
       USE elemmod        ! fuer grid_min,grid_max,etc
+      USE errmod
+      USE konvmod        ! fuer alfx/alfz
 
       IMPLICIT none
 
-      INCLUDE 'konv.fin'        ! fuer alfx/alfz
-      INCLUDE 'err.fin'
 
 c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 c     Indexvariablen

@@ -11,7 +11,7 @@ WPATH 		= ~/bin
 F90		= gfortran
 F77		= gfortran
 FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
-#FFLAG90         = -C -mcmodel=medium
+FFLAG90         = -C
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl
@@ -47,16 +47,15 @@ f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  chold.o cholz.o linvd.o linvz.o femmod.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
-		  randbmod.o
+		  randbmod.o errmod.o konvmod.o cg_mod.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o beta.o bkfak.o blam0.o bnachbar.o \
-		  bpdc.o bpdcsto.o bpdctri.o bp.o bpot.o bpsto.o \
-		  bptri.o brough.o broughsto.o broughtri.o bsendc.o \
+		  bpot.o brough.o broughsto.o broughtri.o bsendc.o \
 		  bsens.o bsensi.o bsigm0.o bsmatm.o bsmatmsto.o \
 		  bsmatmtri.o bvolt.o bvolti.o chareal.o chkpol.o \
-		  choldc.o chol.o cjggdc.o cjggra.o dmisft.o elem1.o \
+		  choldc.o chol.o dmisft.o elem1.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o findinv.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
@@ -68,12 +67,12 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  wpot.o wsens.o bsmatmmgs.o bsytop.o bsmatmtv.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
 		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o \
-		  bsmatmlma.o bplma.o bpdclma.o broughlma.o \
+		  bsmatmlma.o broughlma.o \
 		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
 f90crm		= alloci.o tic_toc.o make_noise.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
-		  elemmod.o wavenmod.o randbmod.o
+		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o
 fcrm		= fem.o
 forcrm		= bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \

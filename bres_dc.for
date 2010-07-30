@@ -14,11 +14,11 @@ c.........................................................................
 
       USE alloci
       USE modelmod
+      USE errmod
+      USE konvmod
       
       IMPLICIT none
 
-      INCLUDE 'konv.fin'
-      INCLUDE 'err.fin'
 !.....................................................................
 !     PROGRAMMINTERNE PARAMETER:
 !     Hilfsvariablen 

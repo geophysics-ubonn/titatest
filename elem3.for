@@ -10,10 +10,10 @@ c     Letzte Aenderung   05-Nov-1997
 c.....................................................................
 
       USE elemmod,only:xk,yk,elmam,elmas,elve
+      USE errmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
       
 c.....................................................................
 

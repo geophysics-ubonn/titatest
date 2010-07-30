@@ -14,12 +14,12 @@ c.....................................................................
       USE sigmamod
       USE modelmod
       USE elemmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
       INCLUDE 'path.fin'
-      INCLUDE 'konv.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

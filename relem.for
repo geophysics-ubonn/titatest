@@ -8,11 +8,11 @@ c     Letzte Aenderung   24-Oct-1996
 c.....................................................................
 
       USE elemmod
+      USE errmod
+      USE konvmod
 
       IMPLICIT none
 
-      INCLUDE 'err.fin'
-      INCLUDE 'konv.fin'
 
 c.....................................................................
 
