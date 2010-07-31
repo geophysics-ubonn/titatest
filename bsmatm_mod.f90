@@ -132,7 +132,7 @@ CONTAINS
     
     IF (ALLOCATED(csens)) DEALLOCATE (csens)
 
-    fetxt = 'C_m^ caculation time'
+    fetxt = 'C_m^ calculation time'
     CALL TOC(c1,fetxt)
 
   END SUBROUTINE bsmatm

@@ -32,6 +32,7 @@ c.....................................................................
       USE errmod
       USE pathmod
       USE bsmatm_mod
+      USE bmcm_mod
 
 c     USE portlib
 
@@ -683,137 +684,7 @@ c     Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
       end if
       IF (lvario) CALL bvariogram ! calculate experimental variogram
       
-      IF (lcov1) THEN
-         WRITE(*,'(a)')'Calculating model uncertainty..'
-         WRITE (fprun,'(a)')'Calculating model uncertainty..'
-         IF (it<2) lam = lamalt
-         lam = lamalt
-         WRITE (*,'(/a,G10.3,a/)')
-     1        'take current lambda ?',lam,ACHAR(9)//':'//ACHAR(9)
-         IF (BTEST(mswitch,5)) THEN 
-            READ (*,*)fetxt
-            IF (fetxt/='')READ(fetxt,*)lam
-            WRITE (*,*)'Set lambda to ',lam
-         END IF
-
-         WRITE (fprun,*)'Taking lam=',lam
-
-         WRITE(*,'(a)')ACHAR(13)//
-     1        'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
-         WRITE(fprun,'(a)')'MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
-
-         IF (ldc) THEN
-
-            ALLOCATE (ata_dc(manz,manz),STAT=errnr)
-            IF (errnr /= 0) THEN
-               errnr = 97
-               GOTO 999
-            END IF
-            ata_dc = 0D0
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
-            CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
-            if (errnr.ne.0) goto 999
-
-            ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)            
-            IF (errnr /= 0) THEN
-               errnr = 97
-               GOTO 999
-            END IF
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
-            CALL bata_reg_dc(kanal) !ata_dc + C_m^-1(lam) -> ata_reg_dc
-            if (errnr.ne.0) goto 999
-
-            ALLOCATE (cov_m_dc(manz,manz))
-            IF (errnr/=0) THEN
-               WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
-               errnr = 97
-               GOTO 999
-            END IF
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm_dc(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
-            if (errnr.ne.0) goto 999
-
-         ELSE
-
-            ALLOCATE (ata(manz,manz),STAT=errnr)
-            IF (errnr /= 0) THEN
-               errnr = 97
-               GOTO 999
-            END IF
-            ata = DCMPLX(0.)
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
-            CALL bata(kanal)    ! A^TC_d^-1A -> ata
-            if (errnr.ne.0) goto 999
-
-            ALLOCATE (ata_reg(manz,manz),STAT=errnr)
-            IF (errnr /= 0) THEN
-               errnr = 97
-               GOTO 999
-            END IF
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
-            CALL bata_reg(kanal) !A^TC_d^-1A + C_m^-1(lam) -> ata_reg
-            if (errnr.ne.0) goto 999
-
-            ALLOCATE (cov_m(manz,manz))
-            IF (errnr/=0) THEN
-               WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
-               errnr = 97
-               GOTO 999
-            END IF
-
-            fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-            CALL bmcm(kanal,lgauss)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
-            if (errnr.ne.0) goto 999
-
-         END IF
-
-         IF (lres) THEN
-            
-            ols = .FALSE.
-            
-            fetxt = ramd(1:lnramd)//slash(1:1)//'res_m.diag'
-
-            WRITE(*,'(a)')ACHAR(13)//
-     1           'calculating RES = (A^TC_d^-1A + C_m^-1)^-1'//
-     1           ' A^TC_d^-1A'
-            WRITE(fprun,'(a)')'RES = (A^TC_d^-1A + C_m^-1)^-1'//
-     1           ' A^TC_d^-1A'
-
-
-            IF (ldc) THEN
-               CALL bres_dc(kanal)
-               if (errnr.ne.0) goto 999
-            ELSE
-               CALL bres(kanal)
-               if (errnr.ne.0) goto 999
-            END IF
-
-            IF (lcov2) THEN
-
-               fetxt = ramd(1:lnramd)//slash(1:1)//'cov2_m.diag'
-
-               WRITE(*,'(a)')ACHAR(13)//
-     1              'calculating MCM_2 = (A^TC_d^-1A + C_m^-1)'//
-     1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
-               WRITE(fprun,'(a)')'MCM_2 = (A^TC_d^-1A + C_m^-1)'//
-     1              '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
-
-               IF (ldc) THEN
-                  CALL bmcm2_dc(kanal)
-                  if (errnr.ne.0) goto 999
-               ELSE
-                  CALL bmcm2(kanal)
-                  if (errnr.ne.0) goto 999
-               END IF
-
-            END IF              ! lcov2
-         END IF                 ! lres
-      END IF                    ! lcov1
+      IF (lcov1) CALL buncert (kanal,lamalt)
 
 c     Kontrollausgaben
 
@@ -890,13 +761,6 @@ c     'sens' und 'kpot' freigeben
 
       IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
       IF (ALLOCATED (m0)) DEALLOCATE (m0)
-
-      IF (ALLOCATED (ata)) DEALLOCATE (ata)
-      IF (ALLOCATED (ata_dc)) DEALLOCATE (ata_dc)
-      IF (ALLOCATED (ata_reg)) DEALLOCATE (ata_reg)
-      IF (ALLOCATED (ata_reg_dc)) DEALLOCATE (ata_reg_dc)
-      IF (ALLOCATED (cov_m)) DEALLOCATE (cov_m)
-      IF (ALLOCATED (cov_m_dc)) DEALLOCATE (cov_m_dc)
 
       IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
       IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 

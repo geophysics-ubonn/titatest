@@ -48,7 +48,7 @@ f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
 		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  cg_mod.o bsmatm_mod.o
+		  cg_mod.o bsmatm_mod.o bmcm_mod.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
@@ -65,8 +65,6 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
 		  wpot.o wsens.o bsytop.o \
-		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
-		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o \
 		  broughlma.o \
 		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
