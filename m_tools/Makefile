@@ -16,7 +16,11 @@ all:		$(PRM)
 
 .SILENT:	cbn
 # default targets
-################################## F90 targets..
+
+SCRIPTS	=	crtomo_plot.sh crtomo_run.sh plt_all_crt plot_cur_crtomo \
+		plot_cur_crmod plot_cur_crt plt_inv_ctr plotCRTmod_batch.m \
+		variogram.sh vario_fit.sh
+
 cbn:		
 		echo "Pruefe ~/bin"
 		if [ -d ~/bin ]; then \
@@ -27,24 +31,10 @@ cbn:
 		fi
 
 mtools:		$(C1)
-		$(CP) crtomo_plot.sh $(WPATH)
-		$(CP) crtomo_run.sh $(WPATH)
-		$(CP) plt_all_crt $(WPATH)
-		$(CP) plot_cur_crmod $(WPATH)
-		$(CP) plot_cur_crtomo $(WPATH)
-		$(CP) plot_cur_crt $(WPATH)
-		$(CP) plt_inv_ctr $(WPATH)
-		$(CP) plotCRTmod_batch.m $(WPATH)
+		$(CP) $(SCRIPTS) $(WPATH)
 
 install:	$(C1)
-		$(CP) crtomo_plot.sh $(WPATH)
-		$(CP) crtomo_run.sh $(WPATH)
-		$(CP) plt_all_crt $(WPATH)
-		$(CP) plot_cur_crmod $(WPATH)
-		$(CP) plot_cur_crtomo $(WPATH)
-		$(CP) plot_cur_crt $(WPATH)
-		$(CP) plt_inv_ctr $(WPATH)
-		$(CP) plotCRTmod_batch.m $(WPATH)
+		$(CP) $(SCRIPTS) $(WPATH)
 
 clean:		
 		$(RM) *~
