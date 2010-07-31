@@ -47,15 +47,15 @@ f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  chold.o cholz.o linvd.o linvz.o femmod.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
-		  randbmod.o errmod.o konvmod.o cg_mod.o
+		  randbmod.o errmod.o konvmod.o pathmod.o \
+		  cg_mod.o bsmatm_mod.o
 
 fcrt		= inv.o
 forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o beta.o bkfak.o blam0.o bnachbar.o \
 		  bpot.o brough.o broughsto.o broughtri.o bsendc.o \
-		  bsens.o bsensi.o bsigm0.o bsmatm.o bsmatmsto.o \
-		  bsmatmtri.o bvolt.o bvolti.o chareal.o chkpol.o \
-		  choldc.o chol.o dmisft.o elem1.o \
+		  bsens.o bsensi.o bsigm0.o bvolt.o bvolti.o chareal.o \
+		  chkpol.o choldc.o chol.o dmisft.o elem1.o \
 		  elem3.o elem4.o elem5.o elem8.o filpat.o findinv.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
@@ -64,15 +64,16 @@ forcrt		= bbsedc.o bbsens.o besp_elem.o bessi0.o bessi1.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o bsmatmmgs.o bsytop.o bsmatmtv.o \
+		  wpot.o wsens.o bsytop.o \
 		  bata_dc.o bata_reg_dc.o bmcm_dc.o bmcm2_dc.o \
 		  bres_dc.o bata.o bata_reg.o bmcm.o bmcm2.o bres.o \
-		  bsmatmlma.o broughlma.o \
+		  broughlma.o \
 		  bvariogram.o bpar.o bsigma.o
 # CRMod objects
 f90crm		= alloci.o tic_toc.o make_noise.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
-		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o
+		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o \
+		  pathmod.o
 fcrm		= fem.o
 forcrm		= bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o bkfak.o beta.o bpot.o \

@@ -23,8 +23,13 @@ MODULE cg_mod
 
   IMPLICIT none
 
+  LOGICAL :: verb ! verbose output?
+
+  PUBLIC :: cjg
+!!!$ controls whather we have REAL or COMPLEX case
+  
 !!!$ DC subroutines
-  PUBLIC :: cjggdc
+  PRIVATE :: cjggdc
 !!!$ Subroutine calculates model update 
 !!!$ with preconditioned conjugate gradient method
   PRIVATE :: bpdc
@@ -37,7 +42,7 @@ MODULE cg_mod
 !!$ for stochastical regularization
 
 !!$ IP subroutines
-  PUBLIC :: cjggra
+  PRIVATE :: cjggra
 !!!$ Subroutine calculates model update for COMPLEX case
 !!!$ with preconditioned conjugate gradient method
   PRIVATE :: bp
@@ -52,6 +57,19 @@ MODULE cg_mod
 
 
 CONTAINS
+
+SUBROUTINE cjg
+
+  verb = .FALSE.
+
+  if (ldc.or.lip) then
+     call cjggdc
+  else
+     call cjggra
+  end if
+
+END SUBROUTINE cjg
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                          DC_PART                               !!!!
@@ -106,8 +124,8 @@ CONTAINS
           beta = dr/dr1
        end if
 
-       WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',ADVANCE='no')&
-            ACHAR(13)//TRIM(fetxt),k,dr,dr0
+       IF (verb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
+            ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
        if (dr.le.dr0) goto 10
 
@@ -494,8 +512,8 @@ CONTAINS
 !!!$    ak                beta = beta*dcmplx(-alpha/dr1)
        END IF
 
-       WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',ADVANCE='no')&
-            ACHAR(13)//TRIM(fetxt),k,dr,dr0
+       IF (verb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
+            ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
        if (dr.le.dr0) goto 10
 

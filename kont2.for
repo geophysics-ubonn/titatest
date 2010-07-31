@@ -13,10 +13,10 @@ c     mw
       USE cjgmod
       USE errmod
       USE konvmod
+      USE pathmod
 
       IMPLICIT none
 
-      INCLUDE 'path.fin'
 
 c.....................................................................
 

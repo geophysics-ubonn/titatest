@@ -16,10 +16,10 @@ c.....................................................................
       USE elemmod
       USE errmod
       USE konvmod
+      USE pathmod
 
       IMPLICIT none
 
-      INCLUDE 'path.fin'
 c.....................................................................
 
 c     EIN-/AUSGABEPARAMETER:

@@ -10,9 +10,9 @@ c     12 - crtomo.cfg -> fpcfg
 c     13 - inv.ctr    -> fpinv
 c     14 - cjg.ctr    -> fpcjg
 c     15 - eps.ctr    -> fpeps
-
-c     Andreas Kemna                                            02-May-1995
-c     Letzte Aenderung                                         03-Jan-2010
+c
+c     Andreas Kemna                                        02-May-1995
+c     Letzte Aenderung                                     Jul-2010
 
 c.....................................................................
 
@@ -30,13 +30,14 @@ c.....................................................................
       USE randbmod
       USE konvmod
       USE errmod
+      USE pathmod
+      USE bsmatm_mod
 
 c     USE portlib
 
       IMPLICIT none
 
       INCLUDE 'invhp.fin'
-      INCLUDE 'path.fin'
 
       CHARACTER(256)         :: ftext
       INTEGER                :: c1,i
@@ -150,7 +151,7 @@ c     Kontrolldateien oeffnen
       close(fpinv)
       fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
       open(fprun,file=fetxt,status='replace',err=999)
-!!$      close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
+c$$$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
       fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
       open(fpcjg,file=fetxt,status='replace',err=999)
       close(fpcjg)
@@ -414,7 +415,7 @@ c     Wichtungsfeld umspeichern
                wmatd(1:nanz) = wmatdp(1:nanz)
 
                lip    = .true.
-               lsetip = .true.
+               lsetip = .true. ! 
                lfphai = .false.
                llam   = .false.
                ldlami = .true.
@@ -476,13 +477,11 @@ c     Lambda speichen
          IF (it>1) lamalt = lam ! mindestens einmal konvergiert
 
 c     Felder speichern
-         do j=1,elanz
-            sigma2(j) = sigma(j)
-         end do
-         do j=1,nanz
-            if (lrobust) wmatd2(j)=wmatd(j)
-            sgmaa2(j) = sigmaa(j)
-         end do
+         sigma2 = sigma
+
+         sgmaa2 = sigmaa
+
+         IF (lrobust) wmatd2 = wmatd
 
 c     Kontrollausgaben
          write (*,'(a,i3,a,i3,a)',ADVANCE='no')
@@ -499,81 +498,17 @@ c     SENSITIVITAETEN berechnen
             call bsensi()
          end if
          
-         if (lsetup.OR.(ltri > 4 .AND. ltri < 10)) then
+c     evtl   Rauhigkeitsmatrix belegen
+         IF (lsetup.OR.(ltri>3.AND.ltri<10)) CALL bsmatm(it) 
                         
-c     akc Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
-c     if (lsens) then
-c     if (ldc) then
-c     call bbsedc(kanal,dsens)
-c     else
-c     call bbsens(kanal,dsens)
-c     end if
-c     if (errnr.ne.0) goto 999
-c     end if
-c     ak
-c     Rauhigkeitsmatrix belegen
-            IF (it == 1) WRITE (*,'(/a)',ADVANCE='no')
-     1           'Regularization::'
-
-            IF (ltri == 0) THEN
-
-               WRITE (*,'(a)')' Rectangular smooth'
-               call bsmatm
-
-            ELSE IF (ltri == 1.OR.ltri == 2) THEN
-
-               WRITE (*,'(a)')' Triangular smooth'
-               CALL bsmatmtri
-
-            ELSE IF (ltri == 3.OR.ltri==4) THEN
-
-               WRITE (*,'(a)',ADVANCE='no')' Using damping'
-               CALL bsmatmlma
-
-            ELSE IF (ltri > 4 .AND. ltri < 10) THEN
-
-               IF (it == 1) THEN
-                  IF (ltri == 5) WRITE (*,'(a)')
-     1                 ' Triangular pure MGS (beta)'
-                  IF (ltri == 6.OR.ltri == 8) WRITE (*,'(a)')
-     1                 ' Triangular sens weighted MGS (beta)'
-                  IF (ltri == 7.OR.ltri == 9) WRITE (*,'(a)')
-     1                 ' Triangular sens weighted MGS mean (beta)'
-               ELSE
-                  WRITE (*,'(a)')' Updating MGS functional'
-               END IF
-
-               CALL bsmatmmgs
-
-            ELSE IF (ltri == 10) THEN
-
-               WRITE (*,'(a)')' Triangular Total variance (alpha)'
-               CALL bsmatmtv
-
-            ELSE IF (ltri == 15) THEN
-
-               WRITE (*,'(a)')' Triangular Stochastic (beta)'
-               CALL bsmatmsto
-               if (errnr.ne.0) goto 999
-
-            ELSE
-
-               WRITE (*,'(a)')' Error:: '//
-     1              'Regularization can just be '//
-     1              '0,1,3,4,5,6,7,8,9,10 or 15'
-               STOP
-
-            END IF 
-         end if
       else
 c     Felder zuruecksetzen
-         do j=1,elanz
-            sigma(j)  = sigma2(j)
-         end do
-         do j=1,nanz
-            if (lrobust) wmatd(j)=wmatd2(j)
-            sigmaa(j) = sgmaa2(j)
-         end do
+         sigma = sigma2
+
+         sigmaa = sgmaa2
+
+         IF (lrobust) wmatd = wmatd2
+
       end if
       IF (itmax == 0) THEN
          errnr2 = 109

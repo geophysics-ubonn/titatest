@@ -21,10 +21,10 @@ c.....................................................................
       USE randbmod
       USE errmod
       USE konvmod
+      USE pathmod
 
       IMPLICIT none
 
-      INCLUDE 'path.fin'
 c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 

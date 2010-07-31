@@ -17,10 +17,10 @@ c.....................................................................
       USE elemmod
       USE errmod
       USE konvmod
+      USE pathmod
 
       IMPLICIT none
       
-      INCLUDE 'path.fin'
 c....................................................................
 c     Hilfsmatrix
       REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work

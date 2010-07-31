@@ -231,11 +231,7 @@ c     diff+>
          end do
 
 c     Modellverbesserung mittels konjugierter Gradienten bestimmen
-         if (ldc.or.lip) then
-            call cjggdc
-         else
-            call cjggra
-         end if
+         CALL cjg
 
 c     Ggf. Verbesserung umspeichern
          if (lip) then
