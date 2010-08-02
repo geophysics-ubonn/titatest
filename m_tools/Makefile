@@ -17,9 +17,8 @@ all:		$(PRM)
 .SILENT:	cbn
 # default targets
 
-SCRIPTS	=	crtomo_plot.sh crtomo_run.sh plt_all_crt plot_cur_crtomo \
-		plot_cur_crmod plot_cur_crt plt_inv_ctr plotCRTmod_batch.m \
-		variogram.sh vario_fit.sh
+SCRIPTS	=	crtomo_*.sh plt_*_crt plot_cur_* \
+		plotCRTmod_batch.m vario*.sh stochastic_*.sh
 
 cbn:		
 		echo "Pruefe ~/bin"
