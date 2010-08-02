@@ -17,13 +17,11 @@ MODULE cg_mod
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lip,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lam,nx,nz
+  USE konvmod , ONLY : ltri,lam,nx,nz,lverb
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
 
   IMPLICIT none
-
-  LOGICAL :: verb ! verbose output?
 
   PUBLIC :: cjg
 !!!$ controls whather we have REAL or COMPLEX case
@@ -59,8 +57,6 @@ MODULE cg_mod
 CONTAINS
 
 SUBROUTINE cjg
-
-  verb = .FALSE.
 
   if (ldc.or.lip) then
      call cjggdc
@@ -124,7 +120,7 @@ END SUBROUTINE cjg
           beta = dr/dr1
        end if
 
-       IF (verb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
+       IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
        if (dr.le.dr0) goto 10
@@ -512,7 +508,7 @@ END SUBROUTINE cjg
 !!!$    ak                beta = beta*dcmplx(-alpha/dr1)
        END IF
 
-       IF (verb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
+       IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
        if (dr.le.dr0) goto 10

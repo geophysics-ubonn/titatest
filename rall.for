@@ -142,6 +142,8 @@ c     ak Tank
 c     ak        mqrms = 2d-2
 c     ak MMAJ
 c     ak        mqrms = 5d-2
+c     Verbose output ?
+      lverb =.TRUE.
 c     CG-Epsilon
       eps = 1d-4
 c     Mindest-step-length
@@ -488,7 +490,10 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
-      ncgmax = manz/10
+      ncgmax = manz ! useful for small scale model variations
+!     for normal smooth and damping we usually need fewer CG iterations;
+!     because the model variations are of bigger scale size
+      IF (ltri < 5) ncgmax = ncgmax / 10
 c     Elektrodenverteilung und Daten einlesen sowie Wellenzahlwerte
 c     bestimmen
 

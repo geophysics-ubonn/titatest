@@ -120,8 +120,8 @@ c     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
 
       do i=1,nanz
          stabwp = 0.; stabwb = 0.
-         WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'data set ',
-     1        REAL( i * (100./nanz) ),'%'
+         IF (lverb) WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//
+     1        'data set ',REAL( i * (100./nanz) ),'%'
          if (lindiv) then
             if (ldc) then
                IF (crtf) THEN

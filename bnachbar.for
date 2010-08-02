@@ -17,6 +17,7 @@ c.....................................................................
       USE modelmod       ! fuer manz
       USE elemmod        ! fuer nachbar, nrel etc. 
       USE errmod       ! errnr und fetxt
+      USE konvmod , ONLY : lverb
 
       IMPLICIT none
 
@@ -40,7 +41,7 @@ c-----------------------------------------------------------------------
 
       DO i=1,elanz
          
-         WRITE (*,'(a,1X,F6.2,a)',ADVANCE='no')ACHAR(13)//
+         IF (lverb) WRITE (*,'(a,1X,F6.2,a)',ADVANCE='no')ACHAR(13)//
      1        'bnachbar/ ',REAL (i * (100./elanz)),'%'
 
          DO ik=1,smaxs

@@ -61,6 +61,9 @@ CONTAINS
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
+
+    PRINT*,ltri
+
     CALL TIC(c1)
 
     IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz),STAT=errnr)
@@ -87,9 +90,9 @@ CONTAINS
        
        IF (it == 1) THEN
           IF (ltri == 3) WRITE (*,'(a)') &
-               'Levenberg damping'
+               'Levenberg damping (LA)'
           IF (ltri == 4) WRITE (*,'(a)') &
-               'Marquardt-Levenberg damping'
+               'Marquardt-Levenberg damping (LMA)'
        ELSE
           WRITE (*,'(a)')' Updating damping'
        END IF
@@ -462,16 +465,13 @@ CONTAINS
 
     IF (ltri==3) THEN
 
-       PRINT*,'pure Levenberg (LA)'
        smatm = 1.0 ! Levenberg Damping
 
     ELSE
 
-       PRINT*,' Levenberg-Marquardt (LMA)'
-
        CALL bcsens (csensmax,csensavg)
 
-       smatm(:,1) = csens ! / csensmax ?
+       smatm(:,1) = csens
 
     END IF
 
