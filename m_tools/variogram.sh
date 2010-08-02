@@ -1,10 +1,23 @@
 #!/bin/bash
 
 if [ -z $2 ];then
-  echo "usage $0 with two arguments ax and ay";
-  exit
+    echo trying to deduce arguments
+    cur=`pwd`
+    bla=`basename $cur`
+    ax=`echo $bla|tr '_' ' '|awk '{print $1}'`
+    ah=`echo $bla|tr '_' ' '|awk '{print $2}'`
+    if [[ -z $ax || -z $ah ]];then
+	echo "usage $0 with arguments ax and ah";
+	exit
+    fi
+else
+    ax=$1
+    ah=$2
 fi
 
+#ah=`echo $ax $ay | awk '{print $1/$2}' `
+
+echo Integral scale horizontal:$ax, ratio $ah
 
 tg1='tmp.gnu'
 tg2='varioplots.tex'
@@ -16,7 +29,7 @@ echo 'set key bot right Left' >> $tg1
 echo 'set xlab offset 0,0.5 "Lag h [m]"' >> $tg1
 echo 'set ylab offset 2,0 "sv(h)=1/2N(h) {/Symbol S}_i(Z(m_i+h)-Z(m_i))^2"' >> $tg1
 
-tit="ax=$1, ax/az=$2"
+tit="ax=$ax, ax/az=$ah"
 echo $tit
 # r-variogram
 echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), '$tit', h = (x^2+z^2)^{1/2}"' >> $tg1
@@ -42,7 +55,7 @@ echo '"sph/inv.variogram" u 1:($2/sph) w lp lw 3 ti "sv(h),sph",\' >> $tg1
 echo '"smo/inv.variogram" u 1:($2/smo) w lp lw 3 ti "sv(h),smo"' >> $tg1
 
 # x-variogram
-tit="$1"
+tit="$ax"
 echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), a = ax ='$tit', h = hx = x"' >> $tg1
 echo 'set out "variograms_x.ps"' >> $tg1
 
@@ -66,7 +79,7 @@ echo '"sph/inv.variogram_x" u 1:($2/sph) w lp lw 3 ti "sv(h),sph",\' >> $tg1
 echo '"smo/inv.variogram_x" u 1:($2/smo) w lp lw 3 ti "sv(h),smo"' >> $tg1
 
 # y-variogram
-tit=`echo $1 $2 | awk '{print $1/$2}' `
+tit=`echo $ax $ah | awk '{print $1/$2}' `
 echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), a = az ='$tit', h = hz = x"' >> $tg1
 echo 'set out "variograms_y.ps"' >> $tg1
 
