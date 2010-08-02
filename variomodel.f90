@@ -66,41 +66,41 @@ CONTAINS
 
     SELECT CASE (c1) ! string for variogram function
     CASE (1) !Gaussian 
-       Ix_v = Ix_v/9. ! scale is changed to match GSlib standard
-       Iy_v = Iy_v/9.
-       WRITE (cszv,'(a)')'va(1-EXP(-(3h/a)**2))'
+       Ix_v = Ix_v / 3D0 ! scale is changed to match GSlib standard
+       Iy_v = Iy_v / 3D0 ! 4/7 is from Kitanidis..
+       WRITE (cszv,'(a)')'va(1-EXP(-(3h/a)^2))'
     CASE (2) ! Spherical
-       WRITE (cszv,'(a)')'va((1.5(h/a)-.5(h/a)**3),1)'
+       WRITE (cszv,'(a)')'va((1.5(h/a)-.5(h/a)^3),1)'
     CASE (3) ! Power
        READ (*,'(a)')cszv
        IF (cszv /= '')READ (cszv,*)omev
-       WRITE (cszv,'(a,F3.1)')'va(h/a)**',omev
+       WRITE (cszv,'(a,F3.1)')'va(h/a)^',omev
     CASE DEFAULT! exponential
-       Ix_v = Ix_v/3.! scale is changed to match GSlib standard
-       Iy_v = Iy_v/3.
+       Ix_v = Ix_v / 3D0! scale is changed to match GSlib standard
+       Iy_v = Iy_v / 3D0
        WRITE (cszv,'(a)')'va(1-EXP(-(3h/a)))'
     END SELECT
 
     SELECT CASE (c2)
     CASE (1) !Gaussian
-       Ix_c = Ix_c/9.! scale is changed to match GSlib standard
-       Iy_c = Iy_c/9.
-       WRITE (cszc,'(a)')'vaEXP(-(3h/a)**2)'
+       Ix_c = Ix_c / 3D0! scale is changed to match GSlib standard
+       Iy_c = Iy_c / 3D0
+       WRITE (cszc,'(a)')'vaEXP(-(3h/a)^2)'
     CASE (2) !Spherical
-       WRITE (cszc,'(a)')'va((1-1.5(h/a)+.5(h/a)**3),0)'
+       WRITE (cszc,'(a)')'va((1-1.5(h/a)+.5(h/a)^3),0)'
     CASE (3) !Power
        PRINT*,'Change power model exponent?[',omec,']'
        READ (*,'(a)')cszc
        IF (cszc /= '')READ (cszc,*)omec
-       WRITE (cszc,'(a,F3.1,a)')'EXP(-va*(h/a)**',omec,')'
+       WRITE (cszc,'(a,F3.1,a)')'EXP(-va*(h/a)^',omec,')'
     CASE (4)!Lemma
        PRINT*,'Change exponent factor?[',tfac,']'
        READ (*,'(a)')cszc
        IF (cszc /= '')READ (cszc,*)tfac
        WRITE (cszc,'(a,F3.1,a)')'EXP(-',tfac,'*variogram(h))'
     CASE DEFAULT!Exponential1
-       Ix_c = Ix_c/3.
-       Iy_c = Iy_c/3.
+       Ix_c = Ix_c / 3D0
+       Iy_c = Iy_c / 3D0
        WRITE (cszc,'(a)')'va*EXP(-3h/a)'
     END SELECT
     
@@ -109,7 +109,7 @@ CONTAINS
   SUBROUTINE get_vario (ax,ay,csz,type)
     INTEGER,INTENT(IN)              :: type 
 !!$! which info type=0 -> variogram type = 1->covariance
-    REAL (KIND(0D0)),INTENT (INOUT) :: ax,ay
+    REAL (KIND(0D0)),INTENT (OUT) :: ax,ay
     CHARACTER (*)                   :: csz
 ! gives back the integral scale used for the variogram
     ax = axs
@@ -158,8 +158,17 @@ CONTAINS
     mcova = 0.
     
     r = SQRT((lagx / Ix_c)**2. + (lagy / Iy_c)**2.)
-    r2 = r*r 
     
+    r2 = r*r 
+
+    r2 = r**1.99999 ! this is odd.. if we put it to 2., C_m is no longer
+!!$ pos definite.. but with 1.99999, which is in fact nearly 2. it is ok
+!!$ happens not all the time but sometimes..
+!!$ the digit can vary up to 7 digits behind the dot. With 8 digits it becomes
+!!$ somehow unstable..
+!!$ I took 5 digits to be sure.
+!!$ To me this sounds like a DOUBLE_PRECISION / SINGLE_PRECISION Problem..
+
     SELECT CASE (c2)
     CASE (1)
        mcova = varianz * EXP(-r2) !from GSlib

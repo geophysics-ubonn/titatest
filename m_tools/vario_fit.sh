@@ -35,7 +35,7 @@ asph=`awk '/asph =/{printf("%.4f\n",$3)}' variofit.dat`
 
 tgau="$sgau(1-exp(-(3h/$agau)**2))"
 texp="$sexp(1-exp(-(3h/$aexp)))"
-tsph="$ssph(1.5(x/$asph)-.5(x/$asph)**3)"
+tsph="$ssph(1.5(h/$asph)-.5(h/$asph)**3)"
 
 echo 'set tit "Variogram least squares fit"' > $gplt
 echo 'set xla offset 0,.5 "Lag (h)"' >> $gplt

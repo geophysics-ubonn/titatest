@@ -86,8 +86,7 @@ SUBROUTINE bvariogram
 !!$! gets the current variogram function parameters
   CALL get_vario(Ix,Iy,fetxt,0) 
 !!$  ! now prepare title string of gnuplot plot
-  WRITE (mti,'(3(a,F3.1))')'Integral length a=',SQRT(Ix**2.+Iy**2.),&
-       ', ax=',Ix,', ay=',Iy
+  WRITE (mti,'(2(a,F3.1))')'Integral length ax=',Ix,', ay=',Iy
 !!$     for postscript 
   tg = '{/Symbol g}'
   WRITE (tgam,'(a)')tg//'(h)='//TRIM(fetxt) 
