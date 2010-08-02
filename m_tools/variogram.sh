@@ -1,23 +1,37 @@
 #!/bin/bash
 
+if [ -z $3 ];then
+    variofunc='Experimental/Variogram function,'
+else
+    if [ "$3" == "Exp" ];then
+	variofunc='{/Symbol g}(h)=va*(1-EXP(-(3h/a))),'
+    elif [ "$3" == "Gau" ];then
+	variofunc='{/Symbol g}(h)=va*(1-EXP(-(3h/a)^2)),'
+    elif [ "$3" == "Sph" ];then
+	variofunc='{/Symbol g}(h)=va((1.5(h/a)-.5(h/a)**3),1),'
+    else
+	variofunc='Experimental/Variogram function,'
+    fi
+fi
+
 if [ -z $2 ];then
     echo trying to deduce arguments
     cur=`pwd`
     bla=`basename $cur`
     ax=`echo $bla|tr '_' ' '|awk '{print $1}'`
-    ah=`echo $bla|tr '_' ' '|awk '{print $2}'`
-    if [[ -z $ax || -z $ah ]];then
+    ay=`echo $bla|tr '_' ' '|awk '{print $2}'`
+    if [[ -z $ax || -z $ay ]];then
 	echo "usage $0 with arguments ax and ah";
 	exit
     fi
 else
     ax=$1
-    ah=$2
+    ay=$2
 fi
 
-#ah=`echo $ax $ay | awk '{print $1/$2}' `
+ah=`echo $ax $ay | awk '{print $1/$2}' `
 
-echo Integral scale horizontal:$ax, ratio $ah
+echo "$0 $variofunc with integral scale horizontal:$ax, ratio $ah"
 
 tg1='tmp.gnu'
 tg2='varioplots.tex'
@@ -32,7 +46,7 @@ echo 'set ylab offset 2,0 "sv(h)=1/2N(h) {/Symbol S}_i(Z(m_i+h)-Z(m_i))^2"' >> $
 tit="ax=$ax, ax/az=$ah"
 echo $tit
 # r-variogram
-echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), '$tit', h = (x^2+z^2)^{1/2}"' >> $tg1
+echo 'set tit "'$variofunc' '$tit', h = (x^2+z^2)^{1/2}"' >> $tg1
 echo 'set out "variograms.ps"' >> $tg1
 
 true=`tail -n 1 true/inv.variogram | awk '{print $3}' `
@@ -56,7 +70,7 @@ echo '"smo/inv.variogram" u 1:($2/smo) w lp lw 3 ti "sv(h),smo"' >> $tg1
 
 # x-variogram
 tit="$ax"
-echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), a = ax ='$tit', h = hx = x"' >> $tg1
+echo 'set tit "'$variofunc' a = ax ='$tit', h = hx = x"' >> $tg1
 echo 'set out "variograms_x.ps"' >> $tg1
 
 true=`tail -n 1 true/inv.variogram_x | awk '{print $3}' `
@@ -80,7 +94,7 @@ echo '"smo/inv.variogram_x" u 1:($2/smo) w lp lw 3 ti "sv(h),smo"' >> $tg1
 
 # y-variogram
 tit=`echo $ax $ah | awk '{print $1/$2}' `
-echo 'set tit "{/Symbol g}(h)=va*(1-EXP(-(3h/a))), a = az ='$tit', h = hz = x"' >> $tg1
+echo 'set tit "'$variofunc' a = az ='$tit', h = hz = z"' >> $tg1
 echo 'set out "variograms_y.ps"' >> $tg1
 
 true=`tail -n 1 true/inv.variogram_y  | awk '{print $3}' `
