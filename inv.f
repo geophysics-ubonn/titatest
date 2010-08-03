@@ -511,7 +511,7 @@ c     Felder zuruecksetzen
          IF (lrobust) wmatd = wmatd2
 
       end if
-      IF (itmax == 0) THEN
+      IF (itmax == 0) THEN ! only precalcs..
          errnr2 = 109
          print*,'Only precalcs'
          GOTO 30

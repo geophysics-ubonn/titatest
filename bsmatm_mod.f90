@@ -61,8 +61,7 @@ CONTAINS
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
-
-    PRINT*,ltri
+    errnr = 2
 
     CALL TIC(c1)
 
@@ -118,18 +117,21 @@ CONTAINS
        
        WRITE (*,'(a)')' Triangular Total variance (alpha)'
        CALL bsmatmtv
+
        
     ELSE IF (ltri == 15) THEN
        
        WRITE (*,'(a)')' Triangular Stochastic (beta)'
        CALL bsmatmsto
-       
+
+       IF (errnr /= 0) STOP
+
     ELSE
        
        WRITE (*,'(a)')' Error:: '// &
             'Regularization can just be '//&
             '0,1,3,4,5,6,7,8,9,10 or 15'
-       STOP
+       RETURN
        
     END IF
     

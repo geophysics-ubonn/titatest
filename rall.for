@@ -294,6 +294,9 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
      1        betamgs
       END IF      
 
+      IF (itmax == 0) PRINT*,
+     1' ####### Only precalcs, itmax==0 ###########'
+
 c check if the final phase should start with homogenous model      
       lffhom = (stabp0 < 0)
       IF (lffhom) stabp0 = -stabp0
