@@ -7,11 +7,10 @@ MODULE bmcm_mod
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lip,wmatd,wdfak
-  USE errmod , ONLY : errnr,fetxt
+  USE errmod , ONLY : errnr,fetxt,fprun
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
-  USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
 
