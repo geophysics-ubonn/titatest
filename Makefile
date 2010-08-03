@@ -51,6 +51,7 @@ f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  cg_mod.o bsmatm_mod.o bmcm_mod.o
 
 fcrt		= inv.o
+
 forcrt		= bbsedc.o bbsens.o bessi0.o bessi1.o \
 		  bessk0.o bessk1.o beta.o bkfak.o blam0.o \
 		  bpot.o brough.o broughsto.o broughtri.o bsendc.o \
@@ -103,6 +104,30 @@ $(fcrm):	%.o : %.f
 $(ferr):	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
+
+################################################################
+# Dependencies
+besp_elem.o:	alloci.o elemmod.o
+
+bvariogram.o:	invmod.o
+
+bmcm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
+		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
+		pathmod.o
+
+bnachbar.o:	alloci.o modelmod.o elemmod.o errmod.o konvmod.o
+
+bsmatm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
+		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
+		pathmod.o variomodel.o
+
+bvariogram.o:	invmod.o variomodel.o sigmamod.o modelmod.o elemmod.o \
+		errmod.o konvmod.o
+
+cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
+		konvmod.o modelmod.o datmod.o
+
+
 ###############################################################
 .SILENT:	cbn
 ###################################
