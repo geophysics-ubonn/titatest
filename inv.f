@@ -649,17 +649,6 @@ c Leitfaehigkeiten mit verbessertem Modell belegen
       CALL bsigma
       if (errnr.ne.0) goto 999
 
-c     Roughness bestimmen
-      IF (ltri == 0) THEN
-         CALL brough()
-      ELSE IF (ltri == 1.OR.ltri == 2.OR.
-     1        (ltri > 4 .AND. ltri < 15)) THEN
-         CALL broughtri
-      ELSE IF (ltri == 3.OR.ltri == 4) THEN
-         CALL broughlma
-      ELSE IF (ltri == 15) THEN
-         CALL broughsto
-      END IF
 
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()

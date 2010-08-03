@@ -62,8 +62,6 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
 
-    PRINT*,ltri
-
     CALL TIC(c1)
 
     IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz),STAT=errnr)
