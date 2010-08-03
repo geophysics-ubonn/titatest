@@ -61,10 +61,7 @@ CONTAINS
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
-<<<<<<< HEAD
     errnr = 2
-=======
->>>>>>> bdb481e37f3eee805916831adfae93cd60a9affc
 
     CALL TIC(c1)
 
