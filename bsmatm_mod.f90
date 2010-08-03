@@ -60,12 +60,9 @@ CONTAINS
     INTEGER (KIND = 4 )   :: c1
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!$    get time
-<<<<<<< HEAD
     errnr = 2
-=======
->>>>>>> bdb481e37f3eee805916831adfae93cd60a9affc
 
+!!!$    get time
     CALL TIC(c1)
 
     IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz),STAT=errnr)
