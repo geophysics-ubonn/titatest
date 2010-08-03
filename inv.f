@@ -33,6 +33,7 @@ c.....................................................................
       USE pathmod
       USE bsmatm_mod
       USE bmcm_mod
+      USE brough_mod
 
 c     USE portlib
 
@@ -649,7 +650,9 @@ c Leitfaehigkeiten mit verbessertem Modell belegen
       CALL bsigma
       if (errnr.ne.0) goto 999
 
-
+c     Roughness bestimmen
+      CALL brough
+      
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
       

@@ -142,8 +142,6 @@ c     ak Tank
 c     ak        mqrms = 2d-2
 c     ak MMAJ
 c     ak        mqrms = 5d-2
-c     Verbose output ?
-      lverb =.FALSE.
 c     CG-Epsilon
       eps = 1d-4
 c     Mindest-step-length
@@ -413,7 +411,7 @@ c Mega switch testing..
 
       lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
 
-      lverb = BTEST (mswitch,6) ! +64 Verbose output
+      lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
