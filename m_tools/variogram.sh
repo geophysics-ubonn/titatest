@@ -147,6 +147,14 @@ echo '\includegraphics[width=.5\textwidth]{exp/model.pdf}' >> $tg2
 echo '\includegraphics[width=.5\textwidth]{gau/model.pdf}' >> $tg2
 echo '\includegraphics[width=.5\textwidth]{sph/model.pdf}' >> $tg2
 echo '\clearpage' >> $tg2
+if [ -e diffs_exp_modl.pdf ];then
+    echo 'found diff plots!!'
+    echo '\fancyhead[C]{\Large\bf Relative differences}' >> $tg2    
+    for x in diffs_*_modl.pdf;do
+	echo "\includegraphics[width=.5\textwidth]{$x}" >> $tg2
+    done
+    echo '\clearpage' >> $tg2
+fi
 echo '\fancyhead[C]{\Large\bf Corresponding Variograms}' >> $tg2
 echo '\includegraphics[width=.5\textwidth]{variograms.pdf}' >> $tg2
 echo '\includegraphics[width=.5\textwidth]{variograms_x.pdf}' >> $tg2
