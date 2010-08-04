@@ -97,6 +97,7 @@ CONTAINS
     CASE (2) ! Spherical
        WRITE (cszv,'(a)')'va((1.5(h/a)-.5(h/a)^3),1)'
     CASE (3) ! Power
+       PRINT*,'Change power model exponent?[',omev,']'
        READ (*,'(a)')cszv
        IF (cszv /= '')READ (cszv,*)omev
        WRITE (cszv,'(a,F3.1)')'va(h/a)^',omev
