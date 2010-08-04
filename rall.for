@@ -142,8 +142,6 @@ c     ak Tank
 c     ak        mqrms = 2d-2
 c     ak MMAJ
 c     ak        mqrms = 5d-2
-c     Verbose output ?
-      lverb =.TRUE.
 c     CG-Epsilon
       eps = 1d-4
 c     Mindest-step-length
@@ -294,6 +292,9 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
      1        betamgs
       END IF      
 
+      IF (itmax == 0) PRINT*,
+     1' ####### Only precalcs, itmax==0 ###########'
+
 c check if the final phase should start with homogenous model      
       lffhom = (stabp0 < 0)
       IF (lffhom) stabp0 = -stabp0
@@ -412,6 +413,8 @@ c Mega switch testing..
       lcov2 = BTEST(mswitch,3) ! +8 posterior modell covariance matrix 2
 
       lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
+
+      lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1

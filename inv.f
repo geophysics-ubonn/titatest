@@ -33,6 +33,7 @@ c.....................................................................
       USE pathmod
       USE bsmatm_mod
       USE bmcm_mod
+      USE brough_mod
 
 c     USE portlib
 
@@ -511,7 +512,7 @@ c     Felder zuruecksetzen
          IF (lrobust) wmatd = wmatd2
 
       end if
-      IF (itmax == 0) THEN
+      IF (itmax == 0) THEN ! only precalcs..
          errnr2 = 109
          print*,'Only precalcs'
          GOTO 30
@@ -650,17 +651,8 @@ c Leitfaehigkeiten mit verbessertem Modell belegen
       if (errnr.ne.0) goto 999
 
 c     Roughness bestimmen
-      IF (ltri == 0) THEN
-         CALL brough()
-      ELSE IF (ltri == 1.OR.ltri == 2.OR.
-     1        (ltri > 4 .AND. ltri < 15)) THEN
-         CALL broughtri
-      ELSE IF (ltri == 3.OR.ltri == 4) THEN
-         CALL broughlma
-      ELSE IF (ltri == 15) THEN
-         CALL broughsto
-      END IF
-
+      CALL brough
+      
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
       
