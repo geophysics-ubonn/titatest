@@ -1,4 +1,16 @@
 MODULE bmcm_mod
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!$ Collection of subroutines to calculate linearized model 
+!!!$ uncertainty and resolution matrices for ERT (DC) and EIT (IP)
+!!!$ 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!$ Copyright by Andreas Kemna 2010
+!!!$
+!!!$ Created by Roland Martin               30-Jul-2010
+!!!$
+!!!$ Last changed       RM                  Jul-2010
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
   USE tic_toc ! counts calculation time
@@ -7,10 +19,11 @@ MODULE bmcm_mod
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lip,wmatd,wdfak
-  USE errmod , ONLY : errnr,fetxt,fprun
+  USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
+  USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
 
