@@ -65,16 +65,6 @@ echo $tit
 echo 'set tit "'$variofunc' '$tit', h = (x^2+z^2)^{1/2}"' >> $tg1
 echo 'set out "variograms.ps"' >> $tg1
 
-paste true/inv.variogram smo/inv.variogram|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > smo/diffs_inv.dat
-paste true/inv.variogram exp/inv.variogram|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > exp/diffs_inv.dat
-paste true/inv.variogram gau/inv.variogram|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > gau/diffs_inv.dat
-paste true/inv.variogram sph/inv.variogram|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > sph/diffs_inv.dat
-
-l1_smo=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' smo/diffs_inv.dat`
-l1_exp=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' exp/diffs_inv.dat`
-l1_gau=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' gau/diffs_inv.dat`
-l1_sph=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' sph/diffs_inv.dat`
-
 true=`tail -n 1 true/inv.variogram | awk '{print $3}' `
 smo=`tail -n 1 smo/inv.variogram | awk '{print $3}' `
 exp=`tail -n 1 exp/inv.variogram | awk '{print $3}' `
@@ -87,6 +77,16 @@ echo "exp=$exp" >> $tg1
 echo "gau=$gau" >> $tg1
 echo "sph=$sph" >> $tg1
 
+paste true/inv.variogram smo/inv.variogram|awk -v t=$true -v b=$smo '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > smo/diffs_inv.dat
+paste true/inv.variogram exp/inv.variogram|awk -v t=$true -v b=$exp '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > exp/diffs_inv.dat
+paste true/inv.variogram gau/inv.variogram|awk -v t=$true -v b=$gau '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > gau/diffs_inv.dat
+paste true/inv.variogram sph/inv.variogram|awk -v t=$true -v b=$sph '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > sph/diffs_inv.dat
+
+l1_smo=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' smo/diffs_inv.dat`
+l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv.dat`
+l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv.dat`
+l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv.dat`
+
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
 echo '"true/inv.variogram" u 1:($2/true) '$lw' lc 1 ti "sv(h),true",\' >> $tg1
@@ -94,10 +94,11 @@ echo '"exp/inv.variogram" u 1:($2/exp) '$lw' lc 2 ti "sv(h),exp",\' >> $tg1
 echo '"gau/inv.variogram" u 1:($2/gau) '$lw'  lc 3 ti "sv(h),gau",\' >> $tg1
 echo '"sph/inv.variogram" u 1:($2/sph) '$lw'  lc 4 ti "sv(h),sph",\' >> $tg1
 echo '"smo/inv.variogram" u 1:($2/smo) '$lw'  lc 5 ti "sv(h),smo",\' >> $tg1
-echo '"exp/diffs_inv.dat" u 1:($2*100) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp')",\' >> $tg1
-echo '"gau/diffs_inv.dat" u 1:($2*100) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau')",\' >> $tg1
-echo '"sph/diffs_inv.dat" u 1:($2*100) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph')",\' >> $tg1
-echo '"smo/diffs_inv.dat" u 1:($2*100) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo')"' >> $tg1
+# factor true/x is from the scaling: $exp/$true*(true/exp) -> normalized 
+echo '"exp/diffs_inv.dat" u 1:($2*(true/exp)) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp' %)",\' >> $tg1
+echo '"gau/diffs_inv.dat" u 1:($2*(true/gau)) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau' %)",\' >> $tg1
+echo '"sph/diffs_inv.dat" u 1:($2*(true/sph)) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph' %)",\' >> $tg1
+echo '"smo/diffs_inv.dat" u 1:($2*(true/smo)) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo' %)"' >> $tg1
 
 
 # x-variogram
@@ -105,26 +106,28 @@ tit="$ax"
 echo 'set tit "'$variofunc' a = ax ='$tit', h = hx = x"' >> $tg1
 echo 'set out "variograms_x.ps"' >> $tg1
 
-paste true/inv.variogram_x smo/inv.variogram_x|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > smo/diffs_inv_x.dat
-paste true/inv.variogram_x exp/inv.variogram_x|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > exp/diffs_inv_x.dat
-paste true/inv.variogram_x gau/inv.variogram_x|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > gau/diffs_inv_x.dat
-paste true/inv.variogram_x sph/inv.variogram_x|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > sph/diffs_inv_x.dat
-l1_smo=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' smo/diffs_inv_x.dat`
-l1_exp=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' exp/diffs_inv_x.dat`
-l1_gau=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' gau/diffs_inv_x.dat`
-l1_sph=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' sph/diffs_inv_x.dat`
-
-
 true=`tail -n 1 true/inv.variogram_x | awk '{print $3}' `
 smo=`tail -n 1 smo/inv.variogram_x | awk '{print $3}' `
 exp=`tail -n 1 exp/inv.variogram_x | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram_x | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram_x | awk '{print $3}' `
+
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
 echo "gau=$gau" >> $tg1
 echo "sph=$sph" >> $tg1
+
+
+paste true/inv.variogram_x smo/inv.variogram_x|awk -v t=$true -v b=$smo '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > smo/diffs_inv_x.dat
+paste true/inv.variogram_x exp/inv.variogram_x|awk -v t=$true -v b=$exp '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > exp/diffs_inv_x.dat
+paste true/inv.variogram_x gau/inv.variogram_x|awk -v t=$true -v b=$gau '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > gau/diffs_inv_x.dat
+paste true/inv.variogram_x sph/inv.variogram_x|awk -v t=$true -v b=$sph '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > sph/diffs_inv_x.dat
+
+l1_smo=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' smo/diffs_inv_x.dat`
+l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv_x.dat`
+l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv_x.dat`
+l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv_x.dat`
 
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram_x" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
@@ -133,24 +136,15 @@ echo '"exp/inv.variogram_x" u 1:($2/exp) '$lw' lc 2 ti "sv(h),exp",\' >> $tg1
 echo '"gau/inv.variogram_x" u 1:($2/gau) '$lw'  lc 3 ti "sv(h),gau",\' >> $tg1
 echo '"sph/inv.variogram_x" u 1:($2/sph) '$lw'  lc 4 ti "sv(h),sph",\' >> $tg1
 echo '"smo/inv.variogram_x" u 1:($2/smo) '$lw'  lc 5 ti "sv(h),smo",\' >> $tg1
-echo '"exp/diffs_inv_x.dat" u 1:($2*100) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp')",\' >> $tg1
-echo '"gau/diffs_inv_x.dat" u 1:($2*100) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau')",\' >> $tg1
-echo '"sph/diffs_inv_x.dat" u 1:($2*100) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph')",\' >> $tg1
-echo '"smo/diffs_inv_x.dat" u 1:($2*100) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo')"' >> $tg1
+echo '"exp/diffs_inv_x.dat" u 1:($2) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp' %)",\' >> $tg1
+echo '"gau/diffs_inv_x.dat" u 1:($2) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau' %)",\' >> $tg1
+echo '"sph/diffs_inv_x.dat" u 1:($2) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph' %)",\' >> $tg1
+echo '"smo/diffs_inv_x.dat" u 1:($2) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo' %)"' >> $tg1
 
 # y-variogram
 tit=`echo $ax $ah | awk '{print $1/$2}' `
 echo 'set tit "'$variofunc' a = az ='$tit', h = hz = z"' >> $tg1
 echo 'set out "variograms_y.ps"' >> $tg1
-
-paste true/inv.variogram_y smo/inv.variogram_y|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > smo/diffs_inv_y.dat
-paste true/inv.variogram_y exp/inv.variogram_y|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > exp/diffs_inv_y.dat
-paste true/inv.variogram_y gau/inv.variogram_y|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > gau/diffs_inv_y.dat
-paste true/inv.variogram_y sph/inv.variogram_y|awk '!/#/{a=(1-($6/$2));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a),$2,$6)}' > sph/diffs_inv_y.dat
-l1_smo=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' smo/diffs_inv_y.dat`
-l1_exp=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' exp/diffs_inv_y.dat`
-l1_gau=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' gau/diffs_inv_y.dat`
-l1_sph=`awk '{sum+=$2} END {printf("%.1f\n",sum/(NR)*100.)}' sph/diffs_inv_y.dat`
 
 true=`tail -n 1 true/inv.variogram_y  | awk '{print $3}' `
 smo=`tail -n 1 smo/inv.variogram_y  | awk '{print $3}' `
@@ -163,6 +157,17 @@ echo "exp=$exp" >> $tg1
 echo "gau=$gau" >> $tg1
 echo "sph=$sph" >> $tg1
 
+
+paste true/inv.variogram_y smo/inv.variogram_y|awk -v t=$true -v b=$smo '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > smo/diffs_inv_y.dat
+paste true/inv.variogram_y exp/inv.variogram_y|awk -v t=$true -v b=$exp '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > exp/diffs_inv_y.dat
+paste true/inv.variogram_y gau/inv.variogram_y|awk -v t=$true -v b=$gau '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > gau/diffs_inv_y.dat
+paste true/inv.variogram_y sph/inv.variogram_y|awk -v t=$true -v b=$sph '!/#/{a=(1-($6/$2)*(t/b));printf("%f\t%f\t%f\t%f\n",$1,sqrt(a*a)*100,$2,$6)}' > sph/diffs_inv_y.dat
+l1_smo=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' smo/diffs_inv_y.dat`
+l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv_y.dat`
+l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv_y.dat`
+l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv_y.dat`
+
+
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram_y" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
 echo '"true/inv.variogram_y" u 1:($2/true) '$lw' lc 1 ti "sv(h),true",\' >> $tg1
@@ -170,10 +175,10 @@ echo '"exp/inv.variogram_y" u 1:($2/exp) '$lw' lc 2 ti "sv(h),exp",\' >> $tg1
 echo '"gau/inv.variogram_y" u 1:($2/gau) '$lw'  lc 3 ti "sv(h),gau",\' >> $tg1
 echo '"sph/inv.variogram_y" u 1:($2/sph) '$lw'  lc 4 ti "sv(h),sph",\' >> $tg1
 echo '"smo/inv.variogram_y" u 1:($2/smo) '$lw'  lc 5 ti "sv(h),smo",\' >> $tg1
-echo '"exp/diffs_inv_y.dat" u 1:($2*100) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp')",\' >> $tg1
-echo '"gau/diffs_inv_y.dat" u 1:($2*100) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau')",\' >> $tg1
-echo '"sph/diffs_inv_y.dat" u 1:($2*100) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph')",\' >> $tg1
-echo '"smo/diffs_inv_y.dat" u 1:($2*100) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo')"' >> $tg1
+echo '"exp/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 2 ti "exp/true(L1='$l1_exp' %)",\' >> $tg1
+echo '"gau/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau' %)",\' >> $tg1
+echo '"sph/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph' %)",\' >> $tg1
+echo '"smo/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo' %)"' >> $tg1
 
 gnuplot < $tg1
 
