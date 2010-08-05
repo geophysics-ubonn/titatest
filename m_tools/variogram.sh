@@ -120,7 +120,7 @@ gnuplot < $tg1
 
 my_pscrop ./
 
-echo '\documentclass[12pt,a4]{article}' >> $tg2
+echo '\documentclass[12pt,a4]{article}' > $tg2
 echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $tg2
 echo '\usepackage[T1]{fontenc}' >> $tg2
 echo '\usepackage[utf8]{inputenc}' >> $tg2
@@ -151,6 +151,7 @@ if [ -e diffs_exp_modl.pdf ];then
     echo 'found diff plots!!'
     echo '\fancyhead[C]{\Large\bf Relative differences}' >> $tg2    
     for x in diffs_*_modl.pdf;do
+	echo include $x
 	echo "\includegraphics[width=.5\textwidth]{$x}" >> $tg2
     done
     echo '\clearpage' >> $tg2
