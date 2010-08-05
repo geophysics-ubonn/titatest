@@ -493,7 +493,7 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
-      ncgmax = manz ! useful for small scale model variations
+      ncgmax = manz / 2 ! useful for small scale model variations
 !     for normal smooth and damping we usually need fewer CG iterations;
 !     because the model variations are of bigger scale size
       IF (ltri < 5) ncgmax = ncgmax / 10
