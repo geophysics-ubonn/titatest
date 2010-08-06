@@ -416,6 +416,8 @@ c Mega switch testing..
 
       lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
 
+      IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
+
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
 c
