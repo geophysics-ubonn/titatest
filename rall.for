@@ -416,6 +416,8 @@ c Mega switch testing..
 
       lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
 
+      IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
+
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
       lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
 c
@@ -493,7 +495,7 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
 
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
-      ncgmax = manz ! useful for small scale model variations
+      ncgmax = manz / 2 ! useful for small scale model variations
 !     for normal smooth and damping we usually need fewer CG iterations;
 !     because the model variations are of bigger scale size
       IF (ltri < 5) ncgmax = ncgmax / 10

@@ -1,11 +1,36 @@
 MODULE variomodel
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!$ Collection of subroutines to evaluate variogram and covariance 
+!!!$ functions for anisotrop or isotrop lag values  
+!!!$ 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!$ Copyright by Andreas Kemna 2010
+!!!$
+!!!$ Created by Roland Martin               30-Jul-2010
+!!!$
+!!!$ Last changed       RM                  Jul-2010
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
   IMPLICIT none
+
   PUBLIC :: set_vario
+!!!$ this sets the type opf variogram and covariance functions which may 
+!!!$ differ. For e.g. one may choose exponetial model as variogram 
+!!!$ function but a spherical model as covariance function ...
   PUBLIC :: get_vario
+!!!$ this gets the current setting of vario or covario function types
+!!!$ (i.e. model type)
   PUBLIC :: mvario
+!!!$ returns the variogram function for (an)isotrope lag values
   PUBLIC :: mcova
+!!!$ returns the covariance function for (an)isotrope lag values
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!   This was decoupeled from CRTomo momory before the main       !!!!!
+!!!!   memory model changed, so the SAVE variables are less nice    !!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !!!$ c1 accounts for the variogram model
 !!!$ c2 accounts for the covariance model
