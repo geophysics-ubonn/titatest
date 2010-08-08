@@ -716,8 +716,8 @@ CONTAINS
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
 !!!$    Schwerpunktskoordinaten der Flaechenelemente ij
     REAL(KIND(0D0)) :: h,sd_el
-!!!$    Korrelation lengths and variance (var)
-    REAL(KIND(0D0))      :: hx,hy,var
+!!!$    Korrelation lengths, variance (var) and nugget
+    REAL(KIND(0D0))      :: hx,hy,var,nugget
 !!!$    gibt es evtl schon eine inverse?
     logical              :: ex,exc        
 !!!$    Hilfsvariablen
@@ -732,6 +732,7 @@ CONTAINS
     CALL get_unit(ifp)
 
     var = 1.
+    nugget = 0.001
 
     fsmat = ramd(1:lnramd)//slash(1:1)//'inv.smatmi'
 
@@ -753,7 +754,7 @@ CONTAINS
 
 !!!$    Belege die Matrix
 
-    smatm = var
+    smatm = 0.0
 
     INQUIRE(FILE=fsmat,EXIST=ex) !!!$already an inverse c_m ?
 
@@ -764,7 +765,7 @@ CONTAINS
             FORM='unformatted')
        READ (ifp) i
        IF (i == manz) THEN
-          WRITE(*,'(a)')'ok!'
+          WRITE(*,'(t40,a)')'ok!'
           READ (ifp) smatm
        END IF
        CLOSE (ifp)
@@ -777,14 +778,18 @@ CONTAINS
           WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',&
                REAL(i*(100./manz)),'%'
 
+          smatm(i,i) = var ! nugget (=variance) effect on the main
+!!!$ R(h) = C_0 \delta(h)  = 
+!!!$ \begin{case} C_0 & \mbox{if}\;h = 0 \\ 0 & else \end{case}
+          
           DO j = i+1 , manz   !!!$fills upper triangle
 
              hx = (espx(i) - espx(j))
              hy = (espy(i) - espy(j))
 
-             smatm(i,j) = mcova(hx,hy,var)
+             smatm(i,j) = mcova(hx,hy,var) ! computes proper covariance
 
-             smatm(j,i) = smatm(i,j) !!!$upper triangle
+             smatm(j,i) = smatm(i,j) ! lower triangle triangle
 
           END DO
        END DO

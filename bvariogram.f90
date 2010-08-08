@@ -1,12 +1,12 @@
 SUBROUTINE bvariogram
 !!$c     
-!!$c     Unterprogramm zum Bestimmen von Variogrammen
+!!$c     Unterprogramm zum Bestimmen von Experimentellen Variogrammen
 !!$c     
 !!$c     Copyright by Andreas Kemna
 !!$c     
-!!$c     Erste Version von Roland Martin                          19-Mar-2010
+!!$c     Created by Roland Martin                             19-Mar-2010
 !!$c     
-!!$c     Letzte Aenderung                                         23-Mar-2010
+!!$c     Letzte Aenderung                                     23-Mar-2010
 !!$c     
 !!$c.....................................................................
 
