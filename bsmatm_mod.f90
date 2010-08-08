@@ -18,7 +18,7 @@ MODULE bsmatm_mod
   USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz
   USE invmod , ONLY : lip,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt
@@ -824,18 +824,26 @@ CONTAINS
           END DO
        END IF
 
-       IF (errnr==0) THEN
-          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'got inverse and write out'
-          OPEN (ifp,FILE=fsmat,STATUS='replace',ACCESS='sequential',&
-               FORM='unformatted')
-          WRITE (ifp) manz
-          WRITE (ifp) smatm
-          CLOSE (ifp)
+       IF (errnr == 0) THEN
+          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'got inverse'
+          IF (lverb) THEN
+             WRITE (*,'(a)',ADVANCE='no')' .. write out'//TRIM(fsmat)
+             OPEN (ifp,FILE=fsmat,STATUS='replace',ACCESS='sequential',&
+                  FORM='unformatted')
+             WRITE (ifp) manz
+             WRITE (ifp) smatm
+             CLOSE (ifp)
+          END IF
+
        ELSE
+
           PRINT*,'got NO inverse'
           errnr = 108
           RETURN
+
        END IF
+
+
     END IF
 
   END SUBROUTINE bsmatmsto
