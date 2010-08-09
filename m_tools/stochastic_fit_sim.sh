@@ -32,8 +32,7 @@ elif [ "$mode" == "Sph" ];then
 else
     exit
 fi
-for x in *_$mode;do
-    
+for x in *_$mode;do    
     ix=`echo $x|tr '_' ' '|awk '{print $2}'`
     iy=`echo $x|tr '_' ' '|awk '{print $4}'`
 # integral scale will be overwritten in this script..
