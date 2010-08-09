@@ -21,7 +21,7 @@ skel=$cur/skel
 mode=`basename $cur`
 
 if [ "$mode" == "Exp" ];then
-    echo "setting Exponential model"
+    echo "setting Exponential model 2"
     rsto=(0 0 0 10 20)
 elif [ "$mode" == "Gau" ];then
     echo "setting Gauss model"
@@ -33,7 +33,7 @@ else
     exit
 fi
 
-for x in "Ix*_$mode";do
+for x in *_$mode;do
     ix=`echo $x|tr '_' ' '|awk '{print $2}'`
     iy=`echo $x|tr '_' ' '|awk '{print $4}'`
     echo ix:$ix iy:$iy
