@@ -738,6 +738,7 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
       IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
       IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+      IF (ALLOCATED (espx)) DEALLOCATE (espx,espy)
 
       IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
       IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
