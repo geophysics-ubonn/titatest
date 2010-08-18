@@ -95,7 +95,7 @@ c     bestimmen
 !!$ get memory for the regular element midpoint coordinates
       ALLOCATE (espx(elanz),espy(elanz),stat=errnr)
       IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation spx failed'
+         fetxt = 'Error memory allocation espx failed'
          errnr = 94
          GOTO 999
       END IF
