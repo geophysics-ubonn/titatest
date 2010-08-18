@@ -285,7 +285,7 @@ c     ak                    write(*,*) i
          wmatd(i) = wmatdr(i)
 c     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
          IF (.NOT.ldc) THEN
-            wmatd(i)=1d0/(stabw**2.+stabwp**2.)
+            IF (lelerr) wmatd(i)=1d0/(stabw**2.+stabwp**2.)
             wmatdp(i)=1d0/(stabwp**2.)
          END IF
          wdfak(i) = 1
