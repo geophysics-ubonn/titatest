@@ -14,7 +14,7 @@ c.....................................................................
       USE elemmod
       USE wavenmod
       USE errmod
-
+      USE konvmod, ONLY : lsytop
       IMPLICIT none
 
 
@@ -68,7 +68,11 @@ c.....................................................................
          GOTO 1000
       END IF
 
-      CALL bsytop
+      IF (lsytop) THEN
+         CALL bsytop
+      ELSE
+         sytop = 0.
+      END IF
 
       do i=1,typanz
          ntyp = typ(i)
@@ -193,7 +197,10 @@ c     Elementbeitraege berechnen
  10      continue
       end do
 
+      IF (ALLOCATED (xk)) DEALLOCATE (xk,yk,elmas,elmam,elve)
+
       errnr = 0
+
       return
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

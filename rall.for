@@ -416,6 +416,11 @@ c Mega switch testing..
 
       lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
 
+      lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
+! no flow boundary electrodes for enhanced beta calculation (bsytop). 
+!     This is useful for including topographical effects and should be used
+
+
       IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
