@@ -8,7 +8,7 @@ c     Unterprogramm zum Einlesen der benoetigten Variablen.
 
 c     Andreas Kemna                                            01-Mar-1995
 c     Letzte Aenderung   20-Aug-2007
-c
+c     
 c.....................................................................
 
       USE make_noise
@@ -55,7 +55,7 @@ c     diff+>
 c     Schalter ob weiterer Datensatz invertiert werden soll
       logical         * 4     lagain
       logical         * 4     lsto
-c check whether the file format is crtomo konform or not..
+c     check whether the file format is crtomo konform or not..
       logical           ::    crtf
 
 c.....................................................................
@@ -87,8 +87,8 @@ c.....................................................................
 c     'crtomo.cfg' EINLESEN
       fetxt = 'crtomo.cfg'
       errnr = 3
-c################# DEFAULTS ########################
-c### switches 
+c#################DEFAULTS ########################
+c###  switches 
 c     ro        lsr    = .false.
 c     ro        lpol   = .true.
 c     ro        lfphai = .true.
@@ -109,7 +109,7 @@ c     'dstart'
 c     ak        lstart = .true.
 c     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
       ltri   = 0
-      lsto = .false. !default--
+      lsto = .false.            !default--
 c     "Force negative phase" ?
 c     sandra        lphi0 = .true.
       lphi0 = .FALSE.
@@ -118,11 +118,11 @@ c     "ratio-dataset" ?
       lratio = .false.
 c     ak        lratio = .true.
       llamf = .FALSE.
-c final phase improvement setzt phase zueruck auf homogenes modell
+c     final phase improvement setzt phase zueruck auf homogenes modell
       lffhom = .FALSE.
 c     Daten Rauschen vom Fehlermodell entkoppeln ?
       lnse2 = .FALSE.
-c###### values..
+c######values..
 c     FIXED PARAMETER
 c     Slash
       slash = '/'
@@ -165,7 +165,7 @@ c     ak        fstop  = 0.8d0
       mswitch = 0
       iregus = 0
 c#########################################################
-c Read in input values..
+c     Read in input values..
       fetxt = 'rall -> grid file'
       read(fpcfg,*,end=1001,err=98) mswitch
  98   read(fpcfg,'(a80)',end=1001,err=999) delem
@@ -189,7 +189,7 @@ c     diff+<
 
       IF (dm0 /= '') THEN
          INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
-         IF (lstart) THEN ! set the starting model
+         IF (lstart) THEN       ! set the starting model
             dstart = dm0
             PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
          ELSE
@@ -199,8 +199,8 @@ c     diff+<
       END IF
       IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
          PRINT*,'Reference model regularization!'
-         lprior = .TRUE. ! reference model regu only if there is no
-         ldiff = .FALSE. ! time difference inversion
+         lprior = .TRUE.        ! reference model regu only if there is no
+         ldiff = .FALSE.        ! time difference inversion
       END IF
 c     diff+>
       fetxt = 'trying noise model seed'
@@ -266,7 +266,7 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
          llamf = .TRUE.
          READ(fpcfg,*,end=104,err=104) lamfix
 	 GOTO 105
- 104     lamfix = 1.0         ! default value for MGS
+ 104     lamfix = 1.0           ! default value for MGS
          BACKSPACE(fpcfg)
 
  105     PRINT*,'Fixing Lambda =', lamfix
@@ -293,17 +293,17 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
       END IF      
 
       IF (itmax == 0) PRINT*,
-     1' ####### Only precalcs, itmax==0 ###########'
+     1     ' ####### Only precalcs, itmax==0 ###########'
 
-c check if the final phase should start with homogenous model      
+c     check if the final phase should start with homogenous model      
       lffhom = (stabp0 < 0)
       IF (lffhom) stabp0 = -stabp0
       
-      lnse = ( stabw0 < 0 ) ! couple error and noise model
+      lnse = ( stabw0 < 0 )     ! couple error and noise model
       IF ( lnse ) THEN
          stabw0 = -stabw0
          IF (lnse2) print*,'overriding seperate noise model'
-         lnse2 = .FALSE. ! overrides the lnse2 switch
+         lnse2 = .FALSE.        ! overrides the lnse2 switch
 c     copy error model into noise model
          nstabw0 = stabw0
          nstabm0 = stabm0
@@ -339,7 +339,7 @@ c     check if there is at least crt.noisemod containig noise info
          modl_stdn = 0.
          iseedpri = 0
          
-         lnse = .TRUE. ! add noise
+         lnse = .TRUE.          ! add noise
 
       END IF
 
@@ -359,10 +359,10 @@ c     Ggf. Fehlermeldungen
          fetxt = ' '
          errnr = 89
          goto 999
-c$$$      else if (alfx.le.0d0.or.alfz.le.0d0) then
-c$$$         fetxt = ' '
-c$$$         errnr = 96
-c$$$         goto 999
+c$$$  else if (alfx.le.0d0.or.alfz.le.0d0) then
+c$$$  fetxt = ' '
+c$$$  errnr = 96
+c$$$  goto 999
       else if (itmax<0.or.itmax.ge.100) then
          fetxt = ' '
          errnr = 61
@@ -406,28 +406,31 @@ c     errnr = 90
 c     goto 999
       end if
 
-c Mega switch testing..
-      lsens = BTEST(mswitch,0) ! +1 ueberdeckung schreiben
-      lcov1 = BTEST(mswitch,1) ! +2 posterior modell covariance matrix 1
-      lres  = BTEST(mswitch,2) ! +4 rsolution matrix berechnen
-      lcov2 = BTEST(mswitch,3) ! +8 posterior modell covariance matrix 2
+      lelerr = .NOT.lfphai.AND..NOT.ldc ! complex inversion only
 
+c     (mswitch) Mega switch testing..
+      lsens = BTEST(mswitch,0)  ! +1 ueberdeckung schreiben
+      lcov1 = BTEST(mswitch,1)  ! +2 posterior modell covariance matrix 1
+      lres  = BTEST(mswitch,2)  ! +4 rsolution matrix berechnen
+      lcov2 = BTEST(mswitch,3)  ! +8 posterior modell covariance matrix 2
+      
       lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
-
-      lverb = BTEST (mswitch,6) ! +64 Verbose output CG, daten, bnachbar..
-
+      
+      lelerr = BTEST (mswitch,5).OR.lelerr ! +32 overwrites previous lelerr
+      
       lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
-! no flow boundary electrodes for enhanced beta calculation (bsytop). 
+!     no flow boundary electrodes for enhanced beta calculation (bsytop). 
 !     This is useful for including topographical effects and should be used
-
-
+      
+      lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
+      
       IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
 
       lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
-      lcov1 = (lres.or.lcov1)  ! compute resolution by taking mcm1
-c
-      lsens = .TRUE. ! default immer coverages schreiben..
-c
+      lcov1 = (lres.or.lcov1)   ! compute resolution by taking mcm1
+c     
+      lsens = .TRUE.            ! default immer coverages schreiben..
+c     
       if (lratio) then
          lrho0  = .true.
          lstart = .false.
@@ -457,8 +460,8 @@ c     Elementeinteilung einlesen
       if (errnr.ne.0) goto 999
 
       IF (ltri/=0) THEN
-         manz = elanz ! wichtig an dieser stelle..
-         CALL bnachbar ! blegt nachbar
+         manz = elanz           ! wichtig an dieser stelle..
+         CALL bnachbar          ! blegt nachbar
          CALL besp_elem
          lvario = .TRUE.
       ELSE
@@ -484,23 +487,23 @@ c     Modelleinteilung gemaess Elementeinteilung belegen
          errnr = 50
          goto 999
       end if
-!!$ get memory for mnr..
+!     !$ get memory for mnr..
       ALLOCATE (mnr(elanz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation mnr failed'
          errnr = 94
          goto 999
       END IF
-!!$ set mnr.. this may be altered if we have zonal approach..
+!     !$ set mnr.. this may be altered if we have zonal approach..
       do i=1,elanz
          mnr(i) = i
       end do
-!!$ all the model mapping is than beased on a new numbering..
-!!$ zonal approach ?
+!     !$ all the model mapping is than beased on a new numbering..
+!     !$ zonal approach ?
 
 c     Maximale Anzahl an CG-steps setzen
 c     ak        ncgmax = manz
-      ncgmax = manz / 2 ! useful for small scale model variations
+      ncgmax = manz / 2         ! useful for small scale model variations
 !     for normal smooth and damping we usually need fewer CG iterations;
 !     because the model variations are of bigger scale size
       IF (ltri < 5) ncgmax = ncgmax / 10
@@ -512,9 +515,9 @@ c     bestimmen
 
       IF (lsink) THEN
          WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
-     1     nsink,sx(snr(nsink)),sy(snr(nsink))
+     1        nsink,sx(snr(nsink)),sy(snr(nsink))
          WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
-     1     nsink,sx(snr(nsink)),sy(snr(nsink))
+     1        nsink,sx(snr(nsink)),sy(snr(nsink))
       END IF
 
       call rdati (kanal,dstrom)

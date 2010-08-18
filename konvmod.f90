@@ -133,5 +133,9 @@ MODULE konvmod
 !!$ no flow boundary electrodes for enhanced beta calculation (bsytop). 
 !!$  This is useful for including topographical effects and should be used
   LOGICAL,PUBLIC  ::     lsytop
+!!!$ switch to regard error ellipses in complex plane 
+!!!$ is srt false as default if we have FPI but may be overwritten with
+!!!$ mswitch + 32 setting it to true
+  LOGICAL, PUBLIC ::     lelerr
 
 END MODULE konvmod

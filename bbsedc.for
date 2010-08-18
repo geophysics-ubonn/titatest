@@ -61,8 +61,8 @@ c     Werte berechnen
          kpotdc(i2,l,4) = 0d0
 
          do i=1,nanz
-            dum2 = SQRT(sensdc(i,j)*sensdc(i,j)*
-     1           wmatd(i)*dble(wdfak(i)))
+            dum2 = SQRT(sensdc(i,j)*sensdc(i,j))*
+     1           wmatd(i)*dble(wdfak(i))
             kpotdc(i2,l,1) = kpotdc(i2,l,1) + dum2
          end do
 
