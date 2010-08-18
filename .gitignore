@@ -2,6 +2,7 @@
 CRMod
 CRTomo
 crerror.h
+*.mod
 *#
 .#*
 *.log
