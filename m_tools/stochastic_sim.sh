@@ -33,12 +33,13 @@ else
     exit
 fi
 
+crm_skel=crm_skel
+
 for x in *_$mode;do
     ix=`echo $x|tr '_' ' '|awk '{print $2}'`
     iy=`echo $x|tr '_' ' '|awk '{print $4}'`
     echo ix:$ix iy:$iy
     cd $x
-    crm_skel=crm_skel
     if [ -d "$crm_skel" ];then
 	echo $crm_skel exists
     else
@@ -70,7 +71,9 @@ for x in *_$mode;do
 	    cd exe
 	    date
 	    pwd
-	    cp $skel/exe/crtomo.cfg .
+	    if [ -d $skel ];then
+		cp $skel/exe/crtomo.cfg .
+	    fi
 	    mybin='CRTomo_'$x'_'$z
 	    cp ~/bin/CRTomo_`uname -n` ./$mybin
 	    sed -in "s/INVDR/\.\.\/inv/g" crtomo.cfg
