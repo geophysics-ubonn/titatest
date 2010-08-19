@@ -461,6 +461,8 @@ c     (mswitch) Mega switch testing..
       lgauss = BTEST (mswitch,4) ! +16 solve ols with Gauss elemination
       
       lelerr = BTEST (mswitch,5).OR.lelerr ! +32 overwrites previous lelerr
+
+      lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
       
       lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
 !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
