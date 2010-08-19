@@ -47,11 +47,13 @@ MODULE Make_noise
 !!$ and fills the parameters for the noise model
 !!$---------------------------------------------------------------------
 
-    SUBROUTINE get_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+    SUBROUTINE get_noisemodel(iseed,wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ Integer seed
+      INTEGER ( KIND = 4 ),INTENT(INOUT) :: iseed 
 !!!$ widerstand noise model output parameters
-      REAL(KIND(0D0)),INTENT(INOUT)   :: wa,w0
+      REAL(KIND(0D0)),INTENT(INOUT)      :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
-      REAL(KIND(0D0)),INTENT(INOUT)   :: pa1,pb,pa2,p0
+      REAL(KIND(0D0)),INTENT(INOUT)      :: pa1,pb,pa2,p0
       CHARACTER (80) :: buff
       INTEGER        :: ifp,ierr
       LOGICAL        :: exi
@@ -64,47 +66,51 @@ MODULE Make_noise
          PRINT*,'reading NOISE model '//TRIM(buff)
          CALL get_unit(ifp)
          OPEN(ifp,FILE=TRIM(buff),STATUS='old')
-         csz = 'Relativer Fehler Widerstand [%]('//TRIM(buff)//')'
+         csz = 'Seed ('//TRIM(buff)//')'
+         READ (ifp,*) iseed
+         csz = 'Relative error resistance [%]('//TRIM(buff)//')'
          READ (ifp,*) wa
          WRITE (*,*)TRIM(csz)//':',wa
-         csz = 'Absoluter Fehler Widerstand [Ohm m] ('//TRIM(buff)//')'
+         csz = 'Absolute errior resistance [Ohm m] ('//TRIM(buff)//')'
          READ (ifp,*) w0
          WRITE (*,*)TRIM(csz)//':',w0
-         csz = 'Phasenfehlerparameter A1 [mRad/Ohm/m]('//TRIM(buff)//')'
+         csz = 'Phase error parameter A1 [mRad/Ohm/m]('//TRIM(buff)//')'
          READ (ifp,*) pa1
          WRITE (*,*)TRIM(csz)//':',pa1
-         csz = 'Phasenfehlerparameter B []('//TRIM(buff)//')'
+         csz = 'Phase error parameter B1 []('//TRIM(buff)//')'
          READ (ifp,*) pb
          WRITE (*,*)TRIM(csz)//':',pb
-         csz = 'Relativer Fehler Phasen A2 [%]('//TRIM(buff)//')'
+         csz = 'Relative phase error A2 [%]('//TRIM(buff)//')'
          READ (ifp,*) pa2
          WRITE (*,*)TRIM(csz)//':',pa2
-         csz = 'Absoluter Fehler Phasen p0 [mRad] ('//TRIM(buff)//')'
+         csz = 'Absolute phase error p0 [mRad] ('//TRIM(buff)//')'
          READ (ifp,*) p0
          WRITE (*,*)TRIM(csz)//':',p0
          CLOSE (ifp)
       ELSE
-         pb = wa
+         pb = wa ; iseed = 1 ! defaults
          PRINT*,'Taking standard deviation',wa
          w0 = 0.;pb = 0.; pa2 = 0.;p0 = 0.
       END IF
-
-      IF (wa < 0) THEN
+      IF (iseed < 0 ) THEN
+         PRINT*,'seed < 0!!'
+         RETURN
+      ELSE IF (wa < 0.) THEN
          PRINT*,'A < 0!!'
          RETURN
-      ELSE IF (w0 < 0) THEN
+      ELSE IF (w0 < 0.) THEN
          PRINT*,'B < 0!!'
          RETURN
-      ELSE IF (pa1 < 0) THEN
+      ELSE IF (pa1 < 0.) THEN
          PRINT*,'A1 < 0!!'
          RETURN
-      ELSE IF (pb < 0) THEN
+      ELSE IF (pb < 0.) THEN
          PRINT*,'B1 < 0!!'
          RETURN
-      ELSE IF (pa2 < 0) THEN
+      ELSE IF (pa2 < 0.) THEN
          PRINT*,'A2 < 0!!'
          RETURN
-      ELSE IF (p0 < 0) THEN
+      ELSE IF (p0 < 0.) THEN
          PRINT*,'p0 < 0!!'
          RETURN
       END IF
@@ -117,13 +123,16 @@ MODULE Make_noise
 !!!$ old data would be overwritten, but with the old data
 !!!$--------------------------------------------------------------------
 
-    SUBROUTINE write_noisemodel(wa,w0,pa1,pb,pa2,p0,ierr)
+    SUBROUTINE write_noisemodel(iseed,wa,w0,pa1,pb,pa2,p0,ierr)
+!!!$ Ensemble seed
+      INTEGER ( KIND = 4 ),INTENT(IN) :: iseed 
 !!!$ widerstand noise model output parameters
       REAL(KIND(0D0)),INTENT(IN)   :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
       REAL(KIND(0D0)),INTENT(IN)   :: pa1,pb,pa2,p0
       INTEGER        :: ifp,ierr
-3     FORMAT(G10.3,5X,'#',1X,A)
+3     FORMAT(G10.3,t15,'#',1X,A)
+4     FORMAT(I7,t15,'#',1X,A)
 
       
       ierr = 1
@@ -132,18 +141,20 @@ MODULE Make_noise
 
       csz = 'crt.noisemod'
       OPEN(ifp,FILE=TRIM(csz),STATUS='replace')
-      csz = 'Relativer Fehler Widerstand A (noise) [%] von dR=AR+B'
+      csz = 'Ensemble seed'
+      WRITE (ifp,4) iseed,TRIM(csz)
+      csz = 'Relative error resistance A (noise) [%] von dR=AR+B'
       WRITE (ifp,3) wa,TRIM(csz)
-      csz = 'Absoluter Fehler Widerstand B (noise) [Ohm m]'
+      csz = 'Absolute errior resistance B (noise) [Ohm m]'
       WRITE (ifp,3) w0,TRIM(csz)
-      csz = 'Phasenfehlerparameter A1 (noise) [mRad/Ohm/m] von'//&
+      csz = 'Phase error parameter A1 (noise) [mRad/Ohm/m] von'//&
            ' dp=A1*R^B1+A2*p+p0'
       WRITE (ifp,3) pa1,TRIM(csz)
-      csz = 'Phasenfehlerparameter B1 (noise) []'
+      csz = 'Phase error parameter B1 (noise) []'
       WRITE (ifp,3) pb,TRIM(csz)
-      csz = 'Relativer Fehler Phasen A2 (noise) [%]'
+      csz = 'Relative phase error A2 (noise) [%]'
       WRITE (ifp,3) pa2,TRIM(csz)
-      csz = 'Absoluter Fehler Phasen p0 (noise) [mRad]'
+      csz = 'Absolute phase error p0 (noise) [mRad]'
       WRITE (ifp,3) p0,TRIM(csz)
       CLOSE (ifp)
 

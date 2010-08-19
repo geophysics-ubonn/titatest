@@ -496,8 +496,9 @@ CONTAINS
 !!!$     PROGRAMMINTERNE PARAMETER:
 !!!$     Hilfsvariablen 
 
-    REAL(KIND(0D0)) :: dum,dum2
-    INTEGER         :: i,j,l,k,ik,anz
+    REAL(KIND(0D0)) :: dum,dum2 ! helpers
+    REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
+    INTEGER         :: i,j,l,k,ik,anz 
     REAL(KIND(0D0)) :: edglen ! Kantenlaenge
     REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
@@ -544,33 +545,39 @@ CONTAINS
                (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2) 
 !!$! edge of i,k and the next..
 
-
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
 
+!!!$schwerpunkt des nachbar elements
              sp2(1) = espx(nachbar(i,k))
              sp2(2) = espy(nachbar(i,k))
-!!!$schwerpunkt des nachbar elements
 
 !!!$    Geometrischer Teil...
              dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.)
-             
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
-             
+!!$! including anisotropy!
+             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
+!!!$ geometrical contribution... (as smooth regularization..)
              alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.)
-!!!$    MGS Teil
-             dum = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
-!!!$    Modell nur im zaehler nicht im Nenner -> fred fragen
 
+!!!$ Model value gradient (\nabla m)
+             mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
+             sqmgrad = mgrad * mgrad
+
+!!!$    MGS Teil
+!!!$
 !!!$    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
 !!!$    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
-!!!$    wobei (m_i-m_{i+1})^2 rausgezogen wird und spaeter 
-!!!$    als Matrix Vektor Produkt berechnet wird
-!!!$    (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i} 
-!!!$    -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrischem Teil 
-!!!$    von anisotroper Wichtung
+!!!$            !!!! ATTENTION !!!!
+!!!$ The squared model gradient in the 
+!!!$ nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
+!!!$ !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
+!!!$ for now we have to deal with the denominator stuff only at this point!!
+!!!$ The gemoetrical part is than reduced to
+!!!$ \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
+!!!$ -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
+!!!$  of anisotropy
              IF (ltri == 5) THEN !!!$reines MGS
 
-                dum = dum**2. + betamgs**2.
+                dum = sqmgrad + betamgs**2.
                 dum = alfgeo * edglen / dist / dum
 
              ELSE IF (ltri == 6) THEN !!!$sensitivitaetswichtung 1 von RM
@@ -580,10 +587,10 @@ CONTAINS
 !!!$    dum2 = f(i,k)^2
                 dum2 = dum2**2.
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = dum**2. + (betamgs / dum2)**2.
+                dum = sqmgrad + (betamgs / dum2)**2.
 !!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
 !!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = alfgeo * edglen / dist /dum2 / dum
+                dum = alfgeo * edglen / dist / dum2 / dum
 
              ELSE IF (ltri == 7) THEN !!!$sensitivitaetswichtung 2 von RM
 
@@ -593,16 +600,16 @@ CONTAINS
 !!!$    dum2 = f(i,k)^2
                 dum2 = dum2**2.
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = dum**2. + (betamgs / dum2)**2.
+                dum = sqmgrad + (betamgs / dum2)**2.
 !!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
 !!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = alfgeo * edglen / dist /dum2 / dum
+                dum = alfgeo * edglen / dist / dum2 / dum
 
              ELSE IF (ltri == 8) THEN !!!$sensitivitaetswichtung von RB
                 
 !!!$    der folgende code wurde mir so ueberliefert... 
 !!!$ kam von RB aber keine ahnung was das genau macht
-                dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
+                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
                      DLOG10(csens(nachbar(i,k))) ) ))
                 
                 alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
@@ -610,7 +617,7 @@ CONTAINS
 
              ELSE IF (ltri == 9) THEN
 
-                dum = dum * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
+                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
                      DLOG10(csens(nachbar(i,k))) ) / csensavg ))
 
                 alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
