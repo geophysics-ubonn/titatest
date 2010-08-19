@@ -1,4 +1,5 @@
 *.o
+*.mod
 CRMod
 CRTomo
 crerror.h

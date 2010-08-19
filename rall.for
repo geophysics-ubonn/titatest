@@ -63,7 +63,7 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,iregus,ifp1
+      integer         * 4     i,ifp1
 
 c     Pi
       real            * 8     pi
@@ -161,31 +161,49 @@ c     ak        fstop  = 0.8d0
 c     ak Strasbrg/Werne/Grimberg
 c     ak        fstart = 0.5d0
 c     ak        fstop  = 0.8d0
-      iseedpri = 0; modl_stdn = 0.; iseed = 1;
+      iseedpri = 0; modl_stdn = 0.; iseed = 1
       mswitch = 0
-      iregus = 0
 c#########################################################
 c     Read in input values..
-      fetxt = 'rall -> grid file'
-      read(fpcfg,*,end=1001,err=98) mswitch
- 98   read(fpcfg,'(a80)',end=1001,err=999) delem
+
+      fetxt = 'rall -> mswitch'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=98) mswitch
+
+ 98   fetxt = 'rall -> grid file'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) delem
+
       fetxt = 'rall -> electrode file'
-      read(fpcfg,'(a80)',end=1001,err=999) delectr
-      fetxt = 'rall -> spannungs file'
-      read(fpcfg,'(a80)',end=1001,err=999) dstrom
-      fetxt = 'rall -> Inversionsverzeichnis'
-      read(fpcfg,'(a80)',end=1001,err=999) ramd
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) delectr
+
+      fetxt = 'rall -> meaurement file'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) dstrom
+
+      fetxt = 'rall -> directory for inversion results'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) ramd
+!     check if dir exists and if not, create it
       INQUIRE (FILE=TRIM(ramd),EXIST= exi)
       IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
-c     diff+<
-      fetxt = 'rall -> Differenz inversion'
-      read(fpcfg,*,end=1001,err=999) ldiff
-      fetxt = 'rall -> Diff. Messspannung'
-      read(fpcfg,'(a80)',end=1001,err=999) dd0
-      fetxt = 'rall -> Diff. Modell (auch prior)'
-      read(fpcfg,'(a80)',end=1001,err=999) dm0
-      fetxt = 'rall -> Diff. Modellierungen'
-      read(fpcfg,'(a80)',end=1001,err=999) dfm0
+
+      fetxt = 'rall -> Difference inversion ?'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) ldiff
+
+      fetxt = 'rall -> Diff. measurements'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) dd0
+
+      fetxt = 'rall -> Diff. model (prior)'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) dm0
+
+      fetxt = 'rall -> Diff. model response of prior'
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) dfm0
 
       IF (dm0 /= '') THEN
          INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
@@ -204,67 +222,94 @@ c     diff+<
       END IF
 c     diff+>
       fetxt = 'trying noise model seed'
-      read(fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
 !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
-      lnse2 = .NOT.lprior       ! kein prior?
+!      lnse2 = .NOT.lprior       ! kein prior?
 !     Daten Rauschen unabhängig vom Fehlermodell?
       lnsepri = lprior          ! if we have seed and std we assume to add noise to prior
  99   fetxt = 'rall -> Gitter nx'
-      read(fpcfg,*,end=1001,err=999) nx
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) nx
       fetxt = 'rall -> Gitter nz'
-      read(fpcfg,*,end=1001,err=999) nz
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) nz
       fetxt = 'rall -> Anisotropie /x'
-      read(fpcfg,*,end=1001,err=999) alfx
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) alfx
       fetxt = 'rall -> Anistotropie /y'
-      read(fpcfg,*,end=1001,err=999) alfz
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) alfz
       fetxt = 'rall -> Maximale Iterationen'
-      read(fpcfg,*,end=1001,err=999) itmax
-c     ak        read(fpcfg,*,end=1001,err=999) nrmsdm
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) itmax
+c     ak        READ (fpcfg,*,end=1001,err=999) nrmsdm
       fetxt = 'rall -> DC/IP Inversion'
-      read(fpcfg,*,end=1001,err=999) ldc
-c     ak        read(fpcfg,*,end=1001,err=999) lsr
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) ldc
+c     ak        READ (fpcfg,*,end=1001,err=999) lsr
       fetxt = 'rall -> Robuste Inversion'
-      read(fpcfg,*,end=1001,err=999) lrobust
-c     ak        read(fpcfg,*,end=1001,err=999) lpol
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lrobust
+c     ak        READ (fpcfg,*,end=1001,err=999) lpol
       fetxt = 'rall -> Finale Phasen Inversion'
-      read(fpcfg,*,end=1001,err=999) lfphai
-c     ak        read(fpcfg,*,end=1001,err=999) lindiv
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lfphai
+c     ak        READ (fpcfg,*,end=1001,err=999) lindiv
       fetxt = 'rall -> Relativer Fehler Widerstand'
-      read(fpcfg,*,end=1001,err=999) stabw0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabw0
       fetxt = 'rall -> Absoluter Fehler Widerstand'
-      read(fpcfg,*,end=1001,err=999) stabm0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabm0
       fetxt = 'rall -> Phasenfehlerparameter A1'
-      read(fpcfg,*,end=1001,err=999) stabpA1
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabpA1
       fetxt = 'rall -> Phasenfehlerparameter B'
-      read(fpcfg,*,end=1001,err=999) stabpB
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabpB
       fetxt = 'rall -> Relative Fehler Phasen'
-      read(fpcfg,*,end=1001,err=999) stabpA2
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabpA2
       fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
-      read(fpcfg,*,end=1001,err=999) stabp0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) stabp0
       fetxt = 'rall -> Homogenes Startmodell?'
-      read(fpcfg,*,end=1001,err=999) lrho0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lrho0
       fetxt = 'rall -> rho_0'
-      read(fpcfg,*,end=1001,err=999) bet0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) bet0
       fetxt = 'rall -> phase_0'
-      read(fpcfg,*,end=1001,err=999) pha0
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) pha0
       fetxt = 'rall -> Noch eine Inversion'
-      read(fpcfg,*,end=1001,err=999) lagain
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lagain
       fetxt = 'rall -> 2D oder 2.5D ?'
-      read(fpcfg,*,end=1001,err=999) swrtr
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) swrtr
       fetxt = 'rall -> weitere Quelle?'
-      read(fpcfg,*,end=1001,err=999) lsink
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lsink
       fetxt = 'rall -> Nummer der Quelle'
-      read(fpcfg,*,end=1001,err=999) nsink
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) nsink
       fetxt = 'rall -> Randbedingungen ?'
-      read(fpcfg,*,end=1001,err=999) lrandb2
+      CALL read_comments(fpcfg)
+      READ (fpcfg,*,end=1001,err=999) lrandb2
       fetxt = 'rall -> Datei mit Randwerten'
-      read(fpcfg,'(a80)',end=1001,err=999) drandb
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(a80)',end=1001,err=999) drandb
       fetxt = 'triangularization switch'
-      read(fpcfg,'(I2)',end=100,err=100) ltri
+      CALL read_comments(fpcfg)
+      READ (fpcfg,'(I2)',end=100,err=100) ltri
 
       IF (ltri >= 20) THEN
          llamf = .TRUE.
-         READ(fpcfg,*,end=104,err=104) lamfix
+         fetxt = 'rall -> fixed lam value'
+         CALL read_comments(fpcfg)
+         READ (fpcfg,*,end=104,err=104) lamfix
 	 GOTO 105
  104     lamfix = 1.0           ! default value for MGS
          BACKSPACE(fpcfg)
@@ -283,7 +328,9 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
  101  IF (lsto) PRINT*,'Stochastische Regularisierung'
       
       IF (ltri > 4 .AND. ltri < 15) THEN
-         READ(fpcfg,*,end=102,err=102) betamgs
+         fetxt = 'rall -> beta value'
+         CALL read_comments(fpcfg)
+         READ (fpcfg,*,end=102,err=102) betamgs
 	 GOTO 103
  102     betamgs = 0.1          ! default value for MGS
          BACKSPACE (fpcfg)
@@ -298,6 +345,10 @@ c     ak        read(fpcfg,*,end=1001,err=999) lindiv
 c     check if the final phase should start with homogenous model      
       lffhom = (stabp0 < 0)
       IF (lffhom) stabp0 = -stabp0
+
+c     check if there is crt.noisemod containig noise info
+      fetxt = 'crt.noisemod'
+      INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
       
       lnse = ( stabw0 < 0 )     ! couple error and noise model
       IF ( lnse ) THEN
@@ -311,33 +362,26 @@ c     copy error model into noise model
          nstabpA2 = stabpA2
          nstabp0 = stabp0
 
-         READ(fpcfg,*,end=106,err=106) iseed
+         fetxt = 'rall -> seed'
+         CALL read_comments(fpcfg)
+         READ (fpcfg,*,end=106,err=106) iseed
 	 GOTO 107
  106     iseed = 1              ! default value for PRS
          BACKSPACE(fpcfg)
          WRITE (*,'(a)')' Rauschen '//
      1        'Gekoppelt an Fehlermodell '
-      ELSE
-c     check if there is at least crt.noisemod containig noise info
-         IF (iseedpri == 0) iseedpri = 1
-         fetxt = 'crt.noisemod'
-         INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
       END IF
+
  107  IF (lnse2) THEN
 
-         iseed = iseedpri
+         fetxt = 'get noise model from crt.noisemod'
+         CALL get_noisemodel(iseed,nstabw0,nstabm0,nstabpA1,
+     1        nstabpB,nstabpA2,nstabp0,errnr)
+         
+         IF (errnr /= 0) GOTO 999
+         
          WRITE (*,'(a,I7)',ADVANCE='no')
      1        'Entkoppeltes Daten Rauschen:: seed:',iseed
-         
-         nstabw0 = modl_stdn
-         
-         fetxt = 'get noise model from crt.noisemod'
-         CALL get_noisemodel(nstabw0,nstabm0,nstabpA1,
-     1        nstabpB,nstabpA2,nstabp0,errnr)
-         IF (errnr /= 0) GOTO 999
-
-         modl_stdn = 0.
-         iseedpri = 0
          
          lnse = .TRUE.          ! add noise
 
@@ -345,7 +389,7 @@ c     check if there is at least crt.noisemod containig noise info
 
       IF (lnse) THEN 
          fetxt = 'write out noise model'
-         CALL write_noisemodel(nstabw0,nstabm0,
+         CALL write_noisemodel(iseed,nstabw0,nstabm0,
      1        nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
          IF (errnr /= 0) GOTO 999
       ELSE
@@ -646,3 +690,4 @@ c     Fehlermeldungen
       return
 
       end
+

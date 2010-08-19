@@ -1,4 +1,4 @@
-subroutine get_unit ( iunit )
+SUBROUTINE get_unit ( iunit )
 
   !     !$*****************************************************************************
   !
@@ -34,30 +34,64 @@ subroutine get_unit ( iunit )
   !
   !    Output, integer ( kind = 4 ) IUNIT, the free unit number.
   !
-  implicit none
+  IMPLICIT NONE
 
-  integer ( kind = 4 ) i
-  integer ( kind = 4 ) ios
-  integer ( kind = 4 ) iunit
-  logical              lopen
+  INTEGER ( kind = 4 ) :: i
+  INTEGER ( kind = 4 ) :: ios
+  INTEGER ( kind = 4 ) :: iunit
+  LOGICAL              :: lopen
 
   iunit = 0
 
-  do i = 1, 99
+  DO i = 1, 99
 
-     if ( i /= 5 .and. i /= 6 .and. i /= 9 ) then
+     IF ( i /= 5 .AND. i /= 6 .AND. i /= 9 ) THEN
 
-        inquire ( unit = i, opened = lopen, iostat = ios )
+        INQUIRE ( unit = i, opened = lopen, iostat = ios )
 
-        if ( ios == 0 ) then
-           if ( .not. lopen ) then
+        IF ( ios == 0 ) THEN
+           IF ( .NOT. lopen ) THEN
               iunit = i
-              return
-           end if
-        end if
+              RETURN
+           END IF
+        END IF
 
-     end if
+     END IF
 
-  end do
+  END DO
 
-end subroutine get_unit
+END SUBROUTINE get_unit
+
+SUBROUTINE read_comments (unit)
+  INTEGER,INTENT (IN)   :: unit
+  INTEGER               :: ios
+  CHARACTER (256)       :: buff
+  LOGICAL               :: oki
+
+  READ ( unit , '(a)' , ERR = 11 , END = 10 , IOSTAT = ios ) buff
+  
+!  PRINT * , TRIM( buff), ios
+  
+  IF ( buff (1:1) /= '#' .OR. buff == '' .OR. ios /= 0 ) THEN
+
+     BACKSPACE ( unit )
+
+  ELSE
+
+     DO WHILE ( buff (1:1) == '#' .AND..NOT. ios /= 0 ) ! lines with comment 
+        
+        READ ( unit , '(a)' , ERR = 11 , END = 10 , IOSTAT = ios ) buff
+
+!        PRINT * , TRIM ( buff )
+
+     END DO
+
+     BACKSPACE ( unit )
+
+  END IF
+
+10 RETURN
+
+11 PRINT * , 'read_comment error::' , buff
+
+END SUBROUTINE read_comments
