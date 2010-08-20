@@ -73,7 +73,8 @@ SUBROUTINE read_comments (unit)
 !  PRINT * , TRIM( buff), ios
   
   IF ( buff (1:1) /= '#' .OR. buff == '' .OR. ios /= 0 ) THEN
-
+! The case ios /= 0 was the solution to buffer underrun errors
+! This lead to curious line readings..
      BACKSPACE ( unit )
 
   ELSE

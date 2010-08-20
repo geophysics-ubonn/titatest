@@ -71,6 +71,8 @@ exp=`tail -n 1 exp/inv.variogram | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram | awk '{print $3}' `
 
+echo $ax $ay $true $smo $exp $gau $sph > variogram_l1_r.dat
+
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
@@ -112,6 +114,8 @@ exp=`tail -n 1 exp/inv.variogram_x | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram_x | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram_x | awk '{print $3}' `
 
+echo $ax $ay $true $smo $exp $gau $sph > variogram_l1_h.dat
+
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
@@ -151,6 +155,9 @@ smo=`tail -n 1 smo/inv.variogram_y  | awk '{print $3}' `
 exp=`tail -n 1 exp/inv.variogram_y  | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram_y  | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram_y  | awk '{print $3}' `
+
+echo $ax $ay $true $smo $exp $gau $sph > variogram_l1_v.dat
+
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
