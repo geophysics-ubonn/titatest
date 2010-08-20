@@ -305,7 +305,7 @@ c     ak        READ (fpcfg,*,end=1001,err=999) lindiv
       CALL read_comments(fpcfg)
       READ (fpcfg,'(I2)',end=100,err=100) ltri
 
-      IF (ltri >= 20) THEN
+      IF (BTEST(ltri,5)) THEN
          llamf = .TRUE.
          fetxt = 'rall -> fixed lam value'
          CALL read_comments(fpcfg)
@@ -315,7 +315,13 @@ c     ak        READ (fpcfg,*,end=1001,err=999) lindiv
          BACKSPACE(fpcfg)
 
  105     PRINT*,'Fixing Lambda =', lamfix
-         ltri = ltri - 20
+         ltri = ltri - 2**5
+      END IF
+
+      IF (ltri > 15) THEN ! exception for wrong ltri switch
+         PRINT*,'WARNING, fix lambda switch has changed'
+         PRINT*,'check ltri value (>15):',ltri
+         STOP
       END IF
 
       lsto = (ltri == 15)
