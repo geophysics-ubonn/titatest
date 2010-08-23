@@ -26,7 +26,7 @@ echo invdir $invdir
 invf=$invdir/inv.ctr
 
 # get the major iterations, without FPI
-awk '/IT/&&!/PIT/{if($2==0){print $1 $2 $3}else{print}}' $invf > inv.stats_it
+awk '/IT/&&!/PIT/{if($2==0){print $1,$2,$3}else{print}}' $invf > inv.stats_it
 # counting the major iterations
 nit=`wc -l inv.stats_it|awk '{print $1}'`
 #prepare to seperate minor (update) and major iterations
