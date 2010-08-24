@@ -28,7 +28,7 @@ modes='Exp Gau Sph'
 #
 tgr=$cur/'tmp.gnu' # plot file..
 # declare font size for the legends
-font='"Arial,14"' # general font and its size of the title and axes
+font='"Arial,18"' # general font and its size of the title and axes
 # major plots
 lw='w lp lt 1 lw 3.5'   # linetype and width of the major plots
 lfw='"Times,12"' # legend font
@@ -42,15 +42,29 @@ psw='pointsize 0.5' # pointsize
 term="postscript enhanced color font $font"
 #term="pngcairo enhanced color crop font $font"
 #key="inside bot horizontal font $lfw $lfws"
-key="below horizontal font $lfw $lfws"
+key="at screen 0.98,0.98 horizontal font $lfw $lfws"
 
 # multi
-# setting global gnuplot parameters
+# setting global gnuplot parameters 
 echo 'set st da l' > $tgr
 echo 'set grid' >> $tgr
 echo "set term $term" >> $tgr
-
-
+# for global model diff plot plot also the RMS
+echo 'set y2tics nomirror' >> $tgr
+echo 'set y2label offset -1.5 "RMS [%]"' >> $tgr
+echo 'set log y2' >> $tgr
+#
+echo 'set xtics nomirror' >> $tgr
+echo 'set xlab offset 0,0.5 "Integral scale /[m]"' >> $tgr
+echo 'set ytics nomirror' >> $tgr
+#echo 'set log y' >> $tg1
+echo 'set ylab offset 1.5 "L_1 difference (1-x/true) [%]"' >> $tgr
+echo "set $psw" >> $tgr
+echo "set key $key"  >> $tgr
+echo 'set multiplot' >> $tgr
+echo 'set origin 0,0' >> $tgr
+echo 'set size 1.0,0.97' >> $tgr
+labscr='at screen 0.01,0.97'
 for mode in $modes;do
 
     if [ -d $mode ];then
@@ -146,8 +160,12 @@ for mode in $modes;do
     fln=$fln_glob
     tg1=$fln'.gnu'
     out='"'$fln'.ps"'
+    tit='"Global model fit and RMS ('$mode')"'
     
-    echo "set yrange[$ymin:$ymax]" >> $tg1
+    echo "set out $out" > tmp.gnu
+    echo "set label 1 $tit $labscr" >> tmp.gnu
+
+    echo "set yrange[$ymin:$ymax]" > $tg1
     echo "set y2range [$y2min:$y2max]" >> $tg1
     echo 'plot \' >> $tg1
     echo '"'$fln_glob'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
@@ -159,47 +177,62 @@ for mode in $modes;do
     echo '"'$fln_glob'" u 1:6 '$lw' lc 4 ti "sph",\' >> $tg1
     echo '"'$fln_rms'" u 1:6 axes x1y2 '$lpw' lc 4 ti "(rms)"' >> $tg1
     
-    echo "set out $out" > tmp.gnu 
     cat $tgr $tg1 >> tmp.gnu
     gnuplot < tmp.gnu
+
 # global variogram plotting commands
     fln=$fln_vr
     tg1=$fln'.gnu'
     out='"'$fln'.ps"'
+    tit='"Global variogram fit ('$mode')"'
+    
+    echo "set out $out" > tmp.gnu
+    echo "set label 1 $tit $labscr" >> tmp.gnu
 
-    echo 'plot \' > $tg1
+    echo 'unset y2tics' > $tg1
+    echo 'unset y2label' >> $tg1
+    echo 'plot \' >> $tg1
     echo '"'$fln'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
     echo '"'$fln'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
     echo '"'$fln'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
     echo '"'$fln'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    echo "set out $out" > tmp.gnu 
+
     cat $tgr $tg1 >> tmp.gnu
     gnuplot < tmp.gnu
 
     fln=$fln_vh
     tg1=$fln'.gnu'
     out='"'$fln'.ps"'
+    tit='"Horizontal variogram fit ('$mode')"'
+    
+    echo "set out $out" > tmp.gnu
+    echo "set label 1 $tit $labscr" >> tmp.gnu
 
-    echo 'plot \' > $tg1
+    echo 'unset y2tics' > $tg1
+    echo 'unset y2label' >> $tg1
+    echo 'plot \' >> $tg1
     echo '"'$fln'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
     echo '"'$fln'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
     echo '"'$fln'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
     echo '"'$fln'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    echo "set out $out" > tmp.gnu 
     cat $tgr $tg1 >> tmp.gnu
     gnuplot < tmp.gnu
 
     fln=$fln_vv
     tg1=$fln_vv'.gnu'
     out='"'$fln'.ps"'
+    tit='"Vertical variogram fit ('$mode')"'
+    
+    echo "set out $out" > tmp.gnu
+    echo "set label 1 $tit $labscr" >> tmp.gnu
 
-    echo 'plot \' > $tg1
+    echo 'unset y2tics' > $tg1
+    echo 'unset y2label' >> $tg1
+    echo 'plot \' >> $tg1
     echo '"'$fln'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
     echo '"'$fln'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
     echo '"'$fln'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
     echo '"'$fln'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    out=$fln'.ps'
-    echo "set out $out" > tmp.gnu
     cat $tgr $tg1 >> tmp.gnu
     gnuplot < tmp.gnu
 
@@ -247,12 +280,12 @@ echo "set $psw" >> $tg1
 
 
 
-    tit="Global model fit and RMS ($mode)"
-    tg2=$mode'_l1_glob_diff_rms'
-    out='"'$tg2'.ps'
-    
-    echo 'set tit "'$tit'"' > $tg1
-    echo "set out $out" >> $tg1
+tit="Global model fit and RMS ($mode)"
+tg2=$mode'_l1_glob_diff_rms'
+out='"'$tg2'.ps'
+
+echo 'set tit "'$tit'"' > $tg1
+echo "set out $out" >> $tg1
 
 
 
@@ -271,41 +304,41 @@ echo "set key $key"  >> $tg1
 
     
 # variogram plots
-    echo 'unset y2tics' >> $tg1
-    echo 'unset y2label' >> $tg1
-    echo 'unset log y' >> $tg1
-    echo 'set yrange [*:*]' >> $tg1
-    echo 'unset key' >> $tg1
+echo 'unset y2tics' >> $tg1
+echo 'unset y2label' >> $tg1
+echo 'unset log y' >> $tg1
+echo 'set yrange [*:*]' >> $tg1
+echo 'unset key' >> $tg1
 # top right global variogram error 
 #    echo 'set origin 0.5,0.5' >> tmp.gnu
-    tit="Global variogram ($mode)"
-    echo 'set tit "'$tit'"' >> $tg1
-    echo 'plot \' >> $tg1
-    echo '"'$fln_vr'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
-    echo '"'$fln_vr'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
-    echo '"'$fln_vr'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
-    echo '"'$fln_vr'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    
+tit="Global variogram ($mode)"
+echo 'set tit "'$tit'"' >> $tg1
+echo 'plot \' >> $tg1
+echo '"'$fln_vr'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
+echo '"'$fln_vr'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
+echo '"'$fln_vr'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
+echo '"'$fln_vr'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
+
 # bottom left, horizontal variogram error
 #    echo 'set origin 0,0' >> tmp.gnu
-    tit="Horizontal variogram ($mode)"
-    echo 'set tit "'$tit'"' >> $tg1
-    echo 'plot \' >> $tg1
-    echo '"'$fln_vh'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
-    echo '"'$fln_vh'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
-    echo '"'$fln_vh'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
-    echo '"'$fln_vh'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    
+tit="Horizontal variogram ($mode)"
+echo 'set tit "'$tit'"' >> $tg1
+echo 'plot \' >> $tg1
+echo '"'$fln_vh'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
+echo '"'$fln_vh'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
+echo '"'$fln_vh'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
+echo '"'$fln_vh'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
+
 # bottom right vertical variogram error
 #    echo 'set origin 0.5,0' >> tmp.gnu
-    tit="Vertical variogram ($mode)"
-    echo 'set tit "'$tit'"' >> $tg1
-    echo 'plot \' >> $tg1
-    echo '"'$fln_vv'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
-    echo '"'$fln_vv'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
-    echo '"'$fln_vv'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
-    echo '"'$fln_vv'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
+tit="Vertical variogram ($mode)"
+echo 'set tit "'$tit'"' >> $tg1
+echo 'plot \' >> $tg1
+echo '"'$fln_vv'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
+echo '"'$fln_vv'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
+echo '"'$fln_vv'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
+echo '"'$fln_vv'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
 exit    
-    gnuplot < $tg1
-    my_pscrop $out
-    mv `echo $out|sed 's/\"//g'|sed 's/\.ps/\.pdf/g'` ..
+gnuplot < $tg1
+my_pscrop $out
+mv `echo $out|sed 's/\"//g'|sed 's/\.ps/\.pdf/g'` ..
