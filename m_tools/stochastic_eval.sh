@@ -141,7 +141,7 @@ echo 'set log y2' >> $tgr
 #
 echo 'set xtics nomirror' >> $tgr
 echo 'set ytics nomirror' >> $tgr
-#echo 'set log y' >> $tgr
+echo 'set log y' >> $tgr
 echo 'set ylab offset 1.5 "(1-x/true) [%]"' >> $tgr
 echo "set $psw" >> $tgr
 echo "set key $key"  >> $tgr
@@ -161,9 +161,11 @@ echo 'set size 0.5,0.48' >> $tgr # equal sizes..
 # setting specific values 
 #
 # top left, global error
+# getting minmax glob L1 fit
 
 echo 'set origin 0,0.5' >> $tgr
 echo 'set size 0.58,0.43' >> $tgr
+echo "set yrange[]" >> $tgr
 echo 'plot \' >> $tgr
 echo '"'$fln_glob'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tgr
 echo '"'$fln_rms'" u 1:3 axes x1y2 '$lpw' lc 1 ti "(rms)",\' >> $tgr
@@ -214,5 +216,5 @@ echo '"'$fln_vv'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tgr
 echo '"'$fln_vv'" u 1:6 '$lw' lc 4 ti "sph"' >> $tgr
 
 gnuplot < $tgr
-my_pscrop $out
-mv `echo $out|sed 's/\"//g'|sed 's/\.ps/\.pdf/g'` ..
+my_pscrop ./ $out
+mv `echo $out|sed 's/\.ps/\.pdf/g'` ..
