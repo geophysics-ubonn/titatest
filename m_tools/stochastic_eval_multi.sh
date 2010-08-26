@@ -251,7 +251,7 @@ key="at screen 1,.97 Right horizontal font $font $lfws width 0.3 height 0.2"
 titpos='at screen 0.51,0.98 center'
 # general settings
 echo 'set st da l' > $tgr
-echo 'set grid' >> $tgr
+#echo 'set grid' >> $tgr
 echo "set term $term" >> $tgr
 #
 echo 'set xtics nomirror' >> $tgr
