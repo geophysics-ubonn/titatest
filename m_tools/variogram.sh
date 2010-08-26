@@ -70,7 +70,6 @@ smo=`tail -n 1 smo/inv.variogram | awk '{print $3}' `
 exp=`tail -n 1 exp/inv.variogram | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram | awk '{print $3}' `
-
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
@@ -86,6 +85,9 @@ l1_smo=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' smo/diffs_inv.dat`
 l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv.dat`
 l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv.dat`
 l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv.dat`
+
+
+echo $ax $ay $l1_smo $l1_exp $l1_gau $l1_sph > variogram_l1_r.dat
 
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
@@ -111,7 +113,6 @@ smo=`tail -n 1 smo/inv.variogram_x | awk '{print $3}' `
 exp=`tail -n 1 exp/inv.variogram_x | awk '{print $3}' `
 gau=`tail -n 1 gau/inv.variogram_x | awk '{print $3}' `
 sph=`tail -n 1 sph/inv.variogram_x | awk '{print $3}' `
-
 echo "true=$true" >> $tg1
 echo "smo=$smo" >> $tg1
 echo "exp=$exp" >> $tg1
@@ -128,6 +129,8 @@ l1_smo=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' smo/diffs_inv_x.dat`
 l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv_x.dat`
 l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv_x.dat`
 l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv_x.dat`
+
+echo $ax $ay $l1_smo $l1_exp $l1_gau $l1_sph > variogram_l1_h.dat
 
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram_x" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
@@ -167,6 +170,7 @@ l1_exp=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' exp/diffs_inv_y.dat`
 l1_gau=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' gau/diffs_inv_y.dat`
 l1_sph=`awk '{sum+=$2} END {printf("%.2f\n",sum/(NR))}' sph/diffs_inv_y.dat`
 
+echo $ax $ay $l1_smo $l1_exp $l1_gau $l1_sph > variogram_l1_v.dat
 
 echo 'plot \' >> $tg1
 echo '"true/inv.variogram_y" u 1:($3/true) '$lw' lc 0 ti "{/Symbol g}(h)",\' >> $tg1
@@ -180,53 +184,56 @@ echo '"gau/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 3 ti "gau/true(L1='$l1_gau
 echo '"sph/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 4 ti "sph/true(L1='$l1_sph' %)",\' >> $tg1
 echo '"smo/diffs_inv_y.dat" u 1:($2) axes x1y2 w p lc 5 ti "smo/true(L1='$l1_smo' %)"' >> $tg1
 
-gnuplot < $tg1
+if [ -z $4 ];then
+    gnuplot < $tg1
 
-my_pscrop ./
+    my_pscrop ./
 
-echo '\documentclass[12pt,a4]{article}' > $tg2
-echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $tg2
-echo '\usepackage[T1]{fontenc}' >> $tg2
-echo '\usepackage[utf8]{inputenc}' >> $tg2
-echo '\usepackage{listings}' >> $tg2
-echo '\lstset{basicstyle=\tiny}' >> $tg2
-echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $tg2
-echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $tg2
-echo '\usepackage{fancyhdr}' >> $tg2
-echo '\oddsidemargin-15mm' >> $tg2
-echo '\parindent0mm' >> $tg2
-echo '\parskip0mm' >> $tg2
-echo '\textheight24cm' >> $tg2
-echo '\textwidth19cm' >> $tg2
-echo '\unitlength1mm' >> $tg2
-echo '\topmargin-2cm' >> $tg2
-echo '\headheight0cm' >> $tg2
-echo '\footskip3cm' >> $tg2
-echo '\begin{document}' >> $tg2
-echo '\pagestyle{fancy}' >> $tg2
-echo '\fancyhead[C]{\Large\bf CRTomo inversion results}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{true/model.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{smo/model.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{exp/model.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{gau/model.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{sph/model.pdf}' >> $tg2
-echo '\clearpage' >> $tg2
-if [ -e diffs_exp_modl.pdf ];then
-    echo 'found diff plots!!'
-    echo '\fancyhead[C]{\Large\bf Relative differences}' >> $tg2    
-    for x in diffs_*_modl.pdf;do
-	echo including $x
-	echo "\includegraphics[width=.5\textwidth]{$x}" >> $tg2
-    done
+    echo '\documentclass[12pt,a4]{article}' > $tg2
+    echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $tg2
+    echo '\usepackage[T1]{fontenc}' >> $tg2
+    echo '\usepackage[utf8]{inputenc}' >> $tg2
+    echo '\usepackage{listings}' >> $tg2
+    echo '\lstset{basicstyle=\tiny}' >> $tg2
+    echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $tg2
+    echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $tg2
+    echo '\usepackage{fancyhdr}' >> $tg2
+    echo '\oddsidemargin-15mm' >> $tg2
+    echo '\parindent0mm' >> $tg2
+    echo '\parskip0mm' >> $tg2
+    echo '\textheight24cm' >> $tg2
+    echo '\textwidth19cm' >> $tg2
+    echo '\unitlength1mm' >> $tg2
+    echo '\topmargin-2cm' >> $tg2
+    echo '\headheight0cm' >> $tg2
+    echo '\footskip3cm' >> $tg2
+    echo '\begin{document}' >> $tg2
+    echo '\pagestyle{fancy}' >> $tg2
+    echo '\fancyhead[C]{\Large\bf CRTomo inversion results}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{true/model.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{smo/model.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{exp/model.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{gau/model.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{sph/model.pdf}' >> $tg2
     echo '\clearpage' >> $tg2
+    if [ -e diffs_exp_modl.pdf ];then
+	echo 'found diff plots!!'
+	echo '\fancyhead[C]{\Large\bf Relative differences}' >> $tg2    
+	for x in diffs_*_modl.pdf;do
+	    echo including $x
+	    echo "\includegraphics[width=.5\textwidth]{$x}" >> $tg2
+	done
+	echo '\clearpage' >> $tg2
+    fi
+    echo '\fancyhead[C]{\Large\bf Corresponding Variograms}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{variograms.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{variograms_x.pdf}' >> $tg2
+    echo '\includegraphics[width=.5\textwidth]{variograms_y.pdf}' >> $tg2
+    echo '\end{document}' >> $tg2
+    
+    
+    pdflatex $tg2
+    
 fi
-echo '\fancyhead[C]{\Large\bf Corresponding Variograms}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{variograms.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{variograms_x.pdf}' >> $tg2
-echo '\includegraphics[width=.5\textwidth]{variograms_y.pdf}' >> $tg2
-echo '\end{document}' >> $tg2
-
-
-pdflatex $tg2
 
 echo 'finished'
