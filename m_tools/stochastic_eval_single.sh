@@ -148,7 +148,7 @@ for mode in $modes;do
 	    
 	    cd $pub
 	    
-	    plot_diff.sh 1
+	    plot_diff.sh
 
 	    bla=`cat l1_diff.dat`
 	    echo $ix $iy $bla >> $fln_glob
@@ -160,7 +160,7 @@ for mode in $modes;do
 	    echo $ix $iy $bla >> $fln_korr
 	    echo $ix $iy $bla
 	    
-	    variogram.sh $ix $iy $mode 1
+	    variogram.sh $ix $iy $mode
 	    
 	    cat variogram_l1_r.dat >> $fln_vr
 	    cat variogram_l1_h.dat >> $fln_vh

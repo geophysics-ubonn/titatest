@@ -40,7 +40,9 @@ for x in $modes;do
 	clean
 	echo "$fnd" > inv.lastmod
 	echo "(x=$x) L_1(x,true)=$l1%, Corr(x,true)=$korr" > tmp.fenster
-	echo 'log_{10}(L_1)[%]' > tmp.cbarn
+	echo 'log(L_1)[%]' > tmp.cbarn
+	echo '-1 3' > tmp.crange
+	echo '#' > tmp.noelec
 	plot_cur_crtomo >& /dev/null
     fi
 done
