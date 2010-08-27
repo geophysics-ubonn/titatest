@@ -43,6 +43,7 @@ plotmod () {
 	echo 'set size 0.34,0.31' >> $tg1
     else
 	lab=''
+	echo 'unset key' >> $tg1
     fi
     echo 'set label 4 "'$j') '$lab'" at graph .07,.94' >> $tg1
     if [ "$ymax" ];then
