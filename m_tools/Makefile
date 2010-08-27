@@ -28,7 +28,6 @@ cbn:
 			echo "Du hast kein bin in deinem home.--"; \
 			mkdir ~/bin; \
 		fi
-		chmod 0755 *.sh
 
 mtools:		$(C1)
 		$(CP) $(SCRIPTS) $(WPATH)
@@ -38,3 +37,7 @@ install:	$(C1)
 
 clean:		
 		$(RM) *~
+
+chmo:
+		echo "chmod " $(SCRIPTS)
+		chmod 0755 $(SCRIPTS)
