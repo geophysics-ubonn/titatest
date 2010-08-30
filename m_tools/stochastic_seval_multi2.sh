@@ -19,31 +19,57 @@ minmax (){
 }
 
 plotmod () {
-    if [ -z "$tg1" ];then
-	tg1=tmp2
+
+    if [ -z "$1" ];then
+	echo no argument
+	exit
     fi
-    echo "set out $out" > tmp1
-    echo "set label 1 $tit $labscr" > $tg1
+
+    if [ -z "$tg1" ];then
+	tg1=tmp1
+    fi
+#
+    if [ $mode = "Exp" ];then
+	let j=$i
+	let k=4
+    elif [ $mode = "Gau" ];then
+	let j=$i+3
+	let k=5
+    elif [ $mode = "Sph" ];then
+	let j=$i+6
+	let k=6
+    fi
+    echo '#' > $tg1
+    echo 'set size 0.34,0.33' >> $tg1
+    if [ $i -eq 1 ];then
+	lab="$mode/Smo"
+	echo 'set size 0.34,0.31' >> $tg1
+    else
+	lab=''
+	echo 'unset key' >> $tg1
+    fi
+    echo 'set label 4 "'$j') '$lab'" at graph .07,.94' >> $tg1
     if [ "$ymax" ];then
 	echo "set yrange[$ymin:$ymax]" >> $tg1
     fi
     if [ "$ylab" ];then
-	echo 'set ylab offset 1.5 "'$ylab'"' >> $tg1	
+	if [ $mode = "Exp" ];then	    
+	    echo 'set ylab offset 2 "'$ylab'"' >> $tg1	
+	else
+	    echo 'unset ylab' >> $tg1	
+	fi
     fi
-    if [ "$logy" ];then
-	echo 'set log y' >> $tg1
+    if [ "$xlab" ];then
+	echo 'set size .34,.355' >> $tg1
+	echo 'set xlab offset 0,.5 "'$xlab'"' >> $tg1	
     fi
     echo 'plot \' >> $tg1
-    echo '"'$fln'" u 1:3 '$lw' lc 1 ti "smo",\' >> $tg1
-    echo '"'$fln'" u 1:4 '$lw' lc 2 ti "exp",\' >> $tg1
-    echo '"'$fln'" u 1:5 '$lw' lc 3 ti "gau",\' >> $tg1
-    echo '"'$fln'" u 1:6 '$lw' lc 4 ti "sph"' >> $tg1
-    
-    cat tmp1 $tgr $tg1 > tmp
-    
-    gnuplot < tmp
+    echo '"'$fln'" u 1:3 '$lw' lc 1 noti ,\' >> $tg1
+    echo '"'$fln'" u 1:'$k' '$lw' lc 2 noti' >> $tg1
+    cat $tg1 >> $1
     
 }
+
 echo running $0 with PID $$ at `uname -n`
 date
 
@@ -51,12 +77,13 @@ cur=`pwd`
 
 modes='Exp Gau Sph'
 
+
 #
 tgr=$cur/'tmp.gnu' # plot file..
 # declare font size for the legends
-font='"Arial,18"' # general font and its size of the title and axes
+font='"Arial,16"' # general font and its size of the title and axes
 # major plots
-lw='w lp lt 1 lw 3.5'   # linetype and width of the major plots
+lw='w lp lt 1 lw 3'   # linetype and width of the major plots
 lfw='"Times,12"' # legend font
 lfw=$font
 lfws='spacing 0.8 samplen 0.4'
@@ -64,28 +91,16 @@ pw='w p pt 1'
 lpw='w l lt 6 lw 2.5'
 psw='pointsize 0.5' # pointsize
 
-font='"Arial,18"' # general font and its size of the title and axes
-# set derived gnuplot variables
-term="postscript enhanced color font $font"
-#term="pngcairo enhanced color crop font $font"
-#key="inside bot horizontal font $lfw $lfws"
-key="at screen 0.98,0.98 Right horizontal font $lfw $lfws width 0.4 height 0.2"
 
-# setting global gnuplot parameters 
-echo 'set st da l' > $tgr
-echo 'set grid' >> $tgr
-echo "set term $term" >> $tgr
-echo 'set xtics nomirror' >> $tgr
-echo 'set xlab offset 0,0.5 "Integral scale /[m]"' >> $tgr
-echo 'set ytics nomirror' >> $tgr
-echo 'set ylab offset 1.5 "L_1={/Symbol S}_i|1-x_i/y_i| [%]"' >> $tgr
-echo "set $psw" >> $tgr
-echo "set key $key"  >> $tgr
 
-echo 'set multiplot' >> $tgr
-echo 'set origin 0,0' >> $tgr
-echo 'set size 1.0,0.97' >> $tgr
-labscr='at screen 0.01,0.97'
+rms=$cur/tmp.rms.gnu
+korr=$cur/tmp.korr.gnu
+l1_diff=$cur/tmp.l1_diff.gnu
+vario_glo=$cur/tmp.vario_glo.gnu
+vario_ver=$cur/tmp.vario_ver.gnu
+vario_hor=$cur/tmp.vario_hor.gnu
+
+rm -f $rms $korr $l1_diff $vario_glo $vario_ver $vario_hor
 
 for mode in $modes;do
 
@@ -178,96 +193,117 @@ for mode in $modes;do
 	    exit
 	fi
     fi
+    let i=1
 # get glob maxvals RMS (for yrange):
     fln=$fln_rms
     minmax $fln
     ymax=$mmax
     ymin=$mmin
     ymin=`echo $ymin|awk '{print $1-0.2}'`
+    ymax=''
 # RMS plotting command
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"RMS ('$mode' sim)"'
     ylab='RMS [%]'
-    plotmod
+    xlab=''
+    plotmod $rms 'rms'
 
-# get glob maxvals Covariance (for yrange):
-    fln=$fln_cov
+#
+    let i=$i+1
+    ymaxv='5.e2'
+    if [ "$1" ];then
+	ymaxv=$1
+    fi
+    echo setting upper maximum for L1 diff plot to $ymaxv %
+    fln=$fln_glob
     minmax $fln
-    ymax=$mmax
+    ymax=`echo $mmax|awk -v max=$ymaxv '{if($1>max){print max}else{print $1}}'`
     ymin=$mmin
-# Covariance plotting command
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Cov ('$mode' sim)"'
-    ylab='Cov(x,y)=({/Symbol S}_ix_iy_i-n@^{\261}x@^{\261}y)/(n-1)'
-    plotmod
+# global L_1 norm of model
+    ylab='L_1(x,true) [%]'
+    xlab=''
+    ymax=''
+    plotmod $l1_diff 'L_1'
 
+    let i=$i+1
 # get glob maxvals Correlation
     fln=$fln_korr
     minmax $fln
     ymax=$mmax
     ymin=$mmin
 # Covariance plotting command
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Correlation ('$mode' sim)"'
-    ylab='Corr(x,y)=Cov(x,y)/((Var(x))^{1/2}(Var(y))^{1/2})'
-    plotmod
+    ylab='Corr(x,true)'
+    xlab='Integral scale /[m]'
+    ymax=''
+    plotmod $korr 'corr'
 
 #
-    ymaxv='5.e2'
-    if [ "$1" ];then
-	ymaxv=$1
-    fi
-    echo setting upper maximum for L1 diff plot to $ymaxv %
-    minmax $fln_glob
-    ymax=`echo $mmax|awk -v max=$ymaxv '{if($1>max){print max}else{print $1}}'`
-    ymin=$mmin
-#    ymax=''
-# global L_1 norm of model
-    fln=$fln_glob
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Global model fit ('$mode' sim)"'
-    ylab=''
-    plotmod
-
-#
-
+    let i=1
     fln=$fln_vr
     minmax $fln
     ymax=$mmax
     ymin=$mmin
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Global variogram fit ('$mode' sim)"'
-    plotmod
+    ylab='Global L_1 [%]'
+    xlab=''
+    ymax=''
+    plotmod $vario_glo 'glob'
 
-
+    let i=$i+1
     fln=$fln_vh
     minmax $fln
     ymax=$mmax
     ymin=$mmin
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Horizontal variogram fit ('$mode' sim)"'
+    ylab='Horizontal L_1 [%]'
+    ymax=''
+    plotmod $vario_hor 'hor'
 
-    plotmod
-
-
+    let i=$i+1
     fln=$fln_vv
     minmax $fln
     ymax=$mmax
     ymin=$mmin
-    tg1=$fln'.gnu'
-    out='"'$fln'.ps"'
-    tit='"Vertical variogram fit ('$mode' sim)"'
-
-    plotmod
+    ylab='Vertical L_1 [%]'
+    xlab='Integral scale /[m]'
+    ymax=''
+    plotmod $vario_ver 'ver'
 
     cd $cur
 done
 
-echo done and cleaning up
-rm -f tmp* *gnu
+# MULTIPLOTS!!
+#
+# set derived gnuplot variables
+term="postscript enhanced color font $font"
+#term="pngcairo enhanced color crop font $font"
+#key="inside bot horizontal font $lfw $lfws"
+key="at screen .39,.93 Right vertical font $font $lfws width .3 height .2"
+
+# general settings
+echo 'set st da l' > $tgr
+#echo 'set grid' >> $tgr
+echo "set term $term" >> $tgr
+#
+echo 'set xtics nomirror' >> $tgr
+echo 'set ytics nomirror' >> $tgr
+echo "set $psw" >> $tgr
+#echo "set key $key"  >> $tgr
+
+
+# now set up special settings for each mplot
+# RMS/L_1/corr
+cat $tgr > tmp1
+echo 'set out "single_rms_l1_korr.ps"'  >> tmp1
+echo 'set origin 0,0' >> tmp1
+echo 'set multiplot layout 3,3 rowsfirst' >> tmp1
+#echo 'set size 0.33,0.3' >> tmp1
+cat tmp1 $rms $l1_diff $korr > tmp
+gnuplot < tmp
+
+# now set up special settings for each mplot
+# Variogram plots Global/Horizontal/Vertical
+cat $tgr > tmp1
+echo 'set out "single_vario_eval.ps"'  >> tmp1
+echo 'set origin 0,0' >> tmp1
+echo 'set multiplot layout 3,3 rowsfirst' >> tmp1
+#echo 'set size 0.3,0.3' >> tmp1
+cat tmp1 $vario_glo $vario_hor $vario_ver > tmp
+gnuplot < tmp
+
