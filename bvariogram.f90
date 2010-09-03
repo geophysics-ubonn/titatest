@@ -86,7 +86,7 @@ SUBROUTINE bvariogram
 !!$! gets the current variogram function parameters
   CALL get_vario(Ix,Iy,fetxt,0) 
 !!$  ! now prepare title string of gnuplot plot
-  WRITE (mti,'(2(a,F3.1))')'Integral length ax=',Ix,', ay=',Iy
+  WRITE (mti,'(2(a,F3.1))')'Correlation lengths ax=',Ix,', ay=',Iy
 !!$     for postscript 
   tg = '{/Symbol g}'
   WRITE (tgam,'(a)')tg//'(h)='//TRIM(fetxt) 
@@ -227,6 +227,7 @@ SUBROUTINE bvariogram
   WRITE (ifp,'(a)')'set grid'
   WRITE (ifp,'(a)')"set out 'variograms.eps'"
   WRITE (ifp,'(a)')'set term pos col sol enh 20'
+  WRITE (ifp,'(a)')'set pointsize 1.5'
   WRITE (ifp,'(a)')'set key bot right Left'
   IF (ltri == 15) THEN ! only meaningful for stochastical regu..
      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//&
@@ -241,11 +242,11 @@ SUBROUTINE bvariogram
   WRITE (ifp,'(a)')"set ylab offset 2,0 'sv(h)=1/2N(h)"//&
        " {/Symbol S}_i(Z(m_i+h)-Z(m_i))^2'"
   WRITE (ifp,'(a,F10.3,a)')"plot"//&
-       "'inv.variogram' u 1:2 w lp lc 1 lw 3 ti 'sv(h)',"//&
+       "'inv.variogram' u 1:2 w p lc 1 lw 3 ti 'sv(h)',"//&
        "'inv.variogram' u 1:3 w l lc 1 lw 3 ti '"//TRIM(tmgam)//&
-       "','inv.variogram_x' u 1:2 w lp lc 2 lw 3 ti 'sv(hx)',"//&
+       "','inv.variogram_x' u 1:2 w p lc 2 lw 3 ti 'sv(hx)',"//&
        "'inv.variogram_x' u 1:3 w l lc 2 lw 3 ti '"//TRIM(tmgam_x)//&
-       "','inv.variogram_y' u 1:2 w lp lc 3 lw 3 ti 'sv(hy)',"//&
+       "','inv.variogram_y' u 1:2 w p lc 3 lw 3 ti 'sv(hy)',"//&
        "'inv.variogram_y' u 1:3 w l lc 3 lw 3 ti '"//TRIM(tmgam_y)//&
        "',",par_vari," w l lc 0 lw 4 ti 'Variance (va)'"
   CLOSE (ifp)

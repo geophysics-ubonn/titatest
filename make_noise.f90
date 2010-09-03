@@ -55,7 +55,7 @@ MODULE Make_noise
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
       REAL(KIND(0D0)),INTENT(INOUT)      :: pa1,pb,pa2,p0
       CHARACTER (80) :: buff
-      INTEGER        :: ifp,ierr
+      INTEGER        :: ifp,ierr,myseed
       LOGICAL        :: exi
       ierr = 1
       CALL get_unit(ifp)
@@ -67,8 +67,12 @@ MODULE Make_noise
          CALL get_unit(ifp)
          OPEN(ifp,FILE=TRIM(buff),STATUS='old')
          csz = 'Seed ('//TRIM(buff)//')'
-         READ (ifp,*) iseed
-         csz = 'Relative error resistance [%]('//TRIM(buff)//')'
+         READ (ifp,*,ERR=99) myseed
+         iseed = myseed
+         GOTO 100
+99       WRITE (*,*)'old crt.noisemode, assuming iseed=',iseed
+         BACKSPACE(ifp)
+100      csz = 'Relative error resistance [%]('//TRIM(buff)//')'
          READ (ifp,*) wa
          WRITE (*,*)TRIM(csz)//':',wa
          csz = 'Absolute errior resistance [Ohm m] ('//TRIM(buff)//')'

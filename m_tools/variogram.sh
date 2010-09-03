@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # declare font size for the legends
-font='"Helvetica" 16' # general font and its size of the title and axes
+font='"Arial,18"' # general font and its size of the title and axes
 # major plots
 lw='w l lw 4'   # linetype and width of the major plots
-lfw='Times,12' # legend font
+lfw='"Times,12"' # legend font
 lfws='spacing 1.1'
 psw='pointsize 1.5' # pointsize
 
@@ -57,7 +57,7 @@ echo 'set log y2' >> $tg1
 echo 'set xlab offset 0,0.5 "Lag h [m]"' >> $tg1
 echo 'set ylab offset 2,0 "sv(h)=1/2N(h) {/Symbol S}_i(Z(m_i+h)-Z(m_i))^2"' >> $tg1
 echo 'set y2la offset -1.5 "Rel. diff [%]"' >> $tg1
-echo 'se key inside right bot nobox noreverse font "'$lfw'"' $lfws >> $tg1
+echo "se key inside right bot nobox noreverse font $lfw $lfws" >> $tg1
 echo "set $psw" >> $tg1
 tit="ax=$ax, ax/az=$ah"
 echo $tit
