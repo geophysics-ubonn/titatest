@@ -45,16 +45,16 @@ MODULE variomodel
 !!$ strings of model type, cszv for variogram model
 !!$ cszc for covariance model (can be decoupeled)
   REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_v,Iy_v
-!!$ Integral scales (range) for variogram function
+!!$ Correlation lengths (range) for variogram function
   REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_c,Iy_c
-!!$ Integral scales for covariance function.
+!!$ Correlation lengths for covariance function.
 !!!$ It may look a littel strange but in fact there are some
 !!!$ variogram models (Exponential and Gauss) which need 
 !!!$ the Correlation length to be /3 (EXP) or /3^2 (GAU) of it. 
 !!!$ So, be careful to mistake these numbers wrong. 
 !!!$ See also the GSlib manual
   REAL(KIND(0D0)),PRIVATE,SAVE      :: axs,ays
-!!$ True integral scale from user..
+!!$ True correlation length from user..
 
   PRIVATE 
 CONTAINS
@@ -86,7 +86,7 @@ CONTAINS
        ays = ay
     END IF
 
-    Ix_v = axs;Ix_c = axs ! sets integral scales (range) for 
+    Ix_v = axs;Ix_c = axs ! sets correlation lengths (range) for 
     Iy_v = ays;Iy_c = ays ! internal usage
 
     SELECT CASE (c1) ! string for variogram function
@@ -137,7 +137,7 @@ CONTAINS
 !!$! which info type=0 -> variogram type = 1->covariance
     REAL (KIND(0D0)),INTENT (OUT) :: ax,ay
     CHARACTER (*)                   :: csz
-! gives back the integral scale used for the variogram
+! gives back the correlation length used for the variogram
     ax = axs
     ay = ays
 
