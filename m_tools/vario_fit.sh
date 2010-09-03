@@ -26,12 +26,12 @@ echo 'save var "variofit.dat"' >> $gplt
 gnuplot < $gplt
 
 gplt=$gplt'2'
-sgau=`awk '/sgau =/{printf("%.3f\n",$3)}' variofit.dat`
-agau=`awk '/agau =/{printf("%.3f\n",$3)}' variofit.dat`
-sexp=`awk '/sexp =/{printf("%.3f\n",$3)}' variofit.dat`
-aexp=`awk '/aexp =/{printf("%.3f\n",$3)}' variofit.dat`
-ssph=`awk '/ssph =/{printf("%.3f\n",$3)}' variofit.dat`
-asph=`awk '/asph =/{printf("%.3f\n",$3)}' variofit.dat`
+sgau=`awk '/sgau =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat` # only positive values
+agau=`awk '/agau =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat`
+sexp=`awk '/sexp =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat`
+aexp=`awk '/aexp =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat`
+ssph=`awk '/ssph =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat`
+asph=`awk '/asph =/{printf("%.3f\n",sqrt($3*$3))}' variofit.dat`
 
 tgau="$sgau(1-exp(-(3h/$agau)**2))"
 texp="$sexp(1-exp(-(3h/$aexp)))"
