@@ -72,6 +72,8 @@ if checkme~=0
     scrsz=fscanf(fp,'%d',1);
     fclose(fp);
 end
+
+noelec = exist ('tmp.noelec','file');
 %%
 % Knoten und Elemente einlesen 
 % Filenamen bestimmen
@@ -190,16 +192,18 @@ fclose(fp);
 
 %%
 % Einlesen der Elektroden
-fp=fopen(elecfile,'r');
+if noelec == 0
+  fp=fopen(elecfile,'r');
 line=fgetl(fp);
 nelec=sscanf(line,'%d',1);
 elecpos=zeros(nelec,2);
 for i=1:nelec
-    ie=fscanf(fp,'%d',1);
-    elecpos(i,1)=sxp(ie);
-    elecpos(i,2)=syp(ie);
+	ie=fscanf(fp,'%d',1);
+elecpos(i,1)=sxp(ie);
+elecpos(i,2)=syp(ie);
 end
 fclose(fp);
+end
 %%
 % open figure with name
 name=sprintf('CRTomo model');
@@ -271,11 +275,13 @@ view(az,el);
 axis tight
 axis image
 
-hold on
-for i=1:nelec
-    plot(elecpos(i,1),elecpos(i,2),elecmark,...
-        'MarkerEdgeColor','k','MarkerFaceColor','k',...
-        'MarkerSize',marksize);
+if noelec == 0
+  hold on
+  for i=1:nelec
+	  plot(elecpos(i,1),elecpos(i,2),elecmark,...
+	       'MarkerEdgeColor','k','MarkerFaceColor','k',...
+	       'MarkerSize',marksize);
+end
 end
 
 %set(fig,'PaperPositionMode','auto');

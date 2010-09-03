@@ -30,12 +30,12 @@ c-----------------------------------------------------------------------
       iel = 0
       DO i=1,typanz
 
-         IF (typ(i) == 12) THEN ! suche nach "no flow"
+         IF (typ(i) == 12) THEN ! search for "no flow" boundary
 
             nkel = selanz(i)
             sytop = 0.
 
-            DO j=1,nelanz(i)
+            DO j=1,nelanz(i) ! check all electrode y-positions
 
                iel = iel + 1
 
@@ -48,7 +48,7 @@ c-----------------------------------------------------------------------
 
                IF (j == 1) THEN 
                   sytop = sp
-               ELSE             !errechne den mittelwert (diret)
+               ELSE             !caculate arithmetic mean (direct)
                   sytop = (sytop*dble(j-1)+sp)/dble(j)
                END IF
 

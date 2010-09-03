@@ -17,7 +17,7 @@ all:		$(PRM)
 .SILENT:	cbn
 # default targets
 
-SCRIPTS	=	crtomo_*.sh crmod_*.sh plt_*_crt plot_*.sh plot_cur_* \
+SCRIPTS	=	crtomo_*.sh crmod_*.sh plt_*_crt* plot_*.sh plot_cur_* \
 		plotCRTmod_batch.m vario*.sh stochastic_*.sh
 
 cbn:		
@@ -37,3 +37,7 @@ install:	$(C1)
 
 clean:		
 		$(RM) *~
+
+chmo:
+		echo "chmod " $(SCRIPTS)
+		chmod 0755 $(SCRIPTS)
