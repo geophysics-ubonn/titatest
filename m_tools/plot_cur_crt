@@ -61,35 +61,43 @@ if [ -z $mod ];then
 	mag=`cat inv.lastmod`
 	mod=$mag
 	ismag=`echo $mag|grep mag`
-	if [ -n $ismag ];then 
-	    mod=${mag%mag}modl;
-	    awk '{if(NR==1){print}else{print $3,0}}' $mag > $mod
-	fi
+#	if [ -n $ismag ];then 
+#	    mod=${mag%mag}modl;
+#	    awk '{if(NR==1){print}else{print $3,0}}' $mag > $mod
+#	fi
     else
 	exit
     fi
 fi
 
-if [ -e "griev.titel" ];then
-    titel=`cat griev.titel`
+if [ -e "tmp.fenster" ];then
+    titel=`cat tmp.fenster`
 else
     titel=$2
 fi
 
 if [ -z $titel ];then titel='CRTomo result';fi
 
-echo 
-if [ -e "griev.cbarn" ];then
-    cbarn=`cat griev.cbarn`
+if [ -e "tmp.cbarn" ];then
+    cbarn=`cat tmp.cbarn`
 else
     cbarn=$3
 fi
+echo $cbarn
+if [ -z "$cbarn" ];then cbarn='Units';fi
 
-if [ -z $cbarn ];then cbarn='Units';fi
 
+griev_std="-i -e $elem -t $elec"
+griev_std=$griev_std`echo '-a "'$titel'"'`
+griev_std=`echo $griev_std' -s "'$cbarn'" -k "X /m" -q "Y /m"'`
+ 
 mypdf=`basename $mod|tr '.' '_'`'.pdf'
 
-echo $griev -i -e $elem -t $elec -r $mod --use_latex -a \"$titel\" -s \"$cbarn\" -p -o $mypdf 
-$griev -i -e $elem -t $elec -r $mod --use_latex -a \"$titel\" -s \"$cbarn\" -p -o $mypdf 
-
-
+if [ -n $ismag ];then
+    griev_std=$griev_std' -y 1 -m '$mod' -p -o '$mypdf
+    echo $griev_std
+    $griev $griev_std
+else
+    echo $griev_std
+    $griev $griev_std -r $mod -j -p -o $mypdf
+fi

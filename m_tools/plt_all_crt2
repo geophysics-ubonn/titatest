@@ -1,0 +1,206 @@
+#!/bin/bash
+
+if [ -z $1 ];then
+    fn='Amplitude'
+else
+    fn=$1
+fi
+echo "$0 argument $1"
+pltdir=crt_plots
+if [ -e crtomo.cfg ];then
+	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
+else
+    echo no inversion was running 
+    exit
+fi
+if [ -e inv.lastmod ];then
+    echo found inv.lastmod
+else
+    echo no inversion results found.. exiting 
+    exit
+fi
+
+plot_cur_crtomo=`which plot_cur_crt`
+clean=`which clean`
+my_pdfcrop=`which my_pdfcrop`
+pdflatex=`which pdflatex`
+plt_inv_ctr=`which plt_inv_ctr`
+
+cp inv.lastmod crt.lastmod
+
+mymag=`cat inv.lastmod`
+mymag=`basename $mymag '.mag'`
+echo $mymag
+it=`echo $mymag|sed 's/rho//g'`
+$clean
+echo "$fn" > tmp.fenster
+echo 'log(rho)[Ohm m]' > tmp.cbarn
+$plot_cur_crtomo
+pltpdf=$mymag'_mag.pdf'
+$clean
+if [ -e $invdir/$mymag'.pha' ];then
+    echo $invdir/$mymag'.pha' > inv.lastmod
+    echo "Phase" > tmp.fenster
+    echo 'phase[mrad]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf $mymag"'_pha.pdf'
+    $clean
+fi
+echo $invdir/coverage.mag > inv.lastmod
+echo 'c=L1(A)' > tmp.fenster
+echo 'log(c)[SI]' > tmp.cbarn
+$plot_cur_crtomo
+pltpdf="$pltpdf coverage_mag.pdf"
+$clean
+if [ -e $invdir/ata.diag ];then
+    echo $invdir/ata.diag > inv.lastmod
+    echo "Squared coverage" > tmp.fenster
+    echo 'Cov=A^TC_d^-1A' > tmp.fenster
+    echo 'log(Cov)[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf ata_diag.pdf"
+    $clean
+fi
+if [ -e $invdir/ata_reg.diag ] ;then
+    echo $invdir/ata_reg.diag > inv.lastmod
+    echo "Regularized squared coverage" > tmp.fenster
+    echo "RCov=A^TC_d^-1A + \lambda R^TR" > tmp.fenster
+    echo 'log(RCov)[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf ata_reg_diag.pdf"
+    $clean
+fi
+if [ -e $invdir/cov1_m.diag_re ];then
+    echo $invdir/cov1_m.diag_re > inv.lastmod
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM1=(A^TC_d^-1A + \lambda R^TR)^-1' > tmp.fenster
+    echo 'log(MCM1^1/2)[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf cov1_m_diag_re.pdf"
+    $clean
+fi
+if [ -e $invdir/cov1_m.diag_im ];then
+    echo $invdir/cov1_m.diag_im > inv.lastmod
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM1=(A^TC_d^-1A + \lambda R^TR)^-1' > tmp.fenster
+    echo 'Im(log(MCM1^1/2))[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf cov1_m_diag_im.pdf"
+    $clean
+fi
+if [ -e $invdir/res_m.diag ];then
+    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag > tmp.dat
+    cp tmp.dat $invdir/res_m.diag
+    echo $invdir/res_m.diagre > inv.lastmod
+    echo "Resolution Matrix" > tmp.fenster
+    echo 'RES=(A^TC_d^-1A + \lambda R^TR)^-1A^TC_d^-1A' > tmp.fenster
+    echo 'RES[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf res_m_diagre.pdf"
+    $clean
+fi
+if [ -e $invdir/res_m.diag_im ];then
+    awk '{if(NR>1){print $2,$1}else{print}}' $invdir/res_m.diag_im > tmp.dat
+    cp tmp.dat $invdir/res_m.diagim
+    echo $invdir/res_m.diagim > inv.lastmod
+    echo "Resolution Matrix" > tmp.fenster
+    echo 'RES=(A^TC_d^-1A + \lambda R^TR)^-1A^TC_d^-1A' > tmp.fenster
+    echo 'Im(RES)[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf res_m_diagim.pdf"
+    $clean
+fi
+if [ -e $invdir/cov2_m.diag_re ];then
+    echo $invdir/cov2_m.diag_re > inv.lastmod
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM2=MCM1 A^TC_d^-1A MCM1' > tmp.fenster
+    echo 'log(MCM2^1/2)[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf cov2_m_diag_re.pdf"
+    $clean
+fi
+if [ -e $invdir/cov2_m.diag_im ];then
+    echo $invdir/cov2_m.diag_im > inv.lastmod
+    echo "Model Covariance Matrix" > tmp.fenster
+    echo 'MCM2=MCM1 A^TC_d^-1A MCM1' > tmp.fenster
+    echo 'Im(log(MCM2^1/2))[SI]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf cov2_m_diag_im.pdf"
+    $clean
+fi
+cp crt.lastmod inv.lastmod
+#if [ -n "$1" ];then
+#	texfile=lam_$1.tex
+#else
+	texfile=crt_plots.tex
+#fi
+
+$plt_inv_ctr
+
+echo '\documentclass[12pt,a4]{article}' > $texfile 
+echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $texfile
+echo '\usepackage[T1]{fontenc}' >> $texfile
+echo '\usepackage[utf8]{inputenc}' >> $texfile
+echo '\usepackage{listings}' >> $texfile
+echo '\lstset{basicstyle=\tiny}' >> $texfile
+echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $texfile
+echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $texfile
+echo '\usepackage{fancyhdr}' >> $texfile
+
+echo '\oddsidemargin-15mm' >> $texfile
+echo '\parindent0mm' >> $texfile
+echo '\parskip0mm' >> $texfile
+echo '\textheight24cm' >> $texfile
+echo '\textwidth19cm' >> $texfile
+echo '\unitlength1mm' >> $texfile
+echo '\topmargin-2cm' >> $texfile
+echo '\headheight0cm' >> $texfile
+echo '\footskip3cm' >> $texfile
+echo '\begin{document}' >> $texfile
+echo '\pagestyle{fancy}' >> $texfile
+#if [ -n "$1" ];then
+#	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
+#else
+	echo '\fancyhead[C]{\Large\bf CRTomo Iteration no. '$it'}' >> $texfile
+#fi
+rm -f cropped.pdf
+echo $pltpdf
+let i=1
+
+for x in $pltpdf;do
+  
+    $my_pdfcrop . $x
+
+    y=`basename $x '.pdf'`;
+    echo '\includegraphics[width=.5\textwidth]{'$x'}' >> $texfile
+    let i=$i+1
+done
+
+echo '\clearpage' >> $texfile
+if [ -e variograms.eps ];then
+    echo '\fancyhead[C]{\large Exp. Variogram }' >> $texfile
+    echo '\includegraphics[height=\textheight]{variograms.eps}' >> $texfile
+    echo '\clearpage' >> $texfile
+fi
+
+echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
+if [ -e inv_stat.eps ];then
+    echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
+fi
+
+echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
+
+
+echo '\end{document}' >> $texfile
+
+
+$pdflatex $texfile
+
+if [ -d $pltdir ];then
+    echo $pltdir exits
+else
+    mkdir $pltdir
+fi
+cp *.pdf *.eps $pltdir
+
+$clean
