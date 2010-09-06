@@ -118,6 +118,10 @@ for x in *_$mode;do
 		    iy=`awk '!/#/{print $3}' variofit.dat`
 		fi
 		echo NEW ix:$ix iy:$iy
+
+		cp inv.variogram variogram.dat
+		vario_fit.sh
+		mv variogram_fit.ps variogram_fit_r.ps
 	    fi
 	else
 	    cd $z/exe
