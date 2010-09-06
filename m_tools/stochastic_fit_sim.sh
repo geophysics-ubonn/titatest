@@ -98,23 +98,24 @@ for x in *_$mode;do
 		
 		cp inv.variogram_x variogram.dat
 		vario_fit.sh
-		
+		mv variogram_fit.ps variogram_fit_x.ps
 		if [ "$mode" == "Exp" ];then
-		    ix=`awk '/aexp =/{printf("%.4f\n",$3)}' variofit.dat`
+		    ix=`awk '!/#/{print $1}' variofit.dat`
 		elif [ $mode == "Gau" ];then 
-		    ix=`awk '/agau =/{printf("%.4f\n",$3)}' variofit.dat`
+		    ix=`awk '!/#/{print $2}' variofit.dat`
 		elif [ $mode == "Sph" ];then
-		    ix=`awk '/asph =/{printf("%.4f\n",$3)}' variofit.dat`
+		    ix=`awk '!/#/{print $3}' variofit.dat`
 		fi
 # get y-vario fit parameter
 		cp inv.variogram_y variogram.dat
 		vario_fit.sh
+		mv variogram_fit.ps variogram_fit_y.ps
 		if [ $mode == "Exp" ];then
-		    iy=`awk '/aexp =/{printf("%.4f\n",$3)}' variofit.dat`
+		    iy=`awk '!/#/{print $1}' variofit.dat`
 		elif [ $mode == "Gau" ];then 
-		    iy=`awk '/agau =/{printf("%.4f\n",$3)}' variofit.dat`
+		    iy=`awk '!/#/{print $2}' variofit.dat`
 		elif [ $mode == "Sph" ];then
-		    iy=`awk '/asph =/{printf("%.4f\n",$3)}' variofit.dat`
+		    iy=`awk '!/#/{print $3}' variofit.dat`
 		fi
 		echo NEW ix:$ix iy:$iy
 	    fi
