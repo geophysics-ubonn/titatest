@@ -98,7 +98,7 @@ for x in *_$mode;do
 		
 		cp inv.variogram_x variogram.dat
 		vario_fit.sh
-		mv variogram_fit.eps variogram_fit_x.eps
+		mv variogram_fit.ps variogram_fit_x.ps
 		if [ "$mode" == "Exp" ];then
 		    ix=`awk '!/#/{print $1}' variofit.dat`
 		elif [ $mode == "Gau" ];then 
@@ -109,7 +109,7 @@ for x in *_$mode;do
 # get y-vario fit parameter
 		cp inv.variogram_y variogram.dat
 		vario_fit.sh
-		mv variogram_fit.eps variogram_fit_y.eps
+		mv variogram_fit.ps variogram_fit_y.ps
 		if [ $mode == "Exp" ];then
 		    iy=`awk '!/#/{print $1}' variofit.dat`
 		elif [ $mode == "Gau" ];then 

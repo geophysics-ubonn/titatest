@@ -225,7 +225,7 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='variogram.gnu',STATUS='replace',ERR=999)
   WRITE (ifp,'(a)')'set st da l'
   WRITE (ifp,'(a)')'set grid'
-  WRITE (ifp,'(a)')"set out 'variograms.eps'"
+  WRITE (ifp,'(a)')"set out 'variograms.ps'"
   WRITE (ifp,'(a)')'set term pos col enh 20'
   WRITE (ifp,'(a)')'set pointsize 1.2'
   WRITE (ifp,'(a)')'set key bot right Left samplen .3'
@@ -244,9 +244,9 @@ SUBROUTINE bvariogram
   WRITE (ifp,'(a,F10.3,a)')"plot"//&
        "'inv.variogram' u 1:2 w p lc 1 pt 7 ti 'sv(h)',"//&
        "'inv.variogram' u 1:3 w l lc 1 lw 4 ti '"//TRIM(tmgam)//&
-       "','inv.variogram_x' u 1:2 w p lc 2 pt 9 ti 'sv(hx)',"//&
+       "','inv.variogram_x' u 1:2 w p lc 2 pt 7 ti 'sv(hx)',"//&
        "'inv.variogram_x' u 1:3 w l lc 2 lw 4 ti '"//TRIM(tmgam_x)//&
-       "','inv.variogram_y' u 1:2 w p lc 3 pt 13 ti 'sv(hy)',"//&
+       "','inv.variogram_y' u 1:2 w p lc 3 pt 7 ti 'sv(hy)',"//&
        "'inv.variogram_y' u 1:3 w l lc 3 lw 4 ti '"//TRIM(tmgam_y)//&
        "',",par_vari," w l lc 0 lw 4 lt 2 ti 'Variance (va)'"
   CLOSE (ifp)

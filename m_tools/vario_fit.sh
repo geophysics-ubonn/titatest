@@ -53,20 +53,21 @@ echo $aexp $agau $asph $daexp $dagau $dasph >> variofit.dat
 gplt=$gplt'2'
 
 
-echo 'set tit "Unweighted least squares fit"' > $gplt
+echo 'set tit "Variogram fit"' > $gplt
 echo 'set xla offset 0,.5 "Lag (h)"' >> $gplt
 echo 'set yla offset 1.5 "Variogram"' >> $gplt
+echo 'set grid' >> $gplt
 echo 'set term pos enh col sol 20' >> $gplt
-echo 'set pointsize 1.5' >> $gplt
-echo 'set out "variogram_fit.eps"' >> $gplt
+echo 'set pointsize 1.4' >> $gplt
+echo 'set out "variogram_fit.ps"' >> $gplt
 echo 'set key bot right Right font "Arial,18" samplen .3 spacing 2.5' >> $gplt
 echo "ve(x)=$sexp*(1 - exp(-(3*x/$aexp)))" >> $gplt
 echo "vg(x)=$sgau*(1 - exp(-(3*x/$agau)**2))" >> $gplt
 echo "vs(x)=$ssph*(1.5*(x/$asph) - .5*(x/$asph)**3)" >> $gplt
 echo 'p\'>> $gplt
 echo '"variogram.dat" w p lc 0 pt 7 ti "Semivariogram",\' >> $gplt
-echo 've(x) w l lw 3 lc 1 ti "'$texp'",\' >> $gplt
-echo 'vg(x) w l lw 3 lc 2 ti "'$tgau'",\' >> $gplt
-echo 'vs(x) w l lw 3 lc 3 ti "'$tsph'"' >> $gplt
+echo 've(x) w l lw 6 lc 1 ti "'$texp'",\' >> $gplt
+echo 'vg(x) w l lw 6 lc 2 ti "'$tgau'",\' >> $gplt
+echo 'vs(x) w l lw 6 lc 3 ti "'$tsph'"' >> $gplt
 
 gnuplot < $gplt 
