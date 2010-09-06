@@ -37,7 +37,7 @@ dagau=`grep -A 4 "Final set" variofit_vg.dat|awk '/agau/{printf("%.2f\n",$5)}'`
 # prepare plot title
 tgau="c (1 - exp( -(3h/a)^2 )); c=$sgau{/Symbol \261}$dsgau, a=$agau{/Symbol \261}$dagau"
 
-echo 'vs(x)=ssph * (1.5 * (x/asph) - .5 * (x/asph)**3 )' > $gplt
+echo 'vs(x)=(myval = ssph * (1.5 * (x/asph) - .5 * (x/asph)**3 ),retval=ssph, (x < asph ? (retval = myval) : 1), retval)' > $gplt
 echo 'fit vs(x) "variogram.dat" u 1:2 via ssph,asph' >> $gplt
 gnuplot < $gplt >& variofit_vs.dat
 ssph=`grep -A 4 "Final set" variofit_vs.dat|awk '/ssph/{printf("%.3f\n",sqrt($3*$3))}'`
@@ -45,7 +45,7 @@ dssph=`grep -A 4 "Final set" variofit_vs.dat|awk '/ssph/{printf("%.3f\n",$5)}'`
 asph=`grep -A 4 "Final set" variofit_vs.dat|awk '/asph/{printf("%.2f\n",sqrt($3*$3))}'`
 dasph=`grep -A 4 "Final set" variofit_vs.dat|awk '/asph/{printf("%.2f\n",$5)}'`
 
-tsph="c (1.5(h/a) - .5(h/a)^3); c=$ssph{/Symbol \261}$dssph, a=$asph{/Symbol \261}$dasph\n"
+tsph="c ((1.5(h/a) - .5(h/a)^3),1); c=$ssph{/Symbol \261}$dssph, a=$asph{/Symbol \261}$dasph\n"
 
 echo '# Exp Gau Sph / Errors (absolute)' > variofit.dat
 echo $aexp $agau $asph $daexp $dagau $dasph >> variofit.dat
@@ -63,7 +63,7 @@ echo 'set out "variogram_fit.ps"' >> $gplt
 echo 'set key bot right Right font "Arial,18" samplen .3 spacing 2.5' >> $gplt
 echo "ve(x)=$sexp*(1 - exp(-(3*x/$aexp)))" >> $gplt
 echo "vg(x)=$sgau*(1 - exp(-(3*x/$agau)**2))" >> $gplt
-echo "vs(x)=$ssph*(1.5*(x/$asph) - .5*(x/$asph)**3)" >> $gplt
+echo "vs(x)=(myval=$ssph*(1.5*(x/$asph) - .5*(x/$asph)**3),retval=$ssph, (x < $asph ? (retval = myval):1), retval)" >> $gplt
 echo 'p\'>> $gplt
 echo '"variogram.dat" w p lc 0 pt 7 ti "Semivariogram",\' >> $gplt
 echo 've(x) w l lw 6 lc 1 ti "'$texp'",\' >> $gplt
