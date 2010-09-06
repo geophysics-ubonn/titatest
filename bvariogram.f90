@@ -225,10 +225,10 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='variogram.gnu',STATUS='replace',ERR=999)
   WRITE (ifp,'(a)')'set st da l'
   WRITE (ifp,'(a)')'set grid'
-  WRITE (ifp,'(a)')"set out 'variograms.eps'"
-  WRITE (ifp,'(a)')'set term pos col sol enh 20'
-  WRITE (ifp,'(a)')'set pointsize 1.5'
-  WRITE (ifp,'(a)')'set key bot right Left'
+  WRITE (ifp,'(a)')"set out 'variograms.ps'"
+  WRITE (ifp,'(a)')'set term pos col enh 20'
+  WRITE (ifp,'(a)')'set pointsize 1.2'
+  WRITE (ifp,'(a)')'set key bot right Left samplen .3'
   IF (ltri == 15) THEN ! only meaningful for stochastical regu..
      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//&
           TRIM(tgam)//'\n'//TRIM(tcov)//'"'
@@ -240,15 +240,15 @@ SUBROUTINE bvariogram
   WRITE (ifp,'(a,2(F10.2,a))')'set xrange [',grid_min,':',&
        grid_max/2.,']'
   WRITE (ifp,'(a)')"set ylab offset 2,0 'sv(h)=1/2N(h)"//&
-       " {/Symbol S}_i(Z(m_i+h)-Z(m_i))^2'"
+       " {/Symbol S}_i(Z(m_i)-Z(m_i+h))^2, {/Symbol g}(h) /[SI]'"
   WRITE (ifp,'(a,F10.3,a)')"plot"//&
-       "'inv.variogram' u 1:2 w p lc 1 lw 3 ti 'sv(h)',"//&
-       "'inv.variogram' u 1:3 w l lc 1 lw 3 ti '"//TRIM(tmgam)//&
-       "','inv.variogram_x' u 1:2 w p lc 2 lw 3 ti 'sv(hx)',"//&
-       "'inv.variogram_x' u 1:3 w l lc 2 lw 3 ti '"//TRIM(tmgam_x)//&
-       "','inv.variogram_y' u 1:2 w p lc 3 lw 3 ti 'sv(hy)',"//&
-       "'inv.variogram_y' u 1:3 w l lc 3 lw 3 ti '"//TRIM(tmgam_y)//&
-       "',",par_vari," w l lc 0 lw 4 ti 'Variance (va)'"
+       "'inv.variogram' u 1:2 w p lc 1 pt 7 ti 'sv(h)',"//&
+       "'inv.variogram' u 1:3 w l lc 1 lw 4 ti '"//TRIM(tmgam)//&
+       "','inv.variogram_x' u 1:2 w p lc 2 pt 7 ti 'sv(hx)',"//&
+       "'inv.variogram_x' u 1:3 w l lc 2 lw 4 ti '"//TRIM(tmgam_x)//&
+       "','inv.variogram_y' u 1:2 w p lc 3 pt 7 ti 'sv(hy)',"//&
+       "'inv.variogram_y' u 1:3 w l lc 3 lw 4 ti '"//TRIM(tmgam_y)//&
+       "',",par_vari," w l lc 0 lw 4 lt 2 ti 'Variance (va)'"
   CLOSE (ifp)
   
   par_vari = 10**par_vari
