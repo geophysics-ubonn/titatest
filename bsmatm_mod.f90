@@ -725,6 +725,7 @@ CONTAINS
     REAL(KIND(0D0)) :: h,sd_el
 !!!$    Korrelation lengths, variance (var) and nugget
     REAL(KIND(0D0))      :: hx,hy,var,nugget
+    REAL                 :: epsi
 !!!$    gibt es evtl schon eine inverse?
     logical              :: ex,exc        
 !!!$    Hilfsvariablen
@@ -734,6 +735,8 @@ CONTAINS
 !!!$    clearscreen
     CHARACTER(80)        :: csz
 
+    epsi=EPSILON(epsi)
+    IF (lverb) WRITE (*,*)'Epsilon smatm::',epsi
 
     errnr = 1
     CALL get_unit(ifp)
@@ -781,6 +784,9 @@ CONTAINS
 
     ELSE
 
+       IF (lverb) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
+       
        DO i = 1 , manz
           WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',&
                REAL(i*(100./manz)),'%'
@@ -798,11 +804,19 @@ CONTAINS
 
              smatm(j,i) = smatm(i,j) ! lower triangle triangle
 
+             IF (smatm(i,j)>epsi.AND.lverb) THEN
+                WRITE (ifp,*)i,j
+                WRITE (ifp,*)j,i
+             END IF
+             
           END DO
        END DO
-
+       IF (lverb) CLOSE (ifp)
 
        PRINT*,'bestimme nun C_m^-1'
+       
+       IF (lverb) OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
@@ -832,9 +846,15 @@ CONTAINS
                   ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
              DO j = 1, i
                 smatm(i,j) = smatm(j,i)
+                
+                IF (smatm(i,j)>epsi.AND.lverb) THEN
+                   WRITE (ifp,*)i,j
+                   WRITE (ifp,*)j,i
+                END IF
              END DO
           END DO
        END IF
+       IF (lverb) CLOSE (ifp)
 
        IF (errnr == 0) THEN
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'got inverse'
