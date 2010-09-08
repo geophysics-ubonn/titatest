@@ -797,12 +797,12 @@ CONTAINS
           
           DO j = i+1 , manz   !!!$fills upper triangle
 
-             hx = (espx(i) - espx(j))
+             hx = (espx(i) - espx(j)) !main point differences
              hy = (espy(i) - espy(j))
 
-             smatm(i,j) = mcova(hx,hy,var) ! computes proper covariance
+             smatm(i,j) = mcova(hx,hy,var) ! compute covariance
 
-             smatm(j,i) = smatm(i,j) ! lower triangle triangle
+             smatm(j,i) = smatm(i,j) ! lower triangle
 
              IF (smatm(i,j)>epsi.AND.lverb) THEN
                 WRITE (ifp,*)i,j
@@ -851,6 +851,7 @@ CONTAINS
                    WRITE (ifp,*)i,j
                    WRITE (ifp,*)j,i
                 END IF
+
              END DO
           END DO
        END IF
