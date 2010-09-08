@@ -725,6 +725,7 @@ CONTAINS
     REAL(KIND(0D0)) :: h,sd_el
 !!!$    Korrelation lengths, variance (var) and nugget
     REAL(KIND(0D0))      :: hx,hy,var,nugget
+    REAL                 :: epsi
 !!!$    gibt es evtl schon eine inverse?
     logical              :: ex,exc        
 !!!$    Hilfsvariablen
@@ -734,6 +735,8 @@ CONTAINS
 !!!$    clearscreen
     CHARACTER(80)        :: csz
 
+    epsi=EPSILON(epsi)
+    IF (lverb) WRITE (*,*)'Epsilon smatm::',epsi
 
     errnr = 1
     CALL get_unit(ifp)
@@ -781,9 +784,15 @@ CONTAINS
 
     ELSE
 
+<<<<<<< HEAD
        OPEN(ifp,FILE='cm0.dat',STATUS='replace',ACCESS='sequential',&
             FORM='formatted')
 
+=======
+       IF (lverb) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
+       
+>>>>>>> 21226fb8617039014bc97a5ca71f4951607ebc97
        DO i = 1 , manz
           WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',&
                REAL(i*(100./manz)),'%'
@@ -799,6 +808,7 @@ CONTAINS
 
              smatm(i,j) = mcova(hx,hy,var) ! compute covariance
 
+<<<<<<< HEAD
              smatm(j,i) = smatm(i,j) ! lower triangle
              l = 0
              IF (smatm(i,j)>=1.e-4) l = 1
@@ -806,8 +816,21 @@ CONTAINS
           END DO
        END DO
        CLOSE (ifp)
+=======
+             IF (smatm(i,j)>epsi.AND.lverb) THEN
+                WRITE (ifp,*)i,j
+                WRITE (ifp,*)j,i
+             END IF
+             
+          END DO
+       END DO
+       IF (lverb) CLOSE (ifp)
+>>>>>>> 21226fb8617039014bc97a5ca71f4951607ebc97
 
        PRINT*,'bestimme nun C_m^-1'
+       
+       IF (lverb) OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
@@ -839,13 +862,22 @@ CONTAINS
                   ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
              DO j = 1, i
                 smatm(i,j) = smatm(j,i)
+<<<<<<< HEAD
                 l = 0
                 IF (smatm(i,j)>=1.e-4) l = 1
                 WRITE (ifp,'(3(I6,2X))')i,j,l
+=======
+                
+                IF (smatm(i,j)>epsi.AND.lverb) THEN
+                   WRITE (ifp,*)i,j
+                   WRITE (ifp,*)j,i
+                END IF
+>>>>>>> 21226fb8617039014bc97a5ca71f4951607ebc97
              END DO
           END DO
           CLOSE (ifp)
        END IF
+       IF (lverb) CLOSE (ifp)
 
        IF (errnr == 0) THEN
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'got inverse'
