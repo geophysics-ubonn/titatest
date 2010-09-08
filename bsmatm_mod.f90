@@ -781,6 +781,9 @@ CONTAINS
 
     ELSE
 
+       OPEN(ifp,FILE='cm0.dat',STATUS='replace',ACCESS='sequential',&
+            FORM='formatted')
+
        DO i = 1 , manz
           WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',&
                REAL(i*(100./manz)),'%'
@@ -791,16 +794,18 @@ CONTAINS
           
           DO j = i+1 , manz   !!!$fills upper triangle
 
-             hx = (espx(i) - espx(j))
+             hx = (espx(i) - espx(j)) !main point differences
              hy = (espy(i) - espy(j))
 
-             smatm(i,j) = mcova(hx,hy,var) ! computes proper covariance
+             smatm(i,j) = mcova(hx,hy,var) ! compute covariance
 
-             smatm(j,i) = smatm(i,j) ! lower triangle triangle
-
+             smatm(j,i) = smatm(i,j) ! lower triangle
+             l = 0
+             IF (smatm(i,j)>=1.e-4) l = 1
+             WRITE (ifp,'(3(I6,2X))')i,j,l
           END DO
        END DO
-
+       CLOSE (ifp)
 
        PRINT*,'bestimme nun C_m^-1'
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
@@ -827,13 +832,19 @@ CONTAINS
           CALL LINVD(smatm,work,manz)
           DEALLOCATE (work)
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling upper C_m...'
+          OPEN(ifp,FILE='cm0_inv.dat',STATUS='replace',&
+               ACCESS='sequential',FORM='formatted')
           DO i= 1, manz
              WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//&
                   ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
              DO j = 1, i
                 smatm(i,j) = smatm(j,i)
+                l = 0
+                IF (smatm(i,j)>=1.e-4) l = 1
+                WRITE (ifp,'(3(I6,2X))')i,j,l
              END DO
           END DO
+          CLOSE (ifp)
        END IF
 
        IF (errnr == 0) THEN
