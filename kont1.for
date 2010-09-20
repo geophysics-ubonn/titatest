@@ -45,7 +45,7 @@ c     diff+>
       
 c     HEADER AUSGEBEN
  10   FORMAT (l1,t20,a)
- 11   FORMAT (g10.5,t20,a)
+ 11   FORMAT (g11.5,t20,a)
  12   FORMAT (I8,t20,a)
       
       write(fpinv,'(a)',err=999) '***FILES***'
