@@ -257,8 +257,6 @@ c     Felder zuruecksetzen
 
       IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
 
-c     Verbesserung anbringen
-      par = par + dpar * DCMPLX(step)
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 c     if (lphi0.and.dimag(par(j)).lt.0d0)
 c     1        par(j) = dcmplx(dble(par(j)))
@@ -268,11 +266,24 @@ c     ak     1          par(j) = dcmplx(dble(par(j)),1d-3)
 
 c     i.e Stepsize = ||\delta m||
       bdpar = 0d0
-
+      in = 0
       do j=1,manz
+         
+         par(j) = par(j) + DCMPLX(step) * dpar(j) ! model update
+         
+c$$$  ! eventually correct for phase < 0 mrad
+         IF (lphi0 .AND. dimag(par(j)) < 0D0) THEN 
+            par(j) = DCMPLX(DBLE(par(j))) 
+            in = in + 1 
+         END IF 
+c$$$! take only the real part as new parameter
+         
          bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
+         
       end do
+      
+      IF (in > 0) WRITE (*,'(a,I9,a)',ADVANCE = 'no')
+     1     ' forcing zero ',in,' times'
       bdpar = bdpar * step
-c$$$      bdpar = dsqrt(bdpar/dble(manz))
 
       end

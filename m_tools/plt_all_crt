@@ -30,15 +30,18 @@ cp inv.lastmod crt.lastmod
 
 mymag=`cat inv.lastmod`
 mymag=`basename $mymag '.mag'`
-echo $mymag
+echo $mymag $invdir
 it=`echo $mymag|sed 's/rho//g'`
 $clean
 echo "$fn" > tmp.fenster
 $plot_cur_crtomo
 pltpdf=$mymag'_mag.pdf'
 $clean
-if [ -e $invdir/$mymag'.pha' ];then
-    echo $invdir/$mymag'.pha' > inv.lastmod
+bla="$invdir/$mymag.pha"
+echo $bla
+if [ -e $bla ];then
+    echo found $bla
+    echo $bla > inv.lastmod
     echo "Phase" > tmp.fenster
     $plot_cur_crtomo
     pltpdf="$pltpdf $mymag"'_pha.pdf'

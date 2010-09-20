@@ -49,6 +49,7 @@ awk '{if (NR==3){print}}' crtomo.cfg > tmp.elecname
 
 if [ -e "tmp.fenster" ];then
     fenster=`cat tmp.fenster`
+    echo found $fenster
 else
     fenster=$1
 fi

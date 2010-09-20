@@ -160,7 +160,7 @@ pha=strmatch(appi,'.pha');
 mag=strmatch(appi,'.mag');
 modl=strmatch(appi,'.modl');
 
-if length(pha) ~= 0 | length(mag) ~= 0
+if length(pha) ~= 0 || length(mag) ~= 0
     rho(1:nm)=0;
     for i=1:nm
         a=fscanf(fp,'%f',2);
@@ -208,7 +208,7 @@ end
 % open figure with name
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
-  if ((length(mag) ~= 0 || length(pha) ~= 0)&& length(mcov) == 0)
+  if ((length(mag) ~= 0 || length(pha) ~= 0) && length(mcov) == 0)
      name = sprintf('%s (RMS %.4f)',fenster,nrms);
   else
      name = fenster;
