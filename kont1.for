@@ -45,7 +45,7 @@ c     diff+>
       
 c     HEADER AUSGEBEN
  10   FORMAT (l1,t20,a)
- 11   FORMAT (g10.5,t20,a)
+ 11   FORMAT (g11.5,t20,a)
  12   FORMAT (I8,t20,a)
       
       write(fpinv,'(a)',err=999) '***FILES***'
@@ -196,6 +196,7 @@ c     ak     1           '! automatic polarity adjustment ?'
       WRITE(fpinv,100,err=999)'Write resolution?',lres
       WRITE(fpinv,100,err=999)'Write MCM 2?',lcov2
       WRITE(fpinv,100,err=999)'Using Gauss ols?',lgauss
+      WRITE(fpinv,100,err=999)'Forcing negative phase?',lphi0
       WRITE(fpinv,100,err=999)'Calculate sytop?',lsytop
       WRITE(fpinv,100,err=999)'Verbose?',lverb
       write(fpinv,'(/a)',err=999) '***FIXED***'
