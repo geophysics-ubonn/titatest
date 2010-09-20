@@ -82,6 +82,7 @@ c check if data file format is CRTOmo konform..
      1     kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),
      1     wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),
      1     stat=errnr)
+      wmatd = 0.;wmatdp = 0.; wmatdr = 0.
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation data space'
          errnr = 94
@@ -209,7 +210,7 @@ c     ak                stabw = (stabw0 + stabm0/bet) * stabw
                   vnr(i)   = elec3*10000 + elec4
                END IF
 
-               if (lfphai) stabwp = ( stabpA1*bet**stabpB
+               if (.NOT. ldc) stabwp = ( stabpA1*bet**stabpB
      1              + 1d-2*stabpA2*dabs(pha)
      1              + stabp0 ) * 1d-3
             end if
