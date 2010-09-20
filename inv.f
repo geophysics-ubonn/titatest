@@ -414,7 +414,7 @@ c     Kontrollausgaben
                close(fpinv)
 
 c     Wichtungsfeld umspeichern
-               wmatd(1:nanz) = wmatdp(1:nanz)
+               wmatd = wmatdp
 
                lip    = .true.
                lsetip = .true. ! 
