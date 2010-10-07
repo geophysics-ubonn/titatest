@@ -92,7 +92,7 @@ c     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
 !     set prior model ...             
             IF (bet0 <= 0. .OR.
      1           (.not.ldc.and.dabs(pha0).gt.1d3*pi)) THEN
-               fetxt = ' '
+               fetxt = 'starting model incorrect '
                errnr = 91
                goto 999
             END IF
@@ -120,7 +120,7 @@ c    hier koennte mittelung passieren
 !     or let it stay at zero and take background cond
                sigma(i) = dcmplx( dcos(pha0/1d3)/bet0 ,
      1              -dsin(pha0/1d3)/bet0 )
-               m0(mnr(i)) = 0.
+               m0(mnr(i)) = DCMPLX(0d0)
             END IF
             
          ELSE
