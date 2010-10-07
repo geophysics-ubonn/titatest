@@ -1,0 +1,139 @@
+#!/bin/bash
+
+if [ -z $1 ];then
+    fn='Amplitude'
+else
+    fn=$1
+fi
+echo "$0 argument $1"
+pltdir=crt_plots
+if [ -e crtomo.cfg ];then
+	invdir=`awk '{if(NR==5){print $1}}' crtomo.cfg`
+else
+    echo no inversion was running 
+    exit
+fi
+if [ -e inv.lastmod ];then
+    echo found inv.lastmod
+else
+    echo no inversion results found.. exiting 
+    exit
+fi
+
+plot_cur_crtomo=`which plot_cur_crt`
+clean=`which clean`
+my_pdfcrop=`which my_pdfcrop`
+pdflatex=`which pdflatex`
+plt_inv_ctr=`which plt_inv_ctr`
+
+cp inv.lastmod crt.lastmod
+
+mymag=`cat inv.lastmod`
+mymag=`basename $mymag '.mag'`
+echo $mymag
+it=`echo $mymag|sed 's/rho//g'`
+pltpdf=''
+let nit=`echo $it|sed 's/0//g'`
+echo processing $nit Iterations
+
+for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
+    if [ $i -lt 9 ];then # case whether we have the proper digits
+# sed string with three blanks inbetween
+	csz="rho0$i"
+    else
+# sed string with two blanks inbetween
+	csz="rho$i"
+    fi
+    echo $csz
+    $clean
+    echo $invdir/$csz'.mag' > inv.lastmod
+    echo "$csz" > tmp.fenster
+    echo 'log(rho)[Ohm m]' > tmp.cbarn
+    $plot_cur_crtomo
+    pltpdf="$pltpdf $csz"'_mag.pdf'
+    $clean
+    if [ -e $invdir/$csz'.pha' ];then
+	echo $invdir/$csz'.pha' > inv.lastmod
+	echo "Phase" > tmp.fenster
+	echo 'phase[mrad]' > tmp.cbarn
+	$plot_cur_crtomo
+	pltpdf="$pltpdf $csz"'_pha.pdf'
+	$clean
+    fi
+done
+cp crt.lastmod inv.lastmod
+#if [ -n "$1" ];then
+#	texfile=lam_$1.tex
+#else
+	texfile=crt_plots.tex
+#fi
+
+$plt_inv_ctr
+
+echo '\documentclass[12pt,a4]{article}' > $texfile 
+echo '\usepackage{amsmath,amssymb,mathrsfs}' >> $texfile
+echo '\usepackage[T1]{fontenc}' >> $texfile
+echo '\usepackage[utf8]{inputenc}' >> $texfile
+echo '\usepackage{listings}' >> $texfile
+echo '\lstset{basicstyle=\tiny}' >> $texfile
+echo '\usepackage{pstricks,epsf,graphicx,psfrag,epsfig}' >> $texfile
+echo '\usepackage{epstopdf,boxedminipage,fancybox,subfigure,float}' >> $texfile
+echo '\usepackage{fancyhdr}' >> $texfile
+
+echo '\oddsidemargin-15mm' >> $texfile
+echo '\parindent0mm' >> $texfile
+echo '\parskip0mm' >> $texfile
+echo '\textheight24cm' >> $texfile
+echo '\textwidth19cm' >> $texfile
+echo '\unitlength1mm' >> $texfile
+echo '\topmargin-2cm' >> $texfile
+echo '\headheight0cm' >> $texfile
+echo '\footskip3cm' >> $texfile
+echo '\begin{document}' >> $texfile
+echo '\pagestyle{fancy}' >> $texfile
+#if [ -n "$1" ];then
+#	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
+#else
+	echo '\fancyhead[C]{\Large\bf All Iterations '$it'}' >> $texfile
+#fi
+rm -f cropped.pdf
+echo $pltpdf
+let i=1
+
+for x in $pltpdf;do
+  
+    $my_pdfcrop . $x
+
+    y=`basename $x '.pdf'`;
+    echo '\includegraphics[width=.5\textwidth]{'$x'}' >> $texfile
+    let i=$i+1
+done
+
+echo '\clearpage' >> $texfile
+if [ -e variograms.eps ];then
+    echo '\fancyhead[C]{\large Exp. Variogram }' >> $texfile
+    echo '\includegraphics[height=\textheight]{variograms.eps}' >> $texfile
+    echo '\clearpage' >> $texfile
+fi
+
+echo '\fancyhead[C]{\Large\bf Stats }' >> $texfile
+if [ -e inv_stat.eps ];then
+    echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
+fi
+
+echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
+
+
+echo '\end{document}' >> $texfile
+
+
+$pdflatex $texfile
+
+if [ -d $pltdir ];then
+    echo $pltdir exits
+else
+    mkdir $pltdir
+fi
+cp *.pdf *.eps $pltdir
+
+$clean
