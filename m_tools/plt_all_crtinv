@@ -33,11 +33,11 @@ mymag=`basename $mymag '.mag'`
 echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 pltpdf=''
-let nit=`echo $it|sed 's/0//g'`
+let nit=$it+1
 echo processing $nit Iterations
 
 for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
-    if [ $i -lt 9 ];then # case whether we have the proper digits
+    if [ $i -lt 10 ];then # case whether we have the proper digits
 # sed string with three blanks inbetween
 	csz="rho0$i"
     else
