@@ -129,22 +129,15 @@ c     get memory for CG data storage of residuums
       END IF
 
 c     Startparameter setzen
-      it     = 0
-      itr    = 0
-      rmsalt = 0d0
-      lamalt = 1d0
-      bdpar = 1d0
-      lsetup = .true.
-      lsetip = .false.
-      lip    = .false.
-      llam   = .false.
-      ldlami = .true.
-      lstep  = .false.
+      it     = 0;itr    = 0
+      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
+      betrms = 0d0; pharms = 0d0
+      lsetup = .true.; lsetip = .false.; lip    = .false.
+      llam   = .false.; ldlami = .true.; lstep  = .false.
       lfstep = .false.
-      step   = 1d0
-      stpalt = 1d0
-      alam   = 0d0
+      step   = 1d0; stpalt = 1d0; alam   = 0d0
 
+      CALL wout(kanal,dsigma,dvolt)
 c     Kontrolldateien oeffnen
       errnr = 1
 
@@ -173,7 +166,7 @@ c$$$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
 c     Kontrolldateien initialisieren
 c     diff-        call kont1(delem,delectr,dstrom,drandb)
 c     diff+<
-      call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0)
+      call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 c     diff+>
       if (errnr.ne.0) goto 999
 !!$      CALL SYSTEM('sleep 1000')
@@ -399,7 +392,8 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
                if (errnr.ne.0) goto 999
 
 c     Kontrollausgaben
-               write(*,'(a24)') ' Final phase improvement'
+               write(*,'(/a/)')
+     1              '**** Final phase improvement ****'
 
                write(fprun,'(a24)',err=999)
      1              ' Final phase improvement'
