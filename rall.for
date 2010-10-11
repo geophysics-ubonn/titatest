@@ -122,6 +122,8 @@ c     final phase improvement setzt phase zueruck auf homogenes modell
       lffhom = .FALSE.
 c     Daten Rauschen vom Fehlermodell entkoppeln ?
       lnse2 = .FALSE.
+c     Regularisierung mit prior modell?
+      lprior = .FALSE.
 c######values..
 c     FIXED PARAMETER
 c     Slash

@@ -177,13 +177,16 @@ SUBROUTINE bvariogram
   END DO                    ! outer loop i=1,elanz
 
   DO i=1,nlag
-     gam(i) = gam(i) / ngam(i) / 2.
+     IF (ngam(i)>0) &
+          gam(i) = gam(i) / ngam(i) / 2.
   END DO
   DO i=1,nlag_x
-     gam_x(i) = gam_x(i) / ngam_x(i) / 2.
+     IF (ngam_x(i)>0) &
+          gam_x(i) = gam_x(i) / ngam_x(i) / 2.
   END DO
   DO i=1,nlag_y
-     gam_y(i) = gam_y(i) / ngam_y(i) / 2.
+     IF (ngam_y(i) > 0) &
+          gam_y(i) = gam_y(i) / ngam_y(i) / 2.
   END DO
 
 !!$   sets parameter variance..
@@ -195,29 +198,29 @@ SUBROUTINE bvariogram
 
   CALL get_unit(ifp)
   OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10a,G10.3)')'#   lag(x-dir)'//ACHAR(9)//&
+  WRITE (ifp,'(a,I10a,F10.2)')'#   lag(x-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram    model ##',nlag_x,&
        ' / parameter variance ',10**par_varix
   DO i=1,nlag_x
-     WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)lag_x(i),gam_x(i),&
+     WRITE (ifp,'(3F10.2,3X),I10)',ERR=999)lag_x(i),gam_x(i),&
           mgam_x(i),ngam_x(i)
   END DO
   CLOSE (ifp)
   OPEN (ifp,FILE='inv.variogram_y',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10a,G10.3)')'#   lag(y-dir)'//ACHAR(9)//&
+  WRITE (ifp,'(a,I10a,F10.2)')'#   lag(y-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram   model ##',nlag_y,&
        ' / parameter variance ',10**par_variy
   DO i=1,nlag_y
-     WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)lag_y(i),gam_y(i),&
+     WRITE (ifp,'(3(F10.2,3X),I10)',ERR=999)lag_y(i),gam_y(i),&
           mgam_y(i),ngam_y(i)
   END DO
   CLOSE (ifp)
   OPEN (ifp,FILE='inv.variogram',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10,a,G10.3)')'#   lag(h)'//ACHAR(9)//&
+  WRITE (ifp,'(a,I10,a,F10.2)')'#   lag(h)'//ACHAR(9)//&
        'exp. semivariogram     model ## ',nlag,&
        ' / parameter variance ',10**par_vari
   DO i=1,nlag
-     WRITE (ifp,'(3(G10.3,3X),I10)',ERR=999)lag(i),gam(i),mgam(i),&
+     WRITE (ifp,'(3(F10.2,3X),I10)',ERR=999)lag(i),gam(i),mgam(i),&
           ngam(i)
   END DO
   CLOSE (ifp)

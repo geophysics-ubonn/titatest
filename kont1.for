@@ -1,6 +1,6 @@
 c     diff-        subroutine kont1(delem,delectr,dstrom,drandb)
 c     diff+<
-      subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0)
+      subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 c     diff+>
 
 c     Unterprogramm zur Ausgabe der Kontrollvariablen.
@@ -38,6 +38,7 @@ c     diff+<
      1     dfm0,
 c     diff+>
      1     drandb
+      LOGICAL :: lagain
       REAL(KIND(0D0)) :: Ix,Iy
       
       fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
@@ -48,27 +49,31 @@ c     HEADER AUSGEBEN
  11   FORMAT (g11.5,t20,a)
  12   FORMAT (I8,t20,a)
       
-      write(fpinv,'(a)',err=999) '***FILES***'
+      IF (mswitch /= 0) THEN
+         write(fpinv,'(I3,t30,a)',err=999)mswitch,'#  mswitch'
+      ELSE
+         write(fpinv,'(a)',err=999) '***FILES***'
+      END IF
       write(fpinv,'(a)',err=999) TRIM(delem)
       write(fpinv,'(a)',err=999) TRIM(delectr)
       write(fpinv,'(a)',err=999) TRIM(dstrom)
       write(fpinv,'(a)',err=999) TRIM(ramd)
 c     diff+<
-      write(fpinv,10,err=999) ldiff,
-     1     '! difference inversion ?'
+      write(fpinv,10,err=999) ldiff.OR.lprior,
+     1     '! difference or inversion or (m - m_{prior})'
       write(fpinv,'(a)',err=999) TRIM(dd0)
-      write(fpinv,10,err=999) lprior,
-     1     '! smooth (m - m_{prior}) ?'
       write(fpinv,'(a)',err=999) TRIM(dm0)
       write(fpinv,'(a)',err=999) TRIM(dfm0)
 c     diff+>
-      write(fpinv,'(a)',err=999) '***PARAMETERS***'
-      IF (ltri == 0) THEN
-         write(fpinv,12,err=999) nx,
-     1        '! # cells in x-direction'
-         write(fpinv,12,err=999) nz,
-     1        '! # cells in z-direction'
+      IF (lnsepri) THEN
+         READ (fpinv,*,err=999) iseedpri,modl_stdn
+      ELSE
+         write(fpinv,'(a)',err=999) '***PARAMETERS***'
       END IF
+      write(fpinv,12,err=999) nx,
+     1     '! nx-switch or # cells in x-direction'
+      write(fpinv,12,err=999) nz,
+     1     '! nz-switch or # cells in z-direction'
       write(fpinv,11,err=999) alfx,
      1     '! smoothing parameter in x-direction'
       write(fpinv,11,err=999) alfz,
@@ -84,8 +89,6 @@ c     ak     1           '! automatic polarity adjustment ?'
       write(fpinv,10,err=999) lfphai,
      1     '! final phase improvement ?'
 !     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
-      WRITE(fpinv,10,err=999) lelerr,
-     1     '! Error ellipses ?'
       write(fpinv,11,err=999) stabw0,
      1     '! rel. resistance error level (%)'//
      1     '  (parameter A1 in err(R) = A1*abs(R) + A2)'
@@ -112,6 +115,8 @@ c     ak     1           '! automatic polarity adjustment ?'
      1     '! background magnitude (ohm*m)'
       write(fpinv,11,err=999) pha0,
      1     '! background phase (mrad)'
+      write(fpinv,10,err=999) lagain,
+     1     '! Another dataset?'
       write(fpinv,12,err=999) swrtr,
      1     '! 2D (=0) or 2.5D (=1)'
       write(fpinv,10,err=999) lsink,
@@ -121,6 +126,13 @@ c     ak     1           '! automatic polarity adjustment ?'
       write(fpinv,10,err=999) lrandb2,
      1     '! boundary values ?'
       write(fpinv,'(a)',err=999) TRIM(drandb)
+      WRITE (fpinv,'(I2)',err=999) ltri
+      IF (BTEST(ltri,5)) 
+     1     WRITE (fpinv,*,err=999) lamfix
+      IF (ltri > 4 .AND. ltri < 15) 
+     1      WRITE (fpinv,*,err=999) betamgs
+      IF ( lnse )
+     1     WRITE (fpinv,*,err=999) iseed
 
  100  FORMAT (a,t30,l1)
  101  FORMAT (a,t30,g10.5)
@@ -138,6 +150,7 @@ c     ak     1           '! automatic polarity adjustment ?'
       WRITE(fpinv,101,err=999)'    Variance',modl_stdn
       WRITE(fpinv,'(/a)',err=999)
      1     '******** Regularization Part *********'
+      WRITE(fpinv,100,err=999)'Prior regualrization',lprior
       WRITE(fpinv,101,err=999)'Regularization-switch',ltri
       WRITE(fpinv,100,err=999)'Regular grid smooth',(ltri==0)
       WRITE(fpinv,100,err=999)'Triangular regu',(ltri==1)
@@ -189,9 +202,9 @@ c     ak     1           '! automatic polarity adjustment ?'
 
       WRITE(fpinv,'(/a,I6)',err=999)
      1     '******** Additional output *********'
+      WRITE(fpinv,101,err=999)'mswitch',mswitch
       WRITE(fpinv,100,err=999)'Read start model?',lstart
       WRITE(fpinv,100,err=999)'Write coverage?',lsens
-      WRITE(fpinv,101,err=999)'mswitch',mswitch
       WRITE(fpinv,100,err=999)'Write MCM 1?',lcov1
       WRITE(fpinv,100,err=999)'Write resolution?',lres
       WRITE(fpinv,100,err=999)'Write MCM 2?',lcov2
@@ -199,6 +212,8 @@ c     ak     1           '! automatic polarity adjustment ?'
       WRITE(fpinv,100,err=999)'Forcing negative phase?',lphi0
       WRITE(fpinv,100,err=999)'Calculate sytop?',lsytop
       WRITE(fpinv,100,err=999)'Verbose?',lverb
+      WRITE(fpinv,100,err=999)'Error Ellipses?',lelerr
+
       write(fpinv,'(/a)',err=999) '***FIXED***'
 
       if (swrtr.eq.1) then
