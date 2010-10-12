@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 tools="Griev";
 
@@ -86,17 +86,38 @@ fi
 echo $cbarn
 if [ -z "$cbarn" ];then cbarn='Units';fi
 
+if [ -e "tmp.crange" ];then
+    maxrho=`awk '{print $2}' tmp.crange`
+    minrho=`awk '{print $1}' tmp.crange`
+fi
+
+# default plot labels
+#cls_default_plot_labels:{
+#	plot_x_label = "xLabel from Config";
+#	plot_y_label = "ylabel from Config";
+#	plot_color_label = "CB F C";
+#	plot_title = "Unglaublicher Titel aus Config File";
+#};
+
+echo 'cls_default_plot_labels:{' > griev.conf
+echo '  plot_x_label = "X /m";' >> griev.conf
+echo '  plot_y_label = "Y /m";' >> griev.conf
+echo '  plot_color_label = "'$cbarn'";' >> griev.conf
+echo '  plot_title = "'$titel'";' >> griev.conf
+echo '};' >> griev.conf
+echo 'aspect_ratio = true;' >> griev.conf
+
 
 griev_std="-i -e $elem -t $elec"
-griev_std=$griev_std`echo '-a "'$titel'"'`
-griev_std=`echo $griev_std' -s "'$cbarn'" -k "X /m" -q "Y /m"'`
- 
+
+if [ -e "tmp.crange" ];then
+    griev_std="$griev_std -c $minrho -d $maxrho"
+fi 
 mypdf=`basename $mod|tr '.' '_'`'.pdf'
 
 if [ -n $ismag ];then
-    griev_std=$griev_std' -y 1 -m '$mod' -p -o '$mypdf
-    echo $griev_std
-    $griev $griev_std
+    echo $griev_std -y 1 -m $mod -p -o $mypdf
+    $griev $griev_std -y 1 -m $mod -p -o $mypdf
 else
     echo $griev_std
     $griev $griev_std -r $mod -j -p -o $mypdf
