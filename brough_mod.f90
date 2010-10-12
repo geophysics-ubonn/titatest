@@ -141,28 +141,29 @@ CONTAINS
        DO i=1,manz
           cdum = dcmplx(0d0)
           DO j=1,smaxs
-             IF (nachbar(i,j)/=0)cdum = cdum + &
-                  DCMPLX(smatm(i,j))*par(nachbar(i,j))
+             IF (nachbar(i,j) /= 0) cdum = cdum + &
+                  DCMPLX(smatm(i,j)) * par(nachbar(i,j))
           END DO
-          cdum = cdum + dcmplx(smatm(i,smaxs+1))*par(i)
+          cdum = cdum + dcmplx(smatm(i,smaxs+1)) * par(i)
           IF (lip) THEN
-             rough = rough + dimag(cdum)*dimag(par(i))
+             rough = rough + dimag(cdum) * dimag(par(i))
           ELSE
-             rough = rough + dble(cdum*dconjg(par(i)))
+             rough = rough + dble(cdum * dconjg(par(i)))
           END IF
        END DO
     ELSE 
        DO i=1,manz
           cdum = dcmplx(0d0)
           DO j=1,smaxs
-             IF (nachbar(i,j)/=0) cdum = cdum + DCMPLX(smatm(i,j)) * &
+             IF (nachbar(i,j) /= 0) cdum = cdum + &
+                  DCMPLX(smatm(i,j)) * &
                   (par(nachbar(i,j)) - m0(nachbar(i,j)))
           END DO
           cdum = cdum + dcmplx(smatm(i,smaxs+1)) * (par(i) - m0(i))
           IF (lip) THEN
              rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
           ELSE
-             rough = rough + dble(cdum * dconjg(par(i)) - m0(i))
+             rough = rough + dble(cdum * dconjg(par(i) - m0(i)))
           END IF
        END DO
     END IF
