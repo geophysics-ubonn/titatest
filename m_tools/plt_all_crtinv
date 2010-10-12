@@ -46,8 +46,14 @@ for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
     fi
     echo $csz
     $clean
-    echo $invdir/$csz'.mag' > inv.lastmod
+    if [ -z "$1" ] ;then
+	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$3)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
+    else
+	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$4)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
+    fi
+    echo $csz'.mag' > inv.lastmod
     echo "$csz" > tmp.fenster
+    echo '2 4' > tmp.crange
     echo 'log(rho)[Ohm m]' > tmp.cbarn
     $plot_cur_crtomo
     pltpdf="$pltpdf $csz"'_mag.pdf'
@@ -94,7 +100,7 @@ echo '\pagestyle{fancy}' >> $texfile
 #if [ -n "$1" ];then
 #	echo '\fancyhead[C]{\Large\bf $\lambda='$1'$}' >> $texfile
 #else
-	echo '\fancyhead[C]{\Large\bf All Iterations '$it'}' >> $texfile
+	echo "\fancyhead[C]{\Large\bf $it iterations}" >> $texfile
 #fi
 rm -f cropped.pdf
 echo $pltpdf

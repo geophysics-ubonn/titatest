@@ -86,16 +86,30 @@ c     Betraege ausgeben
 
       do i=1,elanz
 c     diff+<
-         if (.not.ldiff) then
+         if (.not.ldiff.AND..NOT.lprior) then
+c$$$  if (.not.ldiff) then
 c     diff+>
             dum = dcmplx(1d0)/sigma(i)
 c     ak            write(kanal,*,err=1000) real(espx(i)),real(espy(i)),
 c     ak     1                              real(cdabs(dum))
-            write(kanal,*,err=1000) real(espx(i)),real(espy(i)),
+            write(kanal,'(3F10.4,2X)',err=1000) 
+     1           real(espx(i)),real(espy(i)),
      1           real(dlog10(cdabs(dum)))
 c     ro            write(kanal,*,err=1000) real(espy(i)),real(espx(i)),
 c     ro     1                              real(cdabs(dum))
 c     diff+<
+         ELSE IF (lprior) THEN
+            dum3 = CDABS(dcmplx(1d0)/sigma(i))
+            dum2 = CDABS(dcmplx(1d0)/cdexp(m0(mnr(i))))
+!     dum3 = REAL(CDLOG(sigma(i))/m0(mnr(i)))
+            write(kanal,'(7(f10.4,2x))',err=1000)
+     1           REAL(espx(i)),
+     1           REAL(espy(i)),
+     1           (DLOG10(dum3) - DLOG10(dum2)),
+     1           real(dlog10(dum3)),
+     1           real(dlog10(dum2)),
+     1           real(1d2*(1d0-dum2/dum3)),
+     1           real(1d2*(1d0-dum3/dum2))
          else
             dum3 = cdabs(dcmplx(1d0)/sigma(i))
             dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
@@ -111,14 +125,22 @@ c     diff+>
       end do
       close(kanal)
       fetxt = htxt(1:idum-4)//'modl'
-
       OPEN (kanal,FILE=fetxt,status='replace')
+
       WRITE (kanal,'(I7)',err=1000) elanz
-      DO i=1,elanz
-         dum = dcmplx(1d0)/sigma(i)
-         dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
-         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
-      END DO
+      IF (.NOT.lprior) then
+         DO i=1,elanz
+            dum = dcmplx(1d0)/sigma(i)
+            dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
+            WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
+         END DO
+      ELSE
+         DO i=1,elanz
+            dum = dcmplx(1d0)/sigma(i) - DCMPLX(1d0)/CDEXP(m0(mnr(i)))
+            dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
+            WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
+         END DO
+      END IF
       CLOSE (kanal)
 c     Ggf. Phasen ausgeben
       if (.not.ldc) then

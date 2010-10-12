@@ -88,43 +88,43 @@ c     diff+<
 c     diff+>
             end do
 c Damping--
-         else if (ltri == 3.OR.ltri == 4) THEN
+         ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
             WRITE(*,'(a)',ADVANCE='no')
      1           'update:: damping has no part in the gradient'
 
 c     triang>
-         else if (ltri == 1.OR.ltri == 2.OR.
+         ELSE IF (ltri == 1.OR.ltri == 2.OR.
      1           (ltri > 4 .AND. ltri < 15)) then
-            do i=1,manz
+            DO i=1,manz
                cdum = dcmplx(0d0)
                DO ij=1,smaxs
-                  in=nachbar(i,ij)
-                  IF (in/=0) then
-                     if (.not.lprior) then
-                        cdum = cdum + DCMPLX(smatm(i,ij))*
+                  in = nachbar(i,ij)
+                  IF (in /= 0) THEN
+                     IF (.NOT. lprior) THEN
+                        cdum = cdum + DCMPLX(smatm(i,ij)) *
      1                       par(in)
-                     else
-                        cdum = cdum + DCMPLX(smatm(i,ij))* 
+                     ELSE
+                        cdum = cdum + DCMPLX(smatm(i,ij)) * 
      1                       (par(in) - m0(in))
-                     end if
-                  end if
+                     END IF
+                  END IF
                END DO 
-               if (.not.lprior) then
-                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
+               IF (.NOT. lprior) THEN
+                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1)) *
      1                 par(i)
-               else
-                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1))*
+               ELSE
+                  bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1)) *
      1                 (par(i) - m0(i))
-               end if
-            end do
+               END IF
+            END DO
 
-         else if (ltri == 15) THEN
-            if (.not.lprior) then
+         ELSE IF (ltri == 15) THEN
+            IF (.NOT. lprior) THEN
                bvec = MATMUL( DCMPLX(smatm),par)
-            else
+            ELSE
                bvec = MATMUL( DCMPLX(smatm),( par - m0 ) )
-            end if
+            END IF
          END IF
 c     triang<
          
@@ -276,7 +276,6 @@ c$$$  ! eventually correct for phase < 0 mrad
             par(j) = DCMPLX(DBLE(par(j))) 
             in = in + 1 
          END IF 
-c$$$! take only the real part as new parameter
          
          bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
          
