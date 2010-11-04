@@ -1,9 +1,9 @@
 #!/bin/bash
 
-if [ -z $1 ];then
-    fn='Amplitude'
+if [ -z "$1" ];then
+    crange="2.0 4.0"
 else
-    fn=$1
+    crange=$1
 fi
 echo "$0 argument $1"
 pltdir=crt_plots
@@ -37,7 +37,8 @@ let nit=$it+1
 echo processing $nit Iterations
 
 for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
-    csz2="Iteration $i"
+    csz2="Iteration $i, log(rho)"
+    echo $csz2
     if [ $i -lt 10 ];then # case whether we have the proper digits
 # sed string with three blanks inbetween
 	csz="rho0$i"
@@ -48,21 +49,21 @@ for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
     echo $csz
     $clean
     if [ -z "$1" ] ;then
-	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$3)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
-    else
 	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$4)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
+    else
+	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$3)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
     fi
+    echo "$crange" > tmp.crange
     echo $csz'.mag' > inv.lastmod
     echo "$csz2" > tmp.fenster
-    echo '2 4' > tmp.crange
-    echo 'log(rho)[Ohm m]' > tmp.cbarn
+    echo '[Ohm m]' > tmp.cbarn
     $plot_cur_crtomo
     pltpdf="$pltpdf $csz"'_mag.pdf'
     $clean
     if [ -e $invdir/$csz'.pha' ];then
 	echo $invdir/$csz'.pha' > inv.lastmod
 	echo "Phase" > tmp.fenster
-	echo 'phase[mrad]' > tmp.cbarn
+	echo '[mrad]' > tmp.cbarn
 	$plot_cur_crtomo
 	pltpdf="$pltpdf $csz"'_pha.pdf'
 	$clean

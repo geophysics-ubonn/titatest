@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 tools="Griev";
-
+ctr=tmp.griev_ctr
 echo "checking for tools"
 forcecheck(){
 	Ret_val=`which $1`
@@ -76,15 +76,19 @@ else
     titel=$2
 fi
 
-if [ -z $titel ];then titel='CRTomo result';fi
+if [ -z "$titel" ];then
+    titel='CRTomo result';
+fi
 
 if [ -e "tmp.cbarn" ];then
     cbarn=`cat tmp.cbarn`
 else
     cbarn=$3
 fi
-echo $cbarn
-if [ -z "$cbarn" ];then cbarn='Units';fi
+
+if [ -z "$cbarn" ];then 
+    cbarn='Units';
+fi
 
 if [ -e "tmp.crange" ];then
     maxrho=`awk '{print $2}' tmp.crange`
@@ -99,26 +103,31 @@ fi
 #	plot_title = "Unglaublicher Titel aus Config File";
 #};
 
-echo 'cls_default_plot_labels:{' > griev.conf
-echo '  plot_x_label = "X /m";' >> griev.conf
-echo '  plot_y_label = "Y /m";' >> griev.conf
-echo '  plot_color_label = "'$cbarn'";' >> griev.conf
-echo '  plot_title = "'$titel'";' >> griev.conf
-echo '};' >> griev.conf
-echo 'aspect_ratio = true;' >> griev.conf
-
-
-griev_std="-i -e $elem -t $elec"
-
-if [ -e "tmp.crange" ];then
-    griev_std="$griev_std -c $minrho -d $maxrho"
-fi 
 mypdf=`basename $mod|tr '.' '_'`'.pdf'
 
+echo 'action_open = true;' > $ctr
+echo 'open_file_elem = "'$elem'";' >> $ctr
+echo 'open_file_elec = "'$elec'";' >> $ctr
+echo 'exit = 1;' >> $ctr
+#echo 'show_par_set = 0;' >> $ctr
+#echo 'show_par_set = 0;' >> $ctr
+echo 'nr_par = 1;' >> $ctr
 if [ -n $ismag ];then
-    echo $griev_std -y 1 -m $mod -p -o $mypdf
-    $griev $griev_std -y 1 -m $mod -p -o $mypdf
+    echo 'par_1_format_rho = 0;' >> $ctr
 else
-    echo $griev_std
-    $griev $griev_std -r $mod -j -p -o $mypdf
+    echo 'par_1_format_rho = 1;' >> $ctr
 fi
+echo 'par_1_file = "'$mod'";' >> $ctr
+if [ -n "$minrho" ];then
+    echo "par_1_min_rho = $minrho;" >> $ctr
+    echo "par_1_max_rho = $maxrho;" >> $ctr
+fi
+echo 'par_1_use_latex_interpreter = 0;' >> $ctr
+echo 'par_1_xlabel = "X /m";' >> $ctr
+echo 'par_1_ylabel = "Z /m";' >> $ctr
+echo 'par_1_cblabel = "'$cbarn'";' >> $ctr
+echo 'par_1_title = "'$titel'";' >> $ctr
+echo 'par_1_print_file = "'$mypdf'";' >> $ctr
+echo 'par_1_print = 1;' >> $ctr
+
+$griev -u $ctr >& $ctr.log
