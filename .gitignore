@@ -2,6 +2,7 @@
 *.mod
 CRMod
 CRTomo
+cutmckee/crerror.h
 *.mod
 *#
 .#*
