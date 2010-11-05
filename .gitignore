@@ -2,7 +2,7 @@
 *.mod
 CRMod
 CRTomo
-crerror.h
+cutmckee/crerror.h
 *.mod
 *#
 .#*

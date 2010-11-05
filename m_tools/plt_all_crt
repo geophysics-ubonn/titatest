@@ -29,10 +29,14 @@ plt_inv_ctr=`which plt_inv_ctr`
 cp inv.lastmod crt.lastmod
 
 mymag=`cat inv.lastmod`
+awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$4)}else{print}}' $mymag > tmp.mag
+
 mymag=`basename $mymag '.mag'`
-echo $mymag $invdir
+mv tmp.mag $mymag'.mag'
+echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 $clean
+echo $mymag'.mag' > inv.lastmod
 echo "$fn" > tmp.fenster
 $plot_cur_crtomo
 pltpdf=$mymag'_mag.pdf'
