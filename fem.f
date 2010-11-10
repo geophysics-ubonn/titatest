@@ -174,7 +174,8 @@ c     Startmodell belegen
          goto 999
       END IF
 
-      
+!!$ manz = elanz      
+      manz =elanz
 
       call rsigma(kanal,dsigma)
       if (errnr.ne.0) goto 999
