@@ -117,7 +117,7 @@ SUBROUTINE bvariogram
      mgam_y(i) = mvario(0D0,h,par_vari)
   END DO
 
-  mid_par = SUM(LOG10(DBLE(sigma(1:elanz)))) / manz
+  mid_par = SUM(LOG10(DBLE(sigma))) / manz
   PRINT*,'sigma mean',mid_par
 
   par_vari = 0.
@@ -196,32 +196,32 @@ SUBROUTINE bvariogram
   mgam_x = par_vari * mgam_x
   mgam_y = par_vari * mgam_y
 
+1 FORMAT(3(G10.3,3X),I10)
+2 FORMAT(a,I10a,F10.3)
+
   CALL get_unit(ifp)
   OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10a,F10.2)')'#   lag(x-dir)'//ACHAR(9)//&
+  WRITE (ifp,2)'#   lag(x-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram    model ##',nlag_x,&
        ' / parameter variance ',10**par_varix
   DO i=1,nlag_x
-     WRITE (ifp,'(3F10.2,3X),I10)',ERR=999)lag_x(i),gam_x(i),&
-          mgam_x(i),ngam_x(i)
+     WRITE (ifp,1,ERR=999)lag_x(i),gam_x(i),mgam_x(i),ngam_x(i)
   END DO
   CLOSE (ifp)
   OPEN (ifp,FILE='inv.variogram_y',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10a,F10.2)')'#   lag(y-dir)'//ACHAR(9)//&
+  WRITE (ifp,2)'#   lag(y-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram   model ##',nlag_y,&
        ' / parameter variance ',10**par_variy
   DO i=1,nlag_y
-     WRITE (ifp,'(3(F10.2,3X),I10)',ERR=999)lag_y(i),gam_y(i),&
-          mgam_y(i),ngam_y(i)
+     WRITE (ifp,1,ERR=999)lag_y(i),gam_y(i),mgam_y(i),ngam_y(i)
   END DO
   CLOSE (ifp)
   OPEN (ifp,FILE='inv.variogram',STATUS='replace',ERR=999)
-  WRITE (ifp,'(a,I10,a,F10.2)')'#   lag(h)'//ACHAR(9)//&
+  WRITE (ifp,2)'#   lag(h)'//ACHAR(9)//&
        'exp. semivariogram     model ## ',nlag,&
        ' / parameter variance ',10**par_vari
   DO i=1,nlag
-     WRITE (ifp,'(3(F10.2,3X),I10)',ERR=999)lag(i),gam(i),mgam(i),&
-          ngam(i)
+     WRITE (ifp,1,ERR=999)lag(i),gam(i),mgam(i),ngam(i)
   END DO
   CLOSE (ifp)
 

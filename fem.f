@@ -142,6 +142,7 @@ c     Alles einlesen
       call rdatm(kanal,dstrom)
       if (errnr.ne.0) goto 999
 
+
       if (swrtr.eq.0) then
          lana = .FALSE.
          lsr = .FALSE.
@@ -172,6 +173,9 @@ c     Startmodell belegen
          errnr = 94
          goto 999
       END IF
+
+      
+
       call rsigma(kanal,dsigma)
       if (errnr.ne.0) goto 999
 

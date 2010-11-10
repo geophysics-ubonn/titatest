@@ -105,8 +105,8 @@ c     diff+<
             write(kanal,'(7(f10.4,2x))',err=1000)
      1           REAL(espx(i)),
      1           REAL(espy(i)),
-     1           (DLOG10(dum3) - DLOG10(dum2)),
      1           real(dlog10(dum3)),
+     1           (DLOG10(dum3) - DLOG10(dum2)),
      1           real(dlog10(dum2)),
      1           real(1d2*(1d0-dum2/dum3)),
      1           real(1d2*(1d0-dum3/dum2))
@@ -136,7 +136,7 @@ c     diff+>
          END DO
       ELSE
          DO i=1,elanz
-            dum = dcmplx(1d0)/sigma(i) - DCMPLX(1d0)/CDEXP(m0(mnr(i)))
+            dum = dcmplx(1d0)/sigma(i) ! - DCMPLX(1d0)/CDEXP(m0(mnr(i)))
             dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
             WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
          END DO
