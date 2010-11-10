@@ -235,7 +235,7 @@ for mode in $modes;do
     ymax=$mmax
     ymin=$mmin
     ylab='Global L_1 [%]'
-    xlab='Integral scale /[m]'
+    xlab='Correlation length /[m]'
     plotmod $flnplot 'glob'
 
     let i=$i+1
@@ -244,7 +244,7 @@ for mode in $modes;do
     ymax=$mmax
     ymin=$mmin
     ylab='Horizontal L_1 [%]'
-    xlab='Integral scale /[m]'
+    xlab='Correlation length /[m]'
     plotmod $flnplot 'hor'
 
     let i=$i+1
@@ -253,7 +253,7 @@ for mode in $modes;do
     ymax=$mmax
     ymin=$mmin
     ylab='Vertical L_1 [%]'
-    xlab='Integral scale /[m]'
+    xlab='Correlation length /[m]'
     plotmod $flnplot 'ver'
 
 # now set up special settings for each mplot

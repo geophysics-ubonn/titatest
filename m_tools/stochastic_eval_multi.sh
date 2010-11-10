@@ -41,7 +41,7 @@ plotmod () {
 	echo 'set label 1 "b) Gau sim" at screen 0.02,0.64' >> $tg1
     elif [ $mode == "Sph" ];then
 	echo 'set label 1 "c) Sph sim" at screen 0.02,0.33' > $tg1
-	echo 'set xlab offset 0,0.5 "Integral scale /[m]"' >> $tg1
+	echo 'set xlab offset 0,0.5 "Correlation length /[m]"' >> $tg1
     fi
     if [ "$ymax" ];then
 	echo "set yrange[$ymin:$ymax]" >> $tg1

@@ -76,7 +76,7 @@ echo 'set st da l' > $tgr
 echo 'set grid' >> $tgr
 echo "set term $term" >> $tgr
 echo 'set xtics nomirror' >> $tgr
-echo 'set xlab offset 0,0.5 "Integral scale /[m]"' >> $tgr
+echo 'set xlab offset 0,0.5 "Correlation length /[m]"' >> $tgr
 echo 'set ytics nomirror' >> $tgr
 echo 'set ylab offset 1.5 "L_1={/Symbol S}_i|1-x_i/y_i| [%]"' >> $tgr
 echo "set $psw" >> $tgr
