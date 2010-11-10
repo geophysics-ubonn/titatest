@@ -81,6 +81,7 @@ forcecheck $pdfcr
 $pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
 echo "done mag"
 
+if [ -n "$1" ];then
 rm tmp.crange tmp.cbarn
 awk '{if(NR>1){printf("%f\t%f\t%g\n",0,0,$2)}else{print}}' $mod > cur_crmod.pha
 echo 'cur_crmod.pha' > inv.lastmod
@@ -99,4 +100,6 @@ forcecheck $pdfcr
 $pdfcr --margins 1 --hires $mypdf cropped.pdf >& /dev/null
 cp crt.lastmod inv.lastmod
 clean
+fi
 echo "done all"
+

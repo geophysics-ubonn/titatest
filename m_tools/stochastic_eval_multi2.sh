@@ -228,7 +228,7 @@ for mode in $modes;do
     ymin=$mmin
 # Covariance plotting command
     ylab='Corr(x,true)'
-    xlab='Integral scale /[m]'
+    xlab='Correlation length /[m]'
     plotmod $korr 'corr'
 
 #
@@ -255,7 +255,7 @@ for mode in $modes;do
     ymax=$mmax
     ymin=$mmin
     ylab='Vertical L_1 [%]'
-    xlab='Integral scale /[m]'
+    xlab='Correlation length /[m]'
     plotmod $vario_ver 'ver'
 
     cd $cur
