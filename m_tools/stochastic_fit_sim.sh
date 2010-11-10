@@ -35,7 +35,7 @@ fi
 for x in *_$mode;do    
     ix=`echo $x|tr '_' ' '|awk '{print $2}'`
     iy=`echo $x|tr '_' ' '|awk '{print $4}'`
-# integral scale will be overwritten in this script..
+# correlation length will be overwritten in this script..
     echo ix:$ix iy:$iy
     cd $x
     crm_skel=crm_skel

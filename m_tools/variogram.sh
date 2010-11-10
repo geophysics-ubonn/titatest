@@ -41,7 +41,7 @@ fi
 
 ah=`echo $ax $ay | awk '{print $1/$2}' `
 
-echo "$0 $variofunc with integral scale horizontal:$ax, ratio $ah"
+echo "$0 $variofunc with correlation length horizontal:$ax, ratio $ah"
 
 tg1='tmp.gnu'
 tg2='varioplots.tex'

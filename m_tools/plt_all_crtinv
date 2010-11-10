@@ -51,10 +51,10 @@ for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
 	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$3)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
     else
 	awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$4)}else{print}}' $invdir/$csz'.mag' > $csz'.mag'
+	#echo '2 4' > tmp.crange
     fi
     echo $csz'.mag' > inv.lastmod
     echo "$csz2" > tmp.fenster
-    echo '2 4' > tmp.crange
     echo 'log(rho)[Ohm m]' > tmp.cbarn
     $plot_cur_crtomo
     pltpdf="$pltpdf $csz"'_mag.pdf'
