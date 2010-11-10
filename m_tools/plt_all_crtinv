@@ -56,7 +56,7 @@ for (( i=0 ; i < nit ; i++ ));do # i saves the actual iteration number
     echo "$crange" > tmp.crange
     echo $csz'.mag' > inv.lastmod
     echo "$csz2" > tmp.fenster
-    echo '[Ohm m]' > tmp.cbarn
+    echo 'log(rho)[Ohm m]' > tmp.cbarn
     $plot_cur_crtomo
     pltpdf="$pltpdf $csz"'_mag.pdf'
     $clean
