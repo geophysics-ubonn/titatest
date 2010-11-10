@@ -238,11 +238,7 @@ CONTAINS
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,3))
 
 !!!$    Rauhigkeitsmatrix auf Null setzen
-    do i=1,manz
-       do j=1,3
-          smatm(i,j) = 0d0
-       end do
-    end do
+    smatm = 0d0
 
     do i=1,nz
        lup   = .true.
