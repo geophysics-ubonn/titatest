@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tools="plotCRTmod_batch.m epstopdf matlab mogrify";
+tools="plotCRTmod_batch_cond.m epstopdf matlab mogrify";
 
 echo "checking for tools"
 forcecheck(){
@@ -39,7 +39,6 @@ for x in $tools;do
 	i=$[$i+1];
 done
 cp inv.lastmod crt.lastmod
-clean
 if [ -e 'crmod.cfg' ];then
     echo found crmod.cfg
 else
@@ -59,6 +58,9 @@ else
     c3=`pwd|awk '/4_decades/{printf("%.1f\t%.1f",0.0,4.0)}'` 
 fi
 
+if [ -e 'tmp.cond' ];then
+	echo trying to plot condition data
+fi
 echo range check: $c1 $c2 $c3 $2
 echo $c1 $c2 $c3 $2 > tmp.crange
 
