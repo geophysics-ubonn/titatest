@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tools="plotCRTmod_batch_cond.m epstopdf matlab mogrify";
+tools="plotCRTmod_batch.m epstopdf matlab mogrify";
 
 echo "checking for tools"
 forcecheck(){
