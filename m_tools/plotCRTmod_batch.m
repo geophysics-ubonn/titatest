@@ -4,7 +4,7 @@
 elecmark='bo';
 marksize=5;
 az=0; % Azimuth for the plot 
-el=90; % elongation for thew plot
+el=90; % elongation for the plot
 fns=16; % font size
 saveplot=1; % if save the plot adjust and press space
 
@@ -286,19 +286,19 @@ else
 end
 ylim(ylimits);
 
+% plot colorbar
 h=colorbar('vert');
 set(h,'fontsize',fns)
 set(h,'XaxisLocation','top')
 %cbarn=sprintf('$$\\mathsf{%s}$$',cbarn);
-cbarn2=sprintf('%s\n',cbarn);
+cbarn2=sprintf('%s',cbarn);
 %set(get(h,'xlabel'),'interpreter','latex','String',cbarn2,'fontsize',fns)
 set(get(h,'xlabel'),'String',cbarn,'fontsize',fns)
 view(az,el);
-axis tight
-axis image
+
+hold on
 
 if noelec == 0
-  hold on
   for i=1:nelec
 	  plot(elecpos(i,1),elecpos(i,2),elecmark,...
 	       'MarkerEdgeColor','k','MarkerFaceColor','k',...
@@ -307,7 +307,6 @@ if noelec == 0
 end
 if wcond ~= 0
     %sprintf('here we go')
-	hold on
     scatter(cond(:,1),cond(:,2),40,cond(:,3),'filled','MarkerEdgeColor','k')
 % 	for i=1:ncond
 % 		(cond(i,1),cond(i,2),elecmark,...
@@ -317,6 +316,7 @@ if wcond ~= 0
 %             %'MarkerSize',marksize);
 %     end
 end
+
 %set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',strcat(fls,appi,'.eps'));
 %print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
