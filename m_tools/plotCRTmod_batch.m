@@ -19,11 +19,11 @@ fclose(fp);
 checkme = exist ('inv.lastmod','file');
 if checkme~=0
   fp=fopen('inv.lastmod','r');
-modfile=fscanf(fp,'%s',1);
+  modfile=fscanf(fp,'%s',1)
 fclose(fp);
- else
-   
- end
+end
+
+wcond= exist ('tmp.cond','file');
 
 fenster='';
 checkme = exist ('tmp.fenster','file');
@@ -72,8 +72,10 @@ if checkme~=0
     scrsz=fscanf(fp,'%d',1);
     fclose(fp);
 end
-
 noelec = exist ('tmp.noelec','file');
+if wcond ~= 0
+    noelec = 1;
+end
 %%
 % Knoten und Elemente einlesen 
 % Filenamen bestimmen
@@ -150,7 +152,10 @@ fp=fopen(modfile,'r');
 line=fgetl(fp);
 [buff,count]=sscanf(line,'%d %f',2);
 nm=buff(1);
+nrms=0;
+if length(buff) > 1
 nrms=buff(2);
+end
 if (nm~=nelem)
     sprintf('There seems something wrong since the Element numbers %d \n',nelem);
     sprintf('do not match the number of Model cells %d !!!\n',nm); 
@@ -205,11 +210,28 @@ end
 fclose(fp);
 end
 %%
+% Einlesen der conditionierten daten..
+if wcond ~= 0
+fp=fopen('tmp.cond','r');
+ncond=fscanf(fp,'%d',1);
+nvoid=fscanf(fp,'%d',1);
+for i=1:nvoid+1
+bla=fgetl(fp);
+end
+cond=zeros(ncond,4);
+for i=1:ncond
+    cond(i,:)=fscanf(fp,'%f',4);
+end
+fclose(fp);
+end
+%%
 % open figure with name
 name=sprintf('CRTomo model');
 if length(fenster) ~= 0
-  if ((length(mag) ~= 0 || length(pha) ~= 0) && length(mcov) == 0)
-     name = sprintf('%s (RMS %.4f)',fenster,nrms);
+  if ((length(mag) ~= 0 || length(pha) ~= 0)&& length(mcov) == 0)
+    if nrms ~= 0
+      name = sprintf('%s (RMS %.4f)',fenster,nrms);
+    end
   else
      name = fenster;
   end
@@ -281,9 +303,20 @@ if noelec == 0
 	  plot(elecpos(i,1),elecpos(i,2),elecmark,...
 	       'MarkerEdgeColor','k','MarkerFaceColor','k',...
 	       'MarkerSize',marksize);
+    end
 end
+if wcond ~= 0
+    %sprintf('here we go')
+	hold on
+    scatter(cond(:,1),cond(:,2),40,cond(:,3),'filled','MarkerEdgeColor','k')
+% 	for i=1:ncond
+% 		(cond(i,1),cond(i,2),elecmark,...
+% 	       'CData',cond(i,3),'FaceColor','flat','Edgecolor','none',...
+% 	       'MarkerSize',marksize);
+%             %'MarkerEdgeColor','k','MarkerFaceColor','k',...
+%             %'MarkerSize',marksize);
+%     end
 end
-
 %set(fig,'PaperPositionMode','auto');
 print('-depsc2','-r400',strcat(fls,appi,'.eps'));
 %print('-dpdf','-r400',strcat(fls,appi,'.pdf'));
