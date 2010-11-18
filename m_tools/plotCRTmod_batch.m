@@ -307,7 +307,7 @@ if noelec == 0
 end
 if wcond ~= 0
     %sprintf('here we go')
-    scatter(cond(:,1),cond(:,2),40,cond(:,3),'filled','MarkerEdgeColor','k')
+    scatter(cond(:,1),cond(:,2),40,cond(:,3),'filled','MarkerEdgeColor','k') %,'FaceAlpha',.5)
 % 	for i=1:ncond
 % 		(cond(i,1),cond(i,2),elecmark,...
 % 	       'CData',cond(i,3),'FaceColor','flat','Edgecolor','none',...
