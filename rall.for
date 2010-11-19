@@ -570,8 +570,8 @@ c     bestimmen
       IF (lsink) THEN
          WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',
      1        nsink,sx(snr(nsink)),sy(snr(nsink))
-         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
-     1        nsink,sx(snr(nsink)),sy(snr(nsink))
+c$$$         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
+c$$$     1        nsink,sx(snr(nsink)),sy(snr(nsink))
       END IF
 
       call rdati (kanal,dstrom)

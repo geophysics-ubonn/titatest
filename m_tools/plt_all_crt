@@ -29,7 +29,7 @@ plt_inv_ctr=`which plt_inv_ctr`
 cp inv.lastmod crt.lastmod
 
 mymag=`cat inv.lastmod`
-awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$4)}else{print}}' $mymag > tmp.mag
+awk '{if(NR>1){printf("%f\t%f\t%f\n",$1,$2,$3)}else{print}}' $mymag > tmp.mag
 
 mymag=`basename $mymag '.mag'`
 mv tmp.mag $mymag'.mag'

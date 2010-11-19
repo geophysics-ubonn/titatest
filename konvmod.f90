@@ -106,29 +106,29 @@ MODULE konvmod
   LOGICAL,PUBLIC  ::     lffhom
 !!$c	triang>
 !!!$Schalter für die Triangularisierungsinversion
-  INTEGER(KIND = 4),PUBLIC ::	ltri
+  INTEGER(KIND = 4),PUBLIC :: ltri
 !!$c	triang<	
 !!!$Schalter ob prior model vorhanden
-  LOGICAL,PUBLIC  ::	lprior
+  LOGICAL,PUBLIC  :: lprior
 !!!$Schalter ob prior model verrauschen
-  LOGICAL,PUBLIC  ::	lnsepri
+  LOGICAL,PUBLIC  :: lnsepri
 !!!$Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
 !!!$werden soll
-  LOGICAL,PUBLIC  ::     lsens
+  LOGICAL,PUBLIC  :: lsens
 !!!$Schalter fuer Resolution matrix
-  LOGICAL,PUBLIC  ::	lres
+  LOGICAL,PUBLIC  :: lres
 !!!$Schalter fuer posterior cov
-  LOGICAL,PUBLIC  ::	lcov1
+  LOGICAL,PUBLIC  :: lcov1
 !!!$Schalter fuer posterior cov
-  LOGICAL,PUBLIC  ::	lcov2
+  LOGICAL,PUBLIC  :: lcov2
 !!!$Mega schalter, wird binaer getestet
-  INTEGER(KIND = 4),PUBLIC ::	mswitch
+  INTEGER(KIND = 4),PUBLIC :: mswitch
 !!!$Schalter für ols Loeser
-  LOGICAL,PUBLIC  ::     lgauss
+  LOGICAL,PUBLIC  :: lgauss
 !!!$Schalter ob experimentelles variogram berechnet werden soll
-  LOGICAL,PUBLIC  ::     lvario
+  LOGICAL,PUBLIC  :: lvario
 !!!$ Verbose output switch
-  LOGICAL,PUBLIC  ::     lverb
+  LOGICAL,PUBLIC  :: lverb
 !!!$ lsytop = .NOT.BTEST (mswitch,8)  disables sy top check of 
 !!$ no flow boundary electrodes for enhanced beta calculation (bsytop). 
 !!$  This is useful for including topographical effects and should be used

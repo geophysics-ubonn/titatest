@@ -11,7 +11,6 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE cjgmod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs
@@ -20,6 +19,7 @@ MODULE cg_mod
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
+  USE cjgmod
 
   IMPLICIT none
 
@@ -56,16 +56,18 @@ MODULE cg_mod
 
 CONTAINS
 
-SUBROUTINE cjg
-
-  if (ldc.or.lip) then
-     call cjggdc
-  else
-     call cjggra
-  end if
-
-END SUBROUTINE cjg
-
+  SUBROUTINE cjg
+    
+    if (ldc.or.lip) then
+       call cjggdc
+    else
+       call cjggra
+    end if
+    
+    RETURN
+    
+  END SUBROUTINE cjg
+  
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                          DC_PART                               !!!!
@@ -87,13 +89,6 @@ END SUBROUTINE cjg
     INTEGER         :: j,k
 !!!$
 !!!$....................................................................
-    ALLOCATE (rvecdc(manz),pvecdc(manz),apdc(nanz),&
-         bvecdc(manz),stat=errnr)
-    IF (errnr /= 0) THEN
-       fetxt = 'Error memory allocation rve!!!$in cjggdc'
-       errnr = 94
-       RETURN
-    END IF
 
     if (lip) then
        bvecdc = dimag(bvec)
@@ -125,7 +120,7 @@ END SUBROUTINE cjg
 
        if (dr.le.dr0) goto 10
 
-       pvecdc= rvecdc+ beta * pvecdc
+       pvecdc= rvecdc + beta * pvecdc
 
        IF (ltri == 0) THEN
           CALL bpdc
@@ -147,7 +142,7 @@ END SUBROUTINE cjg
        alpha = dr/dr1
 
        dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
-       rvecdc= rvecdc- alpha * bvecdc
+       rvecdc= rvecdc - alpha * bvecdc
 
 !!!$rm update speichern
        dr1 = dr
@@ -161,7 +156,10 @@ END SUBROUTINE cjg
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+    PRINT*,'hiho',cgres(1)
+!    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+    
+    RETURN
 
   end subroutine cjggdc
 
@@ -470,12 +468,6 @@ END SUBROUTINE cjg
     INTEGER            :: j,k
 !!!$....................................................................
 
-    ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
-    IF (errnr /= 0) THEN
-       fetxt = 'Error memory allocation rve!!!$in cjggdc'
-       errnr = 94
-       RETURN
-    END IF
 
     dpar = 0.
     rvec = bvec
@@ -549,7 +541,6 @@ END SUBROUTINE cjg
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    DEALLOCATE (rvec,pvec,ap)
 
   end subroutine cjggra
 

@@ -127,6 +127,29 @@ c     get memory for CG data storage of residuums
          errnr = 94
          goto 999
       END IF
+c     get memory for CJG and update
+      ALLOCATE (bvec(manz),STAT=errnr)
+      IF (errnr /= 0) THEN
+         fetxt = 'Error memory allocation bvec data'
+         errnr = 94
+         goto 999
+      END IF
+      IF (ldc .OR. lip) THEN
+         ALLOCATE (pvecdc(manz),bvecdc(manz),rvecdc(manz),
+     1        apdc(nanz),STAT=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rvec/bvec dc'
+            errnr = 94
+            GOTO 999
+         END IF
+      ELSE
+         ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rve!!!$in cjggdc'
+            errnr = 94
+            GOTO 999
+         END IF
+      END IF
 
 c     Startparameter setzen
       it     = 0;itr    = 0
@@ -744,6 +767,14 @@ c     'sens' und 'kpot' freigeben
      1     kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
       IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
       IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
+
+      IF (ALLOCATED (bvec)) DEALLOCATE (bvec,STAT=errnr)
+      IF (ALLOCATED (rvecdc))
+     1     DEALLOCATE (rvecdc,apdc,bvecdc,pvecdc,STAT=errnr)
+
+      IF (ALLOCATED (pvec))
+     1     DEALLOCATE (rvec,pvec,ap,STAT=errnr)
+
       IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
 
       IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)

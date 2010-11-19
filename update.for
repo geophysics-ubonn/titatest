@@ -31,28 +31,19 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      complex         * 16    cdum
-      real            * 8     dum
+      COMPLEX (KIND(0D0)) ::   cdum
+      REAL (KIND(0D0))    ::   dum
 
 c     Indexvariablen
-      integer         * 4     i,j,k,ij,in
+      INTEGER (KIND=4)    ::  i,j,k,ij,in
 c.....................................................................
 
-      if (.not.llam) then
+      IF (.NOT. llam) THEN
 
 c     Felder speichern
          dpar2 = dpar
          cgres2 = cgres
 
-C     felder allozieren
-         IF (.NOT.ALLOCATED (bvec)) 
-     1        ALLOCATE (bvec(manz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation bvec in update'
-            errnr = 94
-            RETURN
-         END IF
- 
 c     Smoothnessvektor berechnen
 c     triang>
          if (ltri==0) then
@@ -243,7 +234,7 @@ c     Verbesserung skalieren
             dpar(j) = dpar(j)*dcmplx(fak(j))
          end do
 
-      else                      !(llam)
+      else                      ! (llam==.TRUE.)
 
 
 c     Felder zuruecksetzen
@@ -254,8 +245,6 @@ c     Felder zuruecksetzen
          cgres(1:i) = cgres2(1:i)
          
       end if
-
-      IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
 
 c     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 c     if (lphi0.and.dimag(par(j)).lt.0d0)

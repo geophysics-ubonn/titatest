@@ -27,6 +27,6 @@ MODULE cjgmod
 !!$ actual number of CG steps..
  INTEGER (KIND = 4),PUBLIC                           :: ncg
 !!$c assist vectors
- REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:)            :: apdc
- COMPLEX(KIND(0D0)),ALLOCATABLE,DIMENSION(:)         :: ap
+ REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC     :: apdc
+ COMPLEX(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC  :: ap
 END MODULE cjgmod

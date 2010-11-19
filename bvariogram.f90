@@ -190,14 +190,14 @@ SUBROUTINE bvariogram
   END DO
 
 !!$   sets parameter variance..
-  par_vari = MAX(par_vari / MAX(1,manz - 1), 1.e-5)
+  par_vari = MAX(par_vari / MAX(1,manz - 1),1.d-5)
 
   mgam = par_vari * mgam
   mgam_x = par_vari * mgam_x
   mgam_y = par_vari * mgam_y
 
 1 FORMAT(3(G10.3,3X),I10)
-2 FORMAT(a,I10a,F10.3)
+2 FORMAT(a,I10,a,F10.3)
 
   CALL get_unit(ifp)
   OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)

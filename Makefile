@@ -10,7 +10,7 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
+FFLAG90         = -O3 -m32 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fno-range-check -pedantic
 #FFLAG90         = -Wunderflow -fbacktrace
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
