@@ -1,4 +1,4 @@
-        real * 4 function chareal(txt,ltxt)
+      REAL (KIND(0D0)) FUNCTION chareal(txt,ltxt)
 
 c Die Funktion wandelt einen String in einen Real-Wert;
 c bei Real-Werten muss die Laenge incl. '.' angegeben werden.
@@ -8,12 +8,12 @@ c                                       Letzte Aenderung   24-Oct-1996
            
 c.....................................................................
 
-        character       * (*)   txt
-        integer         * 4     ltxt
-        integer         * 4     i,ih1,pos,j
-        real            * 4     h2
-        logical         * 4     neg
-
+      CHARACTER (*) ::  txt
+      INTEGER (KIND = 4)  ::     ltxt
+      INTEGER (KIND = 4)  ::     i,ih1,pos,j
+      REAL (KIND(0D0)) ::    h2
+      LOGICAL ::     neg
+      
 c.....................................................................
 
         h2  = 0.

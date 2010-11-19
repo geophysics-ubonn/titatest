@@ -22,20 +22,20 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Kanalnummer
-      integer         * 4     kanal
+      INTEGER (KIND = 4)  ::     kanal
 
 c     Datei
-      character       * 80    datei
+      CHARACTER (80)      ::    datei
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariablen
-      integer         * 4     i,j
+      INTEGER (KIND = 4)  ::     i,j
 
 c     Elektrodennummern
-      integer         * 4     elec1,elec2
+      INTEGER (KIND = 4)  ::     elec1,elec2
 
 c.....................................................................
 

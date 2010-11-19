@@ -1,11 +1,11 @@
 !Subroutine to find the inverse of a square matrix
-!Author : Louisda16th a.k.a Ashwith J. Rego
+!       Author : Louisda16th a.k.a Ashwith J. Rego
 !Reference : Algorithm has been well explained in:
 !http://math.uww.edu/~mcfarlat/inverse.htm           
 !http://www.tutor.ms.unimelb.edu.au/matrix/matrix_inverse.html
 	SUBROUTINE findinv(matrix, inverse, n, errorflag)
 	IMPLICIT NONE
-!Declarations
+!       Declarations
 	INTEGER*4, INTENT(IN) :: n
 	INTEGER*4, INTENT(OUT) :: errorflag !Return error status. -1 for error, 0 for normal
 	REAL*8, INTENT(IN), DIMENSION(n,n) :: matrix !Input matrix

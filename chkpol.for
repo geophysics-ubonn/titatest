@@ -20,24 +20,24 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Hilfsschalter
-      logical         * 4     lsetup
+      LOGICAL ::     lsetup
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Messelektrodennummern
-      integer         * 4     elec3,elec4
-
+      INTEGER (KIND = 4)  ::  elec3,elec4
+      
 c     Hilfsvariablen
-      integer         * 4     i,idat,isig
+      INTEGER (KIND = 4)  ::  i,idat,isig
 
 c     Real-, Imaginaerteile
-      real            * 8     redat,imdat,
+      REAL (KIND(0D0))    ::  redat,imdat,
      1     resig,imsig
 
 c     Pi
-      real            * 8     pi
+      REAL (KIND(0D0))    :: pi
 
 c.....................................................................
 

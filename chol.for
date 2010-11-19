@@ -23,12 +23,12 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      integer         * 4     idi,i0,ij,j0
-      integer         * 4     m1,fi
-      complex         * 16    s
+      INTEGER (KIND = 4)  ::     idi,i0,ij,j0
+      INTEGER (KIND = 4)  ::     m1,fi
+      COMPLEX (KIND(0D0)) ::  s
 
 c     Indexvariablen
-      integer         * 4     i,j,k
+      INTEGER (KIND = 4)  ::     i,j,k
 
 c.....................................................................
 

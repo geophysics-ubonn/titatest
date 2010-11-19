@@ -26,27 +26,27 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Kanalnummer
-      integer         * 4     kanal
+      INTEGER (KIND = 4)  ::  kanal
 
 c     Dateiname
-      character       * 80    dstart
+      CHARACTER (80) ::   dstart
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i
+      INTEGER (KIND = 4)  ::   i
 
 c     Hilfsvariablen
-      integer         * 4     idat
-      real            * 8     dum,dum2
+      INTEGER (KIND = 4)  ::   idat
+      REAL (KIND(0D0))    ::   dum,dum2
 
 c     Real-, Imaginaerteil
-      real            * 8     redat,imdat
+      REAL (KIND(0D0))    ::   redat,imdat
 
 c     Pi
-      real            * 8     pi
+      REAL (KIND(0D0))    ::   pi
 
 c.....................................................................
 

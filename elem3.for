@@ -20,18 +20,18 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Grundelementmatrizen
-      integer         * 4     s1(3,3),s2(3,3),s3(3,3),
+      INTEGER (KIND = 4)  ::     s1(3,3),s2(3,3),s3(3,3),
      1     s4(3,3)
 
 c     Grundelementvektor
-      integer         * 4     sb(3)
+      INTEGER (KIND = 4)  ::     sb(3)
 
 c     Hilfsvariablen
-      real            * 8     x21,x31,y21,y31,
+      REAL (KIND(0D0))    ::     x21,x31,y21,y31,
      1     det,a,b,c
 
 c     Indexvariablen
-      integer         * 4     i,j
+      INTEGER (KIND = 4)  ::     i,j
 
 c.....................................................................
 
@@ -49,7 +49,7 @@ c.....................................................................
       
 c     Ggf. Fehlermeldung
       if (det.le.0d0) then
-c         fetxt = ' '
+c     fetxt = ' '
          print*,det,x21,y31,x31,y21
          errnr = 26
          return

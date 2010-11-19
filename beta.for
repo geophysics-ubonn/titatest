@@ -1,4 +1,4 @@
-      real * 8 function beta(nelec,k)
+      REAL (KIND(0D0)) function beta(nelec,k)
 
 c     Function zur Berechnung der 'mixed boundary conditions'.
 
@@ -20,25 +20,25 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Aktuelle Elektrodennummer
-      integer         * 4     nelec
+      INTEGER (KIND = 4)  ::     nelec
 
 c     Aktueller Wellenzahlindex
-      integer         * 4     k
+      INTEGER (KIND = 4)  ::     k
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Abstand Randelement - Quelle/Spiegelquelle
-      real            * 8     r1m,r1p
+      REAL (KIND(0D0))    ::     r1m,r1p
 
 c     Hilfsfunctions
-      real            * 8     bessk0,
+      REAL (KIND(0D0))    ::     bessk0,
      1     bessk1
 
 c     Hilfsvariablen
-      real            * 8     cthetm,cthetp
-      real            * 8     xs,ys,xr,yr,
+      REAL (KIND(0D0))    ::     cthetm,cthetp
+      REAL (KIND(0D0))    ::     xs,ys,xr,yr,
      1     x3,y3m,y3p,
      1     x4,y4,r2,
      1     bk0m,bk0p,

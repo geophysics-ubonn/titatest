@@ -22,15 +22,15 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i
+      INTEGER (KIND = 4)  ::     i
 
 c     Elektrodennummern
-      integer         * 4     elec1,elec2,
+      INTEGER (KIND = 4)  ::     elec1,elec2,
      1     elec3,elec4
 
 c     Hilfsvariablen
-      complex         * 16    dum1,dum2,dum3,dum4
-      real            * 8     dum1dc,dum2dc,dum3dc,dum4dc
+      COMPLEX (KIND(0D0)) ::    dum1,dum2,dum3,dum4
+      REAL (KIND(0D0))    ::     dum1dc,dum2dc,dum3dc,dum4dc
 
 c.....................................................................
 

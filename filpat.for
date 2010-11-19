@@ -11,16 +11,16 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
       IMPLICIT none
-      character       * (*)   disfile
-      integer         * 4     ln
-      integer         * 4     sw
-      character       * 1     slash
+      CHARACTER (*)       ::  disfile
+      INTEGER (KIND = 4)  ::     ln
+      INTEGER (KIND = 4)  ::     sw
+      CHARACTER (1)       ::    slash
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
-      integer         * 4     id1,id2
+      INTEGER (KIND = 4)  ::     id1,id2
 
 c.....................................................................
 

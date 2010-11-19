@@ -21,20 +21,20 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Indexvariable
-      integer         * 4     i,fp
+      INTEGER (KIND = 4)  ::     i,fp
 
 c     Elektrodennummern
-      integer         * 4     elec1,elec2,
+      INTEGER (KIND = 4)  ::     elec1,elec2,
      1     elec3,elec4
 
 c     Koordinaten
-      real            * 8     xk(4),yk(4)
+      REAL (KIND(0D0))    ::     xk(4),yk(4)
 
 c     Pi
-      real            * 8     pi
+      REAL (KIND(0D0))    ::     pi
 
 c     Hilfsvariablen
-      real            * 8     dx,dym,dyp,dum,
+      REAL (KIND(0D0))    ::     dx,dym,dyp,dum,
      1     r1,r2,r3,r4
 
 c.....................................................................

@@ -22,11 +22,11 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      complex         * 16    cdum
-      real            * 8     dum
+      COMPLEX (KIND(0D0)) ::  cdum
+      REAL (KIND(0D0))    ::   dum
 
 c     Indexvariablen
-      integer         * 4     i,j,k
+      INTEGER (KIND = 4)  ::  i,j,k
 
 c.....................................................................
 

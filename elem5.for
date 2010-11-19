@@ -20,18 +20,18 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Grundelementmatrizen
-      integer         * 4     s1(4,4),s2(4,4),s3(4,4),
+      INTEGER (KIND = 4)  ::     s1(4,4),s2(4,4),s3(4,4),
      1     s4(4,4)
 
 c     Grundelementvektor
-      integer         * 4     sb(4)
+      INTEGER (KIND = 4)  ::     sb(4)
 
 c     Hilfsvariablen
-      real            * 8     x21,x31,y21,y31,
+      REAL (KIND(0D0))    ::     x21,x31,y21,y31,
      1     det,a,b,c
 
 c     Indexvariablen
-      integer         * 4     i,j
+      INTEGER (KIND = 4)  ::     i,j
 
 c.....................................................................
 

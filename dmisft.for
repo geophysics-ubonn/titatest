@@ -21,7 +21,7 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Hilfsschalter
-      logical         * 4     lsetup
+      LOGICAL ::     lsetup
 
 c.....................................................................
 
@@ -32,9 +32,9 @@ c     Hilfsfelder
       INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
 c     Hilfsvariablen
-      integer         * 4     i,idum
-      complex         * 16    cdum,cdat,csig
-      real            * 8     dum,norm,norm2
+      INTEGER (KIND = 4)  ::     i,idum
+      COMPLEX (KIND(0D0)) ::    cdum,cdat,csig
+      REAL (KIND(0D0))    ::     dum,norm,norm2
 
 c.....................................................................
 
@@ -199,28 +199,28 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Eingabe
-      complex         * 16    dati,sigi
+      COMPLEX (KIND(0D0)) ::    dati,sigi
 
 c     Ausgabe
-      complex         * 16    cdat,csig
+      COMPLEX (KIND(0D0)) ::    cdat,csig
       
 c     Schalter
-      integer         * 4     wdlok
-      logical         * 4     ldum
+      INTEGER (KIND = 4)  ::     wdlok
+      LOGICAL ::     ldum
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      integer         * 4     idat,isig
+      INTEGER (KIND = 4)  ::     idat,isig
 
 c     Real-, Imaginaerteile
-      real            * 8     redat,imdat,
+      REAL (KIND(0D0))    ::     redat,imdat,
      1     resig,imsig
 
 c     Pi
-      real            * 8     pi
+      REAL (KIND(0D0))    ::     pi
 
 c.....................................................................
 

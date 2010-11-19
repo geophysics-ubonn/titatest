@@ -31,31 +31,31 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfskoordinaten
-      real            * 8     xkdum(5),
+      REAL (KIND(0D0))    ::     xkdum(5),
      1     ykdum(5)
 
 c     Beteiligte Knoten des zusammengesetzten Elements am Teildreieck
-      integer         * 4     ik(3)
+      INTEGER (KIND = 4)  ::     ik(3)
 
 c     Elementmatrizen vor der Kondensation
-      real            * 8     elmas(5,5),
+      REAL (KIND(0D0))    ::     elmas(5,5),
      1     elmam(5,5)
 
 c     Elementvektor vor der Kondensation
-      real            * 8     elve(5)
+      REAL (KIND(0D0))    ::     elve(5)
 
 c     Indexvariablen
-      integer         * 4     i,j,k
+      INTEGER (KIND = 4)  ::     i,j,k
 
 c     Grundelementmatrizen
-      integer         * 4     s1(3,3),s2(3,3),s3(3,3),
+      INTEGER (KIND = 4)  ::     s1(3,3),s2(3,3),s3(3,3),
      1     s4(3,3)
 
 c     Grundelementvektor
-      integer         * 4     sb(3)
+      INTEGER (KIND = 4)  ::     sb(3)
 
 c     Hilfsvariablen
-      real            * 8     x21,x31,y21,y31,
+      REAL (KIND(0D0))    ::     x21,x31,y21,y31,
      1     det,a,b,c,
      1     a1,a2
 

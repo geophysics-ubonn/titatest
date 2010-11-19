@@ -25,26 +25,25 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Kanalnummer
-      integer         * 4     kanal
+      INTEGER (KIND = 4) ::  kanal
 
 c     Datei
-      character       * 80    datei
+      CHARACTER (80)     ::  datei
 
 c.....................................................................
 
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Hilfsvariablen
-      real            * 8     xdum,ydum,dum,dum2,dummax
+      REAL (KIND (0D0)) ::  xdum,ydum,dum,dum2,dummax
 
 c     Indexvariablen
-      integer         * 4     i,j,k,l,i2
-
+      INTEGER (KIND = 4) :: i,j,k,l,i2
 c     Aktuelle Elementnummer
-      integer         * 4     iel
+      INTEGER (KIND = 4) :: iel
 
 c     Anzahl der Knoten im aktuellen Elementtyp
-      integer         * 4     nkel
+      INTEGER (KIND = 4) :: nkel
 
 c.....................................................................
 

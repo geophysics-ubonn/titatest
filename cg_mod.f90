@@ -63,9 +63,7 @@ CONTAINS
     else
        call cjggra
     end if
-    
-    RETURN
-    
+
   END SUBROUTINE cjg
   
 
@@ -156,7 +154,6 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    PRINT*,'hiho',cgres(1)
 !    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
     
     RETURN

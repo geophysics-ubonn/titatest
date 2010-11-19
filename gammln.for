@@ -1,7 +1,7 @@
-      real * 8 FUNCTION gammln(xx)
-      real    * 8 xx
-      integer * 4 j
-      real    * 8 ser,stp,tmp,x,y,cof(6)
+      REAL (KIND(0D0))  FUNCTION gammln(xx)
+      REAL (KIND(0D0))  :: xx
+      INTEGER (KIND=4)  :: j
+      REAL (KIND (0D0)) :: ser,stp,tmp,x,y,cof(6)
       SAVE cof,stp
       DATA cof,stp/76.18009172947146d0,-86.50532032941677d0,
      *24.01409824083091d0,-1.231739572450155d0,.1208650973866179d-2,

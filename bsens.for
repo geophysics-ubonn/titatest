@@ -23,40 +23,40 @@ c.....................................................................
 c     PROGRAMMINTERNE PARAMETER:
 
 c     Aktuelle Elementnummer
-      integer         * 4     iel
+      INTEGER (KIND = 4)  ::     iel
 
 c     Aktueller Elementtyp
-      integer         * 4     ntyp
+      INTEGER (KIND = 4)  ::     ntyp
 
 c     Anzahl der Knoten im aktuellen Elementtyp
-      integer         * 4     nkel
+      INTEGER (KIND = 4)  ::     nkel
 
 c     Elektrodennummern
-      integer         * 4     elec1,elec2,
+      INTEGER (KIND = 4)  ::     elec1,elec2,
      1     elec3,elec4
 
 c     Beitraege zur Superposition
-      complex         * 16    sup(4)
+      COMPLEX (KIND(0D0)) ::     sup(4)
 
 c     Indexvariablen
-      integer         * 4     ityp,jnel,mi,mj,
+      INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,
      1     imn,imax,imin
-      integer         * 4     i,j,k
+      INTEGER (KIND = 4)  ::     i,j,k
 
 c     Hilfsfeld
       COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 c     Hilfsvariablen
-      integer         * 4     nzp,nnp
-      complex         * 16    dum
+      INTEGER (KIND = 4)  ::     nzp,nnp
+      COMPLEX (KIND(0D0)) ::     dum
 
 c     Pi
-      real            * 8     pi
+      REAL (KIND(0D0))    ::  pi
 
 c.....................................................................
 
       pi = dacos(-1d0)
-! get memory for hsens
+!     get memory for hsens
       ALLOCATE (hsens(kwnanz),stat=errnr)
       IF (errnr /= 0) THEN
          fetxt = 'Error memory allocation hsens'

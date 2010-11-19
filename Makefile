@@ -10,7 +10,7 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O3 -m32 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fno-range-check -pedantic
+FFLAG90         = -O0 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -Wunused -O0 -ggdb -g3 -fstack-protector-al
 #FFLAG90         = -Wunderflow -fbacktrace
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
@@ -48,7 +48,7 @@ f90crt		= alloci.o gauss_dble.o gauss_cmplx.o get_unit.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o besp_elem.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
 		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o
+		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o invhpmod.o
 
 fcrt		= inv.o
 
@@ -97,7 +97,7 @@ forcrm		= bbsens.o bessi0.o bessi1.o \
 #$(forcrt):	%.o : %.for
 #		$(F90) $(FFLAG90) -c $<
 
-$(fcrt):	%.o : %.f
+$(fcrt):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
 $(f90crt):	%.o : %.f90		
 		$(F90) $(FFLAG90) -c $<
@@ -131,6 +131,8 @@ cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o
+
+inv.o:		$(f90crt) $(forcrt)
 ###############################################################
 .SILENT:	cbn
 ###################################

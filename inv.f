@@ -45,6 +45,10 @@ c     USE portlib
       INTEGER                :: c1,i
       REAL(KIND(0D0))        :: lamalt
       LOGICAL                :: ols
+
+      INTEGER :: OMP_GET_MAX_THREADS
+      INTEGER :: OMP_GET_NUM_THREADS
+      INTEGER :: OMP_GET_THREAD_NUM
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 c     SETUP UND INPUT
@@ -134,22 +138,6 @@ c     get memory for CJG and update
          errnr = 94
          goto 999
       END IF
-      IF (ldc .OR. lip) THEN
-         ALLOCATE (pvecdc(manz),bvecdc(manz),rvecdc(manz),
-     1        apdc(nanz),STAT=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rvec/bvec dc'
-            errnr = 94
-            GOTO 999
-         END IF
-      ELSE
-         ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rve!!!$in cjggdc'
-            errnr = 94
-            GOTO 999
-         END IF
-      END IF
 
 c     Startparameter setzen
       it     = 0;itr    = 0
@@ -205,6 +193,12 @@ c     'sens' zuweisen
          goto 999
       end if
 
+      write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+!$OMP PARALLEL
+      write(6,"(2(a,i3))") " OpenMP: N_threads = ",
+     *     OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
+!$OMP END PARALLEL
+
 c-------------
 c     get current time
       CALL tic(c1)
@@ -212,12 +206,14 @@ c.................................................
 
 c     MODELLING
 c     'a', 'hpot' und 'kpot' zuweisen
- 10   if (ldc) then
+ 10   print*,'it',it,'itr',itr
+      if (ldc) then
          ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),bdc(sanz),
      1        stat=errnr)
       else
          ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),b(sanz),stat=errnr)
       end if
+      print*,'bla'
       if (errnr.ne.0) then
          fetxt = 'allocation problem a and hpot'
          errnr = 97 
@@ -231,7 +227,6 @@ c     'a', 'hpot' und 'kpot' zuweisen
             goto 999
          end if
       END IF
-
 c     Kontrollausgaben
       WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
       write(*,'(a,i3,a,i3,a)',ADVANCE='no')
@@ -477,7 +472,6 @@ c     Widerstandsverteilung und modellierte Daten ausgeben
          end if
       end if
 
-
       if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
 c     Iterationsindex hochzaehlen
          it = it+1
@@ -658,21 +652,42 @@ c Modell parameter mit aktuellen Leitfaehigkeiten belegen
       CALL bpar
       if (errnr.ne.0) goto 999
 
+      IF (ldc .OR. lip) THEN
+         ALLOCATE (pvecdc(manz),bvecdc(manz),rvecdc(manz),
+     1        apdc(nanz),STAT=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rvec/bvec dc'
+            errnr = 94
+            GOTO 999
+         END IF
+      ELSE
+         ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
+         IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation rve!!!$in cjggdc'
+            errnr = 94
+            GOTO 999
+         END IF
+      END IF
+
 c     UPDATE anbringen
       call update
-      fetxt =''
       if (errnr.ne.0) goto 999
 
+      IF (ALLOCATED (rvecdc))
+     1     DEALLOCATE (rvecdc,apdc,bvecdc,pvecdc,STAT=errnr)
+
+      IF (ALLOCATED (pvec))
+     1     DEALLOCATE (rvec,pvec,ap,STAT=errnr)
+      
 c Leitfaehigkeiten mit verbessertem Modell belegen
       CALL bsigma
       if (errnr.ne.0) goto 999
 
 c     Roughness bestimmen
       CALL brough
-      
+
 c     Ggf. Referenzleitfaehigkeit bestimmen
       if (lsr) call refsig()
-      
 c     Neues Modelling
       goto 10
       
@@ -768,12 +783,7 @@ c     'sens' und 'kpot' freigeben
       IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
       IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
 
-      IF (ALLOCATED (bvec)) DEALLOCATE (bvec,STAT=errnr)
-      IF (ALLOCATED (rvecdc))
-     1     DEALLOCATE (rvecdc,apdc,bvecdc,pvecdc,STAT=errnr)
-
-      IF (ALLOCATED (pvec))
-     1     DEALLOCATE (rvec,pvec,ap,STAT=errnr)
+      IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
 
       IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
 
