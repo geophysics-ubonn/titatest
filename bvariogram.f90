@@ -51,7 +51,7 @@ SUBROUTINE bvariogram
 !!$! tgam stores the output string of get_vario
   CHARACTER (11) :: tg
 !!$c-----------------------------------------------------------------------
-
+  PRINT*,''
   errnr = 4
 !!$
 !!$c     define linear equidistant lag vector

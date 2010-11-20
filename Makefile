@@ -10,8 +10,8 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O0 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -Wunused -O0 -ggdb -g3 -fstack-protector-al
-#FFLAG90         = -Wunderflow -fbacktrace
+FFLAG90         = -O4 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -frepack-arrays
+#FFLAG90         = -O0 -Wunderflow -fbacktrace -Wunused -ggdb -g3 -fstack-protector-all 
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl

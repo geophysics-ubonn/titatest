@@ -5,8 +5,6 @@ SUBROUTINE get_error(ftext,errnr,errflag,intext)
   CHARACTER(256),INTENT (OUT) :: ftext
 
   INCLUDE 'crerror.h'
-
-  
   
   ftext=TRIM(ADJUSTL(fetxt(errnr)))//' '//TRIM(intext)
   

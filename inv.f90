@@ -1,4 +1,4 @@
-program inv
+PROGRAM inv
 
 !!!$   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
 
@@ -43,7 +43,7 @@ program inv
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i
   REAL(KIND(0D0))        :: lamalt
-  LOGICAL                :: ols,converged
+  LOGICAL                :: converged
 
   INTEGER :: OMP_GET_MAX_THREADS
   INTEGER :: OMP_GET_NUM_THREADS
@@ -68,13 +68,14 @@ program inv
   lagain=.TRUE. ! is set afterwards by user input file to false
 
 !!!$   Allgemeine Parameter setzen
-  DO WHILE(lagain)
+  DO WHILE ( lagain ) ! this loop exits after all files are processed
+
      errnr2 = 0
 !!!$   Benoetigte Variablen einlesen
      call rall(kanal,delem,delectr,dstrom,drandb,&
-!!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
-!!!$   diff+<
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
+!!!$   diff+<
+!!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
@@ -90,7 +91,7 @@ program inv
 
 !!!$   Ggf. Fehlermeldungen
         if (.not.lsink) then
-           fetxt = ' '
+           fetxt = 'no mixed boundary specify sink node'
            errnr = 102
         end if
 
@@ -109,37 +110,108 @@ program inv
         end if
      end if
 
-!!!$   Startmodell belegen
-     ALLOCATE (sigma(elanz),sigma2(elanz),stat=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation fem sigma'
-        errnr = 94
-        goto 999
+
+!!!$   getting dynamic memory 
+     errnr = 94
+!!!$ physical model
+     fetxt = 'allocation problem sigma'
+     ALLOCATE (sigma(elanz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem sigma2'
+     ALLOCATE (sigma2(elanz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!!$  model parameters
+     fetxt = 'allocation problem par'
+     ALLOCATE (par(manz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem dpar'
+     ALLOCATE (dpar(manz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem dpar2'
+     ALLOCATE (dpar2(manz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem pot'
+     ALLOCATE(pot(sanz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem pota'
+     ALLOCATE (pota(sanz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem fak'
+     ALLOCATE (fak(sanz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!!$ now the big array are coming.. 
+     if (ldc) then
+        fetxt = 'allocation problem adc'
+        ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem hpotdc'
+        ALLOCATE (hpotdc(sanz,eanz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        ALLOCATE (bdc(sanz),STAT=errnr)
+        fetxt = 'allocation problem adc'
+        IF (errnr /= 0) GOTO 999
+        ALLOCATE (sensdc(nanz,manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem adc'
+        ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=errnr)
+     else
+        fetxt = 'allocation problem adc'
+        ALLOCATE (a((mb+1)*sanz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem adc'
+        ALLOCATE (hpot(sanz,eanz),STAT=errnr) 
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem adc'
+        ALLOCATE (b(sanz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem adc'
+        ALLOCATE (sens(nanz,manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem adc'
+        ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=errnr)
+     end if
+     IF (errnr /= 0) GOTO 999
+
+
+!!!$ CG data storage of residuums
+     ALLOCATE (cgres(ncgmax+2),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem cgres'
+     ALLOCATE (cgres2(ncgmax+2),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation problem cgres2'
+!!!$  CJG aux vectors and update
+     fetxt = 'allocation problem bvec'
+     ALLOCATE (bvec(manz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!$ getting further CJG variables
+     IF (ldc .OR. lfphai) THEN ! ERT or FPI
+        fetxt = 'allocation problem pvecdc'
+        ALLOCATE (pvecdc(manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem bvecdc'
+        ALLOCATE (bvecdc(manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem rvecdc'
+        ALLOCATE (rvecdc(manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem apdc'
+        ALLOCATE (apdc(nanz),STAT=errnr)
+     ELSE ! COMPLEX _only_
+        fetxt = 'allocation problem rvec'
+        ALLOCATE (rvec(manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem pvec'
+        ALLOCATE (pvec(manz),STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem ap'
+        ALLOCATE (ap(nanz),STAT=errnr)
      END IF
+     IF (errnr /= 0) GOTO 999
+
+!!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
-
-!!!$   get memory for model parameters
-     ALLOCATE (par(manz),dpar(manz),dpar2(manz),stat=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation model/update data'
-        errnr = 94
-        goto 999
-     END IF
-!!!$   get memory for CG data storage of residuums
-     ALLOCATE (cgres(ncgmax+2),cgres2(ncgmax+2),stat=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation cgres data'
-        errnr = 94
-        goto 999
-     END IF
-!!!$   get memory for CJG and update
-     ALLOCATE (bvec(manz),STAT=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation bvec data'
-        errnr = 94
-        goto 999
-     END IF
 
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
@@ -182,18 +254,6 @@ program inv
      call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 !!!$   diff+>
      if (errnr.ne.0) goto 999
-!!$      CALL SYSTEM('sleep 1000')
-!!!$   'sens' zuweisen
-     if (ldc) then
-        ALLOCATE(sensdc(nanz,manz),kpotdc(sanz,eanz,kwnanz),stat=errnr)
-     else
-        ALLOCATE(sens(nanz,manz),kpot(sanz,eanz,kwnanz),stat=errnr)
-     end if
-     if (errnr.ne.0) then
-        fetxt = 'allocation problem sens and kpot'
-        errnr = 97 
-        goto 999
-     end if
 
      write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
      !$OMP PARALLEL
@@ -206,41 +266,16 @@ program inv
      CALL tic(c1)
 !!!$.................................................
      converged = .FALSE.
-!!!$   MODELLING
-!!!$   'a', 'hpot' und 'kpot' zuweisen
      DO WHILE (.NOT.converged)
 
 !!!$   Kontrollausgaben
         WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
-             ACHAR(13)//' Iteration ',it,', ',itr,&
+        write(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
+             ' Iteration ',it,', ',itr,' : Calculating Potentials'
+        write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 
-
-        write(fprun,'(a,i3,a,i3,a)')&
-             ' Iteration ',it,', ',itr,&
-             ' : Calculating Potentials'
-
-        if (ldc) then
-           ALLOCATE(adc((mb+1)*sanz),hpotdc(sanz,eanz),bdc(sanz),&
-                stat=errnr)
-        else
-           ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),b(sanz),stat=errnr)
-        end if
-
-        if (errnr.ne.0) then
-           fetxt = 'allocation problem a and hpot'
-           errnr = 97 
-           goto 999
-        end if
-        IF (.NOT.ALLOCATED (pot)) THEN
-           ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
-           if (errnr.ne.0) then
-              fetxt = 'allocation problem pot to fak'
-              errnr = 97 
-              goto 999
-           end if
-        END IF
+!!!$   MODELLING
 
         if (ldc) then
 
@@ -248,11 +283,11 @@ program inv
            do k=1,kwnanz
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
-
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
                     if (lsr) call potana(l,k)
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+                    fetxt = 'kompadc'
                     call kompadc(l,k)
                     if (errnr.ne.0) goto 999
 
@@ -261,19 +296,23 @@ program inv
                     if (lrandb2) call randb2()
 
 !!!$   Gleichungssystem skalieren
+                    fetxt = 'scaldc'
                     call scaldc()
                     if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
+                    fetxt = 'choldc'
                     call choldc()
                     if (errnr.ne.0) goto 999
-                 else
 
+                 else
+                    fetxt = 'kompbdc'
 !!!$   Stromvektor modifizieren
                     call kompbdc(l)
                  end if
 
 !!!$   Gleichungssystem loesen
+                 fetxt = 'vredc'
                  call vredc()
 
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
@@ -298,6 +337,7 @@ program inv
                     if (lsr) call potana(l,k)
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+                    fetxt = 'kompab'
                     call kompab(l,k)
                     if (errnr.ne.0) goto 999
 
@@ -306,19 +346,23 @@ program inv
                     if (lrandb2) call randb2()
 
 !!!$   Gleichungssystem skalieren
+                    fetxt = 'scalab'
                     call scalab()
                     if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
+                    fetxt = 'chol'
                     call chol()
                     if (errnr.ne.0) goto 999
                  else
 
 !!!$   Stromvektor modifizieren
+                    fetxt = 'kompb'
                     call kompb(l)
                  end if
 
 !!!$   Gleichungssystem loesen
+                 fetxt = 'vre'
                  call vre()
 
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
@@ -340,12 +384,6 @@ program inv
         call bvolti()
         if (errnr.ne.0) goto 999
 
-!!!$   'a' und 'hpot' freigeben
-        if (ldc) then
-           DEALLOCATE(adc,hpotdc,bdc)
-        else
-           DEALLOCATE(a,hpot,b)
-        end if
         if (lsetup) then
 
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
@@ -475,24 +513,6 @@ program inv
            end if
         end if
 
-        IF (ldc .OR. lip) THEN
-           ALLOCATE (pvecdc(manz),bvecdc(manz),rvecdc(manz), &
-                apdc(nanz),STAT=errnr)
-           IF (errnr /= 0) THEN
-              fetxt = 'Error memory allocation rvec/bvec dc'
-              errnr = 94
-              GOTO 999
-           END IF
-        ELSE
-           ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
-           IF (errnr /= 0) THEN
-              fetxt = 'Error memory allocation rve!!!$in cjggdc'
-              errnr = 94
-              GOTO 999
-           END IF
-        END IF
-
-
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
 !!!$   Iterationsindex hochzaehlen
            it = it+1
@@ -549,12 +569,6 @@ program inv
            print*,'Only precalcs'
            EXIT
         END IF
-!!!$!!!$   'kpot' freigeben wird nicht mehr freigegeben
-!!!$      if (ldc) then
-!!!$         DEALLOCATE(kpotdc)
-!!!$      else
-!!!$         DEALLOCATE(kpot)
-!!!$      end if
 
 !!!$   REGULARISIERUNG / STEP-LENGTH einstellen
         if (.not.lstep) then
@@ -673,15 +687,10 @@ program inv
         CALL bpar
         if (errnr.ne.0) goto 999
 
+
 !!!$   UPDATE anbringen
         call update
         if (errnr.ne.0) goto 999
-
-        IF (ALLOCATED (rvecdc)) &
-             DEALLOCATE (rvecdc,apdc,bvecdc,pvecdc,STAT=errnr)
-
-        IF (ALLOCATED (pvec)) &
-             DEALLOCATE (rvec,pvec,ap,STAT=errnr)
 
 !!!$ Leitfaehigkeiten mit verbessertem Modell belegen
         CALL bsigma
@@ -693,7 +702,7 @@ program inv
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
         if (lsr) call refsig()
 !!!$   Neues Modelling
-     END DO ! while not converged
+     END DO ! DO WHILE (.not. converged)
 
 !!!$.................................................
 
@@ -710,6 +719,7 @@ program inv
         end if
         if (errnr.ne.0) goto 999
      end if
+     
      IF (lvario) CALL bvariogram ! calculate experimental variogram
 
      IF (lcov1) CALL buncert (kanal,lamalt)
@@ -762,32 +772,129 @@ program inv
      close(fpcjg)
      close(fpeps)
 
-!!!$   'sens' und 'kpot' freigeben
+     fetxt = 'allocation cgres'
+     print*,fetxt
+     DEALLOCATE (cgres,STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+     fetxt = 'allocation  cgres2'
+     print*,fetxt
+     DEALLOCATE (cgres2,STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!!$  CJG aux vectors and update
+     fetxt = 'allocation  bvec'
+     print*,fetxt
+     DEALLOCATE (bvec,STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!$ getting further CJG variables
+     IF (ldc .OR. lfphai) THEN ! ERT or FPI
+        fetxt = 'allocation pvecdc'
+     print*,fetxt
+        DEALLOCATE (pvecdc,STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation bvecdc'
+     print*,fetxt
+        DEALLOCATE (bvecdc,STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation rvecdc'
+     print*,fetxt
+        DEALLOCATE (rvecdc,STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation apdc'
+     print*,fetxt
+        DEALLOCATE (apdc,STAT=errnr)
+     ELSE ! COMPLEX _only_
+        fetxt = 'allocation rvec'
+     print*,fetxt
+        DEALLOCATE (rvec,STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation pvec'
+     print*,fetxt
+        DEALLOCATE (pvec,STAT=errnr)
+        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation ap'
+     print*,fetxt
+        DEALLOCATE (ap,STAT=errnr)
+     END IF
+
+!!!$   'sens' und 'pot' freigeben
      if (ldc) then
-        DEALLOCATE(sensdc,kpotdc)
+        fetxt = 'allocation adc'
+     print*,fetxt
+        DEALLOCATE (adc)
+        fetxt = 'allocation hpotdc'
+     print*,fetxt
+        DEALLOCATE (hpotdc)
+        fetxt = 'allocation bdc'
+     print*,fetxt,'blaaa'
+        DEALLOCATE (bdc,STAT=errnr)
+        print*,errnr,'bla!!'
+        fetxt = 'allocation sensdc'
+     print*,fetxt
+        DEALLOCATE (sensdc)
+        fetxt = 'allocation koptdc'
+     print*,fetxt
+        DEALLOCATE (kpotdc)
      else
+        DEALLOCATE(a,hpot,b)
         DEALLOCATE(sens,kpot)
      end if
+
+     fetxt = 'allocation smatm'
+     print*,fetxt
      IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
+
+     fetxt = 'allocation pot,pota,fak'
+     print*,fetxt
      IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
 
+     fetxt = 'allocation snr,sx,sy'
+     print*,fetxt
      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+
+     fetxt = 'allocation typ'
+     print*,fetxt
      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+
+     fetxt = 'allocation nrel'
+     print*,fetxt
      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
+     fetxt = 'allocation esp'
+     print*,fetxt
      IF (ALLOCATED (espx)) DEALLOCATE (espx,espy)
 
+     fetxt = 'allocation kwn'
+     print*,fetxt
      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+
+     fetxt = 'allocation kwni'
+     print*,fetxt
      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
 
+     fetxt = 'allocation elbg'
+     print*,fetxt
      IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
+
+     fetxt = 'allocation enr'
+     print*,fetxt
      IF (ALLOCATED (enr)) DEALLOCATE (enr)
+
+     fetxt = 'allocation mnr'
+     print*,fetxt
      IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
+
+     fetxt = 'allocation strnr,strom,volt,etc'
+     print*,fetxt
      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,&
           kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
-     IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
-     IF (ALLOCATED (cgres)) DEALLOCATE (cgres,cgres2)
 
-     IF (ALLOCATED (bvec)) DEALLOCATE (bvec)
+     fetxt = 'allocation par,dpar,dpar2'
+     print*,fetxt
+
+     IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
+
+     fetxt = 'allocation sigma'
+     print*,fetxt
 
      IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
 
