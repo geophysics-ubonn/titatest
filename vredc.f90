@@ -1,22 +1,22 @@
-      subroutine vredc()
+subroutine vredc()
 
 !!!$     Fuehrt das Vorwaerts- und Rueckwaertseinsetzen mit der Cholesky-Links-
 !!!$     dreiecksmatrix aus;
 !!!$     'bdc' bleibt unveraendert, 'pot' ist Loesungsvektor.
 
 !!!$     ( Vgl. Subroutine 'VRBNDN' in Schwarz (1991) )
-      
+
 !!!$     Andreas Kemna                                            11-Oct-1993
 !!!$     Letzte Aenderung   14-Nov-1997
 
 !!!$.....................................................................
 
-      USE alloci
-      USE femmod
-      USE elemmod
-      USE errmod
+  USE alloci
+  USE femmod
+  USE elemmod
+  USE errmod
 
-      IMPLICIT none
+  IMPLICIT none
 
 
 !!!$.....................................................................
@@ -24,55 +24,55 @@
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-      REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: potdc
-      integer         * 4     idi,i0
-      integer         * 4     m1,jlow
-      real            * 8     s
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: potdc
+  INTEGER (KIND=4)  :: idi,i0
+  INTEGER (KIND=4)  :: m1,jlow
+  REAL(KIND(0D0))   ::   s
 
 !!!$     Indexvariablen
-      integer         * 4     i,j
+  INTEGER (KIND=4)  ::  i,j
 
 !!!$.....................................................................
 
-      ALLOCATE (potdc(sanz),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation potdc failed'
-         errnr = 94
-         RETURN
-      END IF
-      
+  ALLOCATE (potdc(sanz),stat=errnr)
+  IF (errnr /= 0) THEN
+     fetxt = 'Error memory allocation potdc failed'
+     errnr = 94
+     RETURN
+  END IF
 
-      m1 = mb+1
 
-      do 20 i=1,sanz
-         idi  = i*m1
-         s    = bdc(i)
-         i0   = idi-i
-         jlow = max0(1,i-mb)
+  m1 = mb+1
 
-         do 10 j=jlow,i-1
-            s = s - adc(i0+j)*potdc(j)
- 10      continue
+  do i=1,sanz
+     idi  = i*m1
+     s    = bdc(i)
+     i0   = idi-i
+     jlow = max0(1,i-mb)
 
-         potdc(i) = s / adc(idi)
- 20   continue
+     do j=jlow,i-1
+        s = s - adc(i0+j)*potdc(j)
+     END do
 
-      do 40 i=sanz,1,-1
-         potdc(i) = - potdc(i) / adc(idi)
+     potdc(i) = s / adc(idi)
+  END do
 
-         jlow = max0(1,i-mb)
-         i0   = idi-i
+  do i=sanz,1,-1
+     potdc(i) = - potdc(i) / adc(idi)
 
-         do 30 j=jlow,i-1
-            potdc(j) = potdc(j) + adc(i0+j)*potdc(i)
- 30      continue
+     jlow = max0(1,i-mb)
+     i0   = idi-i
 
-         idi = idi-m1
- 40   continue
+     do j=jlow,i-1
+        potdc(j) = potdc(j) + adc(i0+j)*potdc(i)
+     END do
 
-      do i=1,sanz
-         pot(i) = dcmplx(potdc(i))
-      end do
+     idi = idi-m1
+  END do
 
-      DEALLOCATE (potdc)
-      end
+  do i=1,sanz
+     pot(i) = dcmplx(potdc(i))
+  end do
+
+  DEALLOCATE (potdc)
+end subroutine vredc

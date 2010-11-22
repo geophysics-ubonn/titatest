@@ -57,11 +57,18 @@ MODULE cg_mod
 CONTAINS
 
   SUBROUTINE cjg
-    
     if (ldc.or.lip) then
+       CALL con_cjgmod (2,fetxt,errnr)
+       IF (errnr /= 0) RETURN
        call cjggdc
+       CALL des_cjgmod (2,fetxt,errnr)
+       IF (errnr /= 0) RETURN
     else
+       CALL con_cjgmod (3,fetxt,errnr)
+       IF (errnr /= 0) RETURN
        call cjggra
+       CALL des_cjgmod (3,fetxt,errnr)
+       IF (errnr /= 0) RETURN
     end if
 
   END SUBROUTINE cjg

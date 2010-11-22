@@ -53,24 +53,25 @@ f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  beta.o bkfak.o blam0.o bnachbar.o bpar.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bsigm0.o bsigma.o bsytop.o bvolt.o bvolti.o chareal.o \
-		  chkpol.o \
+		  chkpol.o choldc.o chol.o dmisft.o \
+		  elem1.o elem3.o elem4.o \
+		  elem5.o elem8.o filpat.o \
 		  chold.o cholz.o linvd.o linvz.o \
+		  mdian1.o parfit.o potana.o precal.o rall.o \
+		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
+		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
+		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
+		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
+		  update.o vredc.o vre.o wdatm.o \
+		  wkpot.o wout.o wpot.o wsens.o \
 		  gauss_dble.o gauss_cmplx.o get_unit.o \
 		  make_noise.o tic_toc.o variomodel.o bvariogram.o \
 		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o \
 
 fcrt		= inv.o
 
-forcrt		= choldc.o chol.o dmisft.o elem1.o \
-		  elem3.o elem4.o elem5.o elem8.o filpat.o \
-		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
-		  mdian1.o parfit.o potana.o precal.o rall.o \
-		  randb2.o randb.o randdc.o rdati.o rdatm.o \
-		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
-		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
-		  update.o vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o
+forcrt		= 
 # CRMod objects
 f90crm		= alloci.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
@@ -79,22 +80,23 @@ f90crm		= alloci.o femmod.o datmod.o \
 
 fcrm		= fem.o
 
-forcrm		= choldc.o chol.o elem1.o \
-		  elem3.o elem4.o elem5.o elem8.o filpat.o \
-		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  kompadc.o kompbdc.o kompb.o \
-		  potana.o precal.o \
-		  randb2.o randb.o randdc.o rdatm.o \
-		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
-		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
-		  vredc.o vre.o wdatm.o wkpot.o wout.o \
-		  wpot.o wsens.o
+forcrm		= 
 
 f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
 		  beta.o bkfak.o bpot.o \
 		  bsendc.o bsens.o bsensi.o \
 		  bsytop.o bvolt.o bvolti.o chareal.o \
-		  chkpol.o \
+		  chkpol.o choldc.o chol.o \
+		  elem1.o elem3.o elem4.o \
+		  elem5.o elem8.o filpat.o \
+		  kompadc.o kompbdc.o kompb.o \
+		  potana.o precal.o \
+		  randb2.o randb.o randdc.o rdatm.o \
+		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
+		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
+		  vredc.o vre.o wdatm.o \
+		  wkpot.o wout.o wpot.o wsens.o \
+		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  tic_toc.o make_noise.o get_unit.o 
 ################################################################
 # rules
@@ -146,7 +148,13 @@ cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o
 
-inv.o:		$(f90crt) $(forcrt)
+kont1.o:	variomodel.o
+
+rall.o:		make_noise.o variomodel.o
+
+update.o:	cg_mod.o
+
+inv.o:		$(f90crt) $(forcrt) $(f90crtsub)
 ###############################################################
 .SILENT:	cbn
 ###################################

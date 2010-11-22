@@ -173,42 +173,11 @@ PROGRAM inv
      IF (errnr /= 0) GOTO 999
 
 
-!!!$ CG data storage of residuums
-     ALLOCATE (cgres(ncgmax+2),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
-     fetxt = 'allocation problem cgres'
-     ALLOCATE (cgres2(ncgmax+2),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
-     fetxt = 'allocation problem cgres2'
-!!!$  CJG aux vectors and update
-     fetxt = 'allocation problem bvec'
-     ALLOCATE (bvec(manz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
-!!$ getting further CJG variables
-     IF (ldc .OR. lfphai) THEN ! ERT or FPI
-        fetxt = 'allocation problem pvecdc'
-        ALLOCATE (pvecdc(manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem bvecdc'
-        ALLOCATE (bvecdc(manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem rvecdc'
-        ALLOCATE (rvecdc(manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem apdc'
-        ALLOCATE (apdc(nanz),STAT=errnr)
-     ELSE ! COMPLEX _only_
-        fetxt = 'allocation problem rvec'
-        ALLOCATE (rvec(manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem pvec'
-        ALLOCATE (pvec(manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem ap'
-        ALLOCATE (ap(nanz),STAT=errnr)
-     END IF
+!!!$ get CG data storage of residuums and bvec, which is global
+     CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
+     print*,'gt all the money'
 !!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
@@ -719,7 +688,7 @@ PROGRAM inv
         end if
         if (errnr.ne.0) goto 999
      end if
-     
+
      IF (lvario) CALL bvariogram ! calculate experimental variogram
 
      IF (lcov1) CALL buncert (kanal,lamalt)
@@ -772,67 +741,27 @@ PROGRAM inv
      close(fpcjg)
      close(fpeps)
 
-     fetxt = 'allocation cgres'
-     print*,fetxt
-     DEALLOCATE (cgres,STAT=errnr)
+
+     CALL des_cjgmod(1,fetxt,errnr) ! call cjgmod destructor
      IF (errnr /= 0) GOTO 999
-     fetxt = 'allocation  cgres2'
-     print*,fetxt
-     DEALLOCATE (cgres2,STAT=errnr)
-     IF (errnr /= 0) GOTO 999
-!!!$  CJG aux vectors and update
-     fetxt = 'allocation  bvec'
-     print*,fetxt
-     DEALLOCATE (bvec,STAT=errnr)
-     IF (errnr /= 0) GOTO 999
-!!$ getting further CJG variables
-     IF (ldc .OR. lfphai) THEN ! ERT or FPI
-        fetxt = 'allocation pvecdc'
-     print*,fetxt
-        DEALLOCATE (pvecdc,STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation bvecdc'
-     print*,fetxt
-        DEALLOCATE (bvecdc,STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation rvecdc'
-     print*,fetxt
-        DEALLOCATE (rvecdc,STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation apdc'
-     print*,fetxt
-        DEALLOCATE (apdc,STAT=errnr)
-     ELSE ! COMPLEX _only_
-        fetxt = 'allocation rvec'
-     print*,fetxt
-        DEALLOCATE (rvec,STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation pvec'
-     print*,fetxt
-        DEALLOCATE (pvec,STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation ap'
-     print*,fetxt
-        DEALLOCATE (ap,STAT=errnr)
-     END IF
 
 !!!$   'sens' und 'pot' freigeben
      if (ldc) then
         fetxt = 'allocation adc'
-     print*,fetxt
+        print*,fetxt
         DEALLOCATE (adc)
         fetxt = 'allocation hpotdc'
-     print*,fetxt
+        print*,fetxt
         DEALLOCATE (hpotdc)
         fetxt = 'allocation bdc'
-     print*,fetxt,'blaaa'
+        print*,fetxt,'blaaa'
         DEALLOCATE (bdc,STAT=errnr)
         print*,errnr,'bla!!'
         fetxt = 'allocation sensdc'
-     print*,fetxt
+        print*,fetxt
         DEALLOCATE (sensdc)
         fetxt = 'allocation koptdc'
-     print*,fetxt
+        print*,fetxt
         DEALLOCATE (kpotdc)
      else
         DEALLOCATE(a,hpot,b)

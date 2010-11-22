@@ -1,4 +1,4 @@
-      subroutine kompb(nelec)
+subroutine kompb(nelec)
 
 !!!$     Unterprogramm zur Kompilation des Konstanten- bzw. Stromvektors 'b'
 !!!$     fuer Einheitsstrom.
@@ -8,36 +8,37 @@
 
 !!!$.....................................................................
 
-      USE femmod
-      USE electrmod
-      USE elemmod
+  USE femmod
+  USE electrmod
+  USE elemmod
 
-      IMPLICIT none
+  IMPLICIT none
 
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
 !!!$     Aktuelle Elektrodennummer
-      integer         * 4     nelec
+  INTEGER (KIND = 4) ::     nelec
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-      integer         * 4     i
+  INTEGER (KIND = 4) ::     i
 
 !!!$.....................................................................
 
 !!!$     Konstantenvektor auf Null setzen
-      do i=1,sanz
-         b(i) = dcmplx(0d0)
-      end do
+  b = 0D0
+!!$  do i=1,sanz
+!!$     b(i) = dcmplx(0d0)
+!!$  end do
 
 !!!$     Aufbau des Konstanten- bzw. Stromvektors mit Skalierung
 !!!$     ( A * x + b = 0 )
-      b(enr(nelec)) = dcmplx(-fak(enr(nelec)))
+  b(enr(nelec)) = dcmplx(-fak(enr(nelec)))
 
 !!!$     akc BAW-Tank
 !!!$     ak        b(211) = dcmplx(fak(211))
@@ -58,7 +59,7 @@
 !!!$     akc Adrian (Tank)
 !!!$     ak        b(1660) = dcmplx(fak(1660))
 
-      if (lsink) b(nsink) = dcmplx(fak(nsink))
+  if (lsink) b(nsink) = dcmplx(fak(nsink))
 
-      return
-      end
+  return
+end subroutine kompb
