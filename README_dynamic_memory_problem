@@ -1,0 +1,8 @@
+- All modules with ALLOCATABLE variables should contain at least 
+two methods:
+
+1) Conctructor
+2) Destructor
+
+this should avoid memory segemtation, which may cause instable run time behaviour within 
+gfortran compiled binaries.- :(

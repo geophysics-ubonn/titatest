@@ -36,24 +36,38 @@ mv tmp.mag $mymag'.mag'
 echo $mymag
 it=`echo $mymag|sed 's/rho//g'`
 $clean
-echo $mymag'.mag' > inv.lastmod
-echo "$fn" > tmp.fenster
-$plot_cur_crtomo
 pltpdf=$mymag'_mag.pdf'
-$clean
-if [ -e $invdir/$mymag'.pha' ];then
-    echo $invdir/$mymag'.pha' > inv.lastmod
-    echo "Phase" > tmp.fenster
+if [ -e $pltpdf ];then
+    echo "$pltpdf exists"
+else
+    echo $mymag'.mag' > inv.lastmod
+    echo "$fn" > tmp.fenster
     $plot_cur_crtomo
-    pltpdf="$pltpdf $mymag"'_pha.pdf'
     $clean
 fi
-echo $invdir/coverage.mag > inv.lastmod
-echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
-echo 'log_{10}(c)[SI]' > tmp.cbarn
-$plot_cur_crtomo
-pltpdf="$pltpdf coverage_mag.pdf"
-$clean
+if [ -e $invdir/$mymag'.pha'  ];then
+    if [ -e $mymag'_pha.pdf' ];then
+	echo $mymag'_pha.pdf' exists
+    else
+	echo $invdir/$mymag'.pha' > inv.lastmod
+	echo "Phase" > tmp.fenster
+	$plot_cur_crtomo
+	pltpdf="$pltpdf $mymag"'_pha.pdf'
+	$clean
+    fi
+fi
+if [ -e $invdir/coverage.mag ];then
+    if [ -e coverage_mag.pdf ];then
+	echo coverage_mag.pdf exists
+    else
+	echo $invdir/coverage.mag > inv.lastmod
+	echo 'c_j=\Sigma_i|A_{ij}|' > tmp.fenster
+	echo 'log_{10}(c)[SI]' > tmp.cbarn
+	$plot_cur_crtomo
+	pltpdf="$pltpdf coverage_mag.pdf"
+	$clean
+    fi
+fi
 if [ -e $invdir/ata.diag ];then
     echo $invdir/ata.diag > inv.lastmod
     echo "Squared coverage" > tmp.fenster
@@ -190,8 +204,9 @@ if [ -e inv_stat.eps ];then
     echo '\includegraphics[height=\textheight]{inv_stat.eps}' >> $texfile
 fi
 
-echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
-
+if [ -e inv_stat.eps ];then
+    echo "\lstinputlisting{$invdir/inv.ctr}" >> $texfile
+fi
 
 echo '\end{document}' >> $texfile
 
