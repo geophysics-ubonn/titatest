@@ -494,7 +494,7 @@ CONTAINS
 
     REAL(KIND(0D0)) :: dum,dum2 ! helpers
     REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
-    INTEGER         :: i,j,l,k,ik,anz 
+    INTEGER         :: i,j,k,ik
     REAL(KIND(0D0)) :: edglen ! Kantenlaenge
     REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
@@ -632,7 +632,6 @@ CONTAINS
     DEALLOCATE (csens)
 
     errnr = 0
-999 RETURN
 
   END SUBROUTINE bsmatmmgs
 
@@ -651,7 +650,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     REAL(KIND(0D0)) :: dum
-    INTEGER         :: i,j,l,k,ik,anz
+    INTEGER         :: i,k,ik
     REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
     REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
@@ -717,15 +716,13 @@ CONTAINS
 !!!$....................................................................
 !!!$    Hilfsmatrix
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
-!!!$    Schwerpunktskoordinaten der Flaechenelemente ij
-    REAL(KIND(0D0)) :: h,sd_el
 !!!$    Korrelation lengths, variance (var) and nugget
     REAL(KIND(0D0))      :: hx,hy,var,nugget
     REAL                 :: epsi
 !!!$    gibt es evtl schon eine inverse?
-    logical              :: ex,exc        
+    logical              :: ex
 !!!$    Hilfsvariablen
-    integer              :: i,j,l,ifp,c1
+    integer              :: i,j,ifp
 !!!$    smatm file name
     CHARACTER(124)        :: fsmat
 !!!$    clearscreen

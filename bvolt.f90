@@ -80,6 +80,4 @@ subroutine bvolt()
 
 !!!$     Fehlermeldungen
 
-1000 return
-
 end subroutine bvolt

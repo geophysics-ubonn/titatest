@@ -23,7 +23,7 @@ SUBROUTINE bvariogram
 
 !!$c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 !!$c     Indexvariablen
-  INTEGER :: i,j,ik,jk,ifp
+  INTEGER :: i,j,ik,ifp
 !!$c     th = Tail - Head; hx,hy,h distances in each direction
   REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
 !!$c     Parameter variances in x and y direction

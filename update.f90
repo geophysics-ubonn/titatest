@@ -35,7 +35,7 @@ subroutine update()
   REAL (KIND(0D0))    ::   dum
 
 !!!$     Indexvariablen
-  INTEGER (KIND=4)    ::  i,j,k,ij,in
+  INTEGER (KIND=4)    ::  i,j,ij,in
 !!!$.....................................................................
 
   IF (.NOT. llam) THEN

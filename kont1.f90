@@ -40,6 +40,10 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 10 FORMAT (l1,t20,a)
 11 FORMAT (g11.5,t20,a)
 12 FORMAT (I8,t20,a)
+13 FORMAT (t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
+        t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)
+14 FORMAT (t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
+        t69,a8,t81,a8,t93,a8,t105,a10)
 
   IF (mswitch /= 0) THEN
      write(fpinv,'(I3,t30,a)',err=999)mswitch,'#  mswitch'
@@ -52,7 +56,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   write(fpinv,'(a)',err=999) TRIM(ramd)
 !!!$     diff+<
   write(fpinv,10,err=999) ldiff.OR.lprior,&
-       '! difference or inversion or (m - m_{prior})'
+       '! difference inversion or (m - m_{prior})'
   write(fpinv,'(a)',err=999) TRIM(dd0)
   write(fpinv,'(a)',err=999) TRIM(dm0)
   write(fpinv,'(a)',err=999) TRIM(dfm0)
@@ -223,14 +227,11 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   write(fpinv,*,err=999)
 !!!$     Robuste Inversion
   if (lrobust) then
-     write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
-          t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)',err=999)&
-          'ID','it.','data RMS','stepsize',' lambda ',' roughn.',&
-          'CG-steps',' mag RMS',' pha RMS','- # data','L1-ratio',&
-          'steplength'
+     write(fpinv,13,err=999)'ID','it.','data RMS','stepsize',&
+          ' lambda ',' roughn.','CG-steps',' mag RMS',' pha RMS',&
+          '- # data','L1-ratio','steplength'
   else
-     write(fpinv,'(t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
-          t69,a8,t81,a8,t93,a8,t105,a10)',err=999)&
+     write(fpinv,14,err=999)&
           'ID','it.','data RMS','stepsize',' lambda ',' roughn.',&
           'CG-steps',' mag RMS',' pha RMS','- # data','steplength'
   end if

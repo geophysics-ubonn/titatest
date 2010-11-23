@@ -26,7 +26,7 @@ subroutine kompbdc(nelec)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i
+!!$  INTEGER (KIND = 4) ::     i
 
 !!!$.....................................................................
 

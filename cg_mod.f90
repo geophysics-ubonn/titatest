@@ -91,7 +91,7 @@ CONTAINS
     REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
 !!!$
 !!!$    Hilfsvariablen
-    INTEGER         :: j,k
+    INTEGER         :: k
 !!!$
 !!!$....................................................................
 
@@ -469,7 +469,7 @@ CONTAINS
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
 !!$
 !!!$    Hilfsvariablen
-    INTEGER            :: j,k
+    INTEGER            :: k
 !!!$....................................................................
 
 
@@ -483,11 +483,6 @@ CONTAINS
 
        ncg = k-1
 
-!!!$         dr = 0d0
-!!!$         do j=1,manz
-!!!$            dr = dr + dble(dconjg(rvec(j))*rvec(j))
-!!!$         end do
-
        dr = DOT_PRODUCT(DCONJG(rvec),rvec)
 
        if (k.eq.1) then
@@ -497,11 +492,8 @@ CONTAINS
 !!!$    Fletcher-Reeves-Version
           beta = dcmplx(dr/dr1)
 !!!$    ak!!!$Polak-Ribiere-Version
-!!!$    ak                beta = dcmplx(0d0)
-!!!$    ak                do j=1,manz
-!!!$    ak                    beta = beta + dconjg(bvec(j))*rvec(j)
-!!!$    ak                end do
-!!!$    ak                beta = beta*dcmplx(-alpha/dr1)
+!!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
+!!$          beta = beta * DCMPLX(-alpha/dr1)
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
@@ -523,11 +515,6 @@ CONTAINS
        END IF
 
        dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
-!!!$
-!!!$         dr1 = 0d0
-!!!$         do j=1,manz
-!!!$            dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
-!!!$         end do
 
        alpha = dr/dr1
 

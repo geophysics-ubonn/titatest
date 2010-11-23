@@ -33,37 +33,26 @@ subroutine wout(kanal,dsigma,dvolt)
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-
-!!!$     Aktuelle Elementnummer
-  INTEGER (KIND=4) ::  iel
-
-!!!$     Anzahl der Knoten im aktuellen Elementtyp
-  INTEGER (KIND=4) ::   nkel
-
 !!!$     Indexvariablen
-  INTEGER (KIND=4) ::  i,j,k
+  INTEGER (KIND=4) ::  i
 
 !!!$     Hilfsvariablen
-  REAL(KIND(0D0))  ::  xdum,ydum
-  INTEGER (KIND=4) ::  idum,idum2,lit
+  INTEGER (KIND=4) ::  idum,idum2
   CHARACTER (80)   ::  htxt
-  CHARACTER (12)   ::  htxt2
   COMPLEX(KIND(0D0))  ::  dum
 
 !!!$     Hilfsfunctions
-  CHARACTER (12)   ::   intcha
   CHARACTER (80)   ::   filpat
 
 !!!$     diff+<
   REAL(KIND(0D0))  ::   dum2,dum3
 !!!$     diff+>
-  LOGICAL         ::   exi
   CHARACTER (2)   ::   ci
 !!!$.....................................................................
 
 !!!$     'dsigma' modifizieren
 
-10 IF (it>9) THEN
+  IF (it>9) THEN
      WRITE (ci,'(I2)')it
   ELSE 
      WRITE (ci,'(a,I1)')'0',it

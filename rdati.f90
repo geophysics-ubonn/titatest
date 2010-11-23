@@ -54,9 +54,6 @@ subroutine rdati(kanal,datei)
 
 !!!$     Pi
   REAL(KIND(0D0))     ::     pi
-!!!$    dummi
-  REAL(KIND(0D0))     ::     rdum,rlev
-  CHARACTER(80)       ::    csz
 !!!$ check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
 !!!$.....................................................................

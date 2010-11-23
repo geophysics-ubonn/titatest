@@ -54,7 +54,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i,ifp1
+  INTEGER (KIND = 4) ::     i
 
 !!!$     Pi
   REAL(KIND(0D0))   ::     pi
@@ -68,7 +68,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$     ak Inga
   INTEGER (KIND = 4) ::  elec1,elec2,elec3,elec4
-  CHARACTER(120) :: buff
   LOGICAL      :: exi
 !!!$.....................................................................
 

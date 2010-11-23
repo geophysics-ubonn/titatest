@@ -10,7 +10,7 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O4 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -frepack-arrays
+FFLAG90         = -O4 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -frepack-arrays -W -Wall -pedantic
 #FFLAG90         = -O0 -Wunderflow -fbacktrace -Wunused -ggdb -g3 -fstack-protector-all 
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
@@ -141,6 +141,8 @@ bsmatm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
 
 bvariogram.o:	invmod.o variomodel.o sigmamod.o modelmod.o elemmod.o \
 		errmod.o konvmod.o
+
+cjgmod.o:	modelmod.o datmod.o
 
 cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 		konvmod.o modelmod.o datmod.o

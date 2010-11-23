@@ -53,7 +53,7 @@ subroutine parfit(fa,fb,fc,fmin,smin)
 !!!$     Zwischen 'fa' und 'fb' linear auf fmin interpolieren
               step = a + (b-a)*(fmin-fa)/(fb-fa)
            end if
-        else                    	 
+        else
 
 !!!$     Parabolische Interpolation auf Minimum
            bma     = b-a
@@ -97,7 +97,7 @@ subroutine parfit(fa,fb,fc,fmin,smin)
 !!!$     Zwischen 'fa' und 'fb' linear auf fmin interpolieren
               step = a + (b-a)*(fmin-fa)/(fb-fa)
            end if
-        else                    	 
+        else
 
 !!!$     Parabolische Interpolation auf Maximum
            bma     = b-a

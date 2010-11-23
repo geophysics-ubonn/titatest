@@ -39,16 +39,9 @@ subroutine wsens(kanal,datei)
   CHARACTER (80)   ::    htxt
   CHARACTER (12)   ::    htxt2
 
-  REAL(KIND(0D0))    ::     xdum,ydum,sensmax
   COMPLEX(KIND(0D0)) ::    summe
 !!!$     Indexvariablen
-  INTEGER (KIND=4) ::     i,j,k
-
-!!!$     Aktuelle Elementnummer
-  INTEGER (KIND=4) ::     iel
-
-!!!$     Anzahl der Knoten im aktuellen Elementtyp
-  INTEGER (KIND=4) ::     nkel
+  INTEGER (KIND=4) ::     i,j
 
 !!!$     (Back-) Slash
   CHARACTER (1)   ::     slash
