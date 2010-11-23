@@ -1,4 +1,5 @@
       subroutine kompb(nelec)
+c blaaa
 
 c     Unterprogramm zur Kompilation des Konstanten- bzw. Stromvektors 'b'
 c     fuer Einheitsstrom.

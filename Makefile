@@ -10,7 +10,7 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 F77		= gfortran
-FFLAG90         = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
+FFLAG90         = -O4 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
 #FFLAG90         = -Wunderflow -fbacktrace
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
@@ -32,12 +32,10 @@ PR2		= crm
 # macht CutMckee
 PR3		= ctm
 
-# kopiert die matlab tools
-PRM		= mtools
 MACHINE		= $(shell uname -n)
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
+all:		$(C1) $(PR1) $(PR2) $(PR3) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
@@ -156,19 +154,14 @@ crm:		$(C1) $(f90crm) $(forcrm) $(fcrm) $(ferr)
 		$(f90crm) $(forcrm) $(fcrm) $(ferr) $(LALIB)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 
-mtools:
-		cd ./m_tools ; make
-
 ctm:		
 		cd ./cutmckee ; make
 
 install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
-		cd ./m_tools ; make install
 		cd ./cutmckee ; make install
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o
-		cd ./m_tools ; make clean
 		cd ./cutmckee ; make clean
