@@ -748,20 +748,14 @@ PROGRAM inv
 !!!$   'sens' und 'pot' freigeben
      if (ldc) then
         fetxt = 'allocation adc'
-        print*,fetxt
         DEALLOCATE (adc)
         fetxt = 'allocation hpotdc'
-        print*,fetxt
         DEALLOCATE (hpotdc)
         fetxt = 'allocation bdc'
-        print*,fetxt,'blaaa'
         DEALLOCATE (bdc,STAT=errnr)
-        print*,errnr,'bla!!'
         fetxt = 'allocation sensdc'
-        print*,fetxt
         DEALLOCATE (sensdc)
         fetxt = 'allocation koptdc'
-        print*,fetxt
         DEALLOCATE (kpotdc)
      else
         DEALLOCATE(a,hpot,b)
@@ -769,61 +763,47 @@ PROGRAM inv
      end if
 
      fetxt = 'allocation smatm'
-     print*,fetxt
      IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
 
      fetxt = 'allocation pot,pota,fak'
-     print*,fetxt
      IF (ALLOCATED (pot)) DEALLOCATE (pot,pota,fak)
 
      fetxt = 'allocation snr,sx,sy'
-     print*,fetxt
      IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
 
      fetxt = 'allocation typ'
-     print*,fetxt
      IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
 
      fetxt = 'allocation nrel'
-     print*,fetxt
      IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
 
      fetxt = 'allocation esp'
-     print*,fetxt
      IF (ALLOCATED (espx)) DEALLOCATE (espx,espy)
 
      fetxt = 'allocation kwn'
-     print*,fetxt
      IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
 
      fetxt = 'allocation kwni'
-     print*,fetxt
      IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
 
      fetxt = 'allocation elbg'
-     print*,fetxt
      IF (ALLOCATED (elbg)) DEALLOCATE (elbg,relbg,kg)
 
      fetxt = 'allocation enr'
-     print*,fetxt
      IF (ALLOCATED (enr)) DEALLOCATE (enr)
 
      fetxt = 'allocation mnr'
-     print*,fetxt
      IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
 
      fetxt = 'allocation strnr,strom,volt,etc'
-     print*,fetxt
      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,&
           kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
 
      fetxt = 'allocation par,dpar,dpar2'
-     print*,fetxt
 
      IF (ALLOCATED (par)) DEALLOCATE (par,dpar,dpar2)
 
      fetxt = 'allocation sigma'
-     print*,fetxt
 
      IF (ALLOCATED (sigma)) DEALLOCATE (sigma,sigma2)
 

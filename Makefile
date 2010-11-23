@@ -32,12 +32,10 @@ PR2		= crm
 # macht CutMckee
 PR3		= ctm
 
-# kopiert die matlab tools
-PRM		= mtools
 MACHINE		= $(shell uname -n)
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PRM) install
+all:		$(C1) $(PR1) $(PR2) $(PR3) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
@@ -182,19 +180,14 @@ crm:		$(C1) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(LALIB)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
 
-mtools:
-		cd ./m_tools ; make
-
 ctm:		
 		cd ./cutmckee ; make
 
 install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
-		cd ./m_tools ; make install
 		cd ./cutmckee ; make install
 
 clean:		
 		$(RM) CRTomo CRMod *~ *.mod *.o
-		cd ./m_tools ; make clean
 		cd ./cutmckee ; make clean

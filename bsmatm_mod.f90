@@ -448,8 +448,6 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
     REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
-!!!$     Hilfsvariablen 
-    INTEGER         :: i,l,k,j
 !!!$.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
