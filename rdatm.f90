@@ -1,4 +1,4 @@
-      subroutine rdatm(kanal,datei)
+subroutine rdatm(kanal,datei)
 
 !!!$     Unterprogramm zum Einlesen der Stromwerte sowie der Elektroden-
 !!!$     kennungen aus 'datei'.
@@ -8,11 +8,11 @@
 
 !!!$.....................................................................
 
-      USE datmod
-      USE electrmod
-      USE errmod
+  USE datmod
+  USE electrmod
+  USE errmod
 
-      IMPLICIT none
+  IMPLICIT none
 
 
 !!!$.....................................................................
@@ -20,104 +20,99 @@
 !!!$     EIN-/AUSGABEPARAMETER:
 
 !!!$     Kanalnummer
-      integer         * 4     kanal
+  INTEGER(KIND = 4) ::    kanal
 
 !!!$     Datei
-      character       * 80    datei
+  CHARACTER (80)    ::   datei
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-      integer         * 4     i
+  INTEGER(KIND = 4) ::     i
 
 !!!$     Elektrodennummern
-      integer         * 4     elec1,elec2,
-     1     elec3,elec4
-c check whether the file format is crtomo konform or not..
-      logical           ::    crtf
-c
+  INTEGER(KIND = 4) ::     elec1,elec2,elec3,elec4
+!!!$c check whether the file format is crtomo konform or not..
+  LOGICAL           ::    crtf
+!!!$c
 !!!$.....................................................................
 
 !!!$     'datei' oeffnen
-      fetxt = datei
-      errnr = 1
-      open(kanal,file=fetxt,status='old',err=999)
-      errnr = 3
+  fetxt = datei
+  errnr = 1
+  open(kanal,file=fetxt,status='old',err=999)
+  errnr = 3
 
 !!!$     Anzahl der Messwerte lesen
-      read(kanal,*,end=1001,err=1000) nanz
-c check if data file format is CRTOmo konform..
-      read(kanal,*,end=1001,err=1000) elec1
-      BACKSPACE(kanal)
+  read(kanal,*,end=1001,err=1000) nanz
+!!!$c check if data file format is CRTOmo konform..
+  read(kanal,*,end=1001,err=1000) elec1
+  BACKSPACE(kanal)
 
-      elec3=elec1-10000 ! are we still positive?
+  elec3=elec1-10000 ! are we still positive?
 
-      crtf=(elec3 > 0) ! crtomo konform?
+  crtf=(elec3 > 0) ! crtomo konform?
 
-      ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),
-     1     kfak(nanz),vnr(nanz),stat=errnr)
-      IF (errnr /= 0) THEN
-         fetxt = 'Error memory allocation volt '
-         errnr = 94
-         goto 1000
-      END IF
-      
+  ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
+       kfak(nanz),vnr(nanz),stat=errnr)
+  IF (errnr /= 0) THEN
+     fetxt = 'Error memory allocation volt '
+     errnr = 94
+     goto 1000
+  END IF
+
 
 !!!$     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
-      do i=1,nanz
-         WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(13)//
-     1        'Getting voltage ',i
-         IF (crtf) THEN
-            read(kanal,*,end=1001,err=1000)
-     1           strnr(i),vnr(i)
-         ELSE
-            read(kanal,*,end=1001,err=1000)
-     1           elec1,elec2,elec3,elec4
-            strnr(i) = elec1*10000 + elec2
-            vnr(i)   = elec3*10000 + elec4
-         END IF
+  do i=1,nanz
+     WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(9)//'Getting voltage ',i
+     IF (crtf) THEN
+        read(kanal,*,end=1001,err=1000)strnr(i),vnr(i)
+     ELSE
+        read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4
+        strnr(i) = elec1*10000 + elec2
+        vnr(i)   = elec3*10000 + elec4
+     END IF
 !!!$     Einheitsstrom annehmen
-         strom(i) = 1d0
+     strom(i) = 1d0
 
 !!!$     Stromelektroden bestimmen
-         elec1 = mod(strnr(i),10000)
-         elec2 = (strnr(i)-elec1)/10000
+     elec1 = mod(strnr(i),10000)
+     elec2 = (strnr(i)-elec1)/10000
 
 !!!$     Messelektroden bestimmen
-         elec3 = mod(vnr(i),10000)
-         elec4 = (vnr(i)-elec3)/10000
+     elec3 = mod(vnr(i),10000)
+     elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Ggf. Fehlermeldung
-         if (elec1.lt.0.or.elec1.gt.eanz.or.
-     1        elec2.lt.0.or.elec2.gt.eanz.or.
-     1        elec3.lt.0.or.elec3.gt.eanz.or.
-     1        elec4.lt.0.or.elec4.gt.eanz) then
-            print*,i
-            fetxt = ' '
-            errnr = 46
-            goto 1000
-         end if
-      end do
+     if (elec1.lt.0.or.elec1.gt.eanz.or. &
+          elec2.lt.0.or.elec2.gt.eanz.or. &
+          elec3.lt.0.or.elec3.gt.eanz.or. &
+          elec4.lt.0.or.elec4.gt.eanz) then
+        WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
+        errnr = 46
+        goto 1000
+     end if
+  end do
 
 !!!$     'datei' schliessen
-      close(kanal)
+  close(kanal)
 
-      errnr = 0
-      return
+  errnr = 0
+  return
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
- 999  return
+999 return
 
- 1000 close(kanal)
-      return
+1000 close(kanal)
+  return
 
- 1001 close(kanal)
-      errnr = 2
-      return
+1001 close(kanal)
+  errnr = 2
+  return
 
-      end
+end subroutine rdatm

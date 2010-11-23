@@ -1,4 +1,4 @@
-      subroutine randb2()
+subroutine randb2()
 
 !!!$     Unterprogramm modifiziert die Matrix 'a' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'b' zur Beruecksichtigung der Dirichletschen Rand-
@@ -12,82 +12,83 @@
 
 !!!$.....................................................................
 
-      USE alloci
-      USE femmod
-      USE elemmod
-      USE randbmod
+  USE alloci
+  USE femmod
+  USE elemmod
+  USE randbmod
 
-      IMPLICIT none
+  IMPLICIT none
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-      integer         * 4     m1
-      real            * 8     rwertdc
-      complex         * 16    rwert
+  INTEGER(KIND = 4)   ::     m1
+  REAL(KIND(0D0))     ::     rwertdc
+  COMPLEX(KIND(0D0))  ::     rwert
 
 !!!$     Indexvariablen
-      integer         * 4     ir,i,j,k,
-     1     idk,ia,ki,ji
+  INTEGER(KIND = 4)   ::     ir,i,j,k,idk,ia,ki,ji
 
 !!!$.....................................................................
 
-      if (rwdanz.eq.0) return
+  if (rwdanz.eq.0) return
 
-      m1 = mb + 1
+  m1 = mb + 1
 
-      do 50 ir=1,rwdanz
-         k      = rwdnr(ir)
+  do ir=1,rwdanz
 
-         if (ldc) then
-            rwertd!!!$  = rwddc(ir)
-            bdc(k)   = -rwertdc
-            idk      = k*m1
-            adc(idk) = 1d0
-         else
-            rwert  = rwd(ir)
-            b(k)   = -rwert
-            idk    = k*m1
-            a(idk) = dcmplx(1d0)
-         end if
+     k      = rwdnr(ir)
 
-         if (k.eq.1) goto 30
+     if (ldc) then
+        rwertdc  = rwddc(ir)
+        bdc(k)   = -rwertdc
+        idk      = k*m1
+        adc(idk) = 1d0
+     else
+        rwert  = rwd(ir)
+        b(k)   = -rwert
+        idk    = k*m1
+        a(idk) = dcmplx(1d0)
+     end if
 
-         ia = max0(1,mb+2-k)
+     IF (k /= 1) THEN
 
-         do 20 i=ia,mb
-            j  = k+i-m1
-            ki = idk+i-m1
+        ia = max0(1,mb+2-k)
 
-            if (ldc) then
-               bdc(j)  = bdc(j) + rwertdc * adc(ki)
-               adc(ki) = (0d0)
-            else
-               b(j)  = b(j) + rwert * a(ki)
-               a(ki) = dcmplx(0d0)
-            end if
- 20      continue
+        do i=ia,mb
+           j  = k+i-m1
+           ki = idk+i-m1
 
- 30      if (k.eq.sanz) goto 50
+           if (ldc) then
+              bdc(j)  = bdc(j) + rwertdc * adc(ki)
+              adc(ki) = (0d0)
+           else
+              b(j)  = b(j) + rwert * a(ki)
+              a(ki) = dcmplx(0d0)
+           end if
+        END do
+     END IF
 
-         ia = max0(1,k-sanz+m1)
+     if (k.eq.sanz) CYCLE
 
-         do 40 i=ia,mb
-            j  = k-i+m1
-            ji = (j-1)*m1+i
+     ia = max0(1,k-sanz+m1)
 
-            if (ldc) then
-               bdc(j)  = bdc(j) + rwertdc * adc(ji)
-               adc(ji) = (0d0)
-            else
-               b(j)  = b(j) + rwert * a(ji)
-               a(ji) = dcmplx(0d0)
-            end if
- 40      continue
+     do i=ia,mb
+        j  = k-i+m1
+        ji = (j-1)*m1+i
 
- 50   continue
+        if (ldc) then
+           bdc(j)  = bdc(j) + rwertdc * adc(ji)
+           adc(ji) = (0d0)
+        else
+           b(j)  = b(j) + rwert * a(ji)
+           a(ji) = dcmplx(0d0)
+        end if
+     END do
 
-      return
-      end
+  END do
+
+  return
+end subroutine randb2

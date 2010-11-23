@@ -1,4 +1,4 @@
-      subroutine rrandb(kanal,datei)
+subroutine rrandb(kanal,datei)
 
 !!!$     Unterprogramm zum Einlesen der Randwerte aus 'datei'.
 
@@ -7,12 +7,12 @@
 
 !!!$.....................................................................
 
-      USE femmod
-      USE elemmod
-      USE randbmod
-      USE errmod
+  USE femmod
+  USE elemmod
+  USE randbmod
+  USE errmod
 
-      IMPLICIT none
+  IMPLICIT none
 
 
 !!!$.....................................................................
@@ -20,124 +20,124 @@
 !!!$     EIN-/AUSGABEPARAMETER:
 
 !!!$     Kanalnummer
-      integer         * 4     kanal
+  INTEGER (KIND =4) ::     kanal
 
 !!!$     Datei
-      character       * 80    datei
+  CHARACTER (80)    ::    datei
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-      integer         * 4     i
+  INTEGER (KIND=4)  ::  i
 
 !!!$.....................................................................
 
 !!!$     'datei' oeffnen
-      fetxt = datei
+  fetxt = datei
 
-      errnr = 1
-      open(kanal,file=fetxt,status='old',err=999)
-      errnr = 3
+  errnr = 1
+  open(kanal,file=fetxt,status='old',err=999)
+  errnr = 3
 
 !!!$     DC CASE
-      if (ldc) then
+  if (ldc) then
 
 !!!$     Anzahl der Randwerte einlesen (Dirichlet)
-         read(kanal,*,end=1001,err=1000) rwdanz
-         
-         ALLOCATE (rwdnr(rwdanz),rwddc(rwdanz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rwdnr '
-            errnr = 94
-            goto 1000
-         END IF
+     read(kanal,*,end=1001,err=1000) rwdanz
+
+     ALLOCATE (rwdnr(rwdanz),rwddc(rwdanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation rwdnr '
+        errnr = 94
+        goto 1000
+     END IF
 
 !!!$     Knotennummern der Randwerte sowie Randwerte einlesen (Dirichlet)
-         do i=1,rwdanz
-            read(kanal,*,end=1001,err=1000) rwdnr(i),rwddc(i)
+     do i=1,rwdanz
+        read(kanal,*,end=1001,err=1000) rwdnr(i),rwddc(i)
 
 !!!$     Ggf. Fehlermeldung
-            if (rwdnr(i).gt.sanz) then
-               fetxt = ' '
-               errnr = 30
-               goto 1000
-            end if
-         end do
+        if (rwdnr(i).gt.sanz) then
+           fetxt = ' '
+           errnr = 30
+           goto 1000
+        end if
+     end do
 
 !!!$     Anzahl der Randwerte einlesen (Neumann)
-         read(kanal,*,end=1001,err=1000) rwnanz
+     read(kanal,*,end=1001,err=1000) rwnanz
 
-         ALLOCATE (rwndc(rwnanz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rwdnr '
-            errnr = 94
-            goto 1000
-         END IF
+     ALLOCATE (rwndc(rwnanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation rwdnr '
+        errnr = 94
+        goto 1000
+     END IF
 
 !!!$     Randwerte einlesen (Neumann)
-         if (rwnanz.gt.0)
-     1        read(kanal,*,end=1001,err=1000) (rwndc(i),i=1,rwnanz)
-      else
+     if (rwnanz.gt.0) read(kanal,*,end=1001,err=1000) &
+          (rwndc(i),i=1,rwnanz)
+  else
 
 !!!$     COMPLEX CASE
 
 !!!$     Anzahl der Randwerte einlesen (Dirichlet)
-         read(kanal,*,end=1001,err=1000) rwdanz
+     read(kanal,*,end=1001,err=1000) rwdanz
 
-         ALLOCATE (rwdnr(rwdanz),rwd(rwdanz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rwdnr '
-            errnr = 94
-            goto 1000
-         END IF
+     ALLOCATE (rwdnr(rwdanz),rwd(rwdanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation rwdnr '
+        errnr = 94
+        goto 1000
+     END IF
 
 !!!$     Knotennummern der Randwerte sowie Randwerte einlesen (Dirichlet)
-         do i=1,rwdanz
-            read(kanal,*,end=1001,err=1000) rwdnr(i),rwd(i)
+     do i=1,rwdanz
+        read(kanal,*,end=1001,err=1000) rwdnr(i),rwd(i)
 
 !!!$     Ggf. Fehlermeldung
-            if (rwdnr(i).gt.sanz) then
-               fetxt = ' '
-               errnr = 30
-               goto 1000
-            end if
-         end do
+        if (rwdnr(i).gt.sanz) then
+           fetxt = ' '
+           errnr = 30
+           goto 1000
+        end if
+     end do
 
 !!!$     Anzahl der Randwerte einlesen (Neumann)
-         read(kanal,*,end=1001,err=1000) rwnanz
+     read(kanal,*,end=1001,err=1000) rwnanz
 
-         ALLOCATE (rwn(rwnanz),stat=errnr)
-         IF (errnr /= 0) THEN
-            fetxt = 'Error memory allocation rwdnr '
-            errnr = 94
-            goto 1000
-         END IF
+     ALLOCATE (rwn(rwnanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation rwdnr '
+        errnr = 94
+        goto 1000
+     END IF
 
 !!!$     Randwerte einlesen (Neumann)
-         if (rwnanz.gt.0)
-     1        read(kanal,*,end=1001,err=1000) (rwn(i),i=1,rwnanz)
+     if (rwnanz.gt.0) read(kanal,*,end=1001,err=1000) &
+          (rwn(i),i=1,rwnanz)
 
 !!!$     'datei' schliessen
-      end if
+  end if
 
-      close(kanal)
+  close(kanal)
 
-      errnr = 0
-      return
+  errnr = 0
+  return
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
- 999  return
+999 return
 
- 1000 close(kanal)
-      return
+1000 close(kanal)
+  return
 
- 1001 close(kanal)
-      errnr = 2
-      return
+1001 close(kanal)
+  errnr = 2
+  return
 
-      end
+end subroutine rrandb
