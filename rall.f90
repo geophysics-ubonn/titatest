@@ -567,6 +567,12 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   if (swrtr.eq.0) then
      lsr    = .false.
      kwnanz = 1
+     ALLOCATE (kwn(kwnanz),kwnwi(kwnanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation kwn'
+        errnr = 94
+        GOTO 999
+     END IF
      kwn(1) = 0d0
      do i=1,typanz
         IF (typ(i) == 11) THEN
@@ -665,7 +671,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      end do
      close(kanal)
      DEALLOCATE (dum,dum2,idum,ic,ip)
-  end if
+  end if ! ldiff
 !!!$     diff+>
 
   errnr = 0
