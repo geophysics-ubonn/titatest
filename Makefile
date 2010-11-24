@@ -9,11 +9,11 @@ MV		= mv -f
 WPATH 		= ~/bin
 
 F90		= gfortran
-F90		= ifort
 FFLAG90         = -O4 -march=native -ftree-vectorize
 FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic
-FFLAG90		= -O3 -fast
+#F90		= ifort
+#FFLAG90		= -O3 -fast
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds
