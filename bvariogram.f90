@@ -23,7 +23,7 @@ SUBROUTINE bvariogram
 
 !!$c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 !!$c     Indexvariablen
-  INTEGER :: i,j,ik,ifp
+  INTEGER :: i,j,ik,jk,ifp
 !!$c     th = Tail - Head; hx,hy,h distances in each direction
   REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
 !!$c     Parameter variances in x and y direction
@@ -51,7 +51,7 @@ SUBROUTINE bvariogram
 !!$! tgam stores the output string of get_vario
   CHARACTER (11) :: tg
 !!$c-----------------------------------------------------------------------
-  PRINT*,''
+  WRITE (*,'(a)',ADVANCE='no')'Calculating VARIOGRAM'
   errnr = 4
 !!$
 !!$c     define linear equidistant lag vector
@@ -118,9 +118,9 @@ SUBROUTINE bvariogram
   END DO
 
   mid_par = SUM(LOG10(DBLE(sigma))) / manz
-  PRINT*,'sigma mean',mid_par
+  mid_par = SUM(LOG10(DBLE(sigma))) / manz
 
-  par_vari = 0.
+  par_vari=0.
   par_varix = mgam_x(nlag_x)
   par_variy = mgam_y(nlag_y)
 
@@ -190,8 +190,12 @@ SUBROUTINE bvariogram
   END DO
 
 !!$   sets parameter variance..
-  par_vari = MAX(par_vari / MAX(1,manz - 1),1.d-5)
-
+  par_vari = MAX(par_vari / manz,1.d-5)
+  WRITE (*,'(2(a,G10.3,1x))')ACHAR(13)//'conductivity mean=',mid_par,&
+       'variance=',par_vari
+  WRITE (*,'(3(a,G10.3,1x))')'Min=',MINVAL(REAL(sigma)),'Max=',&
+       MAXVAL(REAL(sigma)),'DLOG',LOG10(MAXVAL(REAL(sigma))/&
+       MINVAL(REAL(sigma)))
   mgam = par_vari * mgam
   mgam_x = par_vari * mgam_x
   mgam_y = par_vari * mgam_y
