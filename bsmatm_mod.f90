@@ -379,7 +379,7 @@ CONTAINS
 !!!$
 !!!$    Hilfsvariablen 
     REAL(KIND(0D0)) :: dum    !!!$dummy stores numbers
-    INTEGER         :: i,l,k,ik,anz
+    INTEGER         :: i,k,ik
     REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
     REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
@@ -492,7 +492,7 @@ CONTAINS
 
     REAL(KIND(0D0)) :: dum,dum2 ! helpers
     REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
-    INTEGER         :: i,j,k,ik
+    INTEGER         :: i,k,ik
     REAL(KIND(0D0)) :: edglen ! Kantenlaenge
     REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten

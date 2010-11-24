@@ -579,7 +579,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     INTEGER                                      :: kanal
-    INTEGER                                      :: i,j,k
+    INTEGER                                      :: i
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
 !!!$.....................................................................
@@ -750,7 +750,7 @@ CONTAINS
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
        ata_reg = ata
        DO i=1,manz
-          ata_reg(i,i) = ata(i,j) + DCMPLX(lam * smatm(i,1))
+          ata_reg(i,i) = ata(i,i) + DCMPLX(lam * smatm(i,1))
           dig(i) = REAL(ata_reg(i,i))
        END DO
 
@@ -1018,7 +1018,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     INTEGER                                     :: kanal
-    INTEGER                                     :: i,j,k
+    INTEGER                                     :: i
     COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig
     COMPLEX(KIND(0D0))                          :: dum
     REAL(KIND(0D0))                             :: dig_min,dig_max,p

@@ -177,7 +177,6 @@ PROGRAM inv
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
-     print*,'gt all the money'
 !!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999

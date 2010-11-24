@@ -1,4 +1,4 @@
-character(*) function filpat(disfile,ln,sw,slash)
+function filpat(disfile,ln,sw,slash)
 
 !!!$     Die Funktion separiert aus einem kompletten Pfad 'disfile' den
 !!!$     File-Namen (sw = 0) bzw. den Ordner (sw = 1) der Laenge 'ln'.
@@ -12,6 +12,7 @@ character(*) function filpat(disfile,ln,sw,slash)
 
   IMPLICIT none
   CHARACTER (*)       ::  disfile
+  CHARACTER (*)       ::  filpat
   INTEGER (KIND = 4)  ::     ln
   INTEGER (KIND = 4)  ::     sw
   CHARACTER (1)       ::    slash
