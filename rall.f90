@@ -48,7 +48,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   LOGICAL ::     lsto
 !!!$     check whether the file format is crtomo konform or not..
   LOGICAL ::    crtf
-
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
@@ -68,7 +67,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$     ak Inga
   INTEGER (KIND = 4) ::  elec1,elec2,elec3,elec4
-  LOGICAL      :: exi
 !!!$.....................................................................
 
   pi = dacos(-1d0)
@@ -163,22 +161,28 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 98 fetxt = 'rall -> grid file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) delem
+  READ (fpcfg,'(a)',end=1001,err=999) delem
 
   fetxt = 'rall -> electrode file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) delectr
+  READ (fpcfg,'(a)',end=1001,err=999) delectr
 
   fetxt = 'rall -> meaurement file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) dstrom
+  READ (fpcfg,'(a)',end=1001,err=999) dstrom
 
   fetxt = 'rall -> directory for inversion results'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) ramd
-  !     check if dir exists and if not, create it
-  INQUIRE (FILE=TRIM(ramd),EXIST= exi)
-  IF (.NOT.exi) CALL SYSTEM ('mkdir '//TRIM(ramd))
+  READ (fpcfg,'(a)',end=1001,err=999) ramd
+!!$! checks if dir exists and if not, create it
+  !DEC$ IF DEFINED (__INTEL_COMPILER)
+!!$! check for the intel compiler..
+  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+  !DEC$ ELSE
+!!$! other compilers go here
+  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
+  !DEC$ ENDIF
+  IF (.NOT.crtf) CALL SYSTEM ('mkdir '//TRIM(ramd))
 
   fetxt = 'rall -> Difference inversion ?'
   CALL read_comments(fpcfg)
@@ -600,7 +604,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         errnr = 94
         goto 999
      END IF
-     open(kanal,file=dd0,status='old')
+     open(kanal,file=TRIM(dd0),status='old')
      read(kanal,*) nanz0
      read(kanal,*,err=999) elec1
      BACKSPACE(kanal)
@@ -627,7 +631,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      end do
      close(kanal)
 
-     open(kanal,file=dfm0,status='old')
+     open(kanal,file=TRIM(dfm0),status='old')
      read(kanal,*)
      do j=1,nanz0
         read(kanal,*) i,i,dum2(j),idum(j)
@@ -663,7 +667,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      end if
      if (i.lt.nanz) goto 10
 
-     open(kanal,file=dm0,status='old')
+     open(kanal,file=TRIM(dm0),status='old')
      read(kanal,*)
      do j=1,elanz
         read(kanal,*) dum3,dum3,dum3

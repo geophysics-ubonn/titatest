@@ -9,9 +9,15 @@ MV		= mv -f
 WPATH 		= ~/bin
 
 F90		= gfortran
-F77		= gfortran
-FFLAG90         = -O4 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -fopenmp -frepack-arrays -W -Wall -pedantic
-#FFLAG90         = -O0 -Wunderflow -fbacktrace -Wunused -ggdb -g3 -fstack-protector-all 
+F90		= ifort
+FFLAG90         = -O4 -march=native -ftree-vectorize
+FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
+		-fimplicit-none -fno-automatic
+FFLAG90		= -O3 -fast
+#FFLAG90         = -C -g -debug all -check all -implicitnone \
+		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
+		-check pointers -check bounds
+
 FFLAGMPI        = -I/usr/include/lam
 FFLAGMPI        = 
 FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -ldl -lnsl

@@ -71,7 +71,7 @@ subroutine wpot(kanal,datei,np)
 !!!$     'datei' oeffnen
   fetxt = htxt
   errnr = 1
-  open(kanal,file=fetxt,status='replace',err=999)
+  open(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
 
 !!!$     Koordinaten und Potentialwerte (Real- und Imaginaerteil) der

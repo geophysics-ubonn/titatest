@@ -61,13 +61,7 @@ subroutine kompadc(nelec,ki)
   im = (mb+1)*sanz
 
   adc = 0D0
-!!$  do i=1,im
-!!$     adc(i) = 0d0
-!!$  end do
   bdc = 0D0
-!!$  do i=1,sanz
-!!$     bdc(i) = 0d0
-!!$  end do
 
   iel = 0
 
@@ -123,11 +117,12 @@ subroutine kompadc(nelec,ki)
                  end if
 
               end if
-           end do
-        end do
-     END do
-  end do
 
+           end do ! l=1,k
+        end do ! k=1,nkel
+     END do ! j=1,nelanz(i)
+  end do ! i=1,typanz
+  
 !!!$     Ggf. Konstantenvektor belegen
   if (.not.lsr) bdc(enr(nelec)) = -1d0
 

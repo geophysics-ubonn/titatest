@@ -525,7 +525,7 @@ CONTAINS
 !!!$  cal!!!$RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 
     errnr = 1
-    open(kanal,file=fetxt,status='replace',err=999)
+    open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
     ata_reg_dc= MATMUL(cov_m_dc,ata_dc) ! that's it...
@@ -589,7 +589,7 @@ CONTAINS
 
 
     errnr = 1
-    open(kanal,file=fetxt,status='replace',err=999)
+    open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
     ata_dc = MATMUL (ata_reg_dc,cov_m_dc)

@@ -40,7 +40,7 @@ subroutine relem(kanal,datei)
   fetxt = datei
 
   errnr = 1
-  open(kanal,file=fetxt,status='old',err=999)
+  open(kanal,file=TRIM(fetxt),status='old',err=999)
 
   errnr = 3
 

@@ -114,7 +114,7 @@ subroutine bbsedc(kanal,datei)
 !!!$    'datei' oeffnen
   fetxt = datei
   errnr = 1
-  open(kanal,file=fetxt,status='replace',err=999)
+  open(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
 
 !!!$    Anzahl der Werte

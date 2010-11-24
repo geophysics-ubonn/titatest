@@ -63,7 +63,7 @@ PROGRAM inv
   fpcjg = 14 
   fpeps = 15 
 
-  open(fpcfg,file=fetxt,status='old',err=999)
+  open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
   lagain=.TRUE. ! is set afterwards by user input file to false
 
@@ -136,38 +136,21 @@ PROGRAM inv
      fetxt = 'allocation problem pota'
      ALLOCATE (pota(sanz),STAT=errnr)
      IF (errnr /= 0) GOTO 999
-     fetxt = 'allocation problem fak'
-     ALLOCATE (fak(sanz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
 !!!$ now the big array are coming.. 
+     fetxt = 'allocation problem fak'
+     ALLOCATE (fak(sanz),STAT=errnr) ! fak for modeling
+     IF (errnr /= 0) GOTO 999
      if (ldc) then
-        fetxt = 'allocation problem adc'
-        ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem hpotdc'
-        ALLOCATE (hpotdc(sanz,eanz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        ALLOCATE (bdc(sanz),STAT=errnr)
-        fetxt = 'allocation problem adc'
-        IF (errnr /= 0) GOTO 999
+        fetxt = 'allocation problem sensdc'
         ALLOCATE (sensdc(nanz,manz),STAT=errnr)
         IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem adc'
+        fetxt = 'allocation problem kpotdc'
         ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=errnr)
      else
-        fetxt = 'allocation problem adc'
-        ALLOCATE (a((mb+1)*sanz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem adc'
-        ALLOCATE (hpot(sanz,eanz),STAT=errnr) 
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem adc'
-        ALLOCATE (b(sanz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem adc'
+        fetxt = 'allocation problem sens'
         ALLOCATE (sens(nanz,manz),STAT=errnr)
         IF (errnr /= 0) GOTO 999
-        fetxt = 'allocation problem adc'
+        fetxt = 'allocation problem kpot'
         ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=errnr)
      end if
      IF (errnr /= 0) GOTO 999
@@ -195,16 +178,16 @@ PROGRAM inv
      errnr = 1
 
      fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-     open(fpinv,file=fetxt,status='replace',err=999)
+     open(fpinv,file=TRIM(fetxt),status='replace',err=999)
      close(fpinv)
      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-     open(fprun,file=fetxt,status='replace',err=999)
+     open(fprun,file=TRIM(fetxt),status='replace',err=999)
 !!!$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
      fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-     open(fpcjg,file=fetxt,status='replace',err=999)
+     open(fpcjg,file=TRIM(fetxt),status='replace',err=999)
      close(fpcjg)
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
-     open(fpeps,file=fetxt,status='replace',err=999)
+     open(fpeps,file=TRIM(fetxt),status='replace',err=999)
      IF (ldc) THEN
         WRITE (fpeps,'(a)')'1/eps_r'
         WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
@@ -223,11 +206,11 @@ PROGRAM inv
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
-     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
-     !$OMP PARALLEL
-     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
-          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
-     !$OMP END PARALLEL
+!!$     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+!!$     !$OMP PARALLEL
+!!$     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
+!!$          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
+!!$     !$OMP END PARALLEL
 
 !!!$-------------
 !!!$   get current time
@@ -246,9 +229,20 @@ PROGRAM inv
 !!!$   MODELLING
 
         if (ldc) then
+           fetxt = 'allocation problem adc'
+           ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
+           IF (errnr /= 0) GOTO 999
+           fetxt = 'allocation problem hpotdc'
+           ALLOCATE (hpotdc(sanz,eanz),STAT=errnr)
+           IF (errnr /= 0) GOTO 999
+           ALLOCATE (bdc(sanz),STAT=errnr)
+           fetxt = 'allocation problem adc'
+           IF (errnr /= 0) GOTO 999
 
+           fetxt = 'DC-Caculation wavenumber'
 !!!$   DC CASE
            do k=1,kwnanz
+              IF (lverb) WRITE (*,'(a,t40,I8)',ADVANCE='no')ACHAR(13)//TRIM(fetxt),k
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
@@ -296,8 +290,20 @@ PROGRAM inv
 
         else
 
+           fetxt = 'allocation problem a'
+           ALLOCATE (a((mb+1)*sanz),STAT=errnr)
+           IF (errnr /= 0) GOTO 999
+           fetxt = 'allocation problem hpot'
+           ALLOCATE (hpot(sanz,eanz),STAT=errnr) 
+           IF (errnr /= 0) GOTO 999
+           fetxt = 'allocation problem b'
+           ALLOCATE (b(sanz),STAT=errnr)
+           IF (errnr /= 0) GOTO 999
+
+           fetxt = 'IP-Caculation wavenumber'
 !!!$   COMPLEX CASE
            do k=1,kwnanz
+              IF (lverb) WRITE (*,'(a,t40,I8)',ADVANCE='no')ACHAR(13)//TRIM(fetxt),k
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 
@@ -351,9 +357,14 @@ PROGRAM inv
 !!!$   Spannungswerte berechnen
         call bvolti()
         if (errnr.ne.0) goto 999
+!!$  free some memory..
+        if (ldc) then
+           DEALLOCATE(adc,hpotdc,bdc)
+        else
+           DEALLOCATE(a,hpot,b)
+        end if
 
         if (lsetup) then
-
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
            if (lratio) then
               do j=1,nanz
@@ -427,7 +438,8 @@ PROGRAM inv
                       ' Final phase improvement'
 
                  fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-                 open(fpinv,file=fetxt,status='old',POSITION='append',err=999)
+                 open(fpinv,file=TRIM(fetxt),status='old',&
+                      POSITION='append',err=999)
                  write(fpinv,'(/a/)',err=999)&
                       '------------------------------------------------'//&
                       '------------------------------------------------'//&
@@ -680,11 +692,7 @@ PROGRAM inv
 
 !!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
      if (lsens) then
-        if (ldc) then
-           call bbsedc(kanal,dsens)
-        else
-           call bbsens(kanal,dsens)
-        end if
+        CALL BBSENS(kanal,dsens)
         if (errnr.ne.0) goto 999
      end if
 
@@ -746,18 +754,11 @@ PROGRAM inv
 
 !!!$   'sens' und 'pot' freigeben
      if (ldc) then
-        fetxt = 'allocation adc'
-        DEALLOCATE (adc)
-        fetxt = 'allocation hpotdc'
-        DEALLOCATE (hpotdc)
-        fetxt = 'allocation bdc'
-        DEALLOCATE (bdc,STAT=errnr)
         fetxt = 'allocation sensdc'
         DEALLOCATE (sensdc)
         fetxt = 'allocation koptdc'
         DEALLOCATE (kpotdc)
      else
-        DEALLOCATE(a,hpot,b)
         DEALLOCATE(sens,kpot)
      end if
 

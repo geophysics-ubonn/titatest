@@ -52,9 +52,9 @@ subroutine kont2(lsetup)
   END DO
   errnr = 1
   fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-  open(fpinv,file=fetxt,status='old',err=1000,position='append')
+  open(fpinv,file=TRIM(fetxt),status='old',err=1000,position='append')
   fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-  open(fpcjg,file=fetxt,status='old',err=1000,position='append')
+  open(fpcjg,file=TRIM(fetxt),status='old',err=1000,position='append')
   errnr = 4
 
 !!!$     Erste Iteration (?)

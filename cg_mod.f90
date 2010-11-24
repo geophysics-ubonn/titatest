@@ -189,11 +189,11 @@ CONTAINS
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
@@ -203,15 +203,15 @@ CONTAINS
        dum = 0d0
 
        if (i.gt.1) &
-            dum = pvecdc(i-1)*smatm(i-1,2)*fak(i-1)
+            dum = pvecdc(i-1)*smatm(i-1,2)*cgfac(i-1)
        if (i.lt.manz) &
-            dum = dum + pvecdc(i+1)*smatm(i,2)*fak(i+1)
+            dum = dum + pvecdc(i+1)*smatm(i,2)*cgfac(i+1)
        if (i.gt.nx) &
-            dum = dum + pvecdc(i-nx)*smatm(i-nx,3)*fak(i-nx)
+            dum = dum + pvecdc(i-nx)*smatm(i-nx,3)*cgfac(i-nx)
        if (i.lt.manz-nx+1) &
-            dum = dum + pvecdc(i+nx)*smatm(i,3)*fak(i+nx)
+            dum = dum + pvecdc(i+nx)*smatm(i,3)*cgfac(i+nx)
 
-       bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*fak(i)
+       bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*cgfac(i)
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -231,7 +231,7 @@ CONTAINS
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdc
@@ -264,11 +264,11 @@ CONTAINS
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * sensdc(i,j) * fak(j)
+             apdc(i) = apdc(i) + pvecdc(j) * sensdc(i,j) * cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * dble(sens(i,j)) * fak(j)
+             apdc(i) = apdc(i) + pvecdc(j) * dble(sens(i,j)) * cgfac(j)
           end do
        end if
     end do
@@ -278,10 +278,10 @@ CONTAINS
        dum = 0d0
        DO j=1,smaxs
           IF (nachbar(i,j) /= 0) dum = dum + pvecdc(nachbar(i,j)) * & 
-               smatm(i,j) * fak(nachbar(i,j)) ! off diagonals
+               smatm(i,j) * cgfac(nachbar(i,j)) ! off diagonals
        END DO
        !     main diagonal
-       bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * fak(i) 
+       bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * cgfac(i) 
     END DO
 
     !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -302,7 +302,7 @@ CONTAINS
 
        bvecdc(j) = dum + lam * bvecdc(j)
 
-       bvecdc(j) = bvecdc(j) * fak(j)
+       bvecdc(j) = bvecdc(j) * cgfac(j)
     end do
 
   end subroutine bpdctri
@@ -335,18 +335,18 @@ CONTAINS
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
 
 !!!$    R^m * p  berechnen (skaliert)
     do i=1,manz
-       bvecdc(i)=pvecdc(i)*fak(i)*smatm(i,1) ! damping stuff..
+       bvecdc(i)=pvecdc(i)*cgfac(i)*smatm(i,1) ! damping stuff..
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -366,7 +366,7 @@ CONTAINS
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdclma
@@ -404,11 +404,11 @@ CONTAINS
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
@@ -416,12 +416,12 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
 !!!$caa   Abgeändert auf (4 Zeilen)
 !!!$      do i=1,manz
-!!!$         pvec2(i)=pvecdc(i)*fak(i)
+!!!$         pvec2(i)=pvecdc(i)*cgfac(i)
 !!!$      end do
     do j = 1 , manz
        bvecdc(j) = 0.
        DO i = 1 , manz
-          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * fak(i)
+          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * cgfac(i)
        END DO
     end do
 
@@ -444,7 +444,7 @@ CONTAINS
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
     IF (ALLOCATED (pvec2)) DEALLOCATE (pvec2)
@@ -557,7 +557,7 @@ CONTAINS
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -566,14 +566,14 @@ CONTAINS
        cdum = dcmplx(0d0)
 
        if (i.gt.1) &
-            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*fak(i-1))
+            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*cgfac(i-1))
        if (i.lt.manz) &
-            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*fak(i+1))
+            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*cgfac(i+1))
        if (i.gt.nx) &
-            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*fak(i-nx))
+            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*cgfac(i-nx))
        if (i.lt.manz-nx+1) &
-            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*fak(i+nx))
-       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*fak(i))
+            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
+       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -586,7 +586,7 @@ CONTAINS
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bp
@@ -618,7 +618,7 @@ CONTAINS
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -629,11 +629,11 @@ CONTAINS
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * DCMPLX(fak(idum)) ! off diagonals
+               DCMPLX(smatm(i,j)) * DCMPLX(cgfac(idum)) ! off diagonals
        END DO
 
        bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
-            DCMPLX(fak(i)) ! + main diagonal
+            DCMPLX(cgfac(i)) ! + main diagonal
 
     END DO
 
@@ -649,7 +649,7 @@ CONTAINS
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
 
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bptri
@@ -676,14 +676,14 @@ CONTAINS
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
 !!!$    coaa R^m * p  berechnen (skaliert)
 
     do j=1,manz
-       bvec(i)=pvec(i)*dcmplx(fak(i))*DCMPLX(smatm(i,1))
+       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -696,7 +696,7 @@ CONTAINS
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bplma
@@ -724,7 +724,7 @@ CONTAINS
     do i=1,nanz
        ap(i) = dcmplx(0d0)
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -733,7 +733,7 @@ CONTAINS
        bvec(j) = 0.
        DO i = 1,manz
           bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * &
-               DCMPLX(fak(j))
+               DCMPLX(cgfac(j))
        END DO
     END DO
 
@@ -747,7 +747,7 @@ CONTAINS
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bpsto

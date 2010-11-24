@@ -148,7 +148,7 @@ subroutine update()
         END IF
 !!!$     triang> 
 
-        fak(j) = 1d0/dsqrt(dum)
+        cgfac(j) = 1d0/dsqrt(dum)
 
      end do
 
@@ -205,7 +205,7 @@ subroutine update()
            bvec(j) = cdum - dcmplx(lam)*bvec(j)
         END IF
 
-        bvec(j) = bvec(j)*dcmplx(fak(j))
+        bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
      end do
 
@@ -219,7 +219,7 @@ subroutine update()
 
 !!!$     Verbesserung skalieren
      do j=1,manz
-        dpar(j) = dpar(j)*dcmplx(fak(j))
+        dpar(j) = dpar(j)*dcmplx(cgfac(j))
      end do
 
   else                      ! (llam==.TRUE.)

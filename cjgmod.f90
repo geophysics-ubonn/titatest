@@ -33,6 +33,8 @@ MODULE cjgmod
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
 !!$ storage
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
+!!$ preconditioning factors
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
 !!$ CG Epsilon
   REAL(KIND(0D0)),PUBLIC                              :: eps
 !!$ maximum number of CG steps
@@ -63,6 +65,9 @@ CONTAINS
 !!!$  CJG aux vectors and update
        errtxt = 'allocation problem bvec'
        ALLOCATE (bvec(manz),STAT=errnr)
+       IF (errnr /= 0) RETURN
+       errtxt = 'allocation problem cgfac'
+       ALLOCATE (cgfac(manz),STAT=errnr)
        IF (errnr /= 0) RETURN
     CASE (2)! ERT or FPI
 !!$ getting further CJG variables
@@ -97,37 +102,40 @@ CONTAINS
 
     SELECT CASE (mycase)
     CASE (1) !global variables
-       errtxt = 'allocation problem cgres'
+       errtxt = 'deallocation problem cgres'
        DEALLOCATE (cgres,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem cgres2'
+       errtxt = 'deallocation problem cgres2'
        DEALLOCATE (cgres2,STAT=errnr)
        IF (errnr /= 0) RETURN
 !!!$  CJG aux vectors and update
-       errtxt = 'allocation problem bvec'
+       errtxt = 'deallocation problem bvec'
        DEALLOCATE (bvec,STAT=errnr)
+       IF (errnr /= 0) RETURN
+       errtxt = 'deallocation problem bvec'
+       DEALLOCATE (cgfac,STAT=errnr)
        IF (errnr /= 0) RETURN
     CASE (2)! ERT or FPI
 !!$ getting further CJG variables
-       errtxt = 'allocation problem pvecdc'
+       errtxt = 'deallocation problem pvecdc'
        DEALLOCATE (pvecdc,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem bvecdc'
+       errtxt = 'deallocation problem bvecdc'
        DEALLOCATE (bvecdc,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem rvecdc'
+       errtxt = 'deallocation problem rvecdc'
        DEALLOCATE (rvecdc,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem apdc'
+       errtxt = 'deallocation problem apdc'
        DEALLOCATE (apdc,STAT=errnr)
     CASE(3) ! COMPLEX _only_
-       errtxt = 'allocation problem rvec'
+       errtxt = 'deallocation problem rvec'
        DEALLOCATE (rvec,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem pvec'
+       errtxt = 'deallocation problem pvec'
        DEALLOCATE (pvec,STAT=errnr)
        IF (errnr /= 0) RETURN
-       errtxt = 'allocation problem ap'
+       errtxt = 'deallocation problem ap'
        DEALLOCATE (ap,STAT=errnr)
     END SELECT
 

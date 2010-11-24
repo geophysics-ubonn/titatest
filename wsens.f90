@@ -72,7 +72,7 @@ subroutine wsens(kanal,datei)
 !!!$     'datei' oeffnen
      fetxt = htxt
      errnr = 1
-     open(kanal,file=fetxt,status='replace',err=999)
+     open(kanal,file=TRIM(fetxt),status='replace',err=999)
      errnr = 4
 
 !!!$     Summe der Sensitivitaeten berechnen und ausgeben

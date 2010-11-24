@@ -68,7 +68,7 @@ subroutine wout(kanal,dsigma,dvolt)
   WRITE (kanal,*)TRIM(fetxt)
   CLOSE (kanal)
   errnr = 1
-  open(kanal,file=fetxt,status='replace',err=999)
+  open(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
   write(kanal,*,err=1000) elanz,ACHAR(9),betrms
 
@@ -109,7 +109,7 @@ subroutine wout(kanal,dsigma,dvolt)
   end do
   close(kanal)
   fetxt = htxt(1:idum-4)//'modl'
-  OPEN (kanal,FILE=fetxt,status='replace')
+  OPEN (kanal,file=TRIM(fetxt),status='replace')
 
   WRITE (kanal,'(I7)',err=1000) elanz
   IF (.NOT.lprior) then
@@ -130,7 +130,7 @@ subroutine wout(kanal,dsigma,dvolt)
   if (.not.ldc) then
      fetxt = htxt(1:idum-4)//'pha'
      errnr = 1
-     open(kanal,file=fetxt,status='replace',err=999)
+     open(kanal,file=TRIM(fetxt),status='replace',err=999)
      errnr = 4
      write(kanal,*,err=1000) elanz,ACHAR(9),pharms
 
@@ -155,7 +155,7 @@ subroutine wout(kanal,dsigma,dvolt)
 
   fetxt = htxt
   errnr = 1
-  open(kanal,file=fetxt,status='replace',err=999)
+  open(kanal,file=TRIM(fetxt),status='replace',err=999)
 
   errnr = 4
   write(kanal,*,err=1000) nanz

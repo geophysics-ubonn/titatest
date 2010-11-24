@@ -41,9 +41,9 @@ subroutine dmisft(lsetup)
 !!!$     einfach mal oeffnen falls Ausgabe
   errnr = 1
   fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
-  OPEN(fpeps,file=fetxt,STATUS='old',POSITION='append',ERR=1000)
+  OPEN(fpeps,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
   fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-  OPEN(fprun,file=fetxt,STATUS='old',POSITION='append',ERR=1000)
+  OPEN(fprun,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
   errnr = 4
 
   if ((llam.and..not.lstep).or.lsetup) then

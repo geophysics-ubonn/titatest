@@ -34,7 +34,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   REAL(KIND(0D0)) :: Ix,Iy
 
   fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-  OPEN(fpinv,file=fetxt,status='old',POSITION='append',err=999)
+  OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
 
 !!!$     HEADER AUSGEBEN
 10 FORMAT (l1,t20,a)
@@ -46,10 +46,11 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
         t69,a8,t81,a8,t93,a8,t105,a10)
 
   IF (mswitch /= 0) THEN
-     write(fpinv,'(I3,t30,a)',err=999)mswitch,'#  mswitch'
+     write(fpinv,12,err=999)mswitch,'#  mswitch'
   ELSE
      write(fpinv,'(a)',err=999) '***FILES***'
   END IF
+
   write(fpinv,'(a)',err=999) TRIM(delem)
   write(fpinv,'(a)',err=999) TRIM(delectr)
   write(fpinv,'(a)',err=999) TRIM(dstrom)
@@ -110,7 +111,6 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   IF (BTEST(ltri,5)) WRITE (fpinv,*,err=999) lamfix
   IF (ltri > 4 .AND. ltri < 15) WRITE (fpinv,*,err=999) betamgs
   IF ( lnse ) WRITE (fpinv,*,err=999) iseed
-
 100 FORMAT (a,t30,l1)
 101 FORMAT (a,t30,g10.5)
 102 FORMAT (a,t30,I8)
