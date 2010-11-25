@@ -64,7 +64,6 @@ CONTAINS
     INTEGER,INTENT(IN)          :: type ! type of variogram model
     REAL(KIND(0D0)),INTENT(IN)  :: ax,ay ! ax/ay anisotropy coefficients
     REAL(KIND(0D0)),INTENT(IN)  :: esp_mit,esp_med ! aus (besp_elem.for)
-    INTEGER                     :: i
 
     omev = 1.5 ! 0<ome<2
     omec = omev

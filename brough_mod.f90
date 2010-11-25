@@ -65,7 +65,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 
 !!!$   Hilfsvariablen
-    INTEGER ::     i,j,k
+    INTEGER ::     i
     COMPLEX(KIND(0D0)) ::    cdum
 !!!$   cdum describes (R^TR)m
 !!!$.....................................................................
@@ -131,7 +131,7 @@ CONTAINS
 !!!$.....................................................................
 !!!$  PROGRAMMINTERNE PARAMETER:
 !!!$  Hilfsvariablen
-    INTEGER ::     i,j,k
+    INTEGER ::     i,j
     COMPLEX(KIND(0D0)) ::    cdum
 !!!$ cdum describes (R^TR)m
 !!!$.....................................................................
@@ -184,7 +184,7 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen
-    INTEGER ::     i,j,k
+    INTEGER ::     i,j
     COMPLEX(KIND(0D0)) ::    cdum
 !!!$.....................................................................
 !!!$   Roughness bestimmen
@@ -241,8 +241,6 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen
-    INTEGER ::     i,j,k
-    COMPLEX(KIND(0D0)) ::    cdum
     COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: parh
 !!!$   parh: Parameter-Hilfsvektor (R^TR)m bzw (C_m^-1)m
 !!!$.....................................................................

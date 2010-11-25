@@ -51,7 +51,7 @@ SUBROUTINE bvariogram
 !!$! tgam stores the output string of get_vario
   CHARACTER (11) :: tg
 !!$c-----------------------------------------------------------------------
-  WRITE (*,'(a)',ADVANCE='no')'Calculating VARIOGRAM'
+  WRITE (*,'(/a)',ADVANCE='no')'Calculating VARIOGRAM'
   errnr = 4
 !!$
 !!$c     define linear equidistant lag vector
@@ -127,8 +127,8 @@ SUBROUTINE bvariogram
 !!$  Experimentelles semi-variogram
   DO i=1,elanz
 
-     IF (lverb) WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'variogram/',REAL(i*(100./elanz)),'%'
+     IF (lverb) WRITE (*,'(a,t70,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Variogram/',REAL(i*(100./elanz)),'%'
 
      tail = LOG10(DBLE(sigma(i))) ! lin val
 
@@ -191,8 +191,8 @@ SUBROUTINE bvariogram
 
 !!$   sets parameter variance..
   par_vari = MAX(par_vari / manz,1.d-5)
-  WRITE (*,'(2(a,G10.3,1x))')ACHAR(13)//'conductivity mean=',mid_par,&
-       'variance=',par_vari
+  WRITE (*,'(2(a,G10.3,1x))')ACHAR(13)//'Conductivity Mean=',mid_par,&
+       'Variance=',par_vari
   WRITE (*,'(3(a,G10.3,1x))')'Min=',MINVAL(REAL(sigma)),'Max=',&
        MAXVAL(REAL(sigma)),'DLOG',LOG10(MAXVAL(REAL(sigma))/&
        MINVAL(REAL(sigma)))

@@ -72,7 +72,7 @@ c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 c     'crmod.cfg' oeffnen
       fetxt = 'crmod.cfg'
       errnr = 1
-      open(12,file=fetxt,status='old',err=999)
+      open(12,file=TRIM(fetxt),status='old',err=999)
 
 c     Allgemeine Parameter setzen
       kanal = 11
