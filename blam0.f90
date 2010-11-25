@@ -34,7 +34,7 @@ subroutine blam0()
   IF (nz<0) THEN
      IF (nz<-1) lammax = -REAL(nz)
      IF (nz==-1) lammax = MAX(REAL(manz),REAL(nanz))
-     WRITE (*,'(2x,a,F12.1)')'taking easy lam_0 ',lammax
+     WRITE (*,'(t5,a,F12.1)')'taking easy lam_0 ',lammax
      RETURN
   END IF
 
@@ -98,6 +98,7 @@ subroutine blam0()
 !!!$     ak Default
   lammax = lammax * 5d0
 
+  WRITE (*,'(t5,a,F12.1)')'found lam_0 ',lammax
 !!!$     ak Synthetic Example (JoH)
 !!!$     ak        lammax = lammax * 1d1
 
