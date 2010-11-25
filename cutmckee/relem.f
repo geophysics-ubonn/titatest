@@ -1,4 +1,4 @@
-      subroutine relem(kanal,datei)
+      subroutine relem(kanal,io,datei)
 
 c     Unterprogramm zum Einlesen der FEM-Parameter aus 'datei'.
 
@@ -18,7 +18,7 @@ c.....................................................................
 c     EIN-/AUSGABEPARAMETER:
 
 c     Kanalnummer
-      integer         * 4     kanal
+      integer         * 4     kanal,io
 
 c     Datei
       character       * 80    datei
@@ -40,7 +40,7 @@ c     'datei' oeffnen
 
       errnr = 1
       open(kanal,file=fetxt,status='old',err=999)
-
+      OPEN(io,file='ctmck.info',STATUS='replace')
       errnr = 3
 
 c     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
@@ -102,9 +102,22 @@ c     einlesen
       END DO
       IF ((i-1) == 0 .OR. (j-1) == 0) THEN
          PRINT*,ACHAR(9)//'## GRID not regular ##'
+         WRITE (io,'(a)')'## Grid not regular'
       ELSE
-         WRITE (*,*)'Counted elements nx=',i-1,
-     1        ' ny',j-1,' nxy=',(i-1)*(j-1)
+         WRITE (*,*)'Regular grid info NX=',i-1,
+     1        '  NY=',j-1,'  NXY=',(i-1)*(j-1)
+         WRITE (*,*)'x0=',MINVAL(sx(1:sanz)),'y0=',
+     1        MINVAL(ABS(sy(1:sanz)))
+         WRITE (*,'(2(a,2x,F10.4))')'Linear dx',sx((2))-sx((1)),
+     1        'dy',sy((i+1))-sy((1))
+         WRITE (io,'(a)')'## Regular grid'
+         WRITE (io,'(A,2X,I4)')'NX',i-1
+         WRITE (io,'(a,2x,F10.3)')'X0',MINVAL(sx(1:sanz))         
+         WRITE (io,'(a,2x,F10.3)')'DX',sx((2))-sx((1))
+         WRITE (io,'(A,2X,I4)')'NY',j-1
+         WRITE (io,'(a,2x,F10.3)')'Y0',MINVAL(ABS(sy(1:sanz)))
+         WRITE (io,'(a,2x,F10.3)')'DY',sy((i+1))-sy((1))
+         WRITE (io,'(A,2X,I4)')'NXY',(i-1)*(j-1)
       END IF
 c     Knotennummern der Elemente einlesen
       print*,'post knoten position',4+sanz
@@ -124,7 +137,7 @@ c     Zeiger auf Werte der Randelemente einlesen
       print*,'post randpunkte position',4+sanz+elanz+relanz*2
 c     'datei' schliessen
       close(kanal)
-      
+      CLOSE(io)
       errnr = 0
       return
 

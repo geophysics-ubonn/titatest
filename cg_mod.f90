@@ -11,7 +11,6 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE cjgmod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs
@@ -20,6 +19,7 @@ MODULE cg_mod
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
+  USE cjgmod
 
   IMPLICIT none
 
@@ -56,16 +56,23 @@ MODULE cg_mod
 
 CONTAINS
 
-SUBROUTINE cjg
+  SUBROUTINE cjg
+    if (ldc.or.lip) then
+       CALL con_cjgmod (2,fetxt,errnr)
+       IF (errnr /= 0) RETURN
+       call cjggdc
+       CALL des_cjgmod (2,fetxt,errnr)
+       IF (errnr /= 0) RETURN
+    else
+       CALL con_cjgmod (3,fetxt,errnr)
+       IF (errnr /= 0) RETURN
+       call cjggra
+       CALL des_cjgmod (3,fetxt,errnr)
+       IF (errnr /= 0) RETURN
+    end if
 
-  if (ldc.or.lip) then
-     call cjggdc
-  else
-     call cjggra
-  end if
-
-END SUBROUTINE cjg
-
+  END SUBROUTINE cjg
+  
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                          DC_PART                               !!!!
@@ -84,16 +91,9 @@ END SUBROUTINE cjg
     REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
 !!!$
 !!!$    Hilfsvariablen
-    INTEGER         :: j,k
+    INTEGER         :: k
 !!!$
 !!!$....................................................................
-    ALLOCATE (rvecdc(manz),pvecdc(manz),apdc(nanz),&
-         bvecdc(manz),stat=errnr)
-    IF (errnr /= 0) THEN
-       fetxt = 'Error memory allocation rve!!!$in cjggdc'
-       errnr = 94
-       RETURN
-    END IF
 
     if (lip) then
        bvecdc = dimag(bvec)
@@ -125,7 +125,7 @@ END SUBROUTINE cjg
 
        if (dr.le.dr0) goto 10
 
-       pvecdc= rvecdc+ beta * pvecdc
+       pvecdc= rvecdc + beta * pvecdc
 
        IF (ltri == 0) THEN
           CALL bpdc
@@ -147,7 +147,7 @@ END SUBROUTINE cjg
        alpha = dr/dr1
 
        dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
-       rvecdc= rvecdc- alpha * bvecdc
+       rvecdc= rvecdc - alpha * bvecdc
 
 !!!$rm update speichern
        dr1 = dr
@@ -161,7 +161,9 @@ END SUBROUTINE cjg
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+!    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+    
+    RETURN
 
   end subroutine cjggdc
 
@@ -187,11 +189,11 @@ END SUBROUTINE cjg
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
@@ -201,15 +203,15 @@ END SUBROUTINE cjg
        dum = 0d0
 
        if (i.gt.1) &
-            dum = pvecdc(i-1)*smatm(i-1,2)*fak(i-1)
+            dum = pvecdc(i-1)*smatm(i-1,2)*cgfac(i-1)
        if (i.lt.manz) &
-            dum = dum + pvecdc(i+1)*smatm(i,2)*fak(i+1)
+            dum = dum + pvecdc(i+1)*smatm(i,2)*cgfac(i+1)
        if (i.gt.nx) &
-            dum = dum + pvecdc(i-nx)*smatm(i-nx,3)*fak(i-nx)
+            dum = dum + pvecdc(i-nx)*smatm(i-nx,3)*cgfac(i-nx)
        if (i.lt.manz-nx+1) &
-            dum = dum + pvecdc(i+nx)*smatm(i,3)*fak(i+nx)
+            dum = dum + pvecdc(i+nx)*smatm(i,3)*cgfac(i+nx)
 
-       bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*fak(i)
+       bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*cgfac(i)
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -229,7 +231,7 @@ END SUBROUTINE cjg
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdc
@@ -262,11 +264,11 @@ END SUBROUTINE cjg
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * sensdc(i,j) * fak(j)
+             apdc(i) = apdc(i) + pvecdc(j) * sensdc(i,j) * cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * dble(sens(i,j)) * fak(j)
+             apdc(i) = apdc(i) + pvecdc(j) * dble(sens(i,j)) * cgfac(j)
           end do
        end if
     end do
@@ -276,10 +278,10 @@ END SUBROUTINE cjg
        dum = 0d0
        DO j=1,smaxs
           IF (nachbar(i,j) /= 0) dum = dum + pvecdc(nachbar(i,j)) * & 
-               smatm(i,j) * fak(nachbar(i,j)) ! off diagonals
+               smatm(i,j) * cgfac(nachbar(i,j)) ! off diagonals
        END DO
        !     main diagonal
-       bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * fak(i) 
+       bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * cgfac(i) 
     END DO
 
     !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -300,7 +302,7 @@ END SUBROUTINE cjg
 
        bvecdc(j) = dum + lam * bvecdc(j)
 
-       bvecdc(j) = bvecdc(j) * fak(j)
+       bvecdc(j) = bvecdc(j) * cgfac(j)
     end do
 
   end subroutine bpdctri
@@ -333,18 +335,18 @@ END SUBROUTINE cjg
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
 
 !!!$    R^m * p  berechnen (skaliert)
     do i=1,manz
-       bvecdc(i)=pvecdc(i)*fak(i)*smatm(i,1) ! damping stuff..
+       bvecdc(i)=pvecdc(i)*cgfac(i)*smatm(i,1) ! damping stuff..
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -364,7 +366,7 @@ END SUBROUTINE cjg
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdclma
@@ -402,11 +404,11 @@ END SUBROUTINE cjg
 
        if (ldc) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
        else if (lip) then
           do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*fak(j)
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
        end if
     end do
@@ -414,12 +416,12 @@ END SUBROUTINE cjg
 !!!$    R^m * p  berechnen (skaliert)
 !!!$caa   Abgeändert auf (4 Zeilen)
 !!!$      do i=1,manz
-!!!$         pvec2(i)=pvecdc(i)*fak(i)
+!!!$         pvec2(i)=pvecdc(i)*cgfac(i)
 !!!$      end do
     do j = 1 , manz
        bvecdc(j) = 0.
        DO i = 1 , manz
-          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * fak(i)
+          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * cgfac(i)
        END DO
     end do
 
@@ -442,7 +444,7 @@ END SUBROUTINE cjg
        end if
 
        bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*fak(j)
+       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
     IF (ALLOCATED (pvec2)) DEALLOCATE (pvec2)
@@ -467,15 +469,9 @@ END SUBROUTINE cjg
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
 !!$
 !!!$    Hilfsvariablen
-    INTEGER            :: j,k
+    INTEGER            :: k
 !!!$....................................................................
 
-    ALLOCATE (rvec(manz),pvec(manz),ap(nanz),stat=errnr)
-    IF (errnr /= 0) THEN
-       fetxt = 'Error memory allocation rve!!!$in cjggdc'
-       errnr = 94
-       RETURN
-    END IF
 
     dpar = 0.
     rvec = bvec
@@ -487,11 +483,6 @@ END SUBROUTINE cjg
 
        ncg = k-1
 
-!!!$         dr = 0d0
-!!!$         do j=1,manz
-!!!$            dr = dr + dble(dconjg(rvec(j))*rvec(j))
-!!!$         end do
-
        dr = DOT_PRODUCT(DCONJG(rvec),rvec)
 
        if (k.eq.1) then
@@ -501,11 +492,8 @@ END SUBROUTINE cjg
 !!!$    Fletcher-Reeves-Version
           beta = dcmplx(dr/dr1)
 !!!$    ak!!!$Polak-Ribiere-Version
-!!!$    ak                beta = dcmplx(0d0)
-!!!$    ak                do j=1,manz
-!!!$    ak                    beta = beta + dconjg(bvec(j))*rvec(j)
-!!!$    ak                end do
-!!!$    ak                beta = beta*dcmplx(-alpha/dr1)
+!!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
+!!$          beta = beta * DCMPLX(-alpha/dr1)
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
@@ -527,11 +515,6 @@ END SUBROUTINE cjg
        END IF
 
        dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
-!!!$
-!!!$         dr1 = 0d0
-!!!$         do j=1,manz
-!!!$            dr1 = dr1 + dble(dconjg(pvec(j))*bvec(j))
-!!!$         end do
 
        alpha = dr/dr1
 
@@ -549,7 +532,6 @@ END SUBROUTINE cjg
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    DEALLOCATE (rvec,pvec,ap)
 
   end subroutine cjggra
 
@@ -575,7 +557,7 @@ END SUBROUTINE cjg
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -584,14 +566,14 @@ END SUBROUTINE cjg
        cdum = dcmplx(0d0)
 
        if (i.gt.1) &
-            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*fak(i-1))
+            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*cgfac(i-1))
        if (i.lt.manz) &
-            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*fak(i+1))
+            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*cgfac(i+1))
        if (i.gt.nx) &
-            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*fak(i-nx))
+            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*cgfac(i-nx))
        if (i.lt.manz-nx+1) &
-            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*fak(i+nx))
-       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*fak(i))
+            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
+       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -604,7 +586,7 @@ END SUBROUTINE cjg
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bp
@@ -636,7 +618,7 @@ END SUBROUTINE cjg
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -647,11 +629,11 @@ END SUBROUTINE cjg
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * DCMPLX(fak(idum)) ! off diagonals
+               DCMPLX(smatm(i,j)) * DCMPLX(cgfac(idum)) ! off diagonals
        END DO
 
        bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
-            DCMPLX(fak(i)) ! + main diagonal
+            DCMPLX(cgfac(i)) ! + main diagonal
 
     END DO
 
@@ -667,7 +649,7 @@ END SUBROUTINE cjg
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
 
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bptri
@@ -694,14 +676,14 @@ END SUBROUTINE cjg
        ap(i) = dcmplx(0d0)
 
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
 !!!$    coaa R^m * p  berechnen (skaliert)
 
     do j=1,manz
-       bvec(i)=pvec(i)*dcmplx(fak(i))*DCMPLX(smatm(i,1))
+       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
     end do
 
 !!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
@@ -714,7 +696,7 @@ END SUBROUTINE cjg
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bplma
@@ -742,7 +724,7 @@ END SUBROUTINE cjg
     do i=1,nanz
        ap(i) = dcmplx(0d0)
        do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(fak(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
 
@@ -751,7 +733,7 @@ END SUBROUTINE cjg
        bvec(j) = 0.
        DO i = 1,manz
           bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * &
-               DCMPLX(fak(j))
+               DCMPLX(cgfac(j))
        END DO
     END DO
 
@@ -765,7 +747,7 @@ END SUBROUTINE cjg
        end do
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(fak(j))
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
   end subroutine bpsto

@@ -10,12 +10,12 @@ SUBROUTINE besp_elem
 !!!$     Letzte Aenderung                                         07-Aug-2009
 !!!$     
 !!!$.....................................................................
-
+  
   USE alloci
   USE elemmod        ! fuer nachbar, nrel etc. 
-
+  
   IMPLICIT none
-
+  
 !!!$     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 !!!$     Indexvariablen
   INTEGER :: i,j,ifp
@@ -26,7 +26,7 @@ SUBROUTINE besp_elem
 !!!$-----------------------------------------------------------------------
 
   IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))
-
+  
   grid_min = 10.**5.; grid_max = 0.
   grid_minx = 10.**5.; grid_maxx = 0.
   grid_miny = 10.**5.; grid_maxy = 0.
@@ -80,12 +80,16 @@ SUBROUTINE besp_elem
   OPEN (ifp,FILE='inv.gstat',STATUS='replace')
   WRITE (ifp,'(a/)')'Grid statistics:'
   WRITE (ifp,'(20X,A,I10)')'Gridcells:'//ACHAR(9),elanz
-  WRITE (ifp,'(20X,A,2F10.4)')'ESP Min/Max:'//ACHAR(9),esp_min,esp_max
-  WRITE (ifp,'(20X,A,2F10.4)')'GRID Min/Max:'//ACHAR(9),grid_min,grid_max
-  WRITE (ifp,'(20X,A,2F10.4)')'GRID-x Min/Max:'//ACHAR(9),grid_minx,grid_maxx
-  WRITE (ifp,'(20X,A,2F10.4)')'GRID-y Min/Max:'//ACHAR(9),grid_miny,grid_maxy
-  WRITE (ifp,'(20X,A,3F10.4)')'Mean/Median/Var:'//ACHAR(9),esp_mit,esp_med,&
-       esp_std
+  WRITE (ifp,'(20X,A,2F10.4)')'ESP Min/Max:'//ACHAR(9),&
+       esp_min,esp_max
+  WRITE (ifp,'(20X,A,2F10.4)')'GRID Min/Max:'//ACHAR(9),&
+       grid_min,grid_max
+  WRITE (ifp,'(20X,A,2F10.4)')'GRID-x Min/Max:'//ACHAR(9),&
+       grid_minx,grid_maxx
+  WRITE (ifp,'(20X,A,2F10.4)')'GRID-y Min/Max:'//ACHAR(9),&
+       grid_miny,grid_maxy
+  WRITE (ifp,'(20X,A,3F10.4)')'Mean/Median/Var:'//ACHAR(9),&
+       esp_mit,esp_med,esp_std
   CLOSE (ifp)
 
   IF (ALLOCATED(abst)) DEALLOCATE (abst)

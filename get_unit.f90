@@ -66,7 +66,6 @@ SUBROUTINE read_comments (unit)
   INTEGER,INTENT (IN)   :: unit
   INTEGER               :: ios
   CHARACTER (256)       :: buff
-  LOGICAL               :: oki
 
   READ ( unit , '(a)' , ERR = 11 , END = 10 , IOSTAT = ios ) buff
   

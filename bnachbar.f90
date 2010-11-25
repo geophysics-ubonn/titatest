@@ -1,17 +1,17 @@
 SUBROUTINE bnachbar
-!!$c     
-!!$c     Unterprogramm zum Bestimmen der Elementnachbarn
-!!$c     zur Realisierung der Triangulationsregularisierung
-!!$c     sowie der kleinsten moeglichen Skalenlaenge der
-!!$c     stochastischen Regularisierung
-!!$c     
-!!$c     Copyright by Andreas Kemna 2009
-!!$c     
-!!$c     Erste Version von Roland Martin                          29-Jul-2009
-!!$c     
-!!$c     Letzte Aenderung                                         07-Aug-2009
-!!$c     
-!!$c.....................................................................
+!!!$     
+!!!$     Unterprogramm zum Bestimmen der Elementnachbarn
+!!!$     zur Realisierung der Triangulationsregularisierung
+!!!$     sowie der kleinsten moeglichen Skalenlaenge der
+!!!$     stochastischen Regularisierung
+!!!$     
+!!!$     Copyright by Andreas Kemna 2009
+!!!$     
+!!!$     Erste Version von Roland Martin                          29-Jul-2009
+!!!$     
+!!!$     Letzte Aenderung                                         07-Aug-2009
+!!!$     
+!!!$.....................................................................
 
   USE alloci
   USE modelmod       ! fuer manz
@@ -22,15 +22,15 @@ SUBROUTINE bnachbar
   IMPLICIT none
 
 
-!!$c     PROGRAMMINTERNE PARAMETER:----------------------------------------
-!!$c     Indexvariablen
+!!!$     PROGRAMMINTERNE PARAMETER:----------------------------------------
+!!!$     Indexvariablen
   INTEGER :: i,j,ik,jk
-!!$c     Knotennummer der Kanten zaehler von element i und j
+!!!$     Knotennummer der Kanten zaehler von element i und j
   INTEGER :: ik1,ik2,jk1,jk2
-!!$c-----------------------------------------------------------------------
+!!!$-----------------------------------------------------------------------
 
-  IF (.NOT.ALLOCATED (nachbar)) ALLOCATE (nachbar(manz,smaxs+1),&
-       STAT=errnr)
+  IF (.NOT.ALLOCATED (nachbar)) &
+       ALLOCATE (nachbar(manz,smaxs+1),STAT=errnr)
   IF (errnr/=0) THEN
      WRITE (*,'(/a/)')'Allocation problem nachbar in bnachbar'
      errnr = 97
@@ -41,7 +41,7 @@ SUBROUTINE bnachbar
 
   DO i=1,elanz
 
-     IF (lverb) WRITE (*,'(a,1X,F6.2,a)',ADVANCE='no')ACHAR(13)//&
+     IF (lverb) WRITE (*,'(a,t70,F6.2,a)',ADVANCE='no')ACHAR(13)// &
           'bnachbar/ ',REAL (i * (100./elanz)),'%'
 
      DO ik=1,smaxs
@@ -60,7 +60,7 @@ SUBROUTINE bnachbar
 
               IF ( (ik1==jk1.AND.ik2==jk2) .OR. &
                    (ik1==jk2.AND.ik2==jk1) ) THEN
-                 
+
                  nachbar(i,ik) = j ! Element teilt kante
                  nachbar(i,smaxs+1) = nachbar(i,smaxs+1)+1 ! Anzahl der Nachbarn
 

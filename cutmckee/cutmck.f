@@ -51,7 +51,7 @@ c     Hilfsvariablen
 
       LOGICAL,DIMENSION(:),ALLOCATABLE   :: num
       logical         * 1     exi1,exi2,exi3
-      integer         * 4     c1,c2,se,mi,st,ta,fp
+      integer         * 4     c1,c2,se,mi,st,ta,fp,fp2
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
  4    FORMAT(/'  minimum grade =',I6/'  maximum grade =',I6,
      1     '  minimum bandwidth =',I6)
@@ -66,6 +66,7 @@ c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
       kont   = .FALSE.
       
       fp = 11
+      fp2 = 12
 c     Fehlerdatei oeffnen
       open(10,file='error.dat',status='unknown')
 
@@ -105,7 +106,7 @@ c     'CutMck.cfg' einlesen
       END IF
       print*,'read in elements...'
 c     'delem' einlesen
-      call relem(fp,delem)
+      call relem(fp,fp2,delem)
       if (errnr.ne.0) goto 1000
       print*,'read in electrodes'
 c     'delectr' einlesen
