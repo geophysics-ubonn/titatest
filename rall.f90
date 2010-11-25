@@ -175,10 +175,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) ramd
 !!$! checks if dir exists and if not, create it
-  !DEC$ IF DEFINED (__INTEL_COMPILER)
+!  !DEC$ IF DEFINED (__INTEL_COMPILER)
 !!$! check for the intel compiler..
-  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-  !DEC$ ELSE
+!  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+!  !DEC$ ELSE
 !!$! other compilers go here
   INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
   !DEC$ ENDIF

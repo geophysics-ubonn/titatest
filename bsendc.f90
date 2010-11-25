@@ -16,7 +16,7 @@ subroutine bsendc()
   USE elemmod
   USE wavenmod
   USE errmod
-
+  USE konvmod , ONLY : lverb
   IMPLICIT none
 
 !!!$.....................................................................
@@ -65,14 +65,12 @@ subroutine bsendc()
   END IF
 
 !!!$     Sensitivitaetenfeld auf Null setzen
-  do i=1,nanz
-     do j=1,manz
-        sensdc(i,j) = 0d0
-     end do
-  end do
+  sensdc = 0D0
 
 !!!$     Messwert hochzaehlen
   do i=1,nanz
+     IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+          'Sensitivity/ ',REAL( i * (100./nanz)),'%'
      iel = 0
 
 !!!$     Stromelektroden bestimmen
@@ -93,7 +91,7 @@ subroutine bsendc()
         nkel = selanz(ityp)
 
 !!!$     Ggf. zu neuem Messwert springen
-        if (ntyp.gt.10) goto 10
+        if (ntyp.gt.10) CYCLE
 
         do jnel=1,nelanz(ityp)
 
@@ -156,11 +154,10 @@ subroutine bsendc()
 !!!$     ak BAW-Tank
 !!!$     ak                if (mnr(iel).le.14*58) sensdc(i,mnr(iel))=0d0
 
-        end do
-     end do
-
-10   continue
-  end do
-
-  return
+        end do ! jnel=1,nelanz(i)
+     end do ! ityp=1,typanz
+  end do ! i=1,nanz
+  
+  DEALLOCATE (hsens)
+  
 end subroutine bsendc

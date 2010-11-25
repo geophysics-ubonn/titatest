@@ -42,7 +42,7 @@ subroutine blam0()
 
   if (ldc) then
      do j=1,manz
-        IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
+        IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
              'blam0/ ',REAL( j * (100./manz)),'%'
         dum = 0d0
 
@@ -59,7 +59,7 @@ subroutine blam0()
   else if (lip) then
 
      do j=1,manz
-        IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
+        IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
              'blam0/ ',REAL( j * (100./manz)),'%'
         dum = 0d0
 

@@ -15,7 +15,7 @@ subroutine bsens()
   USE elemmod
   USE wavenmod
   USE errmod
-
+  USE konvmod , ONLY : lverb
   IMPLICIT none
 
 !!!$.....................................................................
@@ -68,8 +68,8 @@ subroutine bsens()
      iel = 0
 
 !!!$     Kontrollausgabe
-     write(*,'(''+'',a,i4)',ADVANCE='no')ACHAR(13)//&
-          ' Calculating Sensitivities : Measurement ',i
+     IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+          'Sensitivity/ ',REAL( i * (100./nanz)),'%'
 
 !!!$     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
@@ -150,10 +150,10 @@ subroutine bsens()
 !!!$     Sensitivitaeten aufaddieren
            sens(i,mnr(iel)) = sens(i,mnr(iel)) - dum
 
-        end do
-     end do
-  end do
-
+        end do ! jnel=1,nelanz(i)
+     end do ! ityp=1,typanz
+  end do ! i=1,nanz
+  
   DEALLOCATE (hsens)
 
 end subroutine bsens

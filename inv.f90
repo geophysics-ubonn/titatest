@@ -220,7 +220,6 @@ PROGRAM inv
      DO WHILE (.NOT.converged)
 
 !!!$   Kontrollausgaben
-        WRITE (*,'(a60)',ADVANCE='no')ACHAR(13)//''
         write(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
              ' Iteration ',it,', ',itr,' : Calculating Potentials'
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
@@ -239,10 +238,11 @@ PROGRAM inv
            fetxt = 'allocation problem adc'
            IF (errnr /= 0) GOTO 999
 
-           fetxt = 'DC-Caculation wavenumber'
 !!!$   DC CASE
            do k=1,kwnanz
-              IF (lverb) WRITE (*,'(a,t40,I8)',ADVANCE='no')ACHAR(13)//TRIM(fetxt),k
+              fetxt = 'DC-Calculation wavenumber'
+              IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
+                   ACHAR(13)//TRIM(fetxt),k,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
@@ -300,10 +300,11 @@ PROGRAM inv
            ALLOCATE (b(sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
 
-           fetxt = 'IP-Caculation wavenumber'
 !!!$   COMPLEX CASE
            do k=1,kwnanz
-              IF (lverb) WRITE (*,'(a,t40,I8)',ADVANCE='no')ACHAR(13)//TRIM(fetxt),k
+              fetxt = 'IP-Calculation wavenumber'
+              IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
+                   ACHAR(13)//TRIM(fetxt),k,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 
@@ -488,6 +489,8 @@ PROGRAM inv
            else
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
+              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
+                   'WRITING MODEL ITERATE',it,''
               call wout(kanal,dsigma,dvolt)
               if (errnr.ne.0) goto 999
            end if

@@ -10,7 +10,7 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize
-FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
+#FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic
 #F90		= ifort
 #FFLAG90		= -O3 -fast
