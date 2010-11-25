@@ -175,15 +175,17 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) ramd
 !!$! checks if dir exists and if not, create it
-#if defined (__INTEL_COMPILER)
+!#if defined (__INTEL_COMPILER)
 !!$! check for the intel compiler..
-  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-#else   
+!#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+!#else   
 !!$! other compilers go here
 !!$! here we may put #elif defined (__GFORTRAN__) as well
+!#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
+!#endif
+! ifort uses DIRECTORY for folders, so this is to be used than..
+! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
   INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
-#endif
-
   IF (.NOT.crtf) CALL SYSTEM ('mkdir '//TRIM(ramd))
 
   fetxt = 'rall -> Difference inversion ?'
