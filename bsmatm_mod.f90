@@ -779,8 +779,8 @@ CONTAINS
             ACCESS='sequential',FORM='formatted')
        
        DO i = 1 , manz
-          WRITE (*,'(a,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//'cov/',&
-               REAL(i*(100./manz)),'%'
+          WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
+               'cov/',REAL(i*(100./manz)),'%',''
 
           smatm(i,i) = var ! nugget (=variance) effect on the main
 !!!$ R(h) = C_0 \delta(h)  = 
@@ -804,8 +804,6 @@ CONTAINS
        END DO
        IF (lverb) CLOSE (ifp)
 
-       PRINT*,'bestimme nun C_m^-1'
-       
        IF (lverb) OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
             ACCESS='sequential',FORM='formatted')
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
@@ -831,10 +829,9 @@ CONTAINS
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
           CALL LINVD(smatm,work,manz)
           DEALLOCATE (work)
-          WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling upper C_m...'
           DO i= 1, manz
-             WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)//&
-                  ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+             WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
+                  'Filling upper C_m',REAL( i * (100./manz)),'%'
              DO j = 1, i
                 smatm(i,j) = smatm(j,i)
                 

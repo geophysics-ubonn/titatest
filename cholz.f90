@@ -39,9 +39,8 @@ SUBROUTINE cholz(a,p,n,ierr)
 
   DO i = 1 , n
 
-     WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//ACHAR(9)//ACHAR(9)//&
-          ACHAR(9)//'/ ',REAL( i * (100./n)),'%'
+     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'/ ',REAL( i * (100./n)),'%'
 
      DO j = i , n
 
