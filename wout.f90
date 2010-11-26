@@ -78,22 +78,24 @@ subroutine wout(kanal,dsigma,dvolt)
 !!!$  if (.not.ldiff) then
 !!!$     diff+>
         dum = dcmplx(1d0)/sigma(i)
-!!!$     ak            write(kanal,*,err=1000) real(espx(i)),real(espy(i)),
-!!!$     ak     1                              real(cdabs(dum))
-        write(kanal,'(3F10.4,2X)',err=1000) real(espx(i)),real(espy(i)),&
-             real(dlog10(cdabs(dum)))
-!!!$     ro            write(kanal,*,err=1000) real(espy(i)),real(espx(i)),
-!!!$     ro     1                              real(cdabs(dum))
+!!!$ak   write(kanal,*,err=1000) real(espx(i)),real(espy(i)),&
+!!!$ak         real(cdabs(dum))
+        write(kanal,'(3F10.4,2X)',err=1000) real(espx(i)),&
+             real(espy(i)),real(dlog10(cdabs(dum)))
+!!!$ro   write(kanal,*,err=1000) real(espy(i)),real(espx(i)),&
+!!!$ro      real(cdabs(dum))
 !!!$     diff+<
      ELSE IF (lprior) THEN
         dum3 = CDABS(dcmplx(1d0)/sigma(i))
         dum2 = CDABS(dcmplx(1d0)/cdexp(m0(mnr(i))))
         !     dum3 = REAL(CDLOG(sigma(i))/m0(mnr(i)))
-        write(kanal,'(7(f10.4,2x))',err=1000)REAL(espx(i)),&
-             REAL(espy(i)),real(dlog10(dum3)),&
-             (DLOG10(dum3) - DLOG10(dum2)),&
-             real(dlog10(dum2)),real(1d2*(1d0-dum2/dum3)),&
-             real(1d2*(1d0-dum3/dum2))
+        write(kanal,'(3(f10.4,2x))',err=1000)REAL(espx(i)),&
+             REAL(espy(i)),real(dlog10(dum3))
+!!$        write(kanal,'(7(f10.4,2x))',err=1000)REAL(espx(i)),&
+!!$             REAL(espy(i)),real(dlog10(dum3)),&
+!!$             (DLOG10(dum3) - DLOG10(dum2)),&
+!!$             real(dlog10(dum2)),real(1d2*(1d0-dum2/dum3)),&
+!!$             real(1d2*(1d0-dum3/dum2))
      else
         dum3 = cdabs(dcmplx(1d0)/sigma(i))
         dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
