@@ -32,10 +32,9 @@ SUBROUTINE linvd(a,p,n)
   INTEGER                           :: k,i,j
   
   DO i= 1 , n
-     WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//ACHAR(9)//ACHAR(9)//&
-          ACHAR(9)//'/ ',REAL( (n-i) * (100./n)),'%'
-
+     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'/ ',REAL( (n-i) * (100./n)),'%'
+ 
      a(i,i) = 1. / p(i) ! main diagonal of L^-1
 
      DO j = i+1 , n 
