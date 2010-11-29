@@ -158,6 +158,8 @@ kont1.o:	variomodel.o
 
 rall.o:		make_noise.o variomodel.o
 
+rsigma.o:       make_noise.o
+
 update.o:	cg_mod.o
 
 inv.o:		$(f90crt) $(forcrt) $(f90crtsub)
