@@ -150,7 +150,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
      CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
      WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)// &
           'Correlation lengths Ix/Iy',Ix,'/',Iy
-     WRITE (*,'(/2(a,F5.2))')ACHAR(9)// &
+     WRITE (*,'(2(a,F5.2))')ACHAR(9)// &
           'Correlation lengths Ix/Iy',Ix,'/',Iy
      WRITE (fpinv,'(a)',err=999)ACHAR(9)// &
           'Variogram('//TRIM(fetxt)//')'
