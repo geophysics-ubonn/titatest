@@ -66,7 +66,7 @@ subroutine rdatm(kanal,datei)
 
 !!!$     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
   do i=1,nanz
-     WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(9)//'Getting voltage ',i
+     WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(13)//'Getting voltage ',i
      IF (crtf) THEN
         read(kanal,*,end=1001,err=1000)strnr(i),vnr(i)
      ELSE
