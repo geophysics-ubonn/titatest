@@ -32,8 +32,9 @@ SUBROUTINE linvd(a,p,n)
   INTEGER                           :: k,i,j
   
   DO i= 1 , n
+
      WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( (n-i) * (100./n)),'%'
+          ACHAR(13)//'/ ',REAL( (i) * (100./n)),'%'
  
      a(i,i) = 1. / p(i) ! main diagonal of L^-1
 
@@ -62,6 +63,9 @@ SUBROUTINE linvd(a,p,n)
 !!$ --------------------------------------------
 
   DO i = 1, n
+
+     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'/ ',REAL( (n-i) * (100./n)),'%'
 
      a(i,i) = a(i,i) * a(i,i) 
 
