@@ -172,7 +172,9 @@ PROGRAM inv
      llam   = .false.; ldlami = .true.; lstep  = .false.
      lfstep = .false.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
-
+     
+     WRITE (*,'(a,t120,a)')ACHAR(13)//&
+          'WRITING STARTING MODEL',it,''
      CALL wout(kanal,dsigma,dvolt)
 !!!$   Kontrolldateien oeffnen
      errnr = 1
@@ -217,9 +219,10 @@ PROGRAM inv
      CALL tic(c1)
 !!!$.................................................
      converged = .FALSE.
-     DO WHILE (.NOT.converged)
 
-!!!$   Kontrollausgaben
+     DO WHILE (.NOT.converged) ! optimization loop
+
+!!!$   Control output
         write(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
              ' Iteration ',it,', ',itr,' : Calculating Potentials'
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
@@ -245,40 +248,40 @@ PROGRAM inv
                    ACHAR(13)//TRIM(fetxt),k,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
-!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+!!!$   Evtl calculation of analytical potentials
                     if (lsr) call potana(l,k)
 
-!!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+!!!$   Compilation of the linear system
                     fetxt = 'kompadc'
                     call kompadc(l,k)
                     if (errnr.ne.0) goto 999
 
-!!!$   Ggf. Randbedingung beruecksichtigen
+!!!$   Evtl take Dirichlet boundary values into account
                     if (lrandb) call randdc()
                     if (lrandb2) call randb2()
 
-!!!$   Gleichungssystem skalieren
+!!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
                     call scaldc()
                     if (errnr.ne.0) goto 999
 
-!!!$   Cholesky-Zerlegung der Matrix
+!!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     call choldc()
                     if (errnr.ne.0) goto 999
 
                  else
                     fetxt = 'kompbdc'
-!!!$   Stromvektor modifizieren
+!!!$   Modification of the current vector (Left Hand Side)
                     call kompbdc(l)
                  end if
 
-!!!$   Gleichungssystem loesen
+!!!$   Solve linear system
                  fetxt = 'vredc'
                  call vredc()
 
-!!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
-!!!$   analytische Loesung addieren
+!!!$   Scale back the potentials, save them and evtually add 
+!!!$   the analytical response
                  do j=1,sanz
                     kpotdc(j,l,k) = dble(pot(j)) * fak(j)
                     if (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
@@ -690,6 +693,8 @@ PROGRAM inv
 !!!$.................................................
 
 !!!$   OUTPUT
+     WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
+          'WRITING MODEL ITERATE',it,''
      call wout(kanal,dsigma,dvolt)
      if (errnr.ne.0) goto 999
 
