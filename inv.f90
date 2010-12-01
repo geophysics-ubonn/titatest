@@ -94,11 +94,11 @@ PROGRAM inv
            fetxt = 'no mixed boundary specify sink node'
            errnr = 102
         end if
-
-        if (swrtr.eq.0.and..not.lrandb2) then
-           fetxt = ' '
-           errnr = 103
-        end if
+!!!$ RM this is handeled in rall..
+!!$        if (swrtr.eq.0.and..not.lrandb2) then
+!!$           fetxt = ' '
+!!$           errnr = 103
+!!$        end if
 
         if (errnr.ne.0) goto 999
      else

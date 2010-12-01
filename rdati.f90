@@ -117,7 +117,7 @@ subroutine rdati(kanal,datei)
 
   do i=1,nanz
      stabwp = 0.; stabwb = 0.
-     IF (lverb) WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//&
+     IF (lverb) WRITE (*,'(A,t70,F6.2,A)',ADVANCE='no')ACHAR(13)//&
           'data set ',REAL( i * (100./nanz) ),'%'
      if (lindiv) then
         if (ldc) then
