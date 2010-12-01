@@ -94,11 +94,11 @@ PROGRAM inv
            fetxt = 'no mixed boundary specify sink node'
            errnr = 102
         end if
-
-        if (swrtr.eq.0.and..not.lrandb2) then
-           fetxt = ' '
-           errnr = 103
-        end if
+!!!$ RM this is handeled in rall..
+!!$        if (swrtr.eq.0.and..not.lrandb2) then
+!!$           fetxt = ' '
+!!$           errnr = 103
+!!$        end if
 
         if (errnr.ne.0) goto 999
      else
@@ -173,8 +173,8 @@ PROGRAM inv
      lfstep = .false.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
      
-     WRITE (*,'(a,t120,a)')ACHAR(13)//&
-          'WRITING STARTING MODEL',it,''
+     WRITE (*,'(//a,t100/)')ACHAR(13)//&
+          'WRITING STARTING MODEL'
      CALL wout(kanal,dsigma,dvolt)
 !!!$   Kontrolldateien oeffnen
      errnr = 1
@@ -223,8 +223,8 @@ PROGRAM inv
      DO WHILE (.NOT.converged) ! optimization loop
 
 !!!$   Control output
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
-             ' Iteration ',it,', ',itr,' : Calculating Potentials'
+        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')ACHAR(13)//&
+             ' Iteration ',it,', ',itr,' : Calculating Potentials',''
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 
@@ -524,9 +524,9 @@ PROGRAM inv
            IF (lrobust) wmatd2 = wmatd
 
 !!!$   Kontrollausgaben
-           write (*,'(a,i3,a,i3,a)',ADVANCE='no') &
+           write (*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no') &
                 ACHAR(13)//' Iteration ',it,', ',itr,&
-                ' : Calculating Sensitivities'
+                ' : Calculating Sensitivities',''
 
            write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
@@ -580,9 +580,9 @@ PROGRAM inv
                     IF (llamf) THEN
                        lam = lamfix
                     ELSE
-                       write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
+                       write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
                             ACHAR(13)//' Iteration ',it,', ',itr,&
-                            ' : Calculating 1st regularization parameter'
+                            ' : Calculating 1st regularization parameter',''
                        write(fprun,'(a,i3,a,i3,a)',ADVANCE='no')&
                             ' Iteration ',it,', ',itr,&
                             ' : Calculating 1st regularization parameter'
@@ -661,9 +661,9 @@ PROGRAM inv
            end if
         end if
 !!!$   Kontrollausgaben
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
+        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
              ACHAR(13)//' Iteration ',it,', ',itr,&
-             ' : Updating'
+             ' : Updating',''
 
         write(fprun,*)' Iteration ',it,', ',itr,&
              ' : Updating'
@@ -693,20 +693,10 @@ PROGRAM inv
 !!!$.................................................
 
 !!!$   OUTPUT
-     WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-          'WRITING MODEL ITERATE',it,''
+     WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
+          'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
      call wout(kanal,dsigma,dvolt)
      if (errnr.ne.0) goto 999
-
-!!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
-     if (lsens) then
-        CALL BBSENS(kanal,dsens)
-        if (errnr.ne.0) goto 999
-     end if
-
-     IF (lvario) CALL bvariogram ! calculate experimental variogram
-
-     IF (lcov1) CALL buncert (kanal,lamalt)
 
 !!!$   Kontrollausgaben
 
@@ -756,6 +746,16 @@ PROGRAM inv
      close(fpcjg)
      close(fpeps)
 
+
+!!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
+     if (lsens) then
+        CALL BBSENS(kanal,dsens)
+        if (errnr.ne.0) goto 999
+     end if
+
+     IF (lvario) CALL bvariogram ! calculate experimental variogram
+
+     IF (lcov1) CALL buncert (kanal,lamalt)
 
      CALL des_cjgmod(1,fetxt,errnr) ! call cjgmod destructor
      IF (errnr /= 0) GOTO 999

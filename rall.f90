@@ -581,7 +581,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         errnr = 94
         GOTO 999
      END IF
-     kwn(1) = 0d0
+     kwn = 0d0; kwnwi = 0D0
      do i=1,typanz
         IF (typ(i) == 11) THEN
            fetxt = 'in 2D keine gemischten RB'
@@ -590,6 +590,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
            GOTO 999
         END IF
      END DO
+     IF (.NOT.lrandb2) THEN
+        WRITE (*,'(//a,t33,a)')'2D without Dirichlet nodes','setting k=1e-6'
+        kwn = 1d-6  ! make sure A is still pos definite
+     END IF
   else
      call rwaven()
      if (errnr.ne.0) goto 999
