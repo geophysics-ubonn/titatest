@@ -48,11 +48,11 @@ PROGRAM inv
   INTEGER :: OMP_GET_MAX_THREADS
   INTEGER :: OMP_GET_NUM_THREADS
   INTEGER :: OMP_GET_THREAD_NUM
+  INTEGER :: getpid,pid
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$   SETUP UND INPUT
 !!!$   'crtomo.cfg' oeffnen
-  fetxt = 'crtomo.cfg'
   errnr = 1
 !!!$   Kanal nummern belegen.. die variablen sind global!
   fperr = 9 
@@ -63,6 +63,14 @@ PROGRAM inv
   fpcjg = 14 
   fpeps = 15 
 
+  pid = getpid()
+  fetxt = 'crtomo.pid'
+  PRINT*,'CRTomo Process_ID ::',pid
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
+  WRITE (fprun,*)pid
+  CLOSE (fprun)
+
+  fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
   lagain=.TRUE. ! is set afterwards by user input file to false
@@ -830,6 +838,10 @@ PROGRAM inv
 !!!$   'crtomo.cfg' schliessen
   close(fpcfg)
 
+  fetxt = 'crtomo.pid'
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='old',err=999)
+  CLOSE (fprun,STATUS='delete')
+
   stop '0'
 
 !!!$.....................................................................
@@ -838,9 +850,11 @@ PROGRAM inv
 999 open(fperr,file='error.dat',status='replace')
   errflag = 2
   CALL get_error(ftext,errnr,errflag,fetxt)
+  write(fperr,*) 'CRTomo PID ',pid,' exited abnormally'
   write(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
   write(fperr,*)ftext
   close(fperr)
+
   STOP '-1'
 
 end program inv
