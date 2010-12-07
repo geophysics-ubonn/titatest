@@ -115,6 +115,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     FIXED PARAMETER
 !!!$     Slash
   slash = '/'
+!  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
 !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
   l1min = 1d0
 !!!$     ak        l1min = 1.2d0
@@ -185,9 +186,21 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !#endif
 ! ifort uses DIRECTORY for folders, so this is to be used than..
 ! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
-  IF (.NOT.crtf) CALL SYSTEM ('mkdir '//TRIM(ramd))
 
+!!$! workaround for compability issues with ifort..
+  fetxt = TRIM(ramd)//slash//'tmp.check'
+  crtf = .FALSE.
+!!$ test if you can open a file in the directory..
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',ERR=97)
+  !!$ if you can, you can, the directory exits and you can remove it safely
+  CLOSE(fprun,STATUS='delete')
+!!$ set this switch to circumvent mkdir
+  PRINT*,'Inversion directory exists'
+  crtf = .TRUE.
+97 IF (.NOT.crtf) THEN
+     PRINT*,'Creating inversion directory'
+     CALL SYSTEM ('mkdir '//TRIM(ramd))
+  END IF
   fetxt = 'rall -> Difference inversion ?'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) ldiff
