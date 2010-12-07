@@ -6,7 +6,9 @@ SUBROUTINE get_unit ( iunit )
   !
   !  Discussion:
   !
-  !    A "free" FORTRAN unit number is an integer between 1 and 99 
+  !    A "free" FORTRAN unit number is an integer between 0 and 119 
+  !    (on INTEL processors, 0 - 119 is a valid I/O number and 
+  !    0 - 2**31-1 on ALPHA processors)
   !    which is not currently associated with an I/O device.  A free FORTRAN unit
   !    number is needed in order to open a file with the OPEN command.
   !
@@ -14,7 +16,7 @@ SUBROUTINE get_unit ( iunit )
   !    all 99 units were checked (except for units 5, 6 and 9, which
   !    are commonly reserved for console I/O).
   !
-  !    Otherwise, IUNIT is an integer between 1 and 99, representing a
+  !    Otherwise, IUNIT is an integer between 0 and 119, representing a
   !    free FORTRAN unit.  Note that GET_UNIT assumes that units 5 and 6
   !    are special, and will never return those values.
   !
@@ -24,11 +26,14 @@ SUBROUTINE get_unit ( iunit )
   !
   !  Modified:
   !
-  !    18 September 2005
+  !    06 December 2010
   !
   !  Author:
   !
   !    John Burkardt
+  !
+  !  Modifications (set I/O range to 0 - 119):
+  !    Roland Martin
   !
   !  Parameters:
   !
@@ -43,7 +48,7 @@ SUBROUTINE get_unit ( iunit )
 
   iunit = 0
 
-  DO i = 1, 99
+  DO i = 0, 119
 
      IF ( i /= 5 .AND. i /= 6 .AND. i /= 9 ) THEN
 
