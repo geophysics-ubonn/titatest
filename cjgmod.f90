@@ -30,13 +30,13 @@ MODULE cjgmod
 
 !!!$ variables for every case
 !!$ CG residuals
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres
 !!$ storage
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres2
 !!$ preconditioning factors
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
 !!$ CG Epsilon
-  REAL(KIND(0D0)),PUBLIC                              :: eps
+  REAL,PUBLIC                                         :: eps
 !!$ maximum number of CG steps
   INTEGER (KIND = 4),PUBLIC                           :: ncgmax
 !!$ actual number of CG steps..
@@ -57,10 +57,10 @@ CONTAINS
     SELECT CASE (mycase)
     CASE (1) !global variables
        errtxt = 'allocation problem cgres'
-       ALLOCATE (cgres(ncgmax+2),STAT=errnr)
+       ALLOCATE (cgres(ncgmax+1),STAT=errnr)
        IF (errnr /= 0) RETURN
        errtxt = 'allocation problem cgres2'
-       ALLOCATE (cgres2(ncgmax+2),STAT=errnr)
+       ALLOCATE (cgres2(ncgmax+1),STAT=errnr)
        IF (errnr /= 0) RETURN
 !!!$  CJG aux vectors and update
        errtxt = 'allocation problem bvec'

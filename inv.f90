@@ -492,8 +492,8 @@ PROGRAM inv
            else
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
-              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-                   'WRITING MODEL ITERATE',it,''
+!!$              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
+!!$                   'WRITING MODEL ITERATE',it,''
               call wout(kanal,dsigma,dvolt)
               if (errnr.ne.0) goto 999
            end if

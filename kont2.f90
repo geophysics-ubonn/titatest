@@ -80,8 +80,6 @@ subroutine kont2(lsetup)
      END IF
   else
 !!!$     
-     ncg = int(cgres(1))
-
 !!!$     Hauptiterationen
      if (llam.and..not.lstep) then
         write(fpinv,'(a)',err=1000)cdump

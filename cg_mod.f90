@@ -469,7 +469,7 @@ CONTAINS
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
 !!$
 !!!$    Hilfsvariablen
-    INTEGER            :: k
+    INTEGER            :: k,j
 !!!$....................................................................
 
 
@@ -479,12 +479,15 @@ CONTAINS
 
     fetxt = 'CG iteration'
 
+    print*,''
     do k=1,ncgmax
 
        ncg = k-1
-
-       dr = DOT_PRODUCT(DCONJG(rvec),rvec)
-
+       dr = 0d0
+       DO j=1,manz
+          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
+       END DO
+!!$          dr = DOT_PRODUCT(DCONJG(rvec),rvec)
        if (k.eq.1) then
           dr0  = dr*eps
           beta = dcmplx(0d0)
@@ -514,7 +517,11 @@ CONTAINS
           call bpsto
        END IF
 
-       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
+       dr1 = 0d0
+       DO j=1,manz
+          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
+       END DO
+!DOT_PRODUCT(DCONJG(pvec),bvec)
 
        alpha = dr/dr1
 
@@ -525,6 +532,8 @@ CONTAINS
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+
+       print*,cgres(k+1),dr,dr1,alpha
     end do
 
     ncg = ncgmax
@@ -532,7 +541,7 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-
+    
   end subroutine cjggra
 
   subroutine bp()

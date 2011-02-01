@@ -42,7 +42,11 @@ subroutine update()
 
 !!!$     Felder speichern
      dpar2 = dpar
-     cgres2 = cgres
+
+     i = int(cgres(1))+1
+     cgres2(1:i) = cgres(1:i)
+
+!     cgres2 = cgres
 
 !!!$     Smoothnessvektor berechnen
 !!!$     triang>

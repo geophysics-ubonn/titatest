@@ -551,7 +551,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$     Maximale Anzahl an CG-steps setzen
 !!!$     ak        ncgmax = manz
-  ncgmax = manz / 2         ! useful for small scale model variations
+  ncgmax = manz !/ 2         ! useful for small scale model variations
   !     for normal smooth and damping we usually need fewer CG iterations;
   !     because the model variations are of bigger scale size
   IF (ltri < 5) ncgmax = ncgmax / 10
