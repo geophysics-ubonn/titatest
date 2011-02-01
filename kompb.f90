@@ -31,7 +31,7 @@ subroutine kompb(nelec)
 !!!$.....................................................................
 
 !!!$     Konstantenvektor auf Null setzen
-  b = 0D0
+  b = 0.
 !!$  do i=1,sanz
 !!$     b(i) = dcmplx(0d0)
 !!$  end do
