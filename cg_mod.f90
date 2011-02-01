@@ -473,9 +473,9 @@ CONTAINS
 !!!$....................................................................
 
 
-    dpar = 0.
+    dpar = dcmplx(0d0)
     rvec = bvec
-    pvec = 0.
+    pvec = dcmplx(0d0)
 
     fetxt = 'CG iteration'
 
@@ -483,7 +483,13 @@ CONTAINS
 
        ncg = k-1
 
-       dr = DOT_PRODUCT(DCONJG(rvec),rvec)
+
+       dr = 0d0
+       DO j=1,manz
+          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
+       END DO
+
+!!$       dr = DOT_PRODUCT(DCONJG(rvec),rvec)
 
        if (k.eq.1) then
           dr0  = dr*eps
@@ -514,7 +520,11 @@ CONTAINS
           call bpsto
        END IF
 
-       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
+       dr1 = 0d0
+       DO j=1,manz
+          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
+       END DO
+!!$       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
 
        alpha = dr/dr1
 
@@ -629,11 +639,11 @@ CONTAINS
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * DCMPLX(cgfac(idum)) ! off diagonals
+               DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
        bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
-            DCMPLX(cgfac(i)) ! + main diagonal
+            cgfac(i) ! + main diagonal
 
     END DO
 
