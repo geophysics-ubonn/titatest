@@ -511,7 +511,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      manz = elanz           ! wichtig an dieser stelle..
      CALL bnachbar          ! blegt nachbar
      CALL besp_elem
-     lvario = .TRUE.
+     lvario = lsto
   ELSE
 !!!$     Modelleinteilung gemaess Elementeinteilung belegen
      manz = nx*nz           ! nur für strukturierte gitter
