@@ -487,10 +487,10 @@ CONTAINS
 
        dr = 0d0
        DO j=1,manz
-          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
+          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
        END DO
 
-!!$       dr = DOT_PRODUCT(DCONJG(rvec),rvec)
+!!$       dr = DOT_PRODUCT(CONJG(rvec),rvec)
 
        if (k.eq.1) then
           dr0  = dr*eps
@@ -523,22 +523,20 @@ CONTAINS
 
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
+          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
        END DO
-!!$       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
-
+!!$       dr1 = DOT_PRODUCT(CONJG(pvec),bvec) ! !!! <- has not the same
+!!!$    accuracy
        alpha = dr/dr1
        
-!       print*,k,dr,dr1,alpha,beta
-
-       dpar = dpar + DCMPLX(alpha) * pvec
-       rvec = rvec - DCMPLX(alpha) * bvec
+       dpar = dpar + alpha * pvec
+       rvec = rvec - alpha * bvec
 
        dr1 = dr
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
-!       print*,cgres(k+1)
+
     end do
 
     ncg = ncgmax

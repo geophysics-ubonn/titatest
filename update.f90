@@ -38,10 +38,6 @@ subroutine update()
   INTEGER (KIND=4)    ::  i,j,ij,in
 !!!$.....................................................................
 
-  print*,''
-  print*,par(1)
-
-
   IF (.NOT. llam) THEN
 
 !!!$     Felder speichern
@@ -265,9 +261,6 @@ subroutine update()
      bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
 
   end do
-
-!!$  print*,''
-  print*,par(1)
 
   IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&
        ,' times'
