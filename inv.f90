@@ -199,13 +199,17 @@ PROGRAM inv
      close(fpcjg)
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      open(fpeps,file=TRIM(fetxt),status='replace',err=999)
+
      IF (ldc) THEN
-        WRITE (fpeps,'(a)')'1/eps_r'
-        WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
+        WRITE (fpeps,'(a)')'1/eps_r      datum'
+        WRITE (fpeps,'(G12.3,2x,G14.5)')(sqrt(wmatdr(i)),&
+             REAL(dat(i)),i=1,nanz)
      ELSE
-        WRITE (fpeps,'(3(a,10x))')'1/eps','1/eps_r','1/eps_p'
-        WRITE (fpeps,'(3(G12.5,2x))')&
-             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),i=1,nanz)
+        WRITE (fpeps,'(t7,a,t15,a,t25,a,t40,a)')'1/eps','1/eps_r',&
+             '1/eps_p','datum (Re,Im)'
+        WRITE (fpeps,'(3F10.1,2x,2G15.7)')&
+             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),REAL(dat(i)),&
+             AIMAG(dat(i)),i=1,nanz)
      END IF
      close(fpeps)
      errnr = 4
@@ -754,6 +758,8 @@ PROGRAM inv
 !!!$   Run-time abfragen und ausgeben
      fetxt = ' CPU time: '
      CALL toc(c1,fetxt)
+!!$     PRINT*,''
+!!$     PRINT*,''
      write(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen

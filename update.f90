@@ -46,7 +46,7 @@ subroutine update()
 
 !!!$     Felder speichern
      dpar2 = dpar
-     print*,''
+
      cgres2 = cgres
 
 
@@ -212,12 +212,12 @@ subroutine update()
 
         bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
+!!$        print*,j,cdum,sens(1,j),sigma(j)
      end do
 
-    DO j=1,10
-       print*,cgfac(j),wmatd(j)
-    END DO
-
+!!$     DO i=1,nanz
+!!$        print*,i,wmatd(i),dat(i),sigmaa(i),wdfak(i)
+!!$     END Do
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
 
@@ -268,7 +268,7 @@ subroutine update()
 
   end do
 
-  print*,''
+!!$  print*,''
   print*,par(1)
 
   IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&

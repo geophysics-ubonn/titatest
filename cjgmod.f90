@@ -30,13 +30,13 @@ MODULE cjgmod
 
 !!!$ variables for every case
 !!$ CG residuals
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres
 !!$ storage
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres2
 !!$ preconditioning factors
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
 !!$ CG Epsilon
-  REAL(KIND(0D0)),PUBLIC                              :: eps
+  REAL,PUBLIC                                         :: eps
 !!$ maximum number of CG steps
   INTEGER (KIND = 4),PUBLIC                           :: ncgmax
 !!$ actual number of CG steps..
