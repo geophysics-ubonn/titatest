@@ -80,7 +80,7 @@ subroutine wout(kanal,dsigma,dvolt)
         dum = dcmplx(1d0)/sigma(i)
 !!!$ak   write(kanal,*,err=1000) real(espx(i)),real(espy(i)),&
 !!!$ak         real(cdabs(dum))
-        write(kanal,'(3F10.4,2X)',err=1000) real(espx(i)),&
+        write(kanal,*,err=1000) real(espx(i)),&
              real(espy(i)),real(dlog10(cdabs(dum)))
 !!!$ro   write(kanal,*,err=1000) real(espy(i)),real(espx(i)),&
 !!!$ro      real(cdabs(dum))

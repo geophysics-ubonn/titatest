@@ -28,13 +28,14 @@ subroutine dmisft(lsetup)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsfelder
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: eps2,psi
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: psi
+  REAL,DIMENSION(:),ALLOCATABLE   :: eps2
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     i,idum
   COMPLEX (KIND(0D0)) ::    cdum,cdat,csig
-  REAL (KIND(0D0))    ::     dum,norm,norm2
+  REAL    ::     dum,norm,norm2
 
 !!!$.....................................................................
 
@@ -45,11 +46,15 @@ subroutine dmisft(lsetup)
   fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
   OPEN(fprun,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
   errnr = 4
-
+11 FORMAT (G12.3,2x,F10.6,2x,I3,2X,2G15.7)
   if ((llam.and..not.lstep).or.lsetup) then
-     write(fpeps,*,err=1000)'eps      '//&
-          'psi     '//'pol      '//'d        '//'f'
-     write(fpeps,*,err=1000) it
+     IF (lip) THEN
+        write(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
+     ELSE
+        write(fpeps,'(/a,t7,I4)',err=1000)'IT#',it
+     END IF
+     write(fpeps,'(t8,a,t18,a,t27,a,t35,a,t50,a)',err=1000)&
+          'eps','psi','pol','Re(f(m))','Im(f(m))'
   end if
 
 !!!$     RMS-WERTE BERECHNEN
@@ -92,8 +97,8 @@ subroutine dmisft(lsetup)
 
 !!!$     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
      if ((llam.and..not.lstep).or.lsetup) &
-          write(fpeps,*,err=1000) real(1d0/dsqrt(wmatd(i))),&
-          real(psi(i)),wdlok(i),real(cdat),real(csig)
+          write(fpeps,11,err=1000) real(1d0/dsqrt(wmatd(i))),&
+          real(psi(i)),wdlok(i),REAL(csig),AIMAG(csig)
 
      idum   = idum   + wdlok(i)
      nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
@@ -130,14 +135,14 @@ subroutine dmisft(lsetup)
         RETURN
      END IF
 !!!$     'estimated weights' und 1-Normen berechnen
-     norm  = 0d0
-     norm2 = 0d0
+     norm  = 0.
+     norm2 = 0.
 
      do i=1,nanz
-        dum     = 1d0/dsqrt(wmatd(i))
-        eps2(i) = dum*dsqrt(psi(i))
-        norm    = norm  + psi(i)*dble(wdlok(i))
-        norm2   = norm2 + psi(i)*dble(wdlok(i))*dum/eps2(i)
+        dum     = 1./sqrt(wmatd(i))
+        eps2(i) = dum*sqrt(psi(i))
+        norm    = norm  + REAL(psi(i))*REAL(wdlok(i))
+        norm2   = norm2 + REAL(psi(i))*REAL(wdlok(i))*dum/eps2(i)
      end do
 
 !!!$     'estimated weights' normieren
@@ -149,9 +154,9 @@ subroutine dmisft(lsetup)
      norm2 = 0d0
 
      do i=1,nanz
-        dum     = 1d0/dsqrt(wmatd(i))
-        eps2(i) = dmax1(dum,eps2(i))
-        norm2   = norm2 + psi(i)*dble(wdlok(i))*dum/eps2(i)
+        dum     = 1./sqrt(wmatd(i))
+        eps2(i) = max(dum,eps2(i))
+        norm2   = norm2 + REAL(psi(i))*REAL(wdlok(i))*dum/eps2(i)
      end do
 
      l1rat = norm/norm2
@@ -159,15 +164,15 @@ subroutine dmisft(lsetup)
 !!!$     Ggf. neue Wichtungsfaktoren belegen
      if (l1rat.gt.l1min) then
         do i=1,nanz
-           dum = 1d0/eps2(i)/eps2(i)
+           dum = 1./(eps2(i) * eps2(i))
 
 !!!$     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
            if (dum.lt.0.83d0*wmatd(i).and. &
                 ((llam.and..not.lstep).or.lsetup)) then
 
-              write(fprun,'(i4,a32,f5.1)') &
+              write(fprun,*) &
                    i,' : increase standard deviation *', &
-                   real(eps2(i)*dsqrt(wmatd(i)))
+                   eps2(i),dum,psi(i)
            end if
 
            wmatd(i) = dum

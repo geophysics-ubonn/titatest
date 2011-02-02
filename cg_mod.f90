@@ -142,7 +142,7 @@ CONTAINS
 
        END IF
 
-       dr1 = DOT_PRODUCT(pvecdc,bvecdc)
+       dr1 = DOT_PRODUCT(pvecdc,bvecdc) ! this is ok for ERT
 
        alpha = dr/dr1
 
@@ -154,6 +154,7 @@ CONTAINS
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+
     end do
 
     ncg = ncgmax
@@ -465,8 +466,8 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-    COMPLEX(KIND(0D0)) :: beta
-    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
+!    COMPLEX(KIND(0D0)) :: beta
+    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
     INTEGER            :: k
@@ -493,10 +494,10 @@ CONTAINS
 
        if (k.eq.1) then
           dr0  = dr*eps
-          beta = dcmplx(0d0)
+          beta = 0d0
        else
 !!!$    Fletcher-Reeves-Version
-          beta = dcmplx(dr/dr1)
+          beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
 !!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
 !!$          beta = beta * DCMPLX(-alpha/dr1)
@@ -527,6 +528,8 @@ CONTAINS
 !!$       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
 
        alpha = dr/dr1
+       
+!       print*,k,dr,dr1,alpha,beta
 
        dpar = dpar + DCMPLX(alpha) * pvec
        rvec = rvec - DCMPLX(alpha) * bvec
@@ -535,6 +538,7 @@ CONTAINS
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+!       print*,cgres(k+1)
     end do
 
     ncg = ncgmax
