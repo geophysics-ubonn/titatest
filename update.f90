@@ -32,7 +32,7 @@ subroutine update()
 
 !!!$     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::   cdum
-  REAL (KIND(0D0))    ::   dum
+  REAL (KIND(0D0))    ::   dum,dum2
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)    ::  i,j,ij,in
@@ -46,9 +46,9 @@ subroutine update()
 
 !!!$     Felder speichern
      dpar2 = dpar
-     i = int(cgres(1))+1
-     cgres2(1:i) = cgres(1:i)
-!     cgres2 = cgres
+     print*,''
+     cgres2 = cgres
+
 
 !!!$     Smoothnessvektor berechnen
 !!!$     triang>
@@ -136,7 +136,7 @@ subroutine update()
                    wmatd(i)*dble(wdfak(i))
            end do
         end if
-
+        dum2 = dum
 !!!$     triang< 
         IF (ltri==0) THEN
            dum    = dum + lam*smatm(j,1)
@@ -155,7 +155,6 @@ subroutine update()
 !!!$     triang> 
 
         cgfac(j) = 1d0/dsqrt(dum)
-
      end do
 
 !!!$     Konstantenvektor berechen und skalieren (RHS)

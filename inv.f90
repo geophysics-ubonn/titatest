@@ -273,7 +273,6 @@ PROGRAM inv
                     fetxt = 'scaldc'
                     call scaldc()
                     if (errnr.ne.0) goto 999
-
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     call choldc()
@@ -346,6 +345,7 @@ PROGRAM inv
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
                     call kompb(l)
+
                  end if
 
 !!!$   Gleichungssystem loesen
@@ -490,8 +490,6 @@ PROGRAM inv
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
 
-                    
-                    
                     CYCLE       ! neues calc
                     
                  END IF
