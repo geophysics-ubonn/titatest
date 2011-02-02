@@ -28,14 +28,13 @@ subroutine dmisft(lsetup)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsfelder
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: psi
-  REAL,DIMENSION(:),ALLOCATABLE   :: eps2
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: psi,eps2
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     i,idum
   COMPLEX (KIND(0D0)) ::    cdum,cdat,csig
-  REAL    ::     dum,norm,norm2
+  REAL(KIND(0D0))     ::     dum,norm,norm2
 
 !!!$.....................................................................
 
@@ -135,14 +134,14 @@ subroutine dmisft(lsetup)
         RETURN
      END IF
 !!!$     'estimated weights' und 1-Normen berechnen
-     norm  = 0.
-     norm2 = 0.
+     norm  = 0d0
+     norm2 = 0d0
 
      do i=1,nanz
-        dum     = 1./sqrt(wmatd(i))
+        dum     = 1d0/sqrt(wmatd(i))
         eps2(i) = dum*sqrt(psi(i))
-        norm    = norm  + REAL(psi(i))*REAL(wdlok(i))
-        norm2   = norm2 + REAL(psi(i))*REAL(wdlok(i))*dum/eps2(i)
+        norm    = norm  + psi(i)*(wdlok(i))
+        norm2   = norm2 + psi(i)*(wdlok(i))*dum/eps2(i)
      end do
 
 !!!$     'estimated weights' normieren
@@ -154,9 +153,9 @@ subroutine dmisft(lsetup)
      norm2 = 0d0
 
      do i=1,nanz
-        dum     = 1./sqrt(wmatd(i))
+        dum     = 1d0/sqrt(wmatd(i))
         eps2(i) = max(dum,eps2(i))
-        norm2   = norm2 + REAL(psi(i))*REAL(wdlok(i))*dum/eps2(i)
+        norm2   = norm2 + (psi(i))*(wdlok(i))*dum/eps2(i)
      end do
 
      l1rat = norm/norm2
@@ -170,9 +169,9 @@ subroutine dmisft(lsetup)
            if (dum.lt.0.83d0*wmatd(i).and. &
                 ((llam.and..not.lstep).or.lsetup)) then
 
-              write(fprun,*) &
-                   i,' : increase standard deviation *', &
-                   eps2(i),dum,psi(i)
+              write(fprun,*)i,&
+                   ' : increase standard deviation *', &
+                   real(eps2(i)*sqrt(wmatd(i))),dum,psi(i)
            end if
 
            wmatd(i) = dum
