@@ -38,11 +38,17 @@ subroutine update()
   INTEGER (KIND=4)    ::  i,j,ij,in
 !!!$.....................................................................
 
+  print*,''
+  print*,par(1)
+
+
   IF (.NOT. llam) THEN
 
 !!!$     Felder speichern
      dpar2 = dpar
-     cgres2 = cgres
+     i = int(cgres(1))+1
+     cgres2(1:i) = cgres(1:i)
+!     cgres2 = cgres
 
 !!!$     Smoothnessvektor berechnen
 !!!$     triang>
@@ -209,6 +215,10 @@ subroutine update()
 
      end do
 
+    DO j=1,10
+       print*,cgfac(j),wmatd(j)
+    END DO
+
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
 
@@ -243,6 +253,7 @@ subroutine update()
 
 !!!$     i.e Stepsize = ||\delta m||
   bdpar = 0d0
+
   in = 0
   do j=1,manz
 
@@ -258,7 +269,10 @@ subroutine update()
 
   end do
 
-  IF (in > 0) WRITE (*,'(a,I9,a)',ADVANCE = 'no')' forcing zero ',in&
+  print*,''
+  print*,par(1)
+
+  IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&
        ,' times'
   bdpar = bdpar * step
 

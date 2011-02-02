@@ -43,7 +43,7 @@ PROGRAM inv
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i
   REAL(KIND(0D0))        :: lamalt
-  LOGICAL                :: converged
+  LOGICAL                :: converged,l_bsmat
 
   INTEGER :: OMP_GET_MAX_THREADS
   INTEGER :: OMP_GET_NUM_THREADS
@@ -168,6 +168,7 @@ PROGRAM inv
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
+
 !!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
@@ -178,7 +179,7 @@ PROGRAM inv
      betrms = 0d0; pharms = 0d0
      lsetup = .true.; lsetip = .false.; lip    = .false.
      llam   = .false.; ldlami = .true.; lstep  = .false.
-     lfstep = .false.
+     lfstep = .false.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
      
      WRITE (*,'(//a,t100/)')ACHAR(13)//&
@@ -376,7 +377,7 @@ PROGRAM inv
            DEALLOCATE(a,hpot,b)
         end if
 
-        if (lsetup) then
+        if (lsetup.OR.lsetip) then
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
            if (lratio) then
               do j=1,nanz
@@ -385,12 +386,12 @@ PROGRAM inv
            end if
 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
         end if
 
 !!!$   Daten-RMS berechnen
-        call dmisft(lsetup)
-
+        call dmisft(lsetup.OR.lsetip)
+!        print*,nrmsd,betrms,pharms,lrobust,l1rat
         if (errnr.ne.0) goto 999
 
 !!!$   'nrmsd=0' ausschliessen
@@ -405,14 +406,14 @@ PROGRAM inv
 !!!$.............................
 
 !!!$   Kontrollvariablen ausgeben
-        call kont2(lsetup)
+        call kont2(lsetup.OR.lsetip)
         if (errnr.ne.0) goto 999
 
 !!!$   ABBRUCHBEDINGUNGEN
         if (llam.and..not.lstep) then
            lamalt = lam 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
 
 !!!$   Wiederholt minimale step-length ?
            if (stpalt.eq.0d0) errnr2=92
@@ -477,13 +478,22 @@ PROGRAM inv
                          ' ******* Restarting phase model ********'
                     write(fprun,*)&
                          ' ******* Restarting phase model ********'
+                    fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+                    OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
+                         position='append')
+                    WRITE (fpinv,*)&
+                         ' ******* Resetting phase model ********'
+                    CLOSE (fpinv)
                     do j=1,elanz
                        sigma(j) = dcmplx(&
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
 
+                    
+                    
                     CYCLE       ! neues calc
+                    
                  END IF
 !!!$   ak
 
@@ -508,6 +518,7 @@ PROGRAM inv
         end if
 
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
+
 !!!$   Iterationsindex hochzaehlen
            it = it+1
 
@@ -547,7 +558,7 @@ PROGRAM inv
            end if
 
 !!!$   evtl   Rauhigkeitsmatrix belegen
-           IF (lsetup.OR.(ltri>3.AND.ltri<10)) CALL bsmatm(it) 
+           IF (l_bsmat) CALL bsmatm(it,l_bsmat) 
 
         else
 !!!$   Felder zuruecksetzen
@@ -680,7 +691,6 @@ PROGRAM inv
 
         CALL bpar
         if (errnr.ne.0) goto 999
-
 
 !!!$   UPDATE anbringen
         call update
