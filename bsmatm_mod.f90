@@ -52,12 +52,13 @@ MODULE bsmatm_mod
 
 CONTAINS  
 
-  SUBROUTINE bsmatm(it)
+  SUBROUTINE bsmatm(it,l_bsmat)
 !!!$
 !!!$ This sub is the control unit of the smatm calculation
 !!!$
     INTEGER (KIND = 4 ),INTENT(IN) :: it
     INTEGER (KIND = 4 )   :: c1
+    LOGICAL            ,INTENT (INOUT) :: l_bsmat
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     errnr = 2
@@ -136,6 +137,8 @@ CONTAINS
     END IF
     
     IF (ALLOCATED(csens)) DEALLOCATE (csens)
+
+    l_bsmat = (ltri > 4 .AND. ltri < 10) 
 
     fetxt = 'C_m^ calculation time'
     CALL TOC(c1,fetxt)

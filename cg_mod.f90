@@ -470,7 +470,7 @@ CONTAINS
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
-    INTEGER            :: k
+    INTEGER            :: k,j
 !!!$....................................................................
 
 
