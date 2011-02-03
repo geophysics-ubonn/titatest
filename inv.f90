@@ -467,15 +467,15 @@ PROGRAM inv
                  IF (lffhom) THEN
                     write(*,*)&
                          ' ******* Restarting phase model ********'
-                    write(fprun,*)&
+                    write(fpinv,*)&
                          ' ******* Restarting phase model ********'
                     do j=1,elanz
                        sigma(j) = dcmplx(&
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
-
-                 !   CYCLE       ! neues calc
+                    lsetup = .TRUE.
+                    CYCLE       ! neues calc
                  END IF
 !!!$   ak
 
