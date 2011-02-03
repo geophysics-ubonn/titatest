@@ -115,6 +115,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     FIXED PARAMETER
 !!!$     Slash
   slash = '/'
+!  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
 !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
   l1min = 1d0
 !!!$     ak        l1min = 1.2d0
@@ -185,9 +186,21 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !#endif
 ! ifort uses DIRECTORY for folders, so this is to be used than..
 ! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
-  IF (.NOT.crtf) CALL SYSTEM ('mkdir '//TRIM(ramd))
 
+!!$! workaround for compability issues with ifort..
+  fetxt = TRIM(ramd)//slash//'tmp.check'
+  crtf = .FALSE.
+!!$ test if you can open a file in the directory..
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',ERR=97)
+  !!$ if you can, the directory exits and you can remove it safely
+  CLOSE(fprun,STATUS='delete')
+!!$ set this switch to circumvent mkdir
+  PRINT*,'writing inversion results into '//TRIM(ramd)
+  crtf = .TRUE.
+97 IF (.NOT.crtf) THEN
+     PRINT*,'Creating inversion directory '//TRIM(ramd)
+     CALL SYSTEM ('mkdir '//TRIM(ramd))
+  END IF
   fetxt = 'rall -> Difference inversion ?'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) ldiff
@@ -250,6 +263,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   fetxt = 'rall -> Robuste Inversion'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) lrobust
+  IF (lrobust) PRINT*,'## Robust inversion ##'
 !!!$     ak        READ (fpcfg,*,end=1001,err=999) lpol
   fetxt = 'rall -> Finale Phasen Inversion'
   CALL read_comments(fpcfg)
@@ -464,6 +478,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lelerr = BTEST (mswitch,5).OR.lelerr ! +32 overwrites previous lelerr
 
+  IF (lelerr) PRINT*,'## using complex error ellipses ##'
+
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
   lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
@@ -551,7 +567,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$     Maximale Anzahl an CG-steps setzen
 !!!$     ak        ncgmax = manz
-  ncgmax = manz !/ 2         ! useful for small scale model variations
+!!!$  ncgmax = manz / 2         ! useful for small scale model variations
+  ncgmax = manz         ! useful for small scale model variations
   !     for normal smooth and damping we usually need fewer CG iterations;
   !     because the model variations are of bigger scale size
   IF (ltri < 5) ncgmax = ncgmax / 10
@@ -581,7 +598,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         errnr = 94
         GOTO 999
      END IF
-     kwn(1) = 0d0
+     kwn = 0d0; kwnwi = 0D0
      do i=1,typanz
         IF (typ(i) == 11) THEN
            fetxt = 'in 2D keine gemischten RB'
@@ -590,6 +607,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
            GOTO 999
         END IF
      END DO
+     IF (.NOT.lrandb2) THEN
+        WRITE (*,'(//a,t33,a)')'2D without Dirichlet nodes','setting k=1e-6'
+        kwn = 1d-6  ! make sure A is still pos definite
+     END IF
   else
      call rwaven()
      if (errnr.ne.0) goto 999

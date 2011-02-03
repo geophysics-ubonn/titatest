@@ -38,7 +38,7 @@ PR2		= crm
 # macht CutMckee
 PR3		= ctm
 
-MACHINE		= $(shell uname -n)
+MACHINE		= $(shell uname -n)_$(F90)
 ################################################################
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) install

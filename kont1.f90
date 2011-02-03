@@ -96,8 +96,6 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   write(fpinv,11,err=999) stabp0, &
        '! phase error model parameter A3 (mrad)       '// &
        '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-  WRITE(fpinv,10,err=999)lffhom, &
-       '! restart final phase with homogenous phase model?'
   write(fpinv,10,err=999) lrho0,'! homogeneous background resistivity ?'
   write(fpinv,11,err=999) bet0,'! background magnitude (ohm*m)'
   write(fpinv,11,err=999) pha0,'! background phase (mrad)'
@@ -111,7 +109,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   IF (BTEST(ltri,5)) WRITE (fpinv,*,err=999) lamfix
   IF (ltri > 4 .AND. ltri < 15) WRITE (fpinv,*,err=999) betamgs
   IF ( lnse ) WRITE (fpinv,*,err=999) iseed
-100 FORMAT (a,t30,l1)
+100 FORMAT (a,t39,l1)
 101 FORMAT (a,t30,g10.5)
 102 FORMAT (a,t30,I8)
 
@@ -150,7 +148,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
      CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
      WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)// &
           'Correlation lengths Ix/Iy',Ix,'/',Iy
-     WRITE (*,'(/2(a,F5.2))')ACHAR(9)// &
+     WRITE (*,'(2(a,F5.2))')ACHAR(9)// &
           'Correlation lengths Ix/Iy',Ix,'/',Iy
      WRITE (fpinv,'(a)',err=999)ACHAR(9)// &
           'Variogram('//TRIM(fetxt)//')'
@@ -184,6 +182,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE(fpinv,100,err=999)'Calculate sytop?',lsytop
   WRITE(fpinv,100,err=999)'Verbose?',lverb
   WRITE(fpinv,100,err=999)'Error Ellipses?',lelerr
+  WRITE(fpinv,100,err=999)'Restart FPI with homogenous phase?',lffhom
 
   write(fpinv,'(/a)',err=999) '***FIXED***'
 

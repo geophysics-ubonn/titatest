@@ -47,8 +47,8 @@ subroutine elem3()
 
 !!!$     Ggf. Fehlermeldung
   if (det.le.0d0) then
-!!!$     fetxt = ' '
-     print*,det,x21,y31,x31,y21
+     fetxt = TRIM(fetxt)//' hat evtl falsche Kontennummerierung'
+     print*,'det,x21,y31,x31,y21',det,x21,y31,x31,y21
      errnr = 26
      return
   end if

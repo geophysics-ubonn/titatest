@@ -43,16 +43,16 @@ PROGRAM inv
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i
   REAL(KIND(0D0))        :: lamalt
-  LOGICAL                :: converged
+  LOGICAL                :: converged,l_bsmat
 
   INTEGER :: OMP_GET_MAX_THREADS
   INTEGER :: OMP_GET_NUM_THREADS
   INTEGER :: OMP_GET_THREAD_NUM
+  INTEGER :: getpid,pid
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$   SETUP UND INPUT
 !!!$   'crtomo.cfg' oeffnen
-  fetxt = 'crtomo.cfg'
   errnr = 1
 !!!$   Kanal nummern belegen.. die variablen sind global!
   fperr = 9 
@@ -63,6 +63,14 @@ PROGRAM inv
   fpcjg = 14 
   fpeps = 15 
 
+  pid = getpid()
+  fetxt = 'crtomo.pid'
+  PRINT*,'CRTomo Process_ID ::',pid
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
+  WRITE (fprun,*)pid
+  CLOSE (fprun)
+
+  fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
   lagain=.TRUE. ! is set afterwards by user input file to false
@@ -94,11 +102,11 @@ PROGRAM inv
            fetxt = 'no mixed boundary specify sink node'
            errnr = 102
         end if
-
-        if (swrtr.eq.0.and..not.lrandb2) then
-           fetxt = ' '
-           errnr = 103
-        end if
+!!!$ RM this is handeled in rall..
+!!$        if (swrtr.eq.0.and..not.lrandb2) then
+!!$           fetxt = ' '
+!!$           errnr = 103
+!!$        end if
 
         if (errnr.ne.0) goto 999
      else
@@ -160,6 +168,7 @@ PROGRAM inv
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
+
 !!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
@@ -170,11 +179,11 @@ PROGRAM inv
      betrms = 0d0; pharms = 0d0
      lsetup = .true.; lsetip = .false.; lip    = .false.
      llam   = .false.; ldlami = .true.; lstep  = .false.
-     lfstep = .false.
+     lfstep = .false.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
      
-     WRITE (*,'(a,t120,a)')ACHAR(13)//&
-          'WRITING STARTING MODEL',it,''
+     WRITE (*,'(//a,t100/)')ACHAR(13)//&
+          'WRITING STARTING MODEL'
      CALL wout(kanal,dsigma,dvolt)
 !!!$   Kontrolldateien oeffnen
      errnr = 1
@@ -190,13 +199,17 @@ PROGRAM inv
      close(fpcjg)
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      open(fpeps,file=TRIM(fetxt),status='replace',err=999)
+
      IF (ldc) THEN
-        WRITE (fpeps,'(a)')'1/eps_r'
-        WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
+        WRITE (fpeps,'(a)')'1/eps_r      datum'
+        WRITE (fpeps,'(G12.3,2x,G14.5)')(sqrt(wmatdr(i)),&
+             REAL(dat(i)),i=1,nanz)
      ELSE
-        WRITE (fpeps,'(3(a,10x))')'1/eps','1/eps_r','1/eps_p'
-        WRITE (fpeps,'(3(G12.5,2x))')&
-             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),i=1,nanz)
+        WRITE (fpeps,'(t7,a,t15,a,t25,a,t40,a)')'1/eps','1/eps_r',&
+             '1/eps_p','datum (Re,Im)'
+        WRITE (fpeps,'(3F10.1,2x,2G15.7)')&
+             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),REAL(dat(i)),&
+             AIMAG(dat(i)),i=1,nanz)
      END IF
      close(fpeps)
      errnr = 4
@@ -223,8 +236,8 @@ PROGRAM inv
      DO WHILE (.NOT.converged) ! optimization loop
 
 !!!$   Control output
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
-             ' Iteration ',it,', ',itr,' : Calculating Potentials'
+        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')ACHAR(13)//&
+             ' Iteration ',it,', ',itr,' : Calculating Potentials',''
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 
@@ -264,7 +277,6 @@ PROGRAM inv
                     fetxt = 'scaldc'
                     call scaldc()
                     if (errnr.ne.0) goto 999
-
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     call choldc()
@@ -337,6 +349,7 @@ PROGRAM inv
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
                     call kompb(l)
+
                  end if
 
 !!!$   Gleichungssystem loesen
@@ -368,7 +381,7 @@ PROGRAM inv
            DEALLOCATE(a,hpot,b)
         end if
 
-        if (lsetup) then
+        if (lsetup.OR.lsetip) then
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
            if (lratio) then
               do j=1,nanz
@@ -377,12 +390,12 @@ PROGRAM inv
            end if
 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
         end if
 
 !!!$   Daten-RMS berechnen
-        call dmisft(lsetup)
-
+        call dmisft(lsetup.OR.lsetip)
+!        print*,nrmsd,betrms,pharms,lrobust,l1rat
         if (errnr.ne.0) goto 999
 
 !!!$   'nrmsd=0' ausschliessen
@@ -397,14 +410,14 @@ PROGRAM inv
 !!!$.............................
 
 !!!$   Kontrollvariablen ausgeben
-        call kont2(lsetup)
+        call kont2(lsetup.OR.lsetip)
         if (errnr.ne.0) goto 999
 
 !!!$   ABBRUCHBEDINGUNGEN
         if (llam.and..not.lstep) then
            lamalt = lam 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
 
 !!!$   Wiederholt minimale step-length ?
            if (stpalt.eq.0d0) errnr2=92
@@ -469,6 +482,12 @@ PROGRAM inv
                          ' ******* Restarting phase model ********'
                     write(fpinv,*)&
                          ' ******* Restarting phase model ********'
+                    fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+                    OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
+                         position='append')
+                    WRITE (fpinv,*)&
+                         ' ******* Resetting phase model ********'
+                    CLOSE (fpinv)
                     do j=1,elanz
                        sigma(j) = dcmplx(&
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
@@ -476,6 +495,7 @@ PROGRAM inv
                     end do
                     lsetup = .TRUE.
                     CYCLE       ! neues calc
+                    
                  END IF
 !!!$   ak
 
@@ -500,6 +520,7 @@ PROGRAM inv
         end if
 
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
+
 !!!$   Iterationsindex hochzaehlen
            it = it+1
 
@@ -524,9 +545,9 @@ PROGRAM inv
            IF (lrobust) wmatd2 = wmatd
 
 !!!$   Kontrollausgaben
-           write (*,'(a,i3,a,i3,a)',ADVANCE='no') &
+           write (*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no') &
                 ACHAR(13)//' Iteration ',it,', ',itr,&
-                ' : Calculating Sensitivities'
+                ' : Calculating Sensitivities',''
 
            write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
@@ -539,7 +560,7 @@ PROGRAM inv
            end if
 
 !!!$   evtl   Rauhigkeitsmatrix belegen
-           IF (lsetup.OR.(ltri>3.AND.ltri<10)) CALL bsmatm(it) 
+           IF (l_bsmat) CALL bsmatm(it,l_bsmat) 
 
         else
 !!!$   Felder zuruecksetzen
@@ -580,9 +601,9 @@ PROGRAM inv
                     IF (llamf) THEN
                        lam = lamfix
                     ELSE
-                       write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
+                       write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
                             ACHAR(13)//' Iteration ',it,', ',itr,&
-                            ' : Calculating 1st regularization parameter'
+                            ' : Calculating 1st regularization parameter',''
                        write(fprun,'(a,i3,a,i3,a)',ADVANCE='no')&
                             ' Iteration ',it,', ',itr,&
                             ' : Calculating 1st regularization parameter'
@@ -661,9 +682,9 @@ PROGRAM inv
            end if
         end if
 !!!$   Kontrollausgaben
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
+        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
              ACHAR(13)//' Iteration ',it,', ',itr,&
-             ' : Updating'
+             ' : Updating',''
 
         write(fprun,*)' Iteration ',it,', ',itr,&
              ' : Updating'
@@ -672,7 +693,6 @@ PROGRAM inv
 
         CALL bpar
         if (errnr.ne.0) goto 999
-
 
 !!!$   UPDATE anbringen
         call update
@@ -693,20 +713,10 @@ PROGRAM inv
 !!!$.................................................
 
 !!!$   OUTPUT
-     WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-          'WRITING MODEL ITERATE',it,''
+     WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
+          'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
      call wout(kanal,dsigma,dvolt)
      if (errnr.ne.0) goto 999
-
-!!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
-     if (lsens) then
-        CALL BBSENS(kanal,dsens)
-        if (errnr.ne.0) goto 999
-     end if
-
-     IF (lvario) CALL bvariogram ! calculate experimental variogram
-
-     IF (lcov1) CALL buncert (kanal,lamalt)
 
 !!!$   Kontrollausgaben
 
@@ -748,6 +758,8 @@ PROGRAM inv
 !!!$   Run-time abfragen und ausgeben
      fetxt = ' CPU time: '
      CALL toc(c1,fetxt)
+!!$     PRINT*,''
+!!$     PRINT*,''
      write(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen
@@ -756,6 +768,16 @@ PROGRAM inv
      close(fpcjg)
      close(fpeps)
 
+
+!!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
+     if (lsens) then
+        CALL BBSENS(kanal,dsens)
+        if (errnr.ne.0) goto 999
+     end if
+
+     IF (lvario) CALL bvariogram ! calculate experimental variogram
+
+     IF (lcov1) CALL buncert (kanal,lamalt)
 
      CALL des_cjgmod(1,fetxt,errnr) ! call cjgmod destructor
      IF (errnr /= 0) GOTO 999
@@ -830,6 +852,10 @@ PROGRAM inv
 !!!$   'crtomo.cfg' schliessen
   close(fpcfg)
 
+  fetxt = 'crtomo.pid'
+  OPEN (fprun,FILE=TRIM(fetxt),STATUS='old',err=999)
+  CLOSE (fprun,STATUS='delete')
+
   stop '0'
 
 !!!$.....................................................................
@@ -838,9 +864,11 @@ PROGRAM inv
 999 open(fperr,file='error.dat',status='replace')
   errflag = 2
   CALL get_error(ftext,errnr,errflag,fetxt)
+  write(fperr,*) 'CRTomo PID ',pid,' exited abnormally'
   write(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
   write(fperr,*)ftext
   close(fperr)
+
   STOP '-1'
 
 end program inv

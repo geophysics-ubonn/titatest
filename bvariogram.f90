@@ -26,8 +26,6 @@ SUBROUTINE bvariogram
   INTEGER :: i,j,ik,jk,ifp
 !!$c     th = Tail - Head; hx,hy,h distances in each direction
   REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
-!!$c     Parameter variances in x and y direction
-  REAL(KIND(0D0)) :: par_varix,par_variy
 !!$c     korrelation length for variogram models
   REAL(KIND(0D0)) :: Ix,Iy
 !!$c     smallest variogram distance and tolerance
@@ -121,8 +119,6 @@ SUBROUTINE bvariogram
   mid_par = SUM(LOG10(DBLE(sigma))) / manz
 
   par_vari=0.
-  par_varix = mgam_x(nlag_x)
-  par_variy = mgam_y(nlag_y)
 
 !!$  Experimentelles semi-variogram
   DO i=1,elanz
@@ -196,7 +192,8 @@ SUBROUTINE bvariogram
   WRITE (*,'(3(a,G10.3,1x))')'Min=',MINVAL(REAL(sigma)),'Max=',&
        MAXVAL(REAL(sigma)),'DLOG',LOG10(MAXVAL(REAL(sigma))/&
        MINVAL(REAL(sigma)))
-  mgam = par_vari * mgam
+
+  mgam = par_vari * mgam ! or we put it normalized to the sill ?
   mgam_x = par_vari * mgam_x
   mgam_y = par_vari * mgam_y
 
@@ -207,7 +204,7 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='inv.variogram_x',STATUS='replace',ERR=999)
   WRITE (ifp,2)'#   lag(x-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram    model ##',nlag_x,&
-       ' / parameter variance ',10**par_varix
+       ' / parameter variance ',par_vari
   DO i=1,nlag_x
      WRITE (ifp,1,ERR=999)lag_x(i),gam_x(i),mgam_x(i),ngam_x(i)
   END DO
@@ -215,7 +212,7 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='inv.variogram_y',STATUS='replace',ERR=999)
   WRITE (ifp,2)'#   lag(y-dir)'//ACHAR(9)//&
        'anisotrop exp. semivariogram   model ##',nlag_y,&
-       ' / parameter variance ',10**par_variy
+       ' / parameter variance ',par_vari
   DO i=1,nlag_y
      WRITE (ifp,1,ERR=999)lag_y(i),gam_y(i),mgam_y(i),ngam_y(i)
   END DO
@@ -223,7 +220,7 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='inv.variogram',STATUS='replace',ERR=999)
   WRITE (ifp,2)'#   lag(h)'//ACHAR(9)//&
        'exp. semivariogram     model ## ',nlag,&
-       ' / parameter variance ',10**par_vari
+       ' / parameter variance ',par_vari
   DO i=1,nlag
      WRITE (ifp,1,ERR=999)lag(i),gam(i),mgam(i),ngam(i)
   END DO

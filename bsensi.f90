@@ -128,7 +128,6 @@ subroutine bsensi()
                  end do
               end do
            end do
-
 !!!$     GGF. RUECKTRANSFORMATION
            if (swrtr.eq.0) then
 

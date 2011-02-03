@@ -38,9 +38,9 @@ subroutine kont2(lsetup)
 100 FORMAT (t1,a3, t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3)
 101 FORMAT (t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4)
 
-110 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
+110 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
        i4,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3,t117,f5.3)
-111 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
+111 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
        i4,t69,g10.4,t81,g10.4,t93,i4,t105,f5.3)
 
 105 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
@@ -83,7 +83,7 @@ subroutine kont2(lsetup)
 !!!$     Hauptiterationen
      if (llam.and..not.lstep) then
         write(fpinv,'(a)',err=1000)cdump
-        if(lip) then
+        if (lip) then
            if (lrobust) then
               write(fpinv,110,err=1000)'PIT',it,nrmsd,bdpar,lam,rough,&
                    ncg,betrms,pharms,npol,l1rat,step

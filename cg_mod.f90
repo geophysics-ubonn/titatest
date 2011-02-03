@@ -142,7 +142,7 @@ CONTAINS
 
        END IF
 
-       dr1 = DOT_PRODUCT(pvecdc,bvecdc)
+       dr1 = DOT_PRODUCT(pvecdc,bvecdc) ! this is ok for ERT
 
        alpha = dr/dr1
 
@@ -154,6 +154,7 @@ CONTAINS
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+
     end do
 
     ncg = ncgmax
@@ -465,35 +466,37 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-    COMPLEX(KIND(0D0)) :: beta
-    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
+!    COMPLEX(KIND(0D0)) :: beta
+    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
     INTEGER            :: k,j
 !!!$....................................................................
 
 
-    dpar = 0.
+    dpar = dcmplx(0d0)
     rvec = bvec
-    pvec = 0.
+    pvec = dcmplx(0d0)
 
     fetxt = 'CG iteration'
 
-    !print*,''
     do k=1,ncgmax
 
        ncg = k-1
+
        dr = 0d0
        DO j=1,manz
-          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
+          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
        END DO
-          !dr = DOT_PRODUCT(DCONJG(rvec),rvec)
+
+!!$       dr = DOT_PRODUCT(CONJG(rvec),rvec)
+
        if (k.eq.1) then
           dr0  = dr*eps
-          beta = dcmplx(0d0)
+          beta = 0d0
        else
 !!!$    Fletcher-Reeves-Version
-          beta = dcmplx(dr/dr1)
+          beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
 !!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
 !!$          beta = beta * DCMPLX(-alpha/dr1)
@@ -519,21 +522,20 @@ CONTAINS
 
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
+          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
        END DO
-	!dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
-
+!!$       dr1 = DOT_PRODUCT(CONJG(pvec),bvec) ! !!! <- has not the same
+!!!$    accuracy
        alpha = dr/dr1
-
-       dpar = dpar + DCMPLX(alpha) * pvec
-       rvec = rvec - DCMPLX(alpha) * bvec
+       
+       dpar = dpar + alpha * pvec
+       rvec = rvec - alpha * bvec
 
        dr1 = dr
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
 
-       !print*,cgres(k+1),dr,dr1,alpha
     end do
 
     ncg = ncgmax
@@ -638,11 +640,11 @@ CONTAINS
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * DCMPLX(cgfac(idum)) ! off diagonals
+               DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
        bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
-            DCMPLX(cgfac(i)) ! + main diagonal
+            cgfac(i) ! + main diagonal
 
     END DO
 

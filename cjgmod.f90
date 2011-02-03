@@ -48,7 +48,7 @@ MODULE cjgmod
 CONTAINS 
 
 
-  SUBROUTINE con_cjgmod (mycase,errtxt,errnr)
+  SUBROUTINE con_cjgmod (mycase,errtxt,errnr) ! constructor of cjgmod
     INTEGER (KIND=4),INTENT (IN) :: mycase ! mycase can have 3 values
 !!!$ 0:  allocate global cgres and bvec which should be called from update
     CHARACTER (*),INTENT(INOUT)  :: errtxt
@@ -95,7 +95,7 @@ CONTAINS
 
   END SUBROUTINE con_cjgmod
 
-  SUBROUTINE des_cjgmod (mycase,errtxt,errnr)
+  SUBROUTINE des_cjgmod (mycase,errtxt,errnr) ! destructor of cjgmod
     INTEGER (KIND=4),INTENT (IN) :: mycase
     CHARACTER (*),INTENT(INOUT)  :: errtxt
     INTEGER (KIND=4),INTENT(OUT) :: errnr
