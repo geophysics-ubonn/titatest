@@ -475,7 +475,7 @@ PROGRAM inv
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
 
-                    CYCLE       ! neues calc
+                 !   CYCLE       ! neues calc
                  END IF
 !!!$   ak
 

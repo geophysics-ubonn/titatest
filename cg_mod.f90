@@ -479,7 +479,7 @@ CONTAINS
 
     fetxt = 'CG iteration'
 
-    print*,''
+    !print*,''
     do k=1,ncgmax
 
        ncg = k-1
@@ -487,7 +487,7 @@ CONTAINS
        DO j=1,manz
           dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
        END DO
-!!$          dr = DOT_PRODUCT(DCONJG(rvec),rvec)
+          !dr = DOT_PRODUCT(DCONJG(rvec),rvec)
        if (k.eq.1) then
           dr0  = dr*eps
           beta = dcmplx(0d0)
@@ -521,7 +521,7 @@ CONTAINS
        DO j=1,manz
           dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
        END DO
-!DOT_PRODUCT(DCONJG(pvec),bvec)
+	!dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
 
        alpha = dr/dr1
 
@@ -533,7 +533,7 @@ CONTAINS
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
 
-       print*,cgres(k+1),dr,dr1,alpha
+       !print*,cgres(k+1),dr,dr1,alpha
     end do
 
     ncg = ncgmax
