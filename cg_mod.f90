@@ -484,13 +484,11 @@ CONTAINS
 
        ncg = k-1
 
-
-       dr = 0d0
-       DO j=1,manz
-          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
-       END DO
-
-!!$       dr = DOT_PRODUCT(CONJG(rvec),rvec)
+!!$       dr = 0d0
+!!$       DO j=1,manz
+!!$          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
+!!$       END DO
+       dr = DOT_PRODUCT(rvec,rvec)
 
        if (k.eq.1) then
           dr0  = dr*eps
@@ -521,11 +519,12 @@ CONTAINS
           call bpsto
        END IF
 
-       dr1 = 0d0
-       DO j=1,manz
-          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
-       END DO
-!!$       dr1 = DOT_PRODUCT(CONJG(pvec),bvec) ! !!! <- has not the same
+!!$       dr1 = 0d0
+!!$       DO j=1,manz
+!!$          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
+!!$       END DO
+
+       dr1 = DOT_PRODUCT(pvec,bvec) ! !!! <- has not the same
 !!!$    accuracy
        alpha = dr/dr1
        
