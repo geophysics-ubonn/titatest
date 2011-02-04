@@ -5,9 +5,9 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$ Copyright by Andreas Kemna 2010
 !!!$
-!!!$ Created by Roland Martin               30-Jul-2010
+!!!$ Edited by Roland Martin               30-Jul-2010
 !!!$
-!!!$ Last changed       RM                  Jul-2010
+!!!$ Last changed       RM                  Feb-2011
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -484,11 +484,10 @@ CONTAINS
 
        ncg = k-1
 
-!!$       dr = 0d0
-!!$       DO j=1,manz
-!!$          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
-!!$       END DO
-       dr = DOT_PRODUCT(rvec,rvec)
+       dr = 0d0
+       DO j=1,manz
+          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
+       END DO
 
        if (k.eq.1) then
           dr0  = dr*eps
@@ -519,13 +518,11 @@ CONTAINS
           call bpsto
        END IF
 
-!!$       dr1 = 0d0
-!!$       DO j=1,manz
-!!$          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
-!!$       END DO
+       dr1 = 0d0
+       DO j=1,manz
+          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
+       END DO
 
-       dr1 = DOT_PRODUCT(pvec,bvec) ! !!! <- has not the same
-!!!$    accuracy
        alpha = dr/dr1
        
        dpar = dpar + alpha * pvec
