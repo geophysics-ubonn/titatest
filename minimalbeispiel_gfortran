@@ -1,6 +1,6 @@
  REAL arithmetics
  KIND(r):           4
- DIGITS(r):          24
+ PRECISION(r):           6
  EPSILON(r):  1.19209290E-07
 
  pi = ACOS(-1.):   3.1415927    
@@ -8,13 +8,17 @@
  r = SQRT(pi):   1.7724539    
 
  KIND(r_vct):           4
- SHAPE(r_vct):         100
- r_vct(:)=   3.1415927    
- Inner product of r_vct via do loop   986.96143    
- and via DOT_PRODUCT(r_vct,r_vct)   986.96143    
+ SHAPE(r_vct):    10000000
+ Cycles:         100
+ r_vct(:)=  0.31830987    
+ Inner product of r_vct via do loop   1088668.4    
+ DO LOOP::  0d/  0h/  0m/  1s/  29ms
+ and via DOT_PRODUCT(r_vct,r_vct)   1088668.4    
+ DOT_PROD::  0d/  0h/  0m/  1s/  26ms
 
  DOUBLE PRECISION arithmetics
  KIND(dr):           8
+ PRECISION(dr):          15
  EPSILON(dr):  2.22044604925031308E-016
 
  dpi = ACOS(-1d0):   3.1415926535897931     
@@ -24,13 +28,17 @@
  dr = DSQRT(dpi):   1.7724538509055159     
 
  KIND(dr_vct):           8
- SHAPE(dr_vct):         100
- dr_vct(:)=   3.1415926535897931     
- Inner product of dr_vct via do loop   986.96044010893331     
- and via DOT_PRODUCT(dr_vct,dr_vct)   986.96044010893331     
+ SHAPE(dr_vct):    10000000
+ Cycles:         100
+ dr_vct(:)=  0.31830988618379069     
+ Inner product of dr_vct via do loop   1013211.8363339240     
+ DO LOOP::  0d/  0h/  0m/  1s/ 547ms
+ and via DOT_PRODUCT(dr_vct,dr_vct)   1013211.8363339240     
+ DOT_PROD::  0d/  0h/  0m/  1s/ 543ms
 
  COMPLEX arithmetics
  KIND(z):           4
+ PRECISION(z):           6
 
  z = CMPLX(1.0,pi): (  1.0000000    ,  3.1415927    )
  z = DCMPLX(1.0,pi): (  1.0000000    ,  3.1415927    )
@@ -43,15 +51,17 @@
  z2 = CONJG(z)*z: (  19.739210    ,  0.0000000    )
 
  KIND(z_vct):           4
- SHAPE(z_vct):         100
- z_vct(:)= (  3.1415927    ,  1.0000000    )
- Inner product of dz_vct via do loop   1086.9615    
- and via DOT_PRODUCT(z_vct,z_vct) (  1086.9615    ,  0.0000000    )
- and via DOT_PRODUCT(CONJG(dz_vct),dz_vct) (  886.96124    ,  628.31842    )
- ABS(DOT_PRODUCT(CONJG(z_vct),z_vct))   1086.9611    
+ SHAPE(z_vct):    10000000
+ Cycles:         100
+ z_vct(:)= ( 0.28902549    ,-9.19996649E-02)
+ Inner product of dz_vct via do loop   799304.88    
+ DO LOOP::  0d/  0h/  0m/  1s/ 636ms
+ and via DOT_PRODUCT(z_vct,z_vct)   798413.06    
+ DOT_PROD::  0d/  0h/  0m/  2s/  44ms
 
  DOUBLE PRECISION COMPLEX arithmetics
  KIND(dz):           8
+ PRECISION(dz):          15
  KIND(pi):           4
  KIND(dpi):           8
  pi:   3.1415927    
@@ -74,10 +84,11 @@
  dz = CONJG(dz)*dz: (  19.739208802178716     ,  0.0000000000000000     )
 
  KIND(dz_vct):           8
- SHAPE(dz_vct):         100
- dz_vct(:)= (  3.1415927410125732     ,  1.0000000000000000     )
- Inner product of dz_vct via do loop   1086.9604950382864     
- and via DOT_PRODUCT(dz_vct,dz_vct) (  1086.9604950382864     ,  0.0000000000000000     )
- ABS(DOT_PRODUCT(dz_vct,dz_vct))   1086.9604950382864     
- and via DOT_PRODUCT(CONJG(dz_vct),dz_vct) (  886.96049503828704     ,  628.31854820251465     )
- ABS(DOT_PRODUCT(CONJG(dz_vct),dz_vct))   1086.9604950382875     
+ SHAPE(dz_vct):    10000000
+ Cycles:         100
+ dz_vct(:)= ( 0.28902547565925174     ,-9.19996637011885054E-002)
+ Inner product of dz_vct via do loop   919996.63712076063     
+ DO LOOP::  0d/  0h/  0m/  3s/  58ms
+ and via DOT_PRODUCT(dz_vct,dz_vct)   919996.63725487154     
+ DOT_PROD::  0d/  0h/  0m/  3s/  61ms
+ COS(ACOS(1./3.)),COS(ACOS(1d0/3))  0.33333334      0.33333333333333326     

@@ -16,13 +16,13 @@ PROGRAM main
   INTEGER                              :: c1
   CHARACTER (256)                       :: csz
 
-  n = 10 ! vector size
-  m = 1 ! loop counts
+  n = 10000000 ! vector size
+  m = 100 ! loop counts
   ALLOCATE (dz_vct(n),z_vct(n),dr_vct(n),r_vct(n),r_vct2(n))
   ! REAL 
   print*,'REAL arithmetics'
   print*,'KIND(r):',KIND(r)
-  print*,'DIGITS(r):',DIGITS(r)
+  print*,'PRECISION(r):',PRECISION(r)
   print*,'EPSILON(r):',EPSILON(r)
   print*
   pi = ACOS(-1.)
@@ -32,9 +32,10 @@ PROGRAM main
   r = SQRT(pi)
   print*,'r = SQRT(pi):',r
   print*
-  r_vct = pi
+  r_vct = 1./pi
   print*,'KIND(r_vct):',KIND(r_vct)
   print*,'SHAPE(r_vct):',SHAPE(r_vct)
+  print*,'Cycles:',m
   print*,'r_vct(:)=',r_vct(1)
   csz = 'DO LOOP::'
   CALL TIC(c1)
@@ -46,13 +47,13 @@ PROGRAM main
   END DO
   print*,'Inner product of r_vct via do loop',r
   CALL TOC(c1,csz)
-  DO i=1,n
-     r_vct2(i) = REAL(i)
-  END DO
-  print*,'r_vct2:',r_vct2
-  r_vct = r_vct * r_vct2
-  print*,'r_vct = r_vct * r_vct',r_vct(:)
-  STOP
+!!$  DO i=1,n
+!!$     r_vct2(i) = REAL(i)
+!!$  END DO
+!!$  print*,'r_vct2:',r_vct2
+!!$  r_vct = r_vct * r_vct2
+!!$  print*,'r_vct = r_vct * r_vct',r_vct(:)
+!!$  STOP
   csz = 'DOT_PROD::'
   CALL TIC(c1)
   DO j=1,m
@@ -64,6 +65,7 @@ PROGRAM main
   ! DOUBLE PRECISION
   print*,'DOUBLE PRECISION arithmetics'
   print*,'KIND(dr):',KIND(dr)
+  print*,'PRECISION(dr):',PRECISION(dr)
   print*,'EPSILON(dr):',EPSILON(dr)
   print*
   dpi = ACOS(-1d0)
@@ -80,6 +82,7 @@ PROGRAM main
   dr_vct = 1d0/dpi
   print*,'KIND(dr_vct):',KIND(dr_vct)
   print*,'SHAPE(dr_vct):',SHAPE(dr_vct)
+  print*,'Cycles:',m
   print*,'dr_vct(:)=',dr_vct(1)
   csz = 'DO LOOP::'
   CALL TIC(c1)
@@ -102,6 +105,7 @@ PROGRAM main
   ! COMPLEX
   print*,'COMPLEX arithmetics'
   print*,'KIND(z):',KIND(z)
+  print*,'PRECISION(z):',PRECISION(z)
   print*
   z = CMPLX(1.0,pi)
   print*,'z = CMPLX(1.0,pi):',z
@@ -124,6 +128,7 @@ PROGRAM main
   print*
   print*,'KIND(z_vct):',KIND(z_vct)
   print*,'SHAPE(z_vct):',SHAPE(z_vct)
+  print*,'Cycles:',m
   z_vct = 1/CMPLX(pi,1.0)
   print*,'z_vct(:)=',z_vct(1)
   csz = 'DO LOOP::'
@@ -147,6 +152,7 @@ PROGRAM main
   print*
   print*,'DOUBLE PRECISION COMPLEX arithmetics'
   print*,'KIND(dz):',KIND(dz)
+  print*,'PRECISION(dz):',PRECISION(dz)
   print*,'KIND(pi):',KIND(pi)
   print*,'KIND(dpi):',KIND(dpi)
   print*,'pi:',pi
@@ -187,6 +193,7 @@ PROGRAM main
   print*
   print*,'KIND(dz_vct):',KIND(dz_vct)
   print*,'SHAPE(dz_vct):',SHAPE(dz_vct)
+  print*,'Cycles:',m
   dz_vct = 1D0/DCMPLX(pi,1d0)
   print*,'dz_vct(:)=',dz_vct(1)
 
