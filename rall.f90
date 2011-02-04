@@ -486,6 +486,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
   !     This is useful for including topographical effects and should be used
 
+  lvario = BTEST (mswitch,9) ! +512 calculate variogram
+
   lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
 
   IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
@@ -527,7 +529,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      manz = elanz           ! wichtig an dieser stelle..
      CALL bnachbar          ! blegt nachbar
      CALL besp_elem
-     lvario = .TRUE.
+     lvario = lvario.OR.lsto
   ELSE
 !!!$     Modelleinteilung gemaess Elementeinteilung belegen
      manz = nx*nz           ! nur für strukturierte gitter
