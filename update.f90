@@ -42,7 +42,6 @@ subroutine update()
 
 !!!$     Felder speichern
      dpar2 = dpar
-
      cgres2 = cgres
 
 !!!$     Smoothnessvektor berechnen

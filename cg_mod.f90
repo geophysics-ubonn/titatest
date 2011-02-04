@@ -5,9 +5,9 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$ Copyright by Andreas Kemna 2010
 !!!$
-!!!$ Created by Roland Martin               30-Jul-2010
+!!!$ Edited by Roland Martin               30-Jul-2010
 !!!$
-!!!$ Last changed       RM                  Jul-2010
+!!!$ Last changed       RM                  Feb-2011
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -489,8 +489,6 @@ CONTAINS
           dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
        END DO
 
-!!$       dr = DOT_PRODUCT(CONJG(rvec),rvec)
-
        if (k.eq.1) then
           dr0  = dr*eps
           beta = 0d0
@@ -498,8 +496,8 @@ CONTAINS
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
-!!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
-!!$          beta = beta * DCMPLX(-alpha/dr1)
+!!$          beta = DOT_PRODUCT(bvec,rvec) 
+!!$          beta = beta * -alpha/dr1
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
@@ -524,8 +522,7 @@ CONTAINS
        DO j=1,manz
           dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
        END DO
-!!$       dr1 = DOT_PRODUCT(CONJG(pvec),bvec) ! !!! <- has not the same
-!!!$    accuracy
+
        alpha = dr/dr1
        
        dpar = dpar + alpha * pvec

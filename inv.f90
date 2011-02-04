@@ -493,7 +493,7 @@ PROGRAM inv
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
-                    lsetup = .TRUE.
+                    lsetup = .TRUE. ! ensure proper misfit and kont2 output
                     CYCLE       ! neues calc
                     
                  END IF
