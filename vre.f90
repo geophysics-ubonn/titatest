@@ -44,6 +44,7 @@ subroutine vre()
      END do
 
      pot(i) = s / a(idi)
+
   END do
 
   do i=sanz,1,-1
@@ -57,7 +58,7 @@ subroutine vre()
      END do
 
      idi = idi-m1
+
   END do
 
-  return
 end subroutine vre

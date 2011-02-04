@@ -80,9 +80,7 @@ subroutine bsens()
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     do j=1,4
-        sup(j) = dcmplx(0d0)
-     end do
+     sup = 0.
 
      do ityp=1,typanz
         ntyp = typ(ityp)
@@ -125,7 +123,6 @@ subroutine bsens()
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
                     hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k)) * dum
-
                  end do
               end do
            end do

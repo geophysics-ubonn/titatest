@@ -5,9 +5,9 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$ Copyright by Andreas Kemna 2010
 !!!$
-!!!$ Created by Roland Martin               30-Jul-2010
+!!!$ Edited by Roland Martin               30-Jul-2010
 !!!$
-!!!$ Last changed       RM                  Jul-2010
+!!!$ Last changed       RM                  Feb-2011
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -142,7 +142,7 @@ CONTAINS
 
        END IF
 
-       dr1 = DOT_PRODUCT(pvecdc,bvecdc)
+       dr1 = DOT_PRODUCT(pvecdc,bvecdc) ! this is ok for ERT
 
        alpha = dr/dr1
 
@@ -154,6 +154,7 @@ CONTAINS
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+
     end do
 
     ncg = ncgmax
@@ -465,17 +466,17 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-    COMPLEX(KIND(0D0)) :: beta
-    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1
+!    COMPLEX(KIND(0D0)) :: beta
+    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
-    INTEGER            :: k
+    INTEGER            :: k,j
 !!!$....................................................................
 
 
-    dpar = 0.
+    dpar = dcmplx(0d0)
     rvec = bvec
-    pvec = 0.
+    pvec = dcmplx(0d0)
 
     fetxt = 'CG iteration'
 
@@ -483,17 +484,20 @@ CONTAINS
 
        ncg = k-1
 
-       dr = DOT_PRODUCT(DCONJG(rvec),rvec)
+       dr = 0d0
+       DO j=1,manz
+          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
+       END DO
 
        if (k.eq.1) then
           dr0  = dr*eps
-          beta = dcmplx(0d0)
+          beta = 0d0
        else
 !!!$    Fletcher-Reeves-Version
-          beta = dcmplx(dr/dr1)
+          beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
-!!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
-!!$          beta = beta * DCMPLX(-alpha/dr1)
+!!$          beta = DOT_PRODUCT(bvec,rvec) 
+!!$          beta = beta * -alpha/dr1
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
@@ -514,17 +518,21 @@ CONTAINS
           call bpsto
        END IF
 
-       dr1 = DOT_PRODUCT(DCONJG(pvec),bvec)
+       dr1 = 0d0
+       DO j=1,manz
+          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
+       END DO
 
        alpha = dr/dr1
-
-       dpar = dpar + DCMPLX(alpha) * pvec
-       rvec = rvec - DCMPLX(alpha) * bvec
+       
+       dpar = dpar + alpha * pvec
+       rvec = rvec - alpha * bvec
 
        dr1 = dr
 
 !!!$    Residuum speichern
        cgres(k+1) = real(eps*dr/dr0)
+
     end do
 
     ncg = ncgmax
@@ -629,11 +637,11 @@ CONTAINS
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * DCMPLX(cgfac(idum)) ! off diagonals
+               DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
        bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
-            DCMPLX(cgfac(i)) ! + main diagonal
+            cgfac(i) ! + main diagonal
 
     END DO
 

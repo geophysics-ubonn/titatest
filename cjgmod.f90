@@ -30,13 +30,13 @@ MODULE cjgmod
 
 !!!$ variables for every case
 !!$ CG residuals
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres
 !!$ storage
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
+  REAL,PUBLIC,DIMENSION(:),ALLOCATABLE                :: cgres2
 !!$ preconditioning factors
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
 !!$ CG Epsilon
-  REAL(KIND(0D0)),PUBLIC                              :: eps
+  REAL,PUBLIC                                         :: eps
 !!$ maximum number of CG steps
   INTEGER (KIND = 4),PUBLIC                           :: ncgmax
 !!$ actual number of CG steps..
@@ -48,7 +48,7 @@ MODULE cjgmod
 CONTAINS 
 
 
-  SUBROUTINE con_cjgmod (mycase,errtxt,errnr)
+  SUBROUTINE con_cjgmod (mycase,errtxt,errnr) ! constructor of cjgmod
     INTEGER (KIND=4),INTENT (IN) :: mycase ! mycase can have 3 values
 !!!$ 0:  allocate global cgres and bvec which should be called from update
     CHARACTER (*),INTENT(INOUT)  :: errtxt
@@ -95,7 +95,7 @@ CONTAINS
 
   END SUBROUTINE con_cjgmod
 
-  SUBROUTINE des_cjgmod (mycase,errtxt,errnr)
+  SUBROUTINE des_cjgmod (mycase,errtxt,errnr) ! destructor of cjgmod
     INTEGER (KIND=4),INTENT (IN) :: mycase
     CHARACTER (*),INTENT(INOUT)  :: errtxt
     INTEGER (KIND=4),INTENT(OUT) :: errnr

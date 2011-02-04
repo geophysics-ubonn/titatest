@@ -43,7 +43,7 @@ PROGRAM inv
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i
   REAL(KIND(0D0))        :: lamalt
-  LOGICAL                :: converged
+  LOGICAL                :: converged,l_bsmat
 
   INTEGER :: OMP_GET_MAX_THREADS
   INTEGER :: OMP_GET_NUM_THREADS
@@ -168,6 +168,7 @@ PROGRAM inv
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
+
 !!!$ set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
@@ -178,7 +179,7 @@ PROGRAM inv
      betrms = 0d0; pharms = 0d0
      lsetup = .true.; lsetip = .false.; lip    = .false.
      llam   = .false.; ldlami = .true.; lstep  = .false.
-     lfstep = .false.
+     lfstep = .false.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
      
      WRITE (*,'(//a,t100/)')ACHAR(13)//&
@@ -198,13 +199,17 @@ PROGRAM inv
      close(fpcjg)
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      open(fpeps,file=TRIM(fetxt),status='replace',err=999)
+
      IF (ldc) THEN
-        WRITE (fpeps,'(a)')'1/eps_r'
-        WRITE (fpeps,'(G10.3)')(sqrt(wmatdr(i)),i=1,nanz)
+        WRITE (fpeps,'(a)')'1/eps_r      datum'
+        WRITE (fpeps,'(G12.3,2x,G14.5)')(sqrt(wmatdr(i)),&
+             REAL(dat(i)),i=1,nanz)
      ELSE
-        WRITE (fpeps,'(3(a,10x))')'1/eps','1/eps_r','1/eps_p'
-        WRITE (fpeps,'(3(G12.5,2x))')&
-             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),i=1,nanz)
+        WRITE (fpeps,'(t7,a,t15,a,t25,a,t40,a)')'1/eps','1/eps_r',&
+             '1/eps_p','datum (Re,Im)'
+        WRITE (fpeps,'(3F10.1,2x,2G15.7)')&
+             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),REAL(dat(i)),&
+             AIMAG(dat(i)),i=1,nanz)
      END IF
      close(fpeps)
      errnr = 4
@@ -272,7 +277,6 @@ PROGRAM inv
                     fetxt = 'scaldc'
                     call scaldc()
                     if (errnr.ne.0) goto 999
-
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     call choldc()
@@ -345,6 +349,7 @@ PROGRAM inv
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
                     call kompb(l)
+
                  end if
 
 !!!$   Gleichungssystem loesen
@@ -376,7 +381,7 @@ PROGRAM inv
            DEALLOCATE(a,hpot,b)
         end if
 
-        if (lsetup) then
+        if (lsetup.OR.lsetip) then
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
            if (lratio) then
               do j=1,nanz
@@ -385,12 +390,12 @@ PROGRAM inv
            end if
 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
         end if
 
 !!!$   Daten-RMS berechnen
-        call dmisft(lsetup)
-
+        call dmisft(lsetup.OR.lsetip)
+!        print*,nrmsd,betrms,pharms,lrobust,l1rat
         if (errnr.ne.0) goto 999
 
 !!!$   'nrmsd=0' ausschliessen
@@ -405,14 +410,14 @@ PROGRAM inv
 !!!$.............................
 
 !!!$   Kontrollvariablen ausgeben
-        call kont2(lsetup)
+        call kont2(lsetup.OR.lsetip)
         if (errnr.ne.0) goto 999
 
 !!!$   ABBRUCHBEDINGUNGEN
         if (llam.and..not.lstep) then
            lamalt = lam 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup)
+           call chkpol(lsetup.OR.lsetip)
 
 !!!$   Wiederholt minimale step-length ?
            if (stpalt.eq.0d0) errnr2=92
@@ -477,13 +482,20 @@ PROGRAM inv
                          ' ******* Restarting phase model ********'
                     write(fprun,*)&
                          ' ******* Restarting phase model ********'
+                    fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+                    OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
+                         position='append')
+                    WRITE (fpinv,*)&
+                         ' ******* Resetting phase model ********'
+                    CLOSE (fpinv)
                     do j=1,elanz
                        sigma(j) = dcmplx(&
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
                     end do
-
+                    lsetup = .TRUE. ! ensure proper misfit and kont2 output
                     CYCLE       ! neues calc
+                    
                  END IF
 !!!$   ak
 
@@ -508,6 +520,7 @@ PROGRAM inv
         end if
 
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
+
 !!!$   Iterationsindex hochzaehlen
            it = it+1
 
@@ -547,7 +560,7 @@ PROGRAM inv
            end if
 
 !!!$   evtl   Rauhigkeitsmatrix belegen
-           IF (lsetup.OR.(ltri>3.AND.ltri<10)) CALL bsmatm(it) 
+           IF (l_bsmat) CALL bsmatm(it,l_bsmat) 
 
         else
 !!!$   Felder zuruecksetzen
@@ -681,7 +694,6 @@ PROGRAM inv
         CALL bpar
         if (errnr.ne.0) goto 999
 
-
 !!!$   UPDATE anbringen
         call update
         if (errnr.ne.0) goto 999
@@ -746,6 +758,8 @@ PROGRAM inv
 !!!$   Run-time abfragen und ausgeben
      fetxt = ' CPU time: '
      CALL toc(c1,fetxt)
+!!$     PRINT*,''
+!!$     PRINT*,''
      write(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen

@@ -32,7 +32,7 @@ subroutine update()
 
 !!!$     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::   cdum
-  REAL (KIND(0D0))    ::   dum
+  REAL (KIND(0D0))    ::   dum,dum2
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)    ::  i,j,ij,in
@@ -130,7 +130,7 @@ subroutine update()
                    wmatd(i)*dble(wdfak(i))
            end do
         end if
-
+        dum2 = dum
 !!!$     triang< 
         IF (ltri==0) THEN
            dum    = dum + lam*smatm(j,1)
@@ -149,7 +149,6 @@ subroutine update()
 !!!$     triang> 
 
         cgfac(j) = 1d0/dsqrt(dum)
-
      end do
 
 !!!$     Konstantenvektor berechen und skalieren (RHS)
@@ -207,8 +206,12 @@ subroutine update()
 
         bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
+!!$        print*,j,cdum,sens(1,j),sigma(j)
      end do
 
+!!$     DO i=1,nanz
+!!$        print*,i,wmatd(i),dat(i),sigmaa(i),wdfak(i)
+!!$     END Do
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
 
@@ -243,6 +246,7 @@ subroutine update()
 
 !!!$     i.e Stepsize = ||\delta m||
   bdpar = 0d0
+
   in = 0
   do j=1,manz
 
@@ -258,7 +262,7 @@ subroutine update()
 
   end do
 
-  IF (in > 0) WRITE (*,'(a,I9,a)',ADVANCE = 'no')' forcing zero ',in&
+  IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&
        ,' times'
   bdpar = bdpar * step
 
