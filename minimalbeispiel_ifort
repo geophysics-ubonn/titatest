@@ -1,0 +1,83 @@
+ REAL arithmetics
+ KIND(r):           4
+ DIGITS(r):          24
+ EPSILON(r):  1.1920929E-07
+ 
+ pi = ACOS(-1.):   3.141593    
+ pi = ACOS(-1d0):   3.141593    
+ r = SQRT(pi):   1.772454    
+ 
+ KIND(r_vct):           4
+ SHAPE(r_vct):         100
+ r_vct(:)=   3.141593    
+ Inner product of r_vct via do loop   986.9606    
+ and via DOT_PRODUCT(r_vct,r_vct)   986.9606    
+ 
+ DOUBLE PRECISION arithmetics
+ KIND(dr):           8
+ EPSILON(dr):  2.220446049250313E-016
+ 
+ dpi = ACOS(-1d0):   3.14159265358979     
+ dpi = ACOS(-1.):   3.14159274101257     
+ dpi = DACOS(-1d0):   3.14159265358979     
+ dr = SQRT(dpi):   1.77245385090552     
+ dr = DSQRT(dpi):   1.77245385090552     
+ 
+ KIND(dr_vct):           8
+ SHAPE(dr_vct):         100
+ dr_vct(:)=   3.14159265358979     
+ Inner product of dr_vct via do loop   986.960440108936     
+ and via DOT_PRODUCT(dr_vct,dr_vct)   986.960440108936     
+ 
+ COMPLEX arithmetics
+ KIND(z):           4
+ 
+ z = CMPLX(1.0,pi): (1.000000,3.141593)
+ z = DCMPLX(1.0,pi): (1.000000,3.141593)
+ z = CMPLX(pi,pi): (3.141593,3.141593)
+ z = DCMPLX(pi,pi): (3.141593,3.141593)
+ z2 = SQRT(z): (1.947367,0.8066258)
+ z2 = EXP(z): (-23.14070,-2.0230239E-06)
+ z2 = EXP(DCMPLX(pi,pi)): (-23.14070,-2.0230239E-06)
+ z2 = CDEXP(DCMPLX(pi,pi)): (-23.14070,-2.0230239E-06)
+ z2 = CONJG(z)*z: (19.73921,0.0000000E+00)
+ 
+ KIND(z_vct):           4
+ SHAPE(z_vct):         100
+ z_vct(:)= (3.141593,1.000000)
+ Inner product of dz_vct via do loop   1086.962    
+ and via DOT_PRODUCT(z_vct,z_vct) (1086.962,0.0000000E+00)
+ and via DOT_PRODUCT(CONJG(dz_vct),dz_vct) (886.9612,628.3184)
+ ABS(DOT_PRODUCT(CONJG(z_vct),z_vct))   1086.961    
+ 
+ DOUBLE PRECISION COMPLEX arithmetics
+ KIND(dz):           8
+ KIND(pi):           4
+ KIND(dpi):           8
+ pi:   3.141593    
+ dpi:   3.14159265358979     
+ 
+ dz = CMPLX(1.0,dpi): (1.00000000000000,3.14159274101257)
+ dz = DCMPLX(1.0,pi): (1.00000000000000,3.14159274101257)
+ dz = CMPLX(dpi,pi): (3.14159274101257,3.14159274101257)
+ dz = DCMPLX(dpi,pi): (3.14159265358979,3.14159274101257)
+ dz = CMPLX(dpi,dpi): (3.14159274101257,3.14159274101257)
+ dz = DCMPLX(dpi,dpi): (3.14159265358979,3.14159265358979)
+ dz2 = SQRT(dz): (1.94736688784473,0.806625775861574)
+ dz2 = CDSQRT(dz): (1.94736688784473,0.806625775861574)
+ dz2 = EXP(dz): (-23.1406926327793,2.833917516278587E-015)
+ dz2 = CDEXP(dz): (-23.1406926327793,2.833917516278587E-015)
+ dz = EXP(DCMPLX(pi,pi)): (-23.1406946558029,-2.023023858027638E-006)
+ dz = CDEXP(DCMPLX(pi,pi)): (-23.1406946558029,-2.023023858027638E-006)
+ dz = EXP(DCMPLX(dpi,dpi)): (-23.1406926327793,2.833917516278587E-015)
+ dz = CDEXP(DCMPLX(dpi,dpi)): (-23.1406926327793,2.833917516278587E-015)
+ dz = CONJG(dz)*dz: (19.7392088021787,0.000000000000000E+000)
+ 
+ KIND(dz_vct):           8
+ SHAPE(dz_vct):         100
+ dz_vct(:)= (3.14159274101257,1.00000000000000)
+ Inner product of dz_vct via do loop   1086.96049503829     
+ and via DOT_PRODUCT(dz_vct,dz_vct) (1086.96049503829,0.000000000000000E+000)
+ ABS(DOT_PRODUCT(dz_vct,dz_vct))   1086.96049503829     
+ and via DOT_PRODUCT(CONJG(dz_vct),dz_vct) (886.960495038287,628.318548202515)
+ ABS(DOT_PRODUCT(CONJG(dz_vct),dz_vct))   1086.96049503829     

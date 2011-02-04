@@ -497,8 +497,8 @@ CONTAINS
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
-!!$          beta = DOT_PRODUCT(DCONJG(bvec),rvec) 
-!!$          beta = beta * DCMPLX(-alpha/dr1)
+!!$          beta = DOT_PRODUCT(bvec,rvec) 
+!!$          beta = beta * -alpha/dr1
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&

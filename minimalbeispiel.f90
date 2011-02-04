@@ -1,19 +1,25 @@
 PROGRAM main
+
+  USE tic_toc! counts calculation time
+
   IMPLICIT none
+
   COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dz_vct
   COMPLEX(KIND(0D0))                            :: dz,dz2
   COMPLEX(KIND(0E0)),DIMENSION(:),ALLOCATABLE   :: z_vct
   COMPLEX(KIND(0E0))                            :: z,z2
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dr_vct
   REAL(KIND(0D0))                            :: dr,dpi
-  REAL(KIND(0E0)),DIMENSION(:),ALLOCATABLE   :: r_vct
+  REAL(KIND(0E0)),DIMENSION(:),ALLOCATABLE   :: r_vct,r_vct2
   REAL(KIND(0E0))                            :: r,pi
-  INTEGER                              :: i,n
+  INTEGER                              :: i,n,m,j
+  INTEGER                              :: c1
+  CHARACTER (256)                       :: csz
 
-
-  n = 100
-  ALLOCATE (dz_vct(n),z_vct(n),dr_vct(n),r_vct(n))
-! REAL 
+  n = 10 ! vector size
+  m = 1 ! loop counts
+  ALLOCATE (dz_vct(n),z_vct(n),dr_vct(n),r_vct(n),r_vct2(n))
+  ! REAL 
   print*,'REAL arithmetics'
   print*,'KIND(r):',KIND(r)
   print*,'DIGITS(r):',DIGITS(r)
@@ -29,15 +35,33 @@ PROGRAM main
   r_vct = pi
   print*,'KIND(r_vct):',KIND(r_vct)
   print*,'SHAPE(r_vct):',SHAPE(r_vct)
-  print*,'r_vct(:)=',pi
-  r=0d0
-  DO i=1,n
-     r = r + r_vct(i)*r_vct(i)
+  print*,'r_vct(:)=',r_vct(1)
+  csz = 'DO LOOP::'
+  CALL TIC(c1)
+  DO j=1,m
+     r=0d0
+     DO i=1,n
+        r = r + r_vct(i)*r_vct(i)
+     END DO
   END DO
   print*,'Inner product of r_vct via do loop',r
-  print*,'and via DOT_PRODUCT(r_vct,r_vct)',DOT_PRODUCT(r_vct,r_vct)
+  CALL TOC(c1,csz)
+  DO i=1,n
+     r_vct2(i) = REAL(i)
+  END DO
+  print*,'r_vct2:',r_vct2
+  r_vct = r_vct * r_vct2
+  print*,'r_vct = r_vct * r_vct',r_vct(:)
+  STOP
+  csz = 'DOT_PROD::'
+  CALL TIC(c1)
+  DO j=1,m
+     r = DOT_PRODUCT(r_vct,r_vct)
+  END DO
+  print*,'and via DOT_PRODUCT(r_vct,r_vct)',r
+  CALL TOC(c1,csz)
   print*
-! DOUBLE PRECISION
+  ! DOUBLE PRECISION
   print*,'DOUBLE PRECISION arithmetics'
   print*,'KIND(dr):',KIND(dr)
   print*,'EPSILON(dr):',EPSILON(dr)
@@ -53,18 +77,29 @@ PROGRAM main
   dr = DSQRT(dpi)
   print*,'dr = DSQRT(dpi):',dr
   print*
-  dr_vct = dpi
+  dr_vct = 1d0/dpi
   print*,'KIND(dr_vct):',KIND(dr_vct)
   print*,'SHAPE(dr_vct):',SHAPE(dr_vct)
-  print*,'dr_vct(:)=',dpi
-  dr=0d0
-  DO i=1,n
-     dr = dr + dr_vct(i)*dr_vct(i)
+  print*,'dr_vct(:)=',dr_vct(1)
+  csz = 'DO LOOP::'
+  CALL TIC(c1)
+  DO j=1,m
+     dr=0d0
+     DO i=1,n
+        dr = dr + dr_vct(i)*dr_vct(i)
+     END DO
   END DO
   print*,'Inner product of dr_vct via do loop',dr
-  print*,'and via DOT_PRODUCT(dr_vct,dr_vct)',DOT_PRODUCT(dr_vct,dr_vct)
+  CALL TOC(c1,csz)
+  csz = 'DOT_PROD::'
+  CALL TIC(c1)
+  DO j=1,m
+     dr = DOT_PRODUCT(dr_vct,dr_vct)
+  END DO
+  print*,'and via DOT_PRODUCT(dr_vct,dr_vct)',dr
+  CALL TOC(c1,csz)
   print*
-! COMPLEX
+  ! COMPLEX
   print*,'COMPLEX arithmetics'
   print*,'KIND(z):',KIND(z)
   print*
@@ -89,32 +124,48 @@ PROGRAM main
   print*
   print*,'KIND(z_vct):',KIND(z_vct)
   print*,'SHAPE(z_vct):',SHAPE(z_vct)
-  z_vct = CMPLX(pi,1.0)
+  z_vct = 1/CMPLX(pi,1.0)
   print*,'z_vct(:)=',z_vct(1)
-  r=0.0
-  DO i=1,n
-     r = r + REAL(CONJG(z_vct(i))*z_vct(i))
+  csz = 'DO LOOP::'
+  CALL TIC(c1)
+  DO j=1,m
+     r=0.
+     DO i=1,n
+        r = r + REAL(CONJG(z_vct(i))*z_vct(i))
+     END DO
   END DO
   print*,'Inner product of dz_vct via do loop',r
-  print*,'and via DOT_PRODUCT(z_vct,z_vct)',&
-       DOT_PRODUCT(z_vct,z_vct)
-  print*,'and via DOT_PRODUCT(CONJG(dz_vct),dz_vct)',&
-       DOT_PRODUCT(CONJG(z_vct),z_vct)
-  print*,'ABS(DOT_PRODUCT(CONJG(z_vct),z_vct))',&
-       ABS(DOT_PRODUCT(CONJG(z_vct),z_vct))
+  CALL TOC(c1,csz)
+  csz = 'DOT_PROD::'
+  CALL TIC(c1)
+  DO j=1,m
+     r = DOT_PRODUCT(z_vct,z_vct)
+  END DO
+  print*,'and via DOT_PRODUCT(z_vct,z_vct)',r
+  CALL TOC(c1,csz)
+
   print*
   print*,'DOUBLE PRECISION COMPLEX arithmetics'
   print*,'KIND(dz):',KIND(dz)
-!  print*,'DIGITS(dz):',DIGITS(dz)
+  print*,'KIND(pi):',KIND(pi)
+  print*,'KIND(dpi):',KIND(dpi)
+  print*,'pi:',pi
+  print*,'dpi:',dpi
+
+  !  print*,'DIGITS(dz):',DIGITS(dz)
   print*
+  dz = CMPLX(1.0,dpi)
+  print*,'dz = CMPLX(1.0,dpi):',dz
   dz = CMPLX(1.0,pi)
-  print*,'dz = CMPLX(1.0,pi):',dz
-  dz = DCMPLX(1.0,pi)
   print*,'dz = DCMPLX(1.0,pi):',dz
-  dz = CMPLX(pi,pi)
-  print*,'dz = CMPLX(pi,pi):',dz
-  dz = DCMPLX(pi,pi)
-  print*,'dz = DCMPLX(pi,pi):',dz
+  dz = CMPLX(dpi,pi)
+  print*,'dz = CMPLX(dpi,pi):',dz
+  dz = DCMPLX(dpi,pi)
+  print*,'dz = DCMPLX(dpi,pi):',dz
+  dz = CMPLX(dpi,dpi)
+  print*,'dz = CMPLX(dpi,dpi):',dz
+  dz = DCMPLX(dpi,dpi)
+  print*,'dz = DCMPLX(dpi,dpi):',dz
   dz2 = SQRT(dz)
   print*,'dz2 = SQRT(dz):',dz2
   dz2 = CDSQRT(dz)
@@ -127,25 +178,37 @@ PROGRAM main
   print*,'dz = EXP(DCMPLX(pi,pi)):',dz2
   dz2 = CDEXP(DCMPLX(pi,pi))
   print*,'dz = CDEXP(DCMPLX(pi,pi)):',dz2
+  dz2 = EXP(DCMPLX(dpi,dpi))
+  print*,'dz = EXP(DCMPLX(dpi,dpi)):',dz2
+  dz2 = CDEXP(DCMPLX(dpi,dpi))
+  print*,'dz = CDEXP(DCMPLX(dpi,dpi)):',dz2
   dz2 = CONJG(dz)*dz
   print*,'dz = CONJG(dz)*dz:',dz2
   print*
   print*,'KIND(dz_vct):',KIND(dz_vct)
   print*,'SHAPE(dz_vct):',SHAPE(dz_vct)
-  dz_vct = DCMPLX(pi,1d0)
+  dz_vct = 1D0/DCMPLX(pi,1d0)
   print*,'dz_vct(:)=',dz_vct(1)
-  dr=0d0
-  DO i=1,n
-     dr = dr + DBLE(CONJG(dz_vct(i))*dz_vct(i))
+
+  csz = 'DO LOOP::'
+  CALL TIC(c1)
+  DO j=1,m
+     dr=0d0
+     DO i=1,n
+        dr = dr + DBLE(CONJG(dz_vct(i))*dz_vct(i))
+     END DO
   END DO
   print*,'Inner product of dz_vct via do loop',dr
-  print*,'and via DOT_PRODUCT(dz_vct,dz_vct)',&
-       DOT_PRODUCT(dz_vct,dz_vct)
-  print*,'ABS(DOT_PRODUCT(dz_vct,dz_vct))',&
-       ABS(DOT_PRODUCT(dz_vct,dz_vct))
-  print*,'and via DOT_PRODUCT(CONJG(dz_vct),dz_vct)',&
-       DOT_PRODUCT(CONJG(dz_vct),dz_vct)
-  print*,'ABS(DOT_PRODUCT(CONJG(dz_vct),dz_vct))',&
-       ABS(DOT_PRODUCT(CONJG(dz_vct),dz_vct))
-  
+  CALL TOC(c1,csz)
+  csz = 'DOT_PROD::'
+  CALL TIC(c1)
+  DO j=1,m
+     dr = DOT_PRODUCT(dz_vct,dz_vct)
+  END DO
+  print*,'and via DOT_PRODUCT(dz_vct,dz_vct)',dr
+  CALL TOC(c1,csz)
+
+  print*,'COS(ACOS(1./3.)),COS(ACOS(1d0/3))',COS(ACOS(1./3.)),&
+       COS(ACOS(1d0/3))
+
 END PROGRAM main
