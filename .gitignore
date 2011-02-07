@@ -1,7 +1,7 @@
 *.o
 *.mod
-CRMod
-CRTomo
+CRMod*
+CRTomo*
 minimal
 forfiles
 cutmckee/crerror.h
