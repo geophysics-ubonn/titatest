@@ -42,7 +42,7 @@ SUBROUTINE cholz(a,p,n,ierr)
      WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
           ACHAR(13)//'/ ',REAL( i * (100./n)),'%'
 
-     DO j = i , n
+     DO j = i , n ! working on upper triangle
 
         s = a(i,j)
 

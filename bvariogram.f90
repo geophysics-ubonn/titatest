@@ -262,7 +262,7 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='tmp.gnuplot',STATUS='old',ERR=999)
   READ (ifp,'(a)',ERR=100)fetxt
   CLOSE (ifp)
-  fetxt = TRIM(ADJUSTL(fetxt))//' < variogram.gnu'
+  fetxt = TRIM(ADJUSTL(fetxt))//' < variogram.gnu >& /dev/null'
   IF (fetxt /= '') CALL SYSTEM (TRIM(fetxt))
   
 100 DEALLOCATE (gam_x,gam_y,gam)
