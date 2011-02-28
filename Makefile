@@ -12,8 +12,8 @@ F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
-F90		= ifort
-FFLAG90		= -O3 -fast -openmp -parallel
+#F90		= ifort
+#FFLAG90		= -O3 -fast -openmp -parallel
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds
@@ -99,6 +99,9 @@ f90mini		= minimalbeispiel.o
 
 #$(forcrt):	%.o : %.for
 #		$(F90) $(FFLAG90) -c $<
+
+$(fcrm):	%.o : %.f
+		$(F90) $(FFLAG90) -c $<
 
 $(fcrt):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
