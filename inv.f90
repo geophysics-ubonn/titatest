@@ -35,6 +35,7 @@ PROGRAM inv
   USE bmcm_mod
   USE brough_mod
   USE invhpmod
+  USE ompmod
 
 !!!$   USE portlib
 
@@ -45,9 +46,6 @@ PROGRAM inv
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
-  INTEGER :: OMP_GET_MAX_THREADS
-  INTEGER :: OMP_GET_NUM_THREADS
-  INTEGER :: OMP_GET_THREAD_NUM
   INTEGER :: getpid,pid
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -70,6 +68,17 @@ PROGRAM inv
   WRITE (fprun,*)pid
   CLOSE (fprun)
 
+  !$OMP PARALLEL PRIVATE(TID)
+  TID = OMP_GET_THREAD_NUM()
+!  PRINT*,'thread count #', TID
+!!$ this is for the master thread
+  IF (TID == 0) THEN
+     NTHREADS = OMP_GET_NUM_THREADS()
+     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
+  END IF
+!!!$ all threads rejoin master thread and disband
+  !$OMP END PARALLEL
+  
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
