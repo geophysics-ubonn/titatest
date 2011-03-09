@@ -12,8 +12,10 @@ F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
-F90		= ifort
-FFLAG90		= -O3 -fast -openmp -parallel
+FFLAG90         = -pg
+
+#F90		= ifort
+#FFLAG90		= -O3 -fast -openmp #-parallel
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds
@@ -26,13 +28,15 @@ PR1		= crt
 PR2		= crm
 # macht CutMckee
 PR3		= ctm
-# Minimalbeispiel
-PR4		= minimal
+# Minimalbeispiel precision arithemtics
+PR4		= minimal_prec
+# Minimalbeispiel OMP directives
+PR5		= minimal_omp
 
 MACHINE		= $(shell uname -n)_$(F90)
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PR4) install
+all:		$(C1) $(PR1) $(PR2) $(PR3) $(PR4) $(PR5) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
@@ -91,7 +95,7 @@ f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  tic_toc.o make_noise.o get_unit.o 
 # Minimalbeispiel
-f90mini		= minimalbeispiel.o
+f90mini		= minimalbeispiel.o 
 ################################################################
 # rules
 %.o:		%.for
@@ -187,8 +191,11 @@ crm:		$(C1) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 ctm:		
 		cd ./cutmckee ; make
 
-minimal:	$(C1) $(f90mini)
+mini_prec:	$(C1) $(f90mini)
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
+
+mini_omp:	$(C1) minimal_omp.f90 
+		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
 install:	$(C1) $(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
