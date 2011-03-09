@@ -70,7 +70,7 @@ fcrt		= inv.o
 f90crm		= alloci.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
 		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o \
-		  pathmod.o
+		  pathmod.o ompmod.o
 
 fcrm		= fem.o
 
