@@ -66,6 +66,10 @@ subroutine bsendc()
 
 !!!$     Sensitivitaetenfeld auf Null setzen
   sensdc = 0D0
+  !$OMP PARALLEL DEFAULT(none) &
+  !$OMP FIRSTPRIVATE(hsens) &
+  !$OMP SHARED(kpotdc,sensdc,sigma,volt,elbg,nanz,lverb,iel,elec1,elec2)
+  !$OMP DO SCHEDULE(STATIC)
 
 !!!$     Messwert hochzaehlen
   do i=1,nanz
@@ -157,7 +161,9 @@ subroutine bsendc()
         end do ! jnel=1,nelanz(i)
      end do ! ityp=1,typanz
   end do ! i=1,nanz
-  
+  !$OMP END DO
+  !$OMP END PARALLEL
+
   DEALLOCATE (hsens)
   
 end subroutine bsendc
