@@ -35,8 +35,8 @@ subroutine chol()
 
   m1 = mb+1
 
-  !$OMP PARALLEL PRIVATE(idi,i0,ij,j0,s,k,i,j,fi) 
-  !$OMP DO ORDERED
+  !$OMP PARALLEL PRIVATE(idi,i0,ij,j0,s,k,i,j,fi)
+  !$OMP DO ORDERED SCHEDULE(GUIDED,32)
   do i=1,sanz
      !$OMP ORDERED
      idi = i*m1

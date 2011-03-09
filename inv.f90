@@ -35,6 +35,7 @@ PROGRAM inv
   USE bmcm_mod
   USE brough_mod
   USE invhpmod
+  USE omp_lib
   USE ompmod
 
 !!!$   USE portlib
@@ -69,13 +70,13 @@ PROGRAM inv
   CLOSE (fprun)
 
   !$OMP PARALLEL PRIVATE(TID)
-  TID = OMP_GET_THREAD_NUM()
-!  PRINT*,'thread count #', TID
-!!$ this is for the master thread
-  IF (TID == 0) THEN
-     NTHREADS = OMP_GET_NUM_THREADS()
-     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
-  END IF
+!!$  TID = OMP_GET_THREAD_NUM()
+!!$  PRINT*,'thread count #', TID
+!!$!!!$ this is for the master thread
+!!$  IF (TID == 0) THEN
+!!$     NTHREADS = OMP_GET_NUM_THREADS()
+!!$     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
+!!$  END IF
 !!!$ all threads rejoin master thread and disband
   !$OMP END PARALLEL
   
