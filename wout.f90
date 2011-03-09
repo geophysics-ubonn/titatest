@@ -89,7 +89,7 @@ subroutine wout(kanal,dsigma,dvolt)
         dum3 = CDABS(dcmplx(1d0)/sigma(i))
         dum2 = CDABS(dcmplx(1d0)/cdexp(m0(mnr(i))))
         !     dum3 = REAL(CDLOG(sigma(i))/m0(mnr(i)))
-        write(kanal,'(3(f10.4,2x))',err=1000)REAL(espx(i)),&
+        write(kanal,*,err=1000)REAL(espx(i)),&
              REAL(espy(i)),real(dlog10(dum3))
 !!$        write(kanal,'(7(f10.4,2x))',err=1000)REAL(espx(i)),&
 !!$             REAL(espy(i)),real(dlog10(dum3)),&

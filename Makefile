@@ -41,7 +41,7 @@ f90crt		= alloci.o femmod.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
 		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  invhpmod.o
+		  invhpmod.o ompmod.o
 
 f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  bessi0.o bessi1.o bessk0.o bessk1.o \
@@ -99,6 +99,9 @@ f90mini		= minimalbeispiel.o
 
 #$(forcrt):	%.o : %.for
 #		$(F90) $(FFLAG90) -c $<
+
+$(fcrm):	%.o : %.f
+		$(F90) $(FFLAG90) -c $<
 
 $(fcrt):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<

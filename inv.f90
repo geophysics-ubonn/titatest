@@ -35,6 +35,8 @@ PROGRAM inv
   USE bmcm_mod
   USE brough_mod
   USE invhpmod
+  USE omp_lib
+  USE ompmod
 
 !!!$   USE portlib
 
@@ -45,9 +47,6 @@ PROGRAM inv
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
-  INTEGER :: OMP_GET_MAX_THREADS
-  INTEGER :: OMP_GET_NUM_THREADS
-  INTEGER :: OMP_GET_THREAD_NUM
   INTEGER :: getpid,pid
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -70,6 +69,17 @@ PROGRAM inv
   WRITE (fprun,*)pid
   CLOSE (fprun)
 
+  !$OMP PARALLEL PRIVATE(TID)
+!!$  TID = OMP_GET_THREAD_NUM()
+!!$  PRINT*,'thread count #', TID
+!!$!!!$ this is for the master thread
+!!$  IF (TID == 0) THEN
+!!$     NTHREADS = OMP_GET_NUM_THREADS()
+!!$     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
+!!$  END IF
+!!!$ all threads rejoin master thread and disband
+  !$OMP END PARALLEL
+  
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
@@ -480,7 +490,7 @@ PROGRAM inv
                  IF (lffhom) THEN
                     write(*,*)&
                          ' ******* Restarting phase model ********'
-                    write(fprun,*)&
+                    write(fpinv,*)&
                          ' ******* Restarting phase model ********'
                     fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
                     OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
@@ -512,8 +522,8 @@ PROGRAM inv
            else
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
-              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-                   'WRITING MODEL ITERATE',it,''
+!!$              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
+!!$                   'WRITING MODEL ITERATE',it,''
               call wout(kanal,dsigma,dvolt)
               if (errnr.ne.0) goto 999
            end if

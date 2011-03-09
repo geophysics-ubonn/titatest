@@ -3,12 +3,12 @@ MODULE femmod
 !!$ ---------------------------------------------------------
 !!$ this module contains some bigger arrays from fem.fin and should 
 !!$ replace fem.fin   -.-
-!!$ Copyright by Andreas Kemna 2010
-!!$ Written by R. Martin 2010
+!!$ Copyright and written by Andreas Kemna
+!!$ Edited by R. Martin 2010
 !!$
 !!$ included from FEM.FIN!!! COMPLEXs
 !!$
-!!$ Berechnete Potentialwerte (bzw. Loesungsverktor)
+!!$ Berechnete Potentialwerte (bzw. Loesungsvektor)
   COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pot
 !!$ Analytische berechnete Potentialwerte 
   COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pota
@@ -16,7 +16,7 @@ MODULE femmod
   COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: b
 !!$ included from FEM.FIN!!! REALs
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: bdc
-!!$ Skalirerungsfaktor
+!!$ Skalierungsfaktor
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: fak
 !!$ Elementbeitraege
   REAL (KIND(0D0)), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: elbg

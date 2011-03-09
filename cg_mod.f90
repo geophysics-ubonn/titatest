@@ -540,7 +540,7 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-
+    
   end subroutine cjggra
 
   subroutine bp()
