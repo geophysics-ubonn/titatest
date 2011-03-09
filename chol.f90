@@ -1,4 +1,4 @@
-subroutine chol()
+subroutine chol(a_chol)
 
 !!!$     Cholesky-Zerlegung der positiv definiten Matrix 'a'; erfolgt auf dem
 !!!$     Platz von 'a', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
@@ -22,7 +22,8 @@ subroutine chol()
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-
+  COMPLEX (KIND(0D0)),DIMENSION(*) :: a_chol
+  
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idi,i0,ij,j0
   INTEGER (KIND = 4)  ::     m1,fi
@@ -35,10 +36,7 @@ subroutine chol()
 
   m1 = mb+1
 
-  !$OMP PARALLEL PRIVATE(idi,i0,ij,j0,s,k,i,j,fi)
-  !$OMP DO ORDERED SCHEDULE(GUIDED)
   do i=1,sanz
-     !$OMP ORDERED
      idi = i*m1
      fi  = max0(1,i-mb)
      i0  = idi-i
@@ -47,33 +45,31 @@ subroutine chol()
         
         ij = i0+j
         j0 = j*mb
-        s  = a(ij)
+        s  = a_chol(ij)
 
         do k=fi,j-1
-           s = s - a(i0+k)*a(j0+k)
+           s = s - a_chol(i0+k)*a_chol(j0+k)
         END do
 
         if (j.lt.i) then
 
-           a(ij) = s / a(j*m1)
+           a_chol(ij) = s / a_chol(j*m1)
 
         else
 
            if (cdabs(s).le.0d0) then
               fetxt = ' '
               errnr = 28
-              STOP
+              GOTO 1000
            end if
 
-           a(idi) = cdsqrt(s)
+           a_chol(idi) = cdsqrt(s)
 
         end if
 
      END do
-     !$OMP END ORDERED
   END do
-  !$OMP END DO
-  !$OMP END PARALLEL
+
   errnr = 0
   return
 

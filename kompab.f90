@@ -1,4 +1,4 @@
-subroutine kompab(nelec,ki)
+subroutine kompab(nelec,ki,a_komp,b_komp)
 
 !!!$     Unterprogramm zur Kompilation der FE-Matrix 'a' in Bandform
 !!!$     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'b'
@@ -23,6 +23,9 @@ subroutine kompab(nelec,ki)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
+
+  COMPLEX (KIND (0D0)),DIMENSION(*) ::     a_komp
+  COMPLEX (KIND (0D0)),DIMENSION(*) ::     b_komp
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -60,17 +63,17 @@ subroutine kompab(nelec,ki)
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
   im = (mb+1)*sanz
   
-  a = DCMPLX(0D0)
-!!$
-!!$  do i=1,im
-!!$     a(i) = dcmplx(0d0)
-!!$  end do
+! a_komp = DCMPLX(0D0)
 
-  b = DCMPLX(0D0)
-!!$
-!!$  do i=1,sanz
-!!$     b(i) = dcmplx(0d0)
-!!$  end do
+  do i=1,im
+     a_komp(i) = dcmplx(0d0)
+  end do
+
+! b_komp = DCMPLX(0D0)
+
+  do i=1,sanz
+     b_komp(i) = dcmplx(0d0)
+  end do
 
   iel = 0
 
@@ -116,12 +119,12 @@ subroutine kompab(nelec,ki)
                     idum = iel
                  end if
 
-                 a(im) = a(im) + dcmplx(dum) * sigma(idum)
+                 a_komp(im) = a_komp(im) + dcmplx(dum) * sigma(idum)
 
                  if (lsr) then
                     dum2   = dcmplx(dum) * (sigma(idum)-sigma0)
-                    b(nzp) = b(nzp) + dum2 * pota(nnp)
-                    if (nnp.ne.nzp) b(nnp) = b(nnp) + dum2 * pota(nzp)
+                    b_komp(nzp) = b_komp(nzp) + dum2 * pota(nnp)
+                    if (nnp.ne.nzp) b_komp(nnp) = b_komp(nnp) + dum2 * pota(nzp)
                  end if
               end if
            end do
@@ -130,28 +133,28 @@ subroutine kompab(nelec,ki)
   end do
 
 !!!$     Ggf. Konstantenvektor belegen
-  if (.not.lsr) b(enr(nelec)) = dcmplx(-1d0)
+  if (.not.lsr) b_komp(enr(nelec)) = dcmplx(-1d0)
 
 !!!$     akc BAW-Tank
-!!!$     ak        b(211) = dcmplx(1d0)
+!!!$     ak        b_komp(211) = dcmplx(1d0)
 !!!$     akc Model EGS2003
-!!!$     ak        b(1683) = dcmplx(1d0)
+!!!$     ak        b_komp(1683) = dcmplx(1d0)
 !!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        b(129) = dcmplx(1d0)
+!!!$     ak        b_komp(129) = dcmplx(1d0)
 !!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        b(497) = dcmplx(1d0)
+!!!$     ak        b_komp(497) = dcmplx(1d0)
 !!!$     akc Simple Tucson Model
-!!!$     ak        b(431) = dcmplx(1d0)
+!!!$     ak        b_komp(431) = dcmplx(1d0)
 !!!$     akc TU Berlin Mesokosmos
-!!!$     ak        b(201) = dcmplx(1d0)
+!!!$     ak        b_komp(201) = dcmplx(1d0)
 !!!$     akc Andy
-!!!$     ak        b(2508) = dcmplx(1d0)
+!!!$     ak        b_komp(2508) = dcmplx(1d0)
 !!!$     akc Sandra (ele?_anom)
-!!!$     ak        b(497) = dcmplx(1d0)
+!!!$     ak        b_komp(497) = dcmplx(1d0)
 !!!$     akc Adrian (Tank)
-!!!$     ak        b(1660) = dcmplx(1d0)
+!!!$     ak        b_komp(1660) = dcmplx(1d0)
 
-  if (lsink) b(nsink) = dcmplx(1d0)
+  if (lsink) b_komp(nsink) = dcmplx(1d0)
 
   errnr = 0
   return

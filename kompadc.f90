@@ -1,4 +1,4 @@
-subroutine kompadc(nelec,ki)
+subroutine kompadc(nelec,ki,a_komp,b_komp)
 
 !!!$     Unterprogramm zur Kompilation der FE-Matrix 'adc' in Bandform
 !!!$     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'bdc'
@@ -23,6 +23,8 @@ subroutine kompadc(nelec,ki)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
+  REAL (KIND (0D0)),DIMENSION(*) ::     a_komp
+  REAL (KIND (0D0)),DIMENSION(*) ::     b_komp
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -60,8 +62,15 @@ subroutine kompadc(nelec,ki)
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
   im = (mb+1)*sanz
 
-  adc = 0D0
-  bdc = 0D0
+!!$  a_komp = 0D0
+!!$  b_komp = 0D0
+  do i=1,im
+     a_komp(i) = 0d0
+  end do
+
+  do i=1,sanz
+     b_komp(i) = 0d0
+  end do
 
   iel = 0
 
@@ -107,12 +116,12 @@ subroutine kompadc(nelec,ki)
                     idum = iel
                  end if
 
-                 adc(im) = adc(im) + dum * dble(sigma(idum))
+                 a_komp(im) = a_komp(im) + dum * dble(sigma(idum))
 
                  if (lsr) then
                     dum2     = dum * dble(sigma(idum)-sigma0)
-                    bdc(nzp) = bdc(nzp) + dum2 * dble(pota(nnp))
-                    if (nnp.ne.nzp) bdc(nnp) = bdc(nnp) + dum2 * &
+                    b_komp(nzp) = b_komp(nzp) + dum2 * dble(pota(nnp))
+                    if (nnp.ne.nzp) b_komp(nnp) = b_komp(nnp) + dum2 * &
                          dble(pota(nzp))
                  end if
 
@@ -124,26 +133,26 @@ subroutine kompadc(nelec,ki)
   end do ! i=1,typanz
   
 !!!$     Ggf. Konstantenvektor belegen
-  if (.not.lsr) bdc(enr(nelec)) = -1d0
+  if (.not.lsr) b_komp(enr(nelec)) = -1d0
 
 !!!$     akc BAW-Tank
-!!!$     ak        bdc(211) = 1d0
+!!!$     ak        b_komp(211) = 1d0
 !!!$     akc Model EGS2003
-!!!$     ak        bdc(1683) = 1d0
+!!!$     ak        b_komp(1683) = 1d0
 !!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        bdc(129) = 1d0
+!!!$     ak        b_komp(129) = 1d0
 !!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        bdc(497) = 1d0
+!!!$     ak        b_komp(497) = 1d0
 !!!$     akc Simple Tucson Model
-!!!$     ak        bdc(431) = 1d0
+!!!$     ak        b_komp(431) = 1d0
 !!!$     akc TU Berlin Mesokosmos
-!!!$     ak        bdc(201) = 1d0
+!!!$     ak        b_komp(201) = 1d0
 !!!$     akc Andy
-!!!$     ak        bdc(2508) = 1d0
+!!!$     ak        b_komp(2508) = 1d0
 !!!$     akc Sandra (ele?_anom)
-!!!$     ak        bdc(497) = 1d0
+!!!$     ak        b_komp(497) = 1d0
 
-  if (lsink) bdc(nsink) = 1d0
+  if (lsink) b_komp(nsink) = 1d0
 
   errnr = 0
   return

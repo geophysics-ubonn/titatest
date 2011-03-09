@@ -1,4 +1,4 @@
-subroutine choldc()
+subroutine choldc(a_chol)
 
 !!!$  Cholesky-Zerlegung der positiv definiten Matrix 'adc'; erfolgt auf dem
 !!!$  Platz von 'adc', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
@@ -19,6 +19,7 @@ subroutine choldc()
 
 
 !!!$.....................................................................
+  REAL (KIND(0D0)),DIMENSION(*)    ::  a_chol
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
@@ -44,15 +45,15 @@ subroutine choldc()
 
         ij = i0+j
         j0 = j*mb
-        s  = adc(ij)
+        s  = a_chol(ij)
 
         do k=fi,j-1
-           s = s - adc(i0+k)*adc(j0+k)
+           s = s - a_chol(i0+k)*a_chol(j0+k)
         END do
 
         if (j.lt.i) then
 
-           adc(ij) = s / adc(j*m1)
+           a_chol(ij) = s / a_chol(j*m1)
 
         else
 
@@ -62,7 +63,7 @@ subroutine choldc()
               goto 1000
            end if
 
-           adc(idi) = dsqrt(s)
+           a_chol(idi) = dsqrt(s)
 
         end if
 

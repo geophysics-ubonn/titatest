@@ -264,6 +264,10 @@ PROGRAM inv
            fetxt = 'allocation problem adc'
            IF (errnr /= 0) GOTO 999
 
+!$omp parallel default(none) &
+!$omp shared(enr,kpotdc,kwnanz,swrtr,eanz,lsr,lbeta,lrandb,lrandb2,sanz,hpotdc,lverb,errnr) &
+!$omp firstprivate(pota,j,l,k,fak,pot,adc,bdc,fetxt) 
+!$omp do 
 !!!$   DC CASE
            do k=1,kwnanz
               fetxt = 'DC-Calculation wavenumber'
@@ -276,8 +280,8 @@ PROGRAM inv
 
 !!!$   Compilation of the linear system
                     fetxt = 'kompadc'
-                    call kompadc(l,k)
-                    if (errnr.ne.0) goto 999
+                    call kompadc(l,k,adc,bdc)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Evtl take Dirichlet boundary values into account
                     if (lrandb) call randdc()
@@ -285,22 +289,22 @@ PROGRAM inv
 
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
-                    call scaldc()
-                    if (errnr.ne.0) goto 999
+                    call scaldc(adc,bdc,fak)
+!                    if (errnr.ne.0) goto 999
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
-                    call choldc()
-                    if (errnr.ne.0) goto 999
+                    call choldc(adc)
+!                    if (errnr.ne.0) goto 999
 
                  else
                     fetxt = 'kompbdc'
 !!!$   Modification of the current vector (Left Hand Side)
-                    call kompbdc(l)
+                    call kompbdc(l,bdc,fak)
                  end if
 
 !!!$   Solve linear system
                  fetxt = 'vredc'
-                 call vredc()
+                 call vredc(adc,bdc,pot)
 
 !!!$   Scale back the potentials, save them and evtually add 
 !!!$   the analytical response
@@ -312,6 +316,9 @@ PROGRAM inv
                  end do
               end do
            end do
+!$omp end do
+!$OMP BARRIER
+!$omp end parallel
 
         else
 
@@ -324,7 +331,10 @@ PROGRAM inv
            fetxt = 'allocation problem b'
            ALLOCATE (b(sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
-
+!$omp parallel default(none) &
+!$omp shared(enr,kpot,kwnanz,swrtr,eanz,lsr,lbeta,lrandb,lrandb2,sanz,hpot,lverb,errnr) &
+!$omp firstprivate(pota,j,l,k,fak,pot,a,b,fetxt) 
+!$omp do 
 !!!$   COMPLEX CASE
            do k=1,kwnanz
               fetxt = 'IP-Calculation wavenumber'
@@ -338,8 +348,8 @@ PROGRAM inv
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
-                    call kompab(l,k)
-                    if (errnr.ne.0) goto 999
+                    call kompab(l,k,a,b)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
                     if (lrandb) call randb()
@@ -347,24 +357,24 @@ PROGRAM inv
 
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'
-                    call scalab()
-                    if (errnr.ne.0) goto 999
+                    call scalab(a,b,fak)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
                     fetxt = 'chol'
-                    call chol()
-                    if (errnr.ne.0) goto 999
+                    call chol(a)
+!                    if (errnr.ne.0) goto 999
                  else
 
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
-                    call kompb(l)
+                    call kompb(l,b,fak)
 
                  end if
 
 !!!$   Gleichungssystem loesen
                  fetxt = 'vre'
-                 call vre()
+                 call vre(a,b,pot)
 
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
@@ -375,6 +385,9 @@ PROGRAM inv
                  end do
               end do
            end do
+!$omp end do
+!$OMP BARRIER
+!$omp end parallel
 
         end if
 

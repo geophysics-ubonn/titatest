@@ -12,7 +12,7 @@ F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
-FFLAG90         = -pg
+#FFLAG90         = -pg
 
 #F90		= ifort
 #FFLAG90		= -O3 -fast -openmp #-parallel

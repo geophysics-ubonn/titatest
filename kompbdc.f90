@@ -1,4 +1,4 @@
-subroutine kompbdc(nelec)
+subroutine kompbdc(nelec,b_komp,fak_komp)
 
 !!!$     Unterprogramm zur Kompilation des Konstanten- bzw. Stromvektors 'bdc'
 !!!$     fuer Einheitsstrom.
@@ -17,7 +17,8 @@ subroutine kompbdc(nelec)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
-
+  REAL (KIND(0D0)),DIMENSION (*) :: b_komp
+  REAL (KIND(0D0)),DIMENSION (*) :: fak_komp
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
 
@@ -26,19 +27,19 @@ subroutine kompbdc(nelec)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-!!$  INTEGER (KIND = 4) ::     i
+  INTEGER (KIND = 4) ::     i
 
 !!!$.....................................................................
 
 !!!$     Konstantenvektor auf Null setzen
-  bdc = 0D0
-!!$  do i=1,sanz
-!!$     bdc(i) = 0d0
-!!$  end do
+!!$  b_komp = 0D0
+  do i=1,sanz
+     b_komp(i) = 0d0
+  end do
 
 !!!$     Aufbau des Konstanten- bzw. Stromvektors mit Skalierung
 !!!$     ( A * x + b = 0 )
-  bdc(enr(nelec)) = -fak(enr(nelec))
+  b_komp(enr(nelec)) = -fak_komp(enr(nelec))
 
 !!!$     akc BAW-Tank
 !!!$     ak        bdc(211) = fak(211)
@@ -57,7 +58,6 @@ subroutine kompbdc(nelec)
 !!!$     akc Sandra (ele?_anom)
 !!!$     ak        bdc(497) = fak(497)
 
-  if (lsink) bdc(nsink) = fak(nsink)
+  if (lsink) b_komp(nsink) = fak_komp(nsink)
 
-  return
 end subroutine kompbdc
