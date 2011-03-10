@@ -35,10 +35,7 @@ subroutine chol()
 
   m1 = mb+1
 
-  !$OMP PARALLEL PRIVATE(idi,i0,ij,j0,s,k,i,j,fi)
-  !$OMP DO ORDERED SCHEDULE(GUIDED,32)
   do i=1,sanz
-     !$OMP ORDERED
      idi = i*m1
      fi  = max0(1,i-mb)
      i0  = idi-i
@@ -62,7 +59,7 @@ subroutine chol()
            if (cdabs(s).le.0d0) then
               fetxt = ' '
               errnr = 28
-              STOP
+              GOTO 1000
            end if
 
            a(idi) = cdsqrt(s)
@@ -70,10 +67,7 @@ subroutine chol()
         end if
 
      END do
-     !$OMP END ORDERED
   END do
-  !$OMP END DO
-  !$OMP END PARALLEL
   errnr = 0
   return
 
