@@ -581,6 +581,11 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   if (errnr.ne.0) goto 999
 
   IF (lsink) THEN
+     IF (nsink > sanz) THEN
+        PRINT*,'Sink node > grid nodes'
+        errnr = 3
+        GOTO 999
+     END IF
      WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',&
           nsink,sx(snr(nsink)),sy(snr(nsink))
 !!!$         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',

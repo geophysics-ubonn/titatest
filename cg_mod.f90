@@ -200,7 +200,7 @@ CONTAINS
 !!!$....................................................................
 
     !$OMP PARALLEL DEFAULT(SHARED)
-    !$OMP DO SCHEDULE(DYNAMIC)
+    !$OMP DO
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
        apdc(i) = 0d0
@@ -216,7 +216,6 @@ CONTAINS
        end if
     end do
     !$OMP END DO
-    !$OMP BARRIER
     !$OMP END PARALLEL
   END SUBROUTINE bapdc
 
@@ -364,7 +363,7 @@ CONTAINS
 !!!$....................................................................
 
     !$OMP PARALLEL DEFAULT(SHARED)
-    !$OMP DO SCHEDULE(DYNAMIC)
+    !$OMP DO
     do j=1,manz
        dum = 0d0
 
@@ -384,7 +383,6 @@ CONTAINS
        bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
     !$OMP END DO
-    !$OMP BARRIER
     !$OMP END PARALLEL
 
   end subroutine bbdc
@@ -503,7 +501,7 @@ CONTAINS
 
 !!!$    A * p  berechnen (skaliert)
     !$OMP PARALLEL DEFAULT(SHARED)
-    !$OMP DO SCHEDULE(STATIC)
+    !$OMP DO
     do i=1,nanz
        ap(i) = dcmplx(0d0)
        
@@ -659,7 +657,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    
     !$OMP PARALLEL DEFAULT(SHARED)
-    !$OMP DO SCHEDULE(STATIC)
+    !$OMP DO
 
     do j=1,manz
        cdum = dcmplx(0d0)

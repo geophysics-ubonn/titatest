@@ -264,10 +264,11 @@ PROGRAM inv
            fetxt = 'allocation problem adc'
            IF (errnr /= 0) GOTO 999
 
-!$omp parallel default(none) &
-!$omp shared(enr,kpotdc,kwnanz,swrtr,eanz,lsr,lbeta,lrandb,lrandb2,sanz,hpotdc,lverb,errnr) &
-!$omp firstprivate(pota,j,l,k,fak,pot,adc,bdc,fetxt) 
-!$omp do 
+!$OMP PARALLEL DEFAULT (none) &
+!$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
+!$OMP PRIVATE (j,l) &
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc)           
+!$OMP DO 
 !!!$   DC CASE
            do k=1,kwnanz
               fetxt = 'DC-Calculation wavenumber'
@@ -278,7 +279,7 @@ PROGRAM inv
 !!!$   Evtl calculation of analytical potentials
                     if (lsr) call potana(l,k)
 
-!!!$   Compilation of the linear system
+!!!$   COMPilation of the linear system
                     fetxt = 'kompadc'
                     call kompadc(l,k,adc,bdc)
 !                    if (errnr.ne.0) goto 999
@@ -298,7 +299,7 @@ PROGRAM inv
 
                  else
                     fetxt = 'kompbdc'
-!!!$   Modification of the current vector (Left Hand Side)
+!!!$   Modification of the current vector (Right Hand Side)
                     call kompbdc(l,bdc,fak)
                  end if
 
@@ -316,9 +317,8 @@ PROGRAM inv
                  end do
               end do
            end do
-!$omp end do
-!$OMP BARRIER
-!$omp end parallel
+!$OMP END DO
+!$OMP END PARALLEL
 
         else
 
@@ -331,10 +331,11 @@ PROGRAM inv
            fetxt = 'allocation problem b'
            ALLOCATE (b(sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
-!$omp parallel default(none) &
-!$omp shared(enr,kpot,kwnanz,swrtr,eanz,lsr,lbeta,lrandb,lrandb2,sanz,hpot,lverb,errnr) &
-!$omp firstprivate(pota,j,l,k,fak,pot,a,b,fetxt) 
-!$omp do 
+!$OMP PARALLEL DEFAULT (none) &
+!$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
+!$OMP PRIVATE (j,l,k) &
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot)           
+!$OMP DO
 !!!$   COMPLEX CASE
            do k=1,kwnanz
               fetxt = 'IP-Calculation wavenumber'
@@ -346,7 +347,7 @@ PROGRAM inv
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
                     if (lsr) call potana(l,k)
 
-!!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+!!!$   KOMPilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
                     call kompab(l,k,a,b)
 !                    if (errnr.ne.0) goto 999
@@ -385,9 +386,8 @@ PROGRAM inv
                  end do
               end do
            end do
-!$omp end do
-!$OMP BARRIER
-!$omp end parallel
+!$OMP END DO
+!$OMP END PARALLEL
 
         end if
 

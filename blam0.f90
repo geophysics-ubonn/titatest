@@ -26,7 +26,7 @@ subroutine blam0()
   REAL (KIND(0D0))    ::   dum
 
 !!!$     Indexvariablen
-  INTEGER (KIND = 4)  ::  i,j,k
+  INTEGER (KIND = 4)  ::  i,j,k,i_count
 
 !!!$.....................................................................
 
@@ -39,11 +39,14 @@ subroutine blam0()
   END IF
 
   lammax = 0d0
-
+  i_count = 0
+  !$OMP PARALLEL DEFAULT (SHARED) PRIVATE(i,k,dum)
   if (ldc) then
+     !$OMP DO
      do j=1,manz
+        i_count = i_count + 1
         IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+             'blam0/ ',REAL( i_count * (100./manz)),'%'
         dum = 0d0
 
         do i=1,nanz
@@ -55,12 +58,13 @@ subroutine blam0()
 
         lammax = lammax + dabs(dum)
      end do
-
+     !$OMP END DO
   else if (lip) then
-
+     !$OMP DO
      do j=1,manz
+        i_count = i_count + 1
         IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+             'blam0/ ',REAL( i_count * (100./manz)),'%'
         dum = 0d0
 
         do i=1,nanz
@@ -72,12 +76,13 @@ subroutine blam0()
 
         lammax = lammax + dabs(dum)
      end do
-
+     !$OMP END DO
   else
-
+     !$OMP DO
      do j=1,manz
-        IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+        i_count = i_count + 1
+        IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+             'blam0/ ',REAL( i_count * (100./manz)),'%'
         cdum = dcmplx(0d0)
 
         do i=1,nanz
@@ -91,6 +96,7 @@ subroutine blam0()
      end do
 
   end if
+  !$OMP END PARALLEL
 
   lammax = lammax/dble(manz)
 

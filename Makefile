@@ -10,8 +10,9 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
-#FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
-		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
+FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
+FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
+		-fimplicit-none -fno-signed-zeros -ffinite-math-only
 #FFLAG90         = -pg
 
 #F90		= ifort
@@ -191,10 +192,10 @@ crm:		$(C1) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 ctm:		
 		cd ./cutmckee ; make
 
-mini_prec:	$(C1) $(f90mini)
+minimal_prec:	$(C1) $(f90mini)
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
 
-mini_omp:	$(C1) minimal_omp.f90 
+minimal_omp:	$(C1) minimal_omp.f90 
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
 install:	$(C1) $(crt) $(crm)				
