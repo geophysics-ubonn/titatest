@@ -43,7 +43,7 @@ PROGRAM inv
   IMPLICIT none
 
   CHARACTER(256)         :: ftext
-  INTEGER                :: c1,i
+  INTEGER                :: c1,i,count
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
@@ -252,7 +252,7 @@ PROGRAM inv
              ' : Calculating Potentials'
 
 !!!$   MODELLING
-
+        count = 0
         if (ldc) then
            fetxt = 'allocation problem adc'
            ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
@@ -267,13 +267,15 @@ PROGRAM inv
 !$OMP PARALLEL DEFAULT (none) &
 !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
 !$OMP PRIVATE (j,l) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg)           
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count)           
 !$OMP DO 
 !!!$   DC CASE
            do k=1,kwnanz
+              !$OMP ATOMIC
+              count = count + 1
               fetxt = 'DC-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   ACHAR(13)//TRIM(fetxt),k,''
+                   ACHAR(13)//TRIM(fetxt),count,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 !!!$   Evtl calculation of analytical potentials
@@ -313,7 +315,6 @@ PROGRAM inv
                     if (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
                          dble(pota(j))
                     if (swrtr.eq.0) hpotdc(j,l) = kpotdc(j,l,k)
-                    IF (kpotdc(j,l,k)<EPSILON(0D0)) print*,'vre',j,l,k,kpotdc(j,l,k),pot(j)
                  end do
               end do
            end do
@@ -334,13 +335,15 @@ PROGRAM inv
 !$OMP PARALLEL DEFAULT (none) &
 !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
 !$OMP PRIVATE (j,l,k) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot)           
-!$OMP DO
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
+           !$OMP DO
 !!!$   COMPLEX CASE
            do k=1,kwnanz
+              !$OMP ATOMIC
+              count = count + 1
               fetxt = 'IP-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   ACHAR(13)//TRIM(fetxt),k,''
+                   ACHAR(13)//TRIM(fetxt),count,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 

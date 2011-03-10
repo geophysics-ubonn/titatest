@@ -199,7 +199,8 @@ CONTAINS
 
 !!!$....................................................................
 
-    !$OMP PARALLEL DEFAULT(SHARED)
+    !$OMP PARALLEL DEFAULT(none) &
+    !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
     !$OMP DO
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
@@ -215,7 +216,6 @@ CONTAINS
           end do
        end if
     end do
-    !$OMP END DO
     !$OMP END PARALLEL
   END SUBROUTINE bapdc
 
@@ -362,7 +362,8 @@ CONTAINS
 
 !!!$....................................................................
 
-    !$OMP PARALLEL DEFAULT(SHARED)
+    !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
+    !$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
     !$OMP DO
     do j=1,manz
        dum = 0d0
@@ -382,7 +383,6 @@ CONTAINS
        bvecdc(j) = dum + lam*bvecdc(j)
        bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
-    !$OMP END DO
     !$OMP END PARALLEL
 
   end subroutine bbdc
@@ -500,7 +500,8 @@ CONTAINS
 !!!$....................................................................
 
 !!!$    A * p  berechnen (skaliert)
-    !$OMP PARALLEL DEFAULT(SHARED)
+    !$OMP PARALLEL DEFAULT(none) &
+    !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
     !$OMP DO
     do i=1,nanz
        ap(i) = dcmplx(0d0)
@@ -656,7 +657,8 @@ CONTAINS
 
 !!!$....................................................................
 !!!$    
-    !$OMP PARALLEL DEFAULT(SHARED)
+    !$OMP PARALLEL DEFAULT(none) PRIVATE (cdum) &
+    !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
     !$OMP DO
 
     do j=1,manz
@@ -671,7 +673,6 @@ CONTAINS
        bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
-    !$OMP END DO
     !$OMP END PARALLEL
 
   END SUBROUTINE bb

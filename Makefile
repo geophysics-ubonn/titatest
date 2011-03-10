@@ -10,8 +10,8 @@ WPATH 		= ~/bin
 
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
-FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
-FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
+#FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
+#FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-signed-zeros -ffinite-math-only
 #FFLAG90         = -pg
 

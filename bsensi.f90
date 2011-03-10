@@ -68,13 +68,17 @@ subroutine bsensi()
   sens = 0.
   count = 0
   !$OMP PARALLEL DEFAULT (SHARED) &
+!  !$OMP SHARED (nanz,count,lverb,strnr,vnr,typanz,typ,selanz,nelanz,kwnanz,nrel,imin,imn,kpot,elbg,swrtr,kwnwi,pi,sens,mnr,sigma,volt) &
   !$OMP FIRSTPRIVATE (hsens) &
   !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
   !$OMP DO
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
+     !$OMP ATOMIC
      count = count + 1
+!     !$OMP FLUSH(count)
+
      IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
           'sens/ ',REAL( count * (100./nanz)),'%'
 

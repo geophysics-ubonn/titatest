@@ -40,7 +40,7 @@ subroutine bsendc()
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  :: ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  :: i,j,k,i_count
+  INTEGER (KIND = 4)  :: i,j,k,count
 
 !!!$     Hilfsfeld
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
@@ -66,17 +66,19 @@ subroutine bsendc()
 
 !!!$     Sensitivitaetenfeld auf Null setzen
   sensdc = 0D0
-  i_count  = 0
+  count  = 0
   !$OMP PARALLEL DEFAULT (SHARED) &
   !$OMP FIRSTPRIVATE (hsens) &
   !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
   !$OMP DO
-
 !!!$     Messwert hochzaehlen
   do i=1,nanz
-     i_count = i_count + 1
+
+     !$OMP ATOMIC
+     count = count + 1
+
      IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-          'Sensitivity/ ',REAL( i_count * (100./nanz)),'%'
+          'Sensitivity/ ',REAL( count * (100./nanz)),'%'
      iel = 0
 
 !!!$     Stromelektroden bestimmen
@@ -163,7 +165,6 @@ subroutine bsendc()
         end do ! jnel=1,nelanz(i)
      end do ! ityp=1,typanz
   end do ! i=1,nanz
-  !$OMP END DO
   !$OMP END PARALLEL
 
   DEALLOCATE (hsens)

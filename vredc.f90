@@ -24,7 +24,7 @@ subroutine vredc(a_vre,b_vre,pot_vre)
 !!!$     PROGRAMMINTERNE PARAMETER:
   REAL(KIND(0D0)),DIMENSION(*) :: a_vre
   REAL(KIND(0D0)),DIMENSION(*) :: b_vre
-  REAL(KIND(0D0)),DIMENSION(*) :: pot_vre
+  COMPLEX(KIND(0D0)),DIMENSION(*) :: pot_vre
 
 !!!$     Hilfsvariablen
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: potdc
