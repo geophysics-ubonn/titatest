@@ -130,6 +130,11 @@ besp_elem.o:	alloci.o elemmod.o
 
 bvariogram.o:	invmod.o
 
+bsensi.o:	ompmod.o
+
+bsendc.o:	ompmod.o
+
+
 bmcm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
 		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
 		pathmod.o
@@ -146,7 +151,7 @@ bvariogram.o:	invmod.o variomodel.o sigmamod.o modelmod.o elemmod.o \
 cjgmod.o:	modelmod.o datmod.o
 
 cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
-		konvmod.o modelmod.o datmod.o
+		konvmod.o modelmod.o datmod.o ompmod.o
 
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o

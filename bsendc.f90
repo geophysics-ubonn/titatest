@@ -17,6 +17,9 @@ subroutine bsendc()
   USE wavenmod
   USE errmod
   USE konvmod , ONLY : lverb
+  USE ompmod
+  USE tic_toc
+
   IMPLICIT none
 
 !!!$.....................................................................
@@ -46,7 +49,7 @@ subroutine bsendc()
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
-  INTEGER (KIND = 4)  :: nzp,nnp
+  INTEGER (KIND = 4)  :: nzp,nnp,c1
   REAL (KIND(0D0))    :: dum
 
 !!!$     Pi
@@ -64,13 +67,15 @@ subroutine bsendc()
      RETURN
   END IF
 
+  CALL tic (c1)
+
 !!!$     Sensitivitaetenfeld auf Null setzen
   sensdc = 0D0
   count  = 0
   !$OMP PARALLEL DEFAULT (SHARED) &
   !$OMP FIRSTPRIVATE (hsens) &
   !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
-  !$OMP DO
+  !$OMP DO SCHEDULE (DYNAMIC,CHUNK_1)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
 
@@ -166,6 +171,8 @@ subroutine bsendc()
      end do ! ityp=1,typanz
   end do ! i=1,nanz
   !$OMP END PARALLEL
+  fetxt = 'bsendc::'
+  CALL toc(c1,fetxt)
 
   DEALLOCATE (hsens)
   

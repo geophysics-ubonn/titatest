@@ -17,13 +17,15 @@ subroutine bsensi()
   USE wavenmod
   USE errmod
   USE konvmod,ONLY: lverb
+  USE ompmod
+  USE tic_toc
 
   IMPLICIT none
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-
+  INTEGER,PARAMETER :: ntd=2
 !!!$     Aktuelle Elementnummer
   INTEGER (KIND = 4)  ::     iel
 
@@ -47,7 +49,7 @@ subroutine bsensi()
   COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
-  INTEGER (KIND = 4)  ::     nzp,nnp
+  INTEGER (KIND = 4)  ::     nzp,nnp,c1
   COMPLEX (KIND(0D0)) ::    dum
 
 !!!$     Pi
@@ -64,20 +66,20 @@ subroutine bsensi()
      RETURN
   END IF
 
+  CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
   sens = 0.
   count = 0
   !$OMP PARALLEL DEFAULT (SHARED) &
-!  !$OMP SHARED (nanz,count,lverb,strnr,vnr,typanz,typ,selanz,nelanz,kwnanz,nrel,imin,imn,kpot,elbg,swrtr,kwnwi,pi,sens,mnr,sigma,volt) &
+  !  !$OMP SHARED (nanz,count,lverb,strnr,vnr,typanz,typ,selanz,nelanz,kwnanz,nrel,imin,imn,kpot,elbg,swrtr,kwnwi,pi,sens,mnr,sigma,volt) &
   !$OMP FIRSTPRIVATE (hsens) &
   !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
-  !$OMP DO
+  !$OMP DO SCHEDULE (DYNAMIC,CHUNK_1)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
      !$OMP ATOMIC
      count = count + 1
-!     !$OMP FLUSH(count)
 
      IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
           'sens/ ',REAL( count * (100./nanz)),'%'
@@ -161,7 +163,10 @@ subroutine bsensi()
         end do
      end do
   end do
-  !$OMP END DO
   !$OMP END PARALLEL
+  fetxt = 'bsensi::'
+  CALL toc(c1,fetxt)
+
+  DEALLOCATE (hsens)
 
 end subroutine bsensi

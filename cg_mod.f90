@@ -23,6 +23,10 @@ MODULE cg_mod
 
   IMPLICIT none
 
+  INTEGER,PARAMETER,PRIVATE :: ntd=2 ! number of threads
+!!!$ we restrict ther thread numbers here to avoid atomization 
+!!!$ of the problem since we are dealing with pure matrix vector product of types..
+
   PUBLIC :: cjg
 !!!$ controls whather we have REAL or COMPLEX case
   
@@ -199,7 +203,7 @@ CONTAINS
 
 !!!$....................................................................
 
-    !$OMP PARALLEL DEFAULT(none) &
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
     !$OMP DO
 !!!$    A * p  berechnen (skaliert)
@@ -362,7 +366,7 @@ CONTAINS
 
 !!!$....................................................................
 
-    !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
     !$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
     !$OMP DO
     do j=1,manz
@@ -500,7 +504,7 @@ CONTAINS
 !!!$....................................................................
 
 !!!$    A * p  berechnen (skaliert)
-    !$OMP PARALLEL DEFAULT(none) &
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
     !$OMP DO
     do i=1,nanz
@@ -657,7 +661,7 @@ CONTAINS
 
 !!!$....................................................................
 !!!$    
-    !$OMP PARALLEL DEFAULT(none) PRIVATE (cdum) &
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (cdum) &
     !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
     !$OMP DO
 
