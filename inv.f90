@@ -267,7 +267,7 @@ PROGRAM inv
 !$OMP PARALLEL DEFAULT (none) &
 !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
 !$OMP PRIVATE (j,l) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc)           
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg)           
 !$OMP DO 
 !!!$   DC CASE
            do k=1,kwnanz
@@ -306,14 +306,14 @@ PROGRAM inv
 !!!$   Solve linear system
                  fetxt = 'vredc'
                  call vredc(adc,bdc,pot)
-
-!!!$   Scale back the potentials, save them and evtually add 
-!!!$   the analytical response
+!!!$   Scale back the potentials, save them and 
+!!!$   eventually add the analytical response
                  do j=1,sanz
                     kpotdc(j,l,k) = dble(pot(j)) * fak(j)
                     if (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
                          dble(pota(j))
                     if (swrtr.eq.0) hpotdc(j,l) = kpotdc(j,l,k)
+                    IF (kpotdc(j,l,k)<EPSILON(0D0)) print*,'vre',j,l,k,kpotdc(j,l,k),pot(j)
                  end do
               end do
            end do
@@ -393,7 +393,6 @@ PROGRAM inv
 
 !!!$   Ggf. Ruecktransformation der Potentialwerte
         if (swrtr.eq.1) call rtrafo()
-
 !!!$   Spannungswerte berechnen
         call bvolti()
         if (errnr.ne.0) goto 999

@@ -19,7 +19,7 @@ FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 #FFLAG90		= -O3 -fast -openmp #-parallel
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
-		-check pointers -check bounds
+		-check pointers -check bounds -openmp
 
 # das hier chek obs ein bin im home gibt
 C1		= cbn

@@ -44,6 +44,7 @@ subroutine rtrafo()
            end do
 
            hpotdc(j,l) = summdc / pi
+           IF (summdc < EPSILON(0D0)) print*,'rtrafo::',l,j
         end do
      end do
 
