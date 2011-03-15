@@ -13,7 +13,7 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
 #F90		= ifort
-#FFLAG90		= -O3 -fast -openmp -parallel
+#FFLAG90		= -O3 -fast -parallel
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds
@@ -29,7 +29,7 @@ PR3		= ctm
 # Minimalbeispiel
 PR4		= minimal
 
-MACHINE		= $(shell uname -n)_$(F90)
+MACHINE		= $(shell uname -n)_$(F90)_master
 ################################################################
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PR4) install
