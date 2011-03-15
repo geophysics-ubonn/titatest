@@ -71,10 +71,9 @@ subroutine bsensi()
   sens = 0.
   count = 0
   !$OMP PARALLEL DEFAULT (SHARED) &
-  !  !$OMP SHARED (nanz,count,lverb,strnr,vnr,typanz,typ,selanz,nelanz,kwnanz,nrel,imin,imn,kpot,elbg,swrtr,kwnwi,pi,sens,mnr,sigma,volt) &
   !$OMP FIRSTPRIVATE (hsens) &
   !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
-  !$OMP DO SCHEDULE (DYNAMIC,CHUNK_1)
+  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
