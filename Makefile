@@ -100,7 +100,7 @@ f90mini		= minimalbeispiel.o
 #$(forcrt):	%.o : %.for
 #		$(F90) $(FFLAG90) -c $<
 
-$(fcrm):	%.o : %.f
+$(fcrm):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
 
 $(fcrt):	%.o : %.f90
