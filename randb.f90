@@ -1,4 +1,4 @@
-subroutine randb()
+subroutine randb(my_a,my_b)
 
 !!!$     Unterprogramm modifiziert die Matrix 'a' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'b' gemaess homogener Dirichletscher Randbedingungen.
@@ -10,13 +10,16 @@ subroutine randb()
 
 !!!$.....................................................................
 
-  USE alloci
-  USE femmod
-  USE elemmod
+  USE elemmod , ONLY : sanz, mb, typanz, typ, selanz, nrel, nelanz
 
   IMPLICIT none
 
 !!!$.....................................................................
+
+!!!$     EIN-/AUSGABEPARAMETER:
+
+  COMPLEX (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  COMPLEX (KIND (0D0)),DIMENSION (sanz)        :: my_b
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
@@ -48,10 +51,10 @@ subroutine randb()
         
         do ir=1,nkel
            k    = nrel(iel,ir)
-           b(k) = dcmplx(0d0)
+           my_b(k) = dcmplx(0d0)
 
            idk    = k*m1
-           a(idk) = dcmplx(1d0)
+           my_a(idk) = dcmplx(1d0)
 
            if (k /= 1) THEN
 
@@ -59,7 +62,7 @@ subroutine randb()
 
               do i=ia,mb
                  ki    = idk+i-m1
-                 a(ki) = dcmplx(0d0)
+                 my_a(ki) = dcmplx(0d0)
               end do
            END IF
            if (k.eq.sanz) CYCLE ! next ir
@@ -69,7 +72,7 @@ subroutine randb()
            do i=ia,mb
               j     = k-i+m1
               ji    = (j-1)*m1+i
-              a(ji) = dcmplx(0d0)
+              my_a(ji) = dcmplx(0d0)
            end do
 
         END do ! ir
@@ -78,5 +81,4 @@ subroutine randb()
 
   END do !i2
 
-  return
 end subroutine randb

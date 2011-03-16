@@ -1,4 +1,4 @@
-subroutine randb2(my_a,my_b)
+subroutine randbdc2(my_a,my_b)
 
 !!!$     Unterprogramm modifiziert die Matrix 'a' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'b' zur Beruecksichtigung der Dirichletschen Rand-
@@ -11,7 +11,6 @@ subroutine randb2(my_a,my_b)
 !!!$     Letzte Aenderung   15-Jul-2007
 
 !!!$.....................................................................
-
   USE elemmod , ONLY : sanz, mb
   USE randbmod
 
@@ -20,8 +19,8 @@ subroutine randb2(my_a,my_b)
 !!!$.....................................................................
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
-  COMPLEX (KIND (0D0)),DIMENSION (sanz)        :: my_b
+  REAL (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  REAL (KIND (0D0)),DIMENSION (sanz)        :: my_b
 
 !!!$.....................................................................
 
@@ -29,6 +28,7 @@ subroutine randb2(my_a,my_b)
 
 !!!$     Hilfsvariablen
   INTEGER(KIND = 4)   ::     m1
+  REAL(KIND(0D0))     ::     rwertdc
   COMPLEX(KIND(0D0))  ::     rwert
 
 !!!$     Indexvariablen
@@ -44,21 +44,21 @@ subroutine randb2(my_a,my_b)
 
      k      = rwdnr(ir)
 
-     rwert  = rwd(ir)
-     my_b(k)   = -rwert
-     idk    = k*m1
-     my_a(idk) = dcmplx(1d0)
+     rwertdc  = rwddc(ir)
+     my_b(k)   = -rwertdc
+     idk      = k*m1
+     my_a(idk) = 1d0
 
      IF (k /= 1) THEN
-
+        
         ia = max0(1,mb+2-k)
 
         do i=ia,mb
            j  = k+i-m1
            ki = idk+i-m1
 
-           my_b(j)  = my_b(j) + rwert * my_a(ki)
-           my_a(ki) = dcmplx(0d0)
+           my_b(j)  = my_b(j) + rwertdc * my_a(ki)
+           my_a(ki) = (0d0)
 
         END do
      END IF
@@ -71,12 +71,12 @@ subroutine randb2(my_a,my_b)
         j  = k-i+m1
         ji = (j-1)*m1+i
 
-        my_b(j)  = my_b(j) + rwert * my_a(ji)
-        my_a(ji) = dcmplx(0d0)
+
+        my_b(j)  = my_b(j) + rwertdc * my_a(ji)
+        my_a(ji) = (0d0)
 
      END do
 
   END do
 
-  return
-end subroutine randb2
+end subroutine randbdc2

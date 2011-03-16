@@ -279,7 +279,7 @@ PROGRAM inv
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 !!!$   Evtl calculation of analytical potentials
-                    if (lsr) call potana(l,k)
+                    if (lsr) call potana(l,k,pota)
 
 !!!$   COMPilation of the linear system
                     fetxt = 'kompadc'
@@ -287,8 +287,8 @@ PROGRAM inv
 !                    if (errnr.ne.0) goto 999
 
 !!!$   Evtl take Dirichlet boundary values into account
-                    if (lrandb) call randdc()
-                    if (lrandb2) call randb2()
+                    if (lrandb) call randdc(adc,bdc)
+                    if (lrandb2) call randb2(adc,bdc)
 
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
@@ -356,8 +356,8 @@ PROGRAM inv
 !                    if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
-                    if (lrandb) call randb()
-                    if (lrandb2) call randb2()
+                    if (lrandb) call randb(a,b)
+                    if (lrandb2) call randbdc2(a,b)
 
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'

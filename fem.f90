@@ -233,15 +233,15 @@ program fem
         if (lsr.or.lbeta.or.l.eq.1) then
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-           if (lsr) call potana(l,k)
+           if (lsr) call potana(l,k,pota)
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
 !           if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
-           if (lrandb) call randb()
-           if (lrandb2) call randb2()
+           if (lrandb) call randb(a,b)
+           if (lrandb2) call randb2(a,b)
 
 !!!$   Gleichungssystem skalieren
            call scalab(a,b,fak)

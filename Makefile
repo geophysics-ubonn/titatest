@@ -60,7 +60,7 @@ f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  mdian1.o parfit.o potana.o precal.o rall.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
 		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
-		  randb2.o randb.o randdc.o rdati.o rdatm.o \
+		  randb2.o randb.o randdc.o randbdc2.o rdati.o rdatm.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o \
@@ -88,7 +88,7 @@ f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
 		  elem5.o elem8.o filpat.o \
 		  kompadc.o kompbdc.o kompb.o \
 		  potana.o precal.o \
-		  randb2.o randb.o randdc.o rdatm.o \
+		  randb2.o randb.o rdatm.o \
 		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  vredc.o vre.o wdatm.o \

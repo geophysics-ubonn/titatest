@@ -1,4 +1,4 @@
-subroutine randdc()
+subroutine randdc(my_a,my_b)
 
 !!!$     Unterprogramm modifiziert die Matrix 'adc' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'bdc' gemaess homogener Dirichletscher Randbedingungen.
@@ -10,12 +10,18 @@ subroutine randdc()
 
 !!!$.....................................................................
 
-  USE alloci
-  USE femmod
-  USE elemmod
+!!!$.....................................................................
+
+  USE elemmod , ONLY : sanz, mb, typanz, typ, selanz, nrel, nelanz
 
   IMPLICIT none
 
+!!!$.....................................................................
+
+!!!$     EIN-/AUSGABEPARAMETER:
+
+  REAL (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  REAL (KIND (0D0)),DIMENSION (sanz)        :: my_b
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
@@ -48,10 +54,10 @@ subroutine randdc()
 
         do ir=1,nkel
            k      = nrel(iel,ir)
-           bdc(k) = 0d0
+           my_b(k) = 0d0
 
            idk      = k*m1
-           adc(idk) = 1d0
+           my_a(idk) = 1d0
 
            if (k /= 1) THEN
 
@@ -59,7 +65,7 @@ subroutine randdc()
 
               do i=ia,mb
                  ki      = idk+i-m1
-                 adc(ki) = 0d0
+                 my_a(ki) = 0d0
               end do
            END if
            if (k.eq.sanz) CYCLE
@@ -69,12 +75,11 @@ subroutine randdc()
            do i=ia,mb
               j       = k-i+m1
               ji      = (j-1)*m1+i
-              adc(ji) = 0d0
+              my_a(ji) = 0d0
            end do
 
         end do ! ir
      END do ! j2
   end do !i2
 
-  return
 end subroutine randdc
