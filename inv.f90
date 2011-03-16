@@ -348,7 +348,7 @@ PROGRAM inv
                  if (lsr.or.lbeta.or.l.eq.1) then
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-                    if (lsr) call potana(l,k)
+                    if (lsr) call potana(l,k,pota)
 
 !!!$   KOMPilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
