@@ -130,10 +130,9 @@ besp_elem.o:	alloci.o elemmod.o
 
 bvariogram.o:	invmod.o
 
-bsensi.o:	ompmod.o
+bsensi.o:	ompmod.o tic_toc.o
 
-bsendc.o:	ompmod.o
-
+bsendc.o:	ompmod.o tic_toc.o
 
 bmcm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
 		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
