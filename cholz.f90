@@ -1,4 +1,4 @@
-SUBROUTINE cholz(a,p,n,ierr)
+SUBROUTINE cholz(a,p,n,ierr,lverb)
 !!$c-----------------------------------------------------------------
 !!$c
 !!$c                      Cholesky Decomposition
@@ -28,20 +28,24 @@ SUBROUTINE cholz(a,p,n,ierr)
 !!$c------------------------------------------------------------
   IMPLICIT none
 
-  INTEGER,INTENT (IN)                  :: n
-  COMPLEX (KIND(0D0)), DIMENSION (n,n) :: a
-  COMPLEX (KIND(0D0)), DIMENSION (n)   :: p
-  COMPLEX (KIND(0D0))                  :: s
-  INTEGER, INTENT (OUT)                :: ierr
-  INTEGER                              :: i,k,j
+  INTEGER,INTENT (IN)                                :: n
+  COMPLEX (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  COMPLEX (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
+  LOGICAL,INTENT(IN)                                 :: lverb
+  COMPLEX (KIND(0D0))                                :: s
+  INTEGER, INTENT (OUT)                              :: ierr
+  INTEGER                                            :: i,k,j,count
+
 
   ierr = 0
+  count = 0
 
   DO i = 1 , n
 
-     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( i * (100./n)),'%'
-
+     count = count + 1
+     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Factorization ',REAL( count * (100./n)),'%'
+     
      DO j = i , n ! working on upper triangle
 
         s = a(i,j)
@@ -71,6 +75,5 @@ SUBROUTINE cholz(a,p,n,ierr)
      END DO
   END DO
 
-  ierr = 0
 
 END SUBROUTINE cholz

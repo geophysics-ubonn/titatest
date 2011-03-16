@@ -20,7 +20,7 @@ MODULE bmcm_mod
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lip,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt,fprun
@@ -233,9 +233,14 @@ CONTAINS
     ALLOCATE(dig(manz))
 
     ata_dc= 0.
+
+    !$OMP PARALLEL DEFAULT (none) &
+    !$OMP SHARED (ata_dc,sensdc,wmatd,wdfak,dig,manz,nanz) &
+    !$OMP PRIVATE (i,j,k)
+    !$OMP DO
     DO k=1,manz
-       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
+!       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+!            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
        DO j=k,manz ! fills upper triangle (k,j)
           DO i=1,nanz
              ata_dc(k,j) = ata_dc(k,j) + sensdc(i,k) * & 
@@ -245,6 +250,8 @@ CONTAINS
        END DO
        dig(k) = REAL(ata_dc(k,k))
     END DO
+    !$OMP END PARALLEL
+
 !!!$    get min/max
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
@@ -438,14 +445,14 @@ CONTAINS
        END IF
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
 
-       CALL LINVD(cov_m_dc,dig,manz)
+       CALL LINVD(cov_m_dc,dig,manz,lverb)
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
 
        DO i= 1 , manz
 
-          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)&
-               //ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+          IF (lverb) WRITE (*,'(A,t45,F6.2,A)',ADVANCE='no')&
+               ACHAR(13)//'Filling lower/',REAL( i * (100./manz)),'%'
 
           DO j = 1 , i - 1
 
@@ -528,7 +535,11 @@ CONTAINS
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
+    !$OMP PARALLEL SHARED (cov_m_dc,ata_dc,ata_reg_dc)
+
     ata_reg_dc= MATMUL(cov_m_dc,ata_dc) ! that's it...
+
+    !$OMP END PARALLEL
 
     ALLOCATE (dig(manz)) !prepare to write out main diagonal
 
@@ -592,8 +603,12 @@ CONTAINS
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
-    ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
+    !$OMP PARALLEL SHARED (ata_reg_dc,cov_m_dc,ata_dc)
 
+    ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
+    
+    !$OMP END PARALLEL
+    
     ALLOCATE (dig(manz))
 
     DO i=1,manz
@@ -642,7 +657,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     INTEGER                       :: kanal
-    INTEGER                       :: i,j,k
+    INTEGER                       :: i,j,k,count
     REAL,DIMENSION(:),ALLOCATABLE :: dig
     REAL                          :: dig_min,dig_max
 !!!$.....................................................................
@@ -655,10 +670,18 @@ CONTAINS
 
     ALLOCATE(dig(manz))
 
-    DO k=1,manz
-       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
-       DO j=k,manz ! fills upper triangle (k,j) 
+    !$!       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+    !$!            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
+
+
+
+    !$OMP PARALLEL DEFAULT (none) &
+    !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
+    !$OMP PRIVATE (i,j,k)
+    !$OMP DO
+    DO k = 1, manz
+       DO j = k, manz 
+! fills upper triangle (k,j) 
           DO i=1,nanz
              ata(k,j) = ata(k,j) + DCONJG(sens(i,k)) * &
                   sens(i,j) * wmatd(i) * DBLE(wdfak(i))
@@ -667,6 +690,8 @@ CONTAINS
        END DO
        dig(k) = REAL(ata(k,k))
     END DO
+
+    !$OMP END PARALLEL
 
 !!!$    write out 
     dig_min = MINVAL(dig)
@@ -726,7 +751,7 @@ CONTAINS
 
     IF (ltri == 0) THEN
        DO j=1,manz
-          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+          IF (lverb) write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
           DO i=1,j ! lower triangle
 
@@ -758,7 +783,7 @@ CONTAINS
 
        DO j=1,manz
 
-          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+          IF (lverb) write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
 
           DO i=1,manz
@@ -852,7 +877,7 @@ CONTAINS
     IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
 
-       CALL CHOLZ(cov_m,dig,manz,errnr)
+       CALL CHOLZ(cov_m,dig,manz,errnr,lverb)
        IF (errnr /= 0) THEN
           PRINT*,'Zeile::',cov_m(abs(errnr),:)
           PRINT*,'Spalte::',cov_m(:,abs(errnr))
@@ -860,13 +885,14 @@ CONTAINS
           RETURN
        END IF
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
-       CALL LINVZ(cov_m,dig,manz)
+       CALL LINVZ(cov_m,dig,manz,lverb)
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
 
        DO i= 1 , manz
 
-          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)&
+          IF (lverb) WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')&
+               ACHAR(13)//ACHAR(9)&
                //ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
 
           DO j = 1 , i - 1
@@ -957,7 +983,11 @@ CONTAINS
 
 !!!$  calculate  RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
 
+    !$OMP PARALLEL DEFAULT (none) SHARED (ata_reg,cov_m,ata)
+
     ata_reg = MATMUL(cov_m,ata)
+
+    !$OMP END PARALLEL
 
     ALLOCATE (dig(manz))
 

@@ -81,7 +81,7 @@ subroutine bsensi()
      count = count + 1
 
      IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
-          'sens/ ',REAL( count * (100./nanz)),'%'
+          'Sensitivity/ ',REAL( count * (100./nanz)),'%'
 
 !!!$     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)

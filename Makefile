@@ -34,7 +34,7 @@ PR4		= minimal_prec
 # Minimalbeispiel OMP directives
 PR5		= minimal_omp
 
-MACHINE		= $(shell uname -n)_$(F90)_omp
+MACHINE		= $(shell uname -n)_$(F90)_testing
 ################################################################
 # default
 all:		$(C1) $(PR1) $(PR2) $(PR3) $(PR4) $(PR5) install

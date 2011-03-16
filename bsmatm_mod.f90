@@ -23,6 +23,7 @@ MODULE bsmatm_mod
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt
   USE sigmamod , ONLY : sigma
+  USE ompmod
   USE variomodel 
   USE pathmod
 
@@ -157,29 +158,26 @@ CONTAINS
 
     csens=0. ! csens was already allocated (low dimensional) in bsmatm 
 
-    IF (lip) THEN
-       DO j=1,manz
-          DO i=1,nanz
+    !$OMP PARALLEL DEFAULT (none) &
+    !$OMP SHARED (csens,wmatd,sens,sensdc,wdfak,lip,ldc,manz,nanz) &
+    !$OMP PRIVATE(j,i)
+    !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+    DO j=1,manz
+       DO i=1,nanz
+          IF (lip) THEN
              csens(j) = csens(j) + DBLE(sens(i,j)) * &
                   DBLE(sens(i,j)) * wmatd(i)*DBLE(wdfak(i))
-          END DO
-       END DO
-    ELSE IF (ldc) THEN
-       DO j=1,manz
-          DO i=1,nanz
+          ELSE IF (ldc) THEN
              csens(j) = csens(j) + sensdc(i,j) * &
                   sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
-          END DO
-       END DO
-    ELSE
-       DO j=1,manz
-          DO i=1,nanz
+!!!$ wechselt automatisch wmatdp bei lip
+          ELSE
              csens(j) = csens(j) + DCONJG(sens(i,j)) * &
                   sens(i,j) * wmatd(i)*dble(wdfak(i)) 
-!!!$ wechselt automatisch wmatdp bei lip
-          END DO
+          ENDIF
        END DO
-    ENDIF
+    END DO
+    !$OMP END PARALLEL
 
 !!!$ for normalization
     csensmax = MAXVAL(csens)
@@ -832,9 +830,13 @@ CONTAINS
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
           CALL LINVD(smatm,work,manz)
           DEALLOCATE (work)
+          !$OMP PARALLEL DEFAULT (none) &
+          !$OMP SHARED (smatm,manz,epsi,lverb,ifp) &
+          !$OMP PRIVATE (i,j)
+          !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
           DO i= 1, manz
-             WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
-                  'Filling upper C_m',REAL( i * (100./manz)),'%'
+!             WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
+!                  'Filling upper C_m',REAL( i * (100./manz)),'%'
              DO j = 1, i
                 smatm(i,j) = smatm(j,i)
                 
@@ -845,6 +847,7 @@ CONTAINS
 
              END DO
           END DO
+          !$OMP END PARALLEL
        END IF
        IF (lverb) CLOSE (ifp)
 

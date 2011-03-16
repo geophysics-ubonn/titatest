@@ -1,4 +1,4 @@
-SUBROUTINE chold(a,p,n,ierr)
+SUBROUTINE chold(a,p,n,ierr,lverb)
 !!$c-----------------------------------------------------------------
 !!$c
 !!$c                      Cholesky Decomposition
@@ -25,38 +25,48 @@ SUBROUTINE chold(a,p,n,ierr)
 !!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
 !!$c------------------------------------------------------------
+  USE ompmod
+
   IMPLICIT none
 
-  INTEGER,INTENT (IN)               :: n
-  REAL (KIND(0D0)), DIMENSION (n,n) :: a
-  REAL (KIND(0D0)), DIMENSION (n)   :: p
-  REAL (KIND(0D0))                  :: s
-  INTEGER, INTENT (OUT)             :: ierr
-  INTEGER                           :: i,k,j
+  INTEGER,INTENT (IN)                             :: n
+  REAL (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  REAL (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
+  LOGICAL,INTENT(IN)                              :: lverb
+  INTEGER, INTENT (OUT)                           :: ierr
+  REAL (KIND(0D0))                                :: s
+  INTEGER                                         :: i,k,j,count
 
   ierr = 0
-
+  count = 0
+!!$  !$OMP PARALLEL DEFAULT (none) &
+!!$  !$OMP PRIVATE (j,s,k) &
+!!$  !$OMP SHARED (a,p,n,ierr,count)
+!!$  !$OMP DO ORDERED
   DO i = 1 , n
-
-     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( i * (100./n)),'%'
-
+     
+     !$OMP ATOMIC
+     count = count + 1
+     
+     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Factorization',REAL( count * (100./n)),'%'
+     
      DO j = i , n
-
+        
         s = a(i,j)
-
+        
         DO k = i-1 , 1 ,-1
-
+           
            s = s - a(i,k) * a(j,k) ! line sum
-
+           
         END DO
-
+        
         IF (i == j) THEN
-
+           
            IF (s <= 0) THEN
               PRINT*,'CHOLD:: - not positive definite', s
               ierr = -i
-              RETURN
+              STOP
            END IF
 
            p(i) = DSQRT(s) ! main diagonal
@@ -66,10 +76,10 @@ SUBROUTINE chold(a,p,n,ierr)
            a(j,i) = s / p(i) ! scale value
 
         END IF
-
+        
      END DO
   END DO
 
-  ierr = 0
+!!$ !$OMP END PARALLEL
 
 END SUBROUTINE chold
