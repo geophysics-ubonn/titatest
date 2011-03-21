@@ -773,7 +773,6 @@ PROGRAM inv
      write(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen
-     close(fprun)
      close(fpinv)
      close(fpcjg)
      close(fpeps)
@@ -855,6 +854,7 @@ PROGRAM inv
      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+     close(fprun)
 
 !!!$   Ggf. weiteren Datensatz invertieren
   END DO
