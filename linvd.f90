@@ -59,7 +59,7 @@ SUBROUTINE linvd(a,p,n,lverb)
 
 !!$ --------------- own part -------------------
 !!$ this part makes the inverse of A by MATMUL 
-!!$ of L^-T L-^1 into the
+!!$ of L^-T L^-1 into the
 !!$ upper part of a
 !!$ --------------------------------------------
 

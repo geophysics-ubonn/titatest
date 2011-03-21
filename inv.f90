@@ -68,17 +68,8 @@ PROGRAM inv
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (fprun,*)pid
   CLOSE (fprun)
-
-  !$OMP PARALLEL PRIVATE(TID)
-!!$  TID = OMP_GET_THREAD_NUM()
-!!$  PRINT*,'thread count #', TID
-!!$!!!$ this is for the master thread
-!!$  IF (TID == 0) THEN
-!!$     NTHREADS = OMP_GET_NUM_THREADS()
-!!$     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
-!!$  END IF
-!!!$ all threads rejoin master thread and disband
-  !$OMP END PARALLEL
+  WRITE(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+  
   
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
@@ -231,7 +222,6 @@ PROGRAM inv
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
-!!$     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
 !!$     !$OMP PARALLEL
 !!$     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
 !!$          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()

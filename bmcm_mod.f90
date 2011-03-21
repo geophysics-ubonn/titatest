@@ -436,7 +436,7 @@ CONTAINS
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
 
-       CALL CHOLD(cov_m_dc,dig,manz,errnr)
+       CALL CHOLD(cov_m_dc,dig,manz,errnr,lverb)
        IF (errnr /= 0) THEN
           fetxt='CHOLD mcm :: matrix not pos definite..'
           PRINT*,'Zeile(',abs(errnr),')'
@@ -477,9 +477,9 @@ CONTAINS
 
     csz = 'solution time'
     CALL TOC(c1,csz)
-
+    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m_dc,ata_reg_dc,work)
     work = MATMUL(cov_m_dc,ata_reg_dc)
-
+    !$OMP END PARALLEL
     DO i=1,manz
        dig(i) = cov_m_dc(i,i)
        dig2(i) = work(i,i)
@@ -527,6 +527,8 @@ CONTAINS
     INTEGER                                      :: i,kanal
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 
 !!!$  cal!!!$RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
@@ -534,12 +536,16 @@ CONTAINS
     errnr = 1
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
+!!!$    get time
+    CALL TIC(c1)
 
     !$OMP PARALLEL SHARED (cov_m_dc,ata_dc,ata_reg_dc)
 
     ata_reg_dc= MATMUL(cov_m_dc,ata_dc) ! that's it...
 
     !$OMP END PARALLEL
+    csz = 'solution time'
+    CALL TOC(c1,csz)
 
     ALLOCATE (dig(manz)) !prepare to write out main diagonal
 

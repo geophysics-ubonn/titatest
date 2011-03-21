@@ -39,47 +39,74 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
 
   ierr = 0
   count = 0
-!!$  !$OMP PARALLEL DEFAULT (none) &
-!!$  !$OMP PRIVATE (j,s,k) &
-!!$  !$OMP SHARED (a,p,n,ierr,count)
-!!$  !$OMP DO ORDERED
-  DO i = 1 , n
-     
+
+  DO j = 1, n
      !$OMP ATOMIC
      count = count + 1
      
      IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
           ACHAR(13)//'Factorization',REAL( count * (100./n)),'%'
-     
-     DO j = i , n
-        
-        s = a(i,j)
-        
-        DO k = i-1 , 1 ,-1
-           
-           s = s - a(i,k) * a(j,k) ! line sum
-           
+     DO k = 1, j - 1
+        DO i = j, n
+           a(i,j) = a(i,j) - a(i,k) * a(j,k)
         END DO
-        
-        IF (i == j) THEN
-           
-           IF (s <= 0) THEN
-              PRINT*,'CHOLD:: - not positive definite', s
-              ierr = -i
-              STOP
-           END IF
+     END DO
 
-           p(i) = DSQRT(s) ! main diagonal
-
-        ELSE
-
-           a(j,i) = s / p(i) ! scale value
-
-        END IF
-        
+     IF (a(j,j) <= 0) THEN
+        PRINT*,'CHOLD:: - not positive definite', a(j,j)
+        ierr = -i
+        STOP
+     END IF
+     
+     p(j) = DSQRT(a(j,j))
+     a(j,j) = p(j)
+     DO i = j + 1, n
+        a(i,j) = a(i,j) / p(j)
      END DO
   END DO
 
-!!$ !$OMP END PARALLEL
+!!$  !$OMP PARALLEL DEFAULT (none) &
+!!$  !$OMP PRIVATE (j,s,k) &
+!!$  !$OMP SHARED (a,p,n,ierr,i)
+!!$  !$OMP DO
+
+!!$  DO i = 1 , n
+!!$     
+!!$     !$OMP ATOMIC
+!!$     count = count + 1
+!!$     
+!!$     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+!!$          ACHAR(13)//'Factorization',REAL( count * (100./n)),'%'
+!!$     
+!!$     DO j = i , n
+!!$        
+!!$        s = a(i,j)
+!!$        
+!!$        DO k = i-1 , 1 ,-1
+!!$           
+!!$           s = s - a(i,k) * a(j,k) ! line sum
+!!$           
+!!$        END DO
+!!$        
+!!$        IF (i == j) THEN
+!!$           
+!!$           IF (s <= 0) THEN
+!!$              PRINT*,'CHOLD:: - not positive definite', s
+!!$              ierr = -i
+!!$              STOP
+!!$           END IF
+!!$
+!!$           p(i) = DSQRT(s) ! main diagonal
+!!$
+!!$        ELSE
+!!$
+!!$           a(j,i) = s / p(i) ! scale value
+!!$
+!!$        END IF
+!!$        
+!!$     END DO
+!!$  END DO
+!!$     !$OMP END PARALLEL
+
 
 END SUBROUTINE chold
