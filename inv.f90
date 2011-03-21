@@ -865,7 +865,7 @@ PROGRAM inv
   END DO
 
 !!!$   'crtomo.cfg' schliessen
-  close(fpcfg)
+  close (fpcfg)
 
   fetxt = 'crtomo.pid'
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='old',err=999)

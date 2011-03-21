@@ -340,14 +340,21 @@ CONTAINS
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
-
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
+    !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
+    !$OMP DO
     do j = 1 , manz
        bvecdc(j) = 0.
-       DO i = 1 , manz
-          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * cgfac(i)
+       DO i = j , manz
+          dum = pvecdc(i) * smatm(i,j) * cgfac(i)
+          IF (i == j) THEN
+             bvecdc(j) = bvecdc(j) + dum
+          ELSE
+             bvecdc(j) = bvecdc(j) + 2D0 * dum
+          END IF
        END DO
     end do
-
+    !$OMP END PARALLEL
   end subroutine bpdcsto
 
   SUBROUTINE bbdc
@@ -514,7 +521,6 @@ CONTAINS
           ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
-    !$OMP END DO
     !$OMP END PARALLEL
 
   END SUBROUTINE bap
@@ -620,6 +626,10 @@ CONTAINS
 !!!$    Angepasst an die neue Regularisierungsmatrix 
 !!!$    (stoch. Kovarianzmatrix) fuer komplexes Modell
 !!!$
+!!!$   TODO:
+!!!$      since smatm is symmetric, it would be good to 
+!!!$      exploit this..
+!!!$
 !!!$    Copyright by Andreas Kemna 2009
 !!!$    
 !!!$    Created by Roland Martin                              10-Jun-2009
@@ -633,14 +643,21 @@ CONTAINS
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-    DO j=1,manz
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
+    !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
+    !$OMP DO
+    DO j=1, manz
        bvec(j) = 0.
-       DO i = 1,manz
-          bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * &
-               DCMPLX(cgfac(j))
+       DO i = j, manz
+          cdum = pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
+          IF (i == j) THEN
+             bvec(j) = bvec(j) + cdum
+          ELSE
+             bvec(j) = bvec(j) + 2D0 * cdum
+          END IF
        END DO
     END DO
-
+    !$OMP END PARALLEL
 
   end subroutine bpsto
 
