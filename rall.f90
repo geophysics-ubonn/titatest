@@ -519,7 +519,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   dsens  = ramd(1:lnramd)//slash(1:1)//'coverage.mag'
 
 !!!$     Elementeinteilung einlesen
-  WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
+  IF (lverb) WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
   call relem(kanal,delem)
   if (errnr.ne.0) goto 999
 

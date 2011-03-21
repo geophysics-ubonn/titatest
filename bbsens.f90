@@ -37,6 +37,7 @@ subroutine bbsens(kanal,datei)
 !!!$     Hilfsvariablen
   REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens
   REAL (KIND(0D0))                          :: csensmax
+  REAL (KIND(0D0))                          :: dum
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
 !!!$.....................................................................
@@ -52,33 +53,23 @@ subroutine bbsens(kanal,datei)
 !!!$     Werte berechnen
   csens = 0D0
 
-  IF (lip) THEN
-     DO j=1,manz
-        DO i=1,nanz
-           csens(j) = csens(j) + DBLE(sens(i,j)) * &
-                DBLE(sens(i,j)) * wmatd(i)*DBLE(wdfak(i))
-        END DO
-     END DO
-  ELSE IF (ldc) THEN
-     DO j=1,manz
-        DO i=1,nanz
-           csens(j) = csens(j) + sensdc(i,j) * &
-                sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
-        END DO
-     END DO
-  ELSE
-     DO j=1,manz
-        DO i=1,nanz
-           csens(j) = csens(j) + DCONJG(sens(i,j)) * &
-                sens(i,j) * wmatd(i)*dble(wdfak(i)) 
+  DO j=1,manz
+     DO i=1,nanz
+        dum = SQRT(wmatd(i)) * DBLE(wdfak(i))
+        IF (lip) THEN
+           csens(j) = csens(j) + ABS(DBLE(sens(i,j))) * dum
+        ELSE IF (ldc) THEN
+           csens(j) = csens(j) + ABS(sensdc(i,j)) * dum
+        ELSE
 !!!$ wechselt automatisch wmatdp bei lip
-        END DO
+           csens(j) = csens(j) + ABS(sens(i,j)) * dum
+        ENDIF
      END DO
-  ENDIF
-
+  END DO
+  
 !!!$ for normalization
   csensmax = MAXVAL(csens)
-
+  
   write(kanal,*,err=1000) manz
 
 !!!$     Koordinaten und Sensitivitaetsbetraege schreiben
