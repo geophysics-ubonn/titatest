@@ -72,10 +72,6 @@ PROGRAM inv
   
   CALL get_git_ver
 
-  PRINT*,'Git-Branch  ',TRIM(version(1))
-  PRINT*,'Created     ',TRIM(version(3))
-
-
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
