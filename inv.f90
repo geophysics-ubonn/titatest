@@ -70,21 +70,6 @@ PROGRAM inv
   CLOSE (fprun)
 
   CALL get_git_ver
-
-  PRINT*,'Git-Branch  ',TRIM(version(1))
-  PRINT*,'Created     ',TRIM(version(3))
-
-
-  !$OMP PARALLEL PRIVATE(TID)
-!!$  TID = OMP_GET_THREAD_NUM()
-!!$  PRINT*,'thread count #', TID
-!!$!!!$ this is for the master thread
-!!$  IF (TID == 0) THEN
-!!$     NTHREADS = OMP_GET_NUM_THREADS()
-!!$     write(6,'(a,i3)') " OpenMP master: N_threads = ",NTHREADS
-!!$  END IF
-!!!$ all threads rejoin master thread and disband
-  !$OMP END PARALLEL
   
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
