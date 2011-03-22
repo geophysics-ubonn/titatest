@@ -37,7 +37,7 @@ PROGRAM inv
   USE invhpmod
   USE omp_lib
   USE ompmod
-
+  USE get_ver
 !!!$   USE portlib
 
   IMPLICIT none
@@ -69,7 +69,7 @@ PROGRAM inv
   WRITE (fprun,*)pid
   CLOSE (fprun)
 
-  CALL get_git_ver (version)
+  CALL get_git_ver
 
   PRINT*,'Git-Branch  ',TRIM(version(1))
   PRINT*,'Created     ',TRIM(version(3))

@@ -1,12 +1,21 @@
-SUBROUTINE get_git_ver(buff)
+MODULE get_ver
 
-  CHARACTER(256),INTENT (OUT) :: buff(3)
+  IMPLICIT none
+
+  CHARACTER (256),PUBLIC  ::   version(3)
+
+  PUBLIC :: get_git_ver
   
+CONTAINS
+
+  SUBROUTINE get_git_ver
+
   INCLUDE 'my_git_version.h'
   
-  buff(1)=TRIM(ADJUSTL(my_git_version(1)))
-  buff(2)=TRIM(ADJUSTL(my_git_version(2)))
-  buff(3)=TRIM(ADJUSTL(my_git_version(3)))
+  version(1)=TRIM(ADJUSTL(my_git_version(1)))
+  version(2)=TRIM(ADJUSTL(my_git_version(2)))
+  version(3)=TRIM(ADJUSTL(my_git_version(3)))
   
   
 END SUBROUTINE get_git_ver
+END MODULE get_ver

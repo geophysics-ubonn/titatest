@@ -148,7 +148,12 @@ cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o
 
+
+get_git_ver.o:	my_git_version.h
+
+
 kont1.o:	variomodel.o
+
 
 rall.o:		make_noise.o variomodel.o
 
@@ -200,5 +205,5 @@ install:	$(crt) $(crm)
 		cd ./cutmckee ; make install
 
 clean:		
-		$(RM) CRTomo CRMod *~ *.mod *.o my_git.ver
+		$(RM) CRTomo CRMod *~ *.mod *.o my_git_version.h
 		cd ./cutmckee ; make clean

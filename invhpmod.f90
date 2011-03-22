@@ -35,5 +35,4 @@ MODULE invhpmod
 !!$c Zusaetzliche Fehlervariable
   INTEGER (KIND=4) ::     errnr2
 
-  CHARACTER (256)  ::   version(3)
 END MODULE invhpmod

@@ -22,7 +22,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   USE errmod
   USE konvmod
   USE pathmod
-  USE invhpmod,ONLY : version
+  USE get_ver,ONLY : version
 
   IMPLICIT none
 
