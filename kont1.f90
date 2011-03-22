@@ -54,9 +54,8 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE (fpinv,'(a)')'## Git-Branch '//TRIM(version(1))
   WRITE (fpinv,'(a)')'## Git-ID '//TRIM(version(2))
   WRITE (fpinv,'(a)')'##'
-  WRITE (fpinv,'(a)')'## created '//TRIM(version(3))
-  WRITE (fpinv,'(a)')'## by Andreas Kemna'
-  WRITE (fpinv,'(a)')'## All rights reserved'
+  WRITE (fpinv,'(a)')'## Created '//TRIM(version(3))
+  WRITE (fpinv,'(a)')'##'
   WRITE (fpinv,'(a)')''
 
   IF (mswitch /= 0) THEN
