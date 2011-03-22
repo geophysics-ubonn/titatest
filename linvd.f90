@@ -1,4 +1,4 @@
-SUBROUTINE linvd(a,p,n)
+SUBROUTINE linvd(a,p,n,lverb)
 !!$c-----------------------------------------------------------------
 !!$c
 !!$c                Inverse of a Lower Triangular Matrix
@@ -25,16 +25,17 @@ SUBROUTINE linvd(a,p,n)
 !!$c-----------------------------------------------------------------
   IMPLICIT none
   
-  INTEGER,INTENT (IN)               :: n
-  REAL (KIND(0D0)), DIMENSION (n,n) :: a
-  REAL (KIND(0D0)), DIMENSION (n)   :: p
-  REAL (KIND(0D0))                  :: s
-  INTEGER                           :: k,i,j
+  INTEGER,INTENT (IN)                             :: n
+  REAL (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  REAL (KIND(0D0)), DIMENSION (n),INTENT(IN)      :: p
+  LOGICAL,INTENT(IN)                              :: lverb
+  REAL (KIND(0D0))                                :: s
+  INTEGER                                         :: k,i,j
   
   DO i= 1 , n
 
-     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( (i) * (100./n)),'%'
+     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Inverse(1)/',REAL( (i) * (100./n)),'%'
  
      a(i,i) = 1. / p(i) ! main diagonal of L^-1
 
@@ -58,18 +59,18 @@ SUBROUTINE linvd(a,p,n)
 
 !!$ --------------- own part -------------------
 !!$ this part makes the inverse of A by MATMUL 
-!!$ of L^-T L-^1 into the
+!!$ of L^-T L^-1 into the
 !!$ upper part of a
 !!$ --------------------------------------------
 
   DO i = 1, n
 
-     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( (n-i) * (100./n)),'%'
+     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Inverse(2)/ ',REAL( (n-i) * (100./n)),'%'
 
      a(i,i) = a(i,i) * a(i,i) 
 
-     DO k = i+1 , n
+     DO k = i + 1, n
 
         a(i,i) = a(i,i) + a(k,i) * a(k,i) ! main diagonal
 

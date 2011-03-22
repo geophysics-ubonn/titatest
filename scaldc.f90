@@ -1,4 +1,4 @@
-subroutine scaldc()
+subroutine scaldc(a_scal,b_scal,fak_scal)
 
 !!!$     Unterprogramm skaliert 'adc' und 'bdc' und liefert die Skalierungs-
 !!!$     faktoren im Vektor 'fak'.
@@ -19,6 +19,9 @@ subroutine scaldc()
 
 
 !!!$.....................................................................
+  REAL(KIND(0D0)),DIMENSION(*)  ::  a_scal
+  REAL(KIND(0D0)),DIMENSION(*)  ::  b_scal
+  REAL(KIND(0D0)),DIMENSION(*)  ::  fak_scal
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     idi,i0
@@ -33,7 +36,7 @@ subroutine scaldc()
   do i=1,sanz
 
      idi = i*(mb+1)
-     dum = adc(idi)
+     dum = a_scal(idi)
 
      if (dum.le.0d0) then
         WRITE (fetxt,'(a,I6,A,I6)')'scaldc',i,'idi',idi
@@ -41,9 +44,9 @@ subroutine scaldc()
         RETURN
      end if
 
-     adc(idi) = 1d0
-     fak(i)   = 1d0 / dsqrt(dum)
-     bdc(i)   = bdc(i) * fak(i)
+     a_scal(idi) = 1d0
+     fak_scal(i)   = 1d0 / dsqrt(dum)
+     b_scal(i)   = b_scal(i) * fak_scal(i)
 
      if (i.eq.1) CYCLE
 
@@ -51,7 +54,7 @@ subroutine scaldc()
      ja = max0(1,i-mb)
 
      do j=ja,i-1
-        adc(i0+j) = adc(i0+j)*fak(i)*fak(j)
+        a_scal(i0+j) = a_scal(i0+j)*fak_scal(i)*fak_scal(j)
      end do
 
   END DO

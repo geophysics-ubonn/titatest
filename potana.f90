@@ -1,4 +1,4 @@
-subroutine potana(l,k)
+subroutine potana(l,k,my_pota)
 
 !!!$     Unterprogramm zur Berechnung der analytischen Loesung der
 !!!$     Helmholtzgleichung fuer einen homogenen Halbraum (fuer Einheitsstrom !).
@@ -8,10 +8,9 @@ subroutine potana(l,k)
 
 !!!$.....................................................................
 
-  USE femmod
   USE sigmamod
   USE electrmod
-  USE elemmod
+  USE elemmod, ONLY : sanz, snr, sx, sy
   USE wavenmod
 
   IMPLICIT none
@@ -25,6 +24,9 @@ subroutine potana(l,k)
 
 !!!$     Wellenzahlindex
   INTEGER (KIND=4)  :: k
+
+!!$ Analytische berechnete Potentialwerte 
+  COMPLEX (KIND(0D0)), DIMENSION(sanz) :: my_pota
 
 !!!$.....................................................................
 
@@ -61,7 +63,7 @@ subroutine potana(l,k)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
      potmax  = dmax1(potmax,dum)
-     pota(j) = dcmplx(dum)
+     my_pota(j) = dcmplx(dum)
   end do
 
   do j=idum+1,sanz
@@ -75,20 +77,17 @@ subroutine potana(l,k)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
      potmax  = dmax1(potmax,dum)
-     pota(j) = dcmplx(dum)
+     my_pota(j) = dcmplx(dum)
   end do
 
 !!!$     Endlichen Wert fuer Singularitaet vorgeben (beeinflusst nur
 !!!$     berechnete Potentialwerte in direkter Umgebung des Stromknotens !)
 !!!$     ak
-  pota(idum) = dcmplx(5d0*potmax)
+  my_pota(idum) = dcmplx(5d0*potmax)
 
 !!!$     Potentialwerte skalieren (fuer Einheitsstrom !)
   dum2 = dcmplx(5d-1/pi) / sigma0
 
-  do j=1,sanz
-     pota(j) = pota(j) * dum2
-  end do
+  my_pota = my_pota * dum2
 
-  return
 end subroutine potana

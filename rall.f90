@@ -486,6 +486,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
   !     This is useful for including topographical effects and should be used
 
+  lvario = BTEST (mswitch,9) ! +512 calculate variogram
+
   lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
 
   IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
@@ -519,7 +521,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   dsens  = ramd(1:lnramd)//slash(1:1)//'coverage.mag'
 
 !!!$     Elementeinteilung einlesen
-  WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
+  IF (lverb) WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
   call relem(kanal,delem)
   if (errnr.ne.0) goto 999
 
@@ -527,7 +529,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      manz = elanz           ! wichtig an dieser stelle..
      CALL bnachbar          ! blegt nachbar
      CALL besp_elem
-     lvario = .TRUE.
+     lvario = lvario.OR.lsto
   ELSE
 !!!$     Modelleinteilung gemaess Elementeinteilung belegen
      manz = nx*nz           ! nur für strukturierte gitter
@@ -579,6 +581,11 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   if (errnr.ne.0) goto 999
 
   IF (lsink) THEN
+     IF (nsink > sanz) THEN
+        PRINT*,'Sink node > grid nodes'
+        errnr = 3
+        GOTO 999
+     END IF
      WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',&
           nsink,sx(snr(nsink)),sy(snr(nsink))
 !!!$         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',

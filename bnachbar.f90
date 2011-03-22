@@ -24,7 +24,7 @@ SUBROUTINE bnachbar
 
 !!!$     PROGRAMMINTERNE PARAMETER:----------------------------------------
 !!!$     Indexvariablen
-  INTEGER :: i,j,ik,jk
+  INTEGER :: i,j,ik,jk,count
 !!!$     Knotennummer der Kanten zaehler von element i und j
   INTEGER :: ik1,ik2,jk1,jk2
 !!!$-----------------------------------------------------------------------
@@ -38,11 +38,18 @@ SUBROUTINE bnachbar
   END IF
 
   nachbar = 0
-
+  count = 0
+  !$OMP PARALLEL DEFAULT (none) &
+  !$OMP PRIVATE (i,ik,ik1,ik2,j,jk,jk1,jk2) &
+  !$OMP SHARED (nachbar,smaxs,count,elanz,nrel,lverb)
+  !$OMP DO
   DO i=1,elanz
 
+     !$OMP ATOMIC
+     count = count + 1
+
      IF (lverb) WRITE (*,'(a,t70,F6.2,a)',ADVANCE='no')ACHAR(13)// &
-          'bnachbar/ ',REAL (i * (100./elanz)),'%'
+          'bnachbar/ ',REAL (count * (100./elanz)),'%'
 
      DO ik=1,smaxs
 
@@ -71,5 +78,6 @@ SUBROUTINE bnachbar
 
      END DO
   END DO                    ! outer loop i=1,elanz
+  !$OMP END PARALLEL
 
 END SUBROUTINE bnachbar

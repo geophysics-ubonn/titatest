@@ -71,8 +71,8 @@ subroutine bvolti()
      end if
 
      if (cdabs(volt(i)).eq.0d0) then
-        fetxt = 'index '
-        write(fetxt(7:10),'(i4)') i
+        write(fetxt,*)'index',i
+        print*,hpotdc(enr(i),:),dum1dc,dum2dc,dum3dc,dum4dc
         errnr = 82
         goto 1000
      end if

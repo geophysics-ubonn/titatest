@@ -22,6 +22,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   USE errmod
   USE konvmod
   USE pathmod
+  USE get_ver,ONLY : version
 
   IMPLICIT none
 
@@ -36,6 +37,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
   OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
 
+
 !!!$     HEADER AUSGEBEN
 10 FORMAT (l1,t20,a)
 11 FORMAT (g11.5,t20,a)
@@ -44,6 +46,17 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
         t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)
 14 FORMAT (t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
         t69,a8,t81,a8,t93,a8,t105,a10)
+
+
+  WRITE (fpinv,'(a)')'##'
+  WRITE (fpinv,'(a)')'## Complex Resistivity Tomography (CRTomo)'
+  WRITE (fpinv,'(a)')'##'
+  WRITE (fpinv,'(a)')'## Git-Branch '//TRIM(version(1))
+  WRITE (fpinv,'(a)')'## Git-ID '//TRIM(version(2))
+  WRITE (fpinv,'(a)')'##'
+  WRITE (fpinv,'(a)')'## Created '//TRIM(version(3))
+  WRITE (fpinv,'(a)')'##'
+  WRITE (fpinv,'(a)')''
 
   IF (mswitch /= 0) THEN
      write(fpinv,12,err=999)mswitch,'#  mswitch'
@@ -192,7 +205,10 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
           ' Inverse Fourier transform range :',amin,'m'
      write(fpinv,'(t50,g11.5,t62,a1)',err=999) amax,'m'
   end if
-
+  IF (lsytop) THEN
+     write(fpinv,'(a,t50,g11.5)',err=999) &
+          ' -- Sytop [m] :',sytop
+  END IF
   if (.not.lrho0.and..not.lstart) then
      bet0 = cdabs(dcmplx(1d0)/sigma0)
      pha0 = 1d3*datan2(dimag(dcmplx(1d0)/sigma0),dble(dcmplx(1d0)/sigma0))

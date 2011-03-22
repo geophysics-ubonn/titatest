@@ -23,10 +23,10 @@ subroutine blam0()
 
 !!!$     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::  cdum
-  REAL (KIND(0D0))    ::   dum
+  REAL (KIND(0D0))    ::   dum,lam_tmp
 
 !!!$     Indexvariablen
-  INTEGER (KIND = 4)  ::  i,j,k
+  INTEGER (KIND = 4)  ::  i,j,k,count
 
 !!!$.....................................................................
 
@@ -39,58 +39,48 @@ subroutine blam0()
   END IF
 
   lammax = 0d0
+  count = 0
+  !$OMP PARALLEL DEFAULT (none) &
+  !$OMP SHARED (manz,count,lverb,ldc,nanz,sensdc,wmatd,wdfak,lip,sens,lammax) &
+  !$OMP PRIVATE(i,k,dum,j,cdum)
+  !$OMP DO
+  do j=1,manz
 
-  if (ldc) then
-     do j=1,manz
-        IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
-        dum = 0d0
+     !$OMP ATOMIC
+     count = count + 1
 
+     IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+          'blam0/ ',REAL( count * (100./manz)),'%'
+     dum = 0d0;cdum = DCMPLX(0D0)
+     if (ldc) then
         do i=1,nanz
            do k=1,manz
               dum = dum + sensdc(i,j) * sensdc(i,k) * &
                    wmatd(i)*dble(wdfak(i))
            end do
         end do
-
-        lammax = lammax + dabs(dum)
-     end do
-
-  else if (lip) then
-
-     do j=1,manz
-        IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
-        dum = 0d0
-
+     else if (lip) then
         do i=1,nanz
            do k=1,manz
               dum = dum + dble(sens(i,j)) * dble(sens(i,k)) * &
                    wmatd(i)*dble(wdfak(i))
            end do
         end do
-
-        lammax = lammax + dabs(dum)
-     end do
-
-  else
-
-     do j=1,manz
-        IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
-        cdum = dcmplx(0d0)
-
+     else
         do i=1,nanz
            do k=1,manz
               cdum = cdum + dconjg(sens(i,j)) * sens(i,k) * &
                    dcmplx(wmatd(i)*dble(wdfak(i)))
            end do
         end do
+        dum = CDABS(cdum)
+     END if
+     
+     !$OMP ATOMIC
+     lammax = lammax + dabs(dum)
 
-        lammax = lammax + cdabs(cdum)
-     end do
-
-  end if
+  end do
+  !$OMP END PARALLEL
 
   lammax = lammax/dble(manz)
 

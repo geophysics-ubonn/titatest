@@ -48,6 +48,7 @@ SUBROUTINE bvariogram
 !!$! mti stores a string for variogram statistics, like korrelation length
 !!$! tgam stores the output string of get_vario
   CHARACTER (11) :: tg
+  CHARACTER (256) :: my_buff
 !!$c-----------------------------------------------------------------------
   WRITE (*,'(/a)',ADVANCE='no')'Calculating VARIOGRAM'
   errnr = 4
@@ -262,8 +263,8 @@ SUBROUTINE bvariogram
   OPEN (ifp,FILE='tmp.gnuplot',STATUS='old',ERR=999)
   READ (ifp,'(a)',ERR=100)fetxt
   CLOSE (ifp)
-  fetxt = TRIM(ADJUSTL(fetxt))//' < variogram.gnu'
-  IF (fetxt /= '') CALL SYSTEM (TRIM(fetxt))
+  my_buff = TRIM(ADJUSTL(fetxt))//' < variogram.gnu >& /dev/null'
+  IF (fetxt /= '') CALL SYSTEM (TRIM(my_buff))
   
 100 DEALLOCATE (gam_x,gam_y,gam)
   DEALLOCATE (ngam_x,ngam_y,ngam)

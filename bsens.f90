@@ -63,6 +63,9 @@ subroutine bsens()
   END IF
 !!!$     Sensitivitaetenfeld auf Null setzen
   sens = 0.
+
+  !$OMP PARALLEL DEFAULT(SHARED) FIRSTPRIVATE(hsens)
+  !$OMP DO SCHEDULE(STATIC)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
@@ -150,6 +153,8 @@ subroutine bsens()
         end do ! jnel=1,nelanz(i)
      end do ! ityp=1,typanz
   end do ! i=1,nanz
+  !$OMP END DO
+  !$OMP END PARALLEL
   
   DEALLOCATE (hsens)
 

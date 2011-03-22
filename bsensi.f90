@@ -16,13 +16,16 @@ subroutine bsensi()
   USE elemmod
   USE wavenmod
   USE errmod
+  USE konvmod,ONLY: lverb
+  USE ompmod
+  USE tic_toc
 
   IMPLICIT none
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-
+  INTEGER,PARAMETER :: ntd=2
 !!!$     Aktuelle Elementnummer
   INTEGER (KIND = 4)  ::     iel
 
@@ -40,13 +43,13 @@ subroutine bsensi()
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  ::     i,j,k
+  INTEGER (KIND = 4)  ::     i,j,k,count
 
 !!!$     Hilfsfeld
   COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
-  INTEGER (KIND = 4)  ::     nzp,nnp
+  INTEGER (KIND = 4)  ::     nzp,nnp,c1
   COMPLEX (KIND(0D0)) ::    dum
 
 !!!$     Pi
@@ -63,12 +66,22 @@ subroutine bsensi()
      RETURN
   END IF
 
+  CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
   sens = 0.
-
+  count = 0
+  !$OMP PARALLEL DEFAULT (SHARED) &
+  !$OMP FIRSTPRIVATE (hsens) &
+  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
+  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
+     !$OMP ATOMIC
+     count = count + 1
+
+     IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
+          'Sensitivity/ ',REAL( count * (100./nanz)),'%'
 
 !!!$     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
@@ -149,6 +162,10 @@ subroutine bsensi()
         end do
      end do
   end do
+  !$OMP END PARALLEL
+  fetxt = 'bsensi::'
+  CALL toc(c1,fetxt)
 
-  return
+  DEALLOCATE (hsens)
+
 end subroutine bsensi

@@ -35,19 +35,18 @@ PROGRAM inv
   USE bmcm_mod
   USE brough_mod
   USE invhpmod
-
+  USE omp_lib
+  USE ompmod
+  USE get_ver
 !!!$   USE portlib
 
   IMPLICIT none
 
   CHARACTER(256)         :: ftext
-  INTEGER                :: c1,i
+  INTEGER                :: c1,i,count
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
-  INTEGER :: OMP_GET_MAX_THREADS
-  INTEGER :: OMP_GET_NUM_THREADS
-  INTEGER :: OMP_GET_THREAD_NUM
   INTEGER :: getpid,pid
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -69,6 +68,9 @@ PROGRAM inv
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (fprun,*)pid
   CLOSE (fprun)
+  WRITE(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+  
+  CALL get_git_ver
 
   fetxt = 'crtomo.cfg'
   open(fpcfg,file=TRIM(fetxt),status='old',err=999)
@@ -221,7 +223,6 @@ PROGRAM inv
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
-!!$     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
 !!$     !$OMP PARALLEL
 !!$     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
 !!$          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
@@ -242,7 +243,7 @@ PROGRAM inv
              ' : Calculating Potentials'
 
 !!!$   MODELLING
-
+        count = 0
         if (ldc) then
            fetxt = 'allocation problem adc'
            ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
@@ -254,46 +255,52 @@ PROGRAM inv
            fetxt = 'allocation problem adc'
            IF (errnr /= 0) GOTO 999
 
+!$OMP PARALLEL DEFAULT (none) &
+!$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
+!$OMP PRIVATE (j,l) &
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count)           
+!$OMP DO 
 !!!$   DC CASE
            do k=1,kwnanz
+              !$OMP ATOMIC
+              count = count + 1
               fetxt = 'DC-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   ACHAR(13)//TRIM(fetxt),k,''
+                   ACHAR(13)//TRIM(fetxt),count,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 !!!$   Evtl calculation of analytical potentials
-                    if (lsr) call potana(l,k)
+                    if (lsr) call potana(l,k,pota)
 
-!!!$   Compilation of the linear system
+!!!$   COMPilation of the linear system
                     fetxt = 'kompadc'
-                    call kompadc(l,k)
-                    if (errnr.ne.0) goto 999
+                    call kompadc(l,k,adc,bdc)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Evtl take Dirichlet boundary values into account
-                    if (lrandb) call randdc()
-                    if (lrandb2) call randb2()
+                    if (lrandb) call randdc(adc,bdc)
+                    if (lrandb2) call randb2(adc,bdc)
 
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
-                    call scaldc()
-                    if (errnr.ne.0) goto 999
+                    call scaldc(adc,bdc,fak)
+!                    if (errnr.ne.0) goto 999
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
-                    call choldc()
-                    if (errnr.ne.0) goto 999
+                    call choldc(adc)
+!                    if (errnr.ne.0) goto 999
 
                  else
                     fetxt = 'kompbdc'
-!!!$   Modification of the current vector (Left Hand Side)
-                    call kompbdc(l)
+!!!$   Modification of the current vector (Right Hand Side)
+                    call kompbdc(l,bdc,fak)
                  end if
 
 !!!$   Solve linear system
                  fetxt = 'vredc'
-                 call vredc()
-
-!!!$   Scale back the potentials, save them and evtually add 
-!!!$   the analytical response
+                 call vredc(adc,bdc,pot)
+!!!$   Scale back the potentials, save them and 
+!!!$   eventually add the analytical response
                  do j=1,sanz
                     kpotdc(j,l,k) = dble(pot(j)) * fak(j)
                     if (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
@@ -302,6 +309,8 @@ PROGRAM inv
                  end do
               end do
            end do
+!$OMP END DO
+!$OMP END PARALLEL
 
         else
 
@@ -314,47 +323,53 @@ PROGRAM inv
            fetxt = 'allocation problem b'
            ALLOCATE (b(sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
-
+!$OMP PARALLEL DEFAULT (none) &
+!$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
+!$OMP PRIVATE (j,l,k) &
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
+           !$OMP DO
 !!!$   COMPLEX CASE
            do k=1,kwnanz
+              !$OMP ATOMIC
+              count = count + 1
               fetxt = 'IP-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   ACHAR(13)//TRIM(fetxt),k,''
+                   ACHAR(13)//TRIM(fetxt),count,''
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-                    if (lsr) call potana(l,k)
+                    if (lsr) call potana(l,k,pota)
 
-!!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+!!!$   KOMPilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
-                    call kompab(l,k)
-                    if (errnr.ne.0) goto 999
+                    call kompab(l,k,a,b)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
-                    if (lrandb) call randb()
-                    if (lrandb2) call randb2()
+                    if (lrandb) call randb(a,b)
+                    if (lrandb2) call randbdc2(a,b)
 
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'
-                    call scalab()
-                    if (errnr.ne.0) goto 999
+                    call scalab(a,b,fak)
+!                    if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
                     fetxt = 'chol'
-                    call chol()
-                    if (errnr.ne.0) goto 999
+                    call chol(a)
+!                    if (errnr.ne.0) goto 999
                  else
 
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
-                    call kompb(l)
+                    call kompb(l,b,fak)
 
                  end if
 
 !!!$   Gleichungssystem loesen
                  fetxt = 'vre'
-                 call vre()
+                 call vre(a,b,pot)
 
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
@@ -365,12 +380,13 @@ PROGRAM inv
                  end do
               end do
            end do
+!$OMP END DO
+!$OMP END PARALLEL
 
         end if
 
 !!!$   Ggf. Ruecktransformation der Potentialwerte
         if (swrtr.eq.1) call rtrafo()
-
 !!!$   Spannungswerte berechnen
         call bvolti()
         if (errnr.ne.0) goto 999
@@ -480,7 +496,7 @@ PROGRAM inv
                  IF (lffhom) THEN
                     write(*,*)&
                          ' ******* Restarting phase model ********'
-                    write(fprun,*)&
+                    write(fpinv,*)&
                          ' ******* Restarting phase model ********'
                     fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
                     OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
@@ -512,8 +528,8 @@ PROGRAM inv
            else
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
-              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-                   'WRITING MODEL ITERATE',it,''
+!!$              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
+!!$                   'WRITING MODEL ITERATE',it,''
               call wout(kanal,dsigma,dvolt)
               if (errnr.ne.0) goto 999
            end if
@@ -763,7 +779,6 @@ PROGRAM inv
      write(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen
-     close(fprun)
      close(fpinv)
      close(fpcjg)
      close(fpeps)
@@ -845,12 +860,13 @@ PROGRAM inv
      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+     close(fprun)
 
 !!!$   Ggf. weiteren Datensatz invertieren
   END DO
 
 !!!$   'crtomo.cfg' schliessen
-  close(fpcfg)
+  close (fpcfg)
 
   fetxt = 'crtomo.pid'
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='old',err=999)

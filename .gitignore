@@ -1,9 +1,11 @@
 *.o
 *.mod
-CRMod
-CRTomo
-minimal
+CRMod*
+CRTomo*
+minimal*
+mini_*
 forfiles
+my_git_version.h
 cutmckee/crerror.h
 *.mod
 *#

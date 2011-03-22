@@ -17,6 +17,9 @@ subroutine bsendc()
   USE wavenmod
   USE errmod
   USE konvmod , ONLY : lverb
+  USE ompmod
+  USE tic_toc
+
   IMPLICIT none
 
 !!!$.....................................................................
@@ -40,13 +43,13 @@ subroutine bsendc()
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  :: ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  :: i,j,k
+  INTEGER (KIND = 4)  :: i,j,k,count
 
 !!!$     Hilfsfeld
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
-  INTEGER (KIND = 4)  :: nzp,nnp
+  INTEGER (KIND = 4)  :: nzp,nnp,c1
   REAL (KIND(0D0))    :: dum
 
 !!!$     Pi
@@ -64,13 +67,23 @@ subroutine bsendc()
      RETURN
   END IF
 
+  CALL tic (c1)
+
 !!!$     Sensitivitaetenfeld auf Null setzen
   sensdc = 0D0
-
+  count  = 0
+  !$OMP PARALLEL DEFAULT (SHARED) &
+  !$OMP FIRSTPRIVATE (hsens) &
+  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
+  !$OMP DO SCHEDULE (DYNAMIC,CHUNK_1)
 !!!$     Messwert hochzaehlen
   do i=1,nanz
+
+     !$OMP ATOMIC
+     count = count + 1
+
      IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-          'Sensitivity/ ',REAL( i * (100./nanz)),'%'
+          'Sensitivity/ ',REAL( count * (100./nanz)),'%'
      iel = 0
 
 !!!$     Stromelektroden bestimmen
@@ -157,7 +170,10 @@ subroutine bsendc()
         end do ! jnel=1,nelanz(i)
      end do ! ityp=1,typanz
   end do ! i=1,nanz
-  
+  !$OMP END PARALLEL
+  fetxt = 'bsendc::'
+  CALL toc(c1,fetxt)
+
   DEALLOCATE (hsens)
   
 end subroutine bsendc

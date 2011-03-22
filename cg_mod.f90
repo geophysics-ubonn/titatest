@@ -23,13 +23,21 @@ MODULE cg_mod
 
   IMPLICIT none
 
+  INTEGER,PARAMETER,PRIVATE :: ntd=2 ! number of threads
+!!!$ we restrict ther thread numbers here to avoid atomization 
+!!!$ of the problem since we are dealing with pure matrix vector product of types..
+
   PUBLIC :: cjg
 !!!$ controls whather we have REAL or COMPLEX case
   
+
 !!!$ DC subroutines
   PRIVATE :: cjggdc
 !!!$ Subroutine calculates model update 
 !!!$ with preconditioned conjugate gradient method
+
+  PRIVATE :: bapdc
+!!!$  sub calculates A * p (skaliert)
   PRIVATE :: bpdc
 !!!$  subroutine calculates b = B * p (RHS) smooth regularization
   PRIVATE :: bpdctri
@@ -38,11 +46,17 @@ MODULE cg_mod
 !!!$ for Levenberg and Levenberg-Marquardt damping
   PRIVATE :: bpdcsto
 !!$ for stochastical regularization
+  PRIVATE :: bbdc
+!!!$ calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
+
 
 !!$ IP subroutines
   PRIVATE :: cjggra
 !!!$ Subroutine calculates model update for COMPLEX case
 !!!$ with preconditioned conjugate gradient method
+
+  PRIVATE :: bap
+!!!$  sub calculates A * p (skaliert)
   PRIVATE :: bp
 !!!$  subroutine calculates b = B * p (RHS) smooth regularization
   PRIVATE :: bptri
@@ -52,6 +66,8 @@ MODULE cg_mod
   PRIVATE :: bpsto
 !!$ for stochastical regularization, MATMUL is 
 !!$ now explicitly formed because of conjugate complex
+  PRIVATE :: bb
+!!!$ calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
 
 
 CONTAINS
@@ -127,6 +143,8 @@ CONTAINS
 
        pvecdc= rvecdc + beta * pvecdc
 
+       CALL bapdc
+
        IF (ltri == 0) THEN
           CALL bpdc
 
@@ -141,6 +159,8 @@ CONTAINS
           CALL bpdcsto
 
        END IF
+
+       CALL bbdc
 
        dr1 = DOT_PRODUCT(pvecdc,bvecdc) ! this is ok for ERT
 
@@ -168,6 +188,41 @@ CONTAINS
 
   end subroutine cjggdc
 
+  SUBROUTINE bapdc
+!!$
+!!!$    Unterprogramm berechnet Hilfsvektor A * p (skaliert).
+!!!$
+!!!$    Andreas Kemna                                      29-Feb-1996
+!!$
+!!!$    Last changes   RM                                  Mar-2011
+!!$
+!!!$...................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+!!!$    Hilfsvariablen
+    INTEGER         ::     i,j
+
+!!!$....................................................................
+
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
+    !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
+    !$OMP DO
+!!!$    A * p  berechnen (skaliert)
+    do i=1,nanz
+       apdc(i) = 0d0
+
+       if (ldc) then
+          do j=1,manz
+             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
+          end do
+       else if (lip) then
+          do j=1,manz
+             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
+          end do
+       end if
+    end do
+    !$OMP END PARALLEL
+  END SUBROUTINE bapdc
+
   subroutine bpdc()
 !!$
 !!!$    Unterprogramm berechnet b = B * p .
@@ -184,21 +239,6 @@ CONTAINS
 
 !!!$....................................................................
 
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       apdc(i) = 0d0
-
-       if (ldc) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
-          end do
-       else if (lip) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
-          end do
-       end if
-    end do
-
 !!!$    R^m * p  berechnen (skaliert)
     do i=1,manz
        dum = 0d0
@@ -213,26 +253,6 @@ CONTAINS
             dum = dum + pvecdc(i+nx)*smatm(i,3)*cgfac(i+nx)
 
        bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*cgfac(i)
-    end do
-
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       dum = 0d0
-
-       if (ldc) then
-          do i=1,nanz
-             dum = dum + sensdc(i,j) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       else if (lip) then
-          do i=1,nanz
-             dum = dum + dble(sens(i,j)) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       end if
-
-       bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdc
@@ -257,22 +277,6 @@ CONTAINS
     REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 !!!$!.....................................................................
-!!!!     WRITE(*,*) "BPDCtri",errnr 
-!!!!     A * p  berechnen (skaliert)
-
-    do i=1,nanz
-       apdc(i) = 0d0
-
-       if (ldc) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * sensdc(i,j) * cgfac(j)
-          end do
-       else if (lip) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j) * dble(sens(i,j)) * cgfac(j)
-          end do
-       end if
-    end do
 
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
@@ -284,27 +288,6 @@ CONTAINS
        !     main diagonal
        bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * cgfac(i) 
     END DO
-
-    !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       dum = 0d0
-
-       if (ldc) then
-          do i=1,nanz
-             dum = dum + sensdc(i,j) * wmatd(i) * dble(wdfak(i)) * &
-                  apdc(i)
-          end do
-       else if (lip) then
-          do i=1,nanz
-             dum = dum + dble(sens(i,j)) * wmatd(i) * &
-                  dble(wdfak(i)) * apdc(i)
-          end do
-       end if
-
-       bvecdc(j) = dum + lam * bvecdc(j)
-
-       bvecdc(j) = bvecdc(j) * cgfac(j)
-    end do
 
   end subroutine bpdctri
 
@@ -330,44 +313,10 @@ CONTAINS
 
 !!!$....................................................................
 
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       apdc(i) = 0d0
-
-       if (ldc) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
-          end do
-       else if (lip) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
-          end do
-       end if
-    end do
 
 !!!$    R^m * p  berechnen (skaliert)
     do i=1,manz
        bvecdc(i)=pvecdc(i)*cgfac(i)*smatm(i,1) ! damping stuff..
-    end do
-
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       dum = 0d0
-
-       if (ldc) then
-          do i=1,nanz
-             dum = dum + sensdc(i,j) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       else if (lip) then
-          do i=1,nanz
-             dum = dum + dble(sens(i,j)) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       end if
-
-       bvecdc(j) = dum + lam*bvecdc(j)
-       bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
 
   end subroutine bpdclma
@@ -387,48 +336,46 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: pvec2
+    REAL(KIND(0D0))    ::     dum
+    INTEGER         ::     i,j
+
+!!!$    R^m * p  berechnen (skaliert)
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
+    !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
+    !$OMP DO
+    do j = 1 , manz
+       bvecdc(j) = 0.
+       DO i = j , manz
+          dum = pvecdc(i) * smatm(i,j) * cgfac(i)
+          IF (i == j) THEN
+             bvecdc(j) = bvecdc(j) + dum
+          ELSE
+             bvecdc(j) = bvecdc(j) + 2D0 * dum
+          END IF
+       END DO
+    end do
+    !$OMP END PARALLEL
+  end subroutine bpdcsto
+
+  SUBROUTINE bbdc
+!!$
+!!!$    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+!!!$
+!!!$    Andreas Kemna                                      29-Feb-1996
+!!$
+!!!$    Last changes   RM                                  Mar-2011
+!!$
+!!!$...................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+!!!$    Hilfsvariablen
     REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
-!!!$      ALLOCATE (pvec2(manz),stat=errnr)
-!!!$      IF (errnr /= 0) THEN
-!!!$         fetxt = 'Error memory allocation pvec2 in bpdcsto'
-!!!$         errnr = 94
-!!!$         RETURN
-!!!$      END IF
 
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       apdc(i) = 0d0
-
-       if (ldc) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
-          end do
-       else if (lip) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
-          end do
-       end if
-    end do
-
-!!!$    R^m * p  berechnen (skaliert)
-!!!$caa   Abgeändert auf (4 Zeilen)
-!!!$      do i=1,manz
-!!!$         pvec2(i)=pvecdc(i)*cgfac(i)
-!!!$      end do
-    do j = 1 , manz
-       bvecdc(j) = 0.
-       DO i = 1 , manz
-          bvecdc(j) = bvecdc(j) + pvecdc(i) * smatm(i,j) * cgfac(i)
-       END DO
-    end do
-
-!!!$
-!!!$      bvecdc= MATMUL(smatm,pvec2)
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
+    !$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
+    !$OMP DO
     do j=1,manz
        dum = 0d0
 
@@ -447,10 +394,9 @@ CONTAINS
        bvecdc(j) = dum + lam*bvecdc(j)
        bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
+    !$OMP END PARALLEL
 
-    IF (ALLOCATED (pvec2)) DEALLOCATE (pvec2)
-
-  end subroutine bpdcsto
+  end subroutine bbdc
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -507,6 +453,8 @@ CONTAINS
 
        pvec = rvec + beta * pvec
 
+       CALL bap
+
        IF (ltri == 0) THEN
           CALL bp
        ELSE IF (ltri == 1.OR.ltri == 2.OR.&
@@ -517,6 +465,8 @@ CONTAINS
        ELSE IF (ltri == 15) THEN
           call bpsto
        END IF
+
+       CALL bb
 
        dr1 = 0d0
        DO j=1,manz
@@ -540,8 +490,40 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-
+    
   end subroutine cjggra
+
+  SUBROUTINE bap
+!!!$
+!!!$    Unterprogramm berechnet A * p  berechnen (skaliert)
+!!!$
+!!!$    Andreas Kemna                                        29-Feb-1996
+!!!$     
+!!!$    Last changes      RM                                   Mar-2011
+!!!$    
+!!!$....................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+
+!!!$    Hilfsvariablen
+    COMPLEX(KIND(0D0)) ::    cdum
+    INTEGER         ::     i,j
+
+!!!$....................................................................
+
+!!!$    A * p  berechnen (skaliert)
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
+    !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
+    !$OMP DO
+    do i=1,nanz
+       ap(i) = dcmplx(0d0)
+       
+       do j=1,manz
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
+       end do
+    end do
+    !$OMP END PARALLEL
+
+  END SUBROUTINE bap
 
   subroutine bp()
 !!!$
@@ -559,16 +541,6 @@ CONTAINS
     INTEGER         ::     i,j
 
 !!!$....................................................................
-
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       ap(i) = dcmplx(0d0)
-
-       do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
-       end do
-    end do
-
 !!!$    R^m * p  berechnen (skaliert)
     do i=1,manz
        cdum = dcmplx(0d0)
@@ -583,20 +555,6 @@ CONTAINS
             cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
        bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
     end do
-
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       cdum = dcmplx(0d0)
-
-       do i=1,nanz
-          cdum = cdum + dconjg(sens(i,j)) * &
-               dcmplx(wmatd(i)*dble(wdfak(i)))*ap(i)
-       end do
-
-       bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(cgfac(j))
-    end do
-
   end subroutine bp
 
   subroutine bptri()
@@ -619,18 +577,6 @@ CONTAINS
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j,idum
 !!!.....................................................................
-!!!     
-!!!     A * p  berechnen (skaliert)
-
-    do i=1,nanz
-       ap(i) = dcmplx(0d0)
-
-       do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
-       end do
-    end do
-
-
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
        cdum = dcmplx(0d0)
@@ -644,21 +590,6 @@ CONTAINS
             cgfac(i) ! + main diagonal
 
     END DO
-
-
-    !     A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       cdum = dcmplx(0d0)
-
-       do i=1,nanz
-          cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i) * &
-               dble(wdfak(i)))*ap(i)
-       end do
-
-       bvec(j) = cdum + dcmplx(lam)*bvec(j)
-
-       bvec(j) = bvec(j)*dcmplx(cgfac(j))
-    end do
 
   end subroutine bptri
 
@@ -679,33 +610,12 @@ CONTAINS
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       ap(i) = dcmplx(0d0)
-
-       do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
-       end do
-    end do
-
 !!!$    coaa R^m * p  berechnen (skaliert)
 
-    do j=1,manz
-       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
-    end do
-
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-    do j=1,manz
-       cdum = dcmplx(0d0)
-
-       do i=1,nanz
-          cdum = cdum + dconjg(sens(i,j))* &
-               dcmplx(wmatd(i)*dble(wdfak(i)))*ap(i)
-       end do
-
-       bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(cgfac(j))
-    end do
+    bvec = pvec * DCMPLX(cgfac * smatm(:,1))
+!!$    do j=1,manz
+!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
+!!$    end do
 
   end subroutine bplma
 
@@ -715,6 +625,10 @@ CONTAINS
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$    Angepasst an die neue Regularisierungsmatrix 
 !!!$    (stoch. Kovarianzmatrix) fuer komplexes Modell
+!!!$
+!!!$   TODO:
+!!!$      since smatm is symmetric, it would be good to 
+!!!$      exploit this..
 !!!$
 !!!$    Copyright by Andreas Kemna 2009
 !!!$    
@@ -728,24 +642,46 @@ CONTAINS
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
-!!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       ap(i) = dcmplx(0d0)
-       do j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
-       end do
-    end do
-
 !!!$    R^m * p  berechnen (skaliert)
-    DO j=1,manz
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
+    !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
+    !$OMP DO
+    DO j=1, manz
        bvec(j) = 0.
-       DO i = 1,manz
-          bvec(j) = bvec(j) + pvec(i) * DCMPLX(smatm(i,j)) * &
-               DCMPLX(cgfac(j))
+       DO i = j, manz
+          cdum = pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
+          IF (i == j) THEN
+             bvec(j) = bvec(j) + cdum
+          ELSE
+             bvec(j) = bvec(j) + 2D0 * cdum
+          END IF
        END DO
     END DO
+    !$OMP END PARALLEL
 
-!!!$    A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+  end subroutine bpsto
+
+  SUBROUTINE bb
+!!!$
+!!!$    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+!!!$
+!!!$    Andreas Kemna                                        29-Feb-1996
+!!!$     
+!!!$    Last changes      RM                                   Mar-2011
+!!!$    
+!!!$....................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+
+!!!$    Hilfsvariablen
+    COMPLEX(KIND(0D0)) ::    cdum
+    INTEGER         ::     i,j
+
+!!!$....................................................................
+!!!$    
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (cdum) &
+    !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
+    !$OMP DO
+
     do j=1,manz
        cdum = dcmplx(0d0)
 
@@ -758,7 +694,9 @@ CONTAINS
        bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
-  end subroutine bpsto
+    !$OMP END PARALLEL
+
+  END SUBROUTINE bb
 
 
 END MODULE cg_mod

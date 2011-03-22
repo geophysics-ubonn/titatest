@@ -1,4 +1,4 @@
-subroutine scalab()
+subroutine scalab(a_scal,b_scal,fak_scal)
 
 !!!$     Unterprogramm skaliert 'a' und 'b' und liefert die Skalierungs-
 !!!$     faktoren im Vektor 'fak'.
@@ -19,6 +19,12 @@ subroutine scalab()
 
 
 !!!$.....................................................................
+!!$Gesamtsteifigkeitsmatrix
+  COMPLEX (KIND(0D0)),DIMENSION(*):: a_scal
+!!$ Berechnete Potentialwerte (bzw. Loesungsverktor)
+  COMPLEX (KIND(0D0)),DIMENSION(*):: b_scal
+!!$ Skalirerungsfaktor
+  REAL (KIND(0D0)),DIMENSION(*)  :: fak_scal
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::    idi,i0
@@ -33,7 +39,7 @@ subroutine scalab()
   do  i=1,sanz
 
      idi = i*(mb+1)
-     dum = cdabs(a(idi))
+     dum = cdabs(a_scal(idi))
 
      if (dum.le.0d0) then
         WRITE (fetxt,*)'scalab idi',idi,'i',i
@@ -41,9 +47,9 @@ subroutine scalab()
         goto 1000
      end if
 
-     a(idi) = a(idi) / dcmplx(dum)
-     fak(i) = 1d0 / dsqrt(dum)
-     b(i)   = b(i) * dcmplx(fak(i))
+     a_scal(idi) = a_scal(idi) / dcmplx(dum)
+     fak_scal(i) = 1d0 / dsqrt(dum)
+     b_scal(i)   = b_scal(i) * dcmplx(fak_scal(i))
 
      if (i.eq.1) CYCLE
 
@@ -51,7 +57,7 @@ subroutine scalab()
      ja = max0(1,i-mb)
 
      do j=ja,i-1
-        a(i0+j) = a(i0+j) * dcmplx(fak(i)*fak(j))
+        a_scal(i0+j) = a_scal(i0+j) * dcmplx(fak_scal(i)*fak_scal(j))
      END do
 
   END do
