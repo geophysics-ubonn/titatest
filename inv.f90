@@ -69,6 +69,12 @@ PROGRAM inv
   WRITE (fprun,*)pid
   CLOSE (fprun)
 
+  CALL get_git_ver (version)
+
+  PRINT*,'Git-Branch  ',TRIM(version(1))
+  PRINT*,'Created     ',TRIM(version(3))
+
+
   !$OMP PARALLEL PRIVATE(TID)
 !!$  TID = OMP_GET_THREAD_NUM()
 !!$  PRINT*,'thread count #', TID
