@@ -23,6 +23,8 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 
 # das hier chek obs ein bin im home gibt
 C1		= cbn
+# invokes get_git_version.sh
+C2		= ggv
 # macht CRTomo
 PR1		= crt
 # macht CRMod
@@ -46,7 +48,7 @@ f90crt		= alloci.o femmod.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
 		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  invhpmod.o ompmod.o
+		  invhpmod.o ompmod.o get_git_ver.o
 
 f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  bessi0.o bessi1.o bessk0.o bessk1.o \
@@ -75,7 +77,7 @@ fcrt		= inv.o
 f90crm		= alloci.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
 		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o \
-		  pathmod.o
+		  pathmod.o ompmod.o get_git_ver.o
 
 fcrm		= fem.o
 
@@ -105,7 +107,7 @@ f90mini		= minimalbeispiel.o
 #$(forcrt):	%.o : %.for
 #		$(F90) $(FFLAG90) -c $<
 
-$(fcrm):	%.o : %.f
+$(fcrm):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
 
 $(fcrt):	%.o : %.f90
@@ -155,7 +157,12 @@ cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o
 
+
+get_git_ver.o:	my_git_version.h
+
+
 kont1.o:	variomodel.o
+
 
 rall.o:		make_noise.o variomodel.o
 
@@ -182,13 +189,15 @@ cbn:
 			echo "Du hast kein bin in deinem home.--"; \
 			mkdir ~/bin; \
 		fi
+ggv:		
+		./get_git_version.sh
 
-crt:		$(C1) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
+crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) -o CRTomo \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
 		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE) 
 
-crm:		$(C1) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
+crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) -o CRMod \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
@@ -208,5 +217,5 @@ install:	$(C1) $(crt) $(crm)
 		cd ./cutmckee ; make install
 
 clean:		
-		$(RM) CRTomo CRMod *~ *.mod *.o
+		$(RM) CRTomo CRMod *~ *.mod *.o my_git_version.h
 		cd ./cutmckee ; make clean

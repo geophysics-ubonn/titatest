@@ -69,7 +69,6 @@ subroutine chol(a_chol)
 
      END do
   END do
-
   errnr = 0
   return
 
