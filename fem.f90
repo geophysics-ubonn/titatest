@@ -23,6 +23,7 @@ program fem
   USE randbmod
   USE errmod
   USE konvmod
+  USE get_ver
 
   IMPLICIT none
 
@@ -59,7 +60,19 @@ program fem
   integer         * 4     j,k,l,c1
 
   character       *256    ftext
+  INTEGER :: getpid,pid
+
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+  kanal = 11
+  pid = getpid()
+  fetxt = 'crmod.pid'
+  PRINT*,'CRMod Process_ID ::',pid
+  OPEN (kanal,FILE=TRIM(fetxt),STATUS='replace',err=999)
+  WRITE (kanal,*)pid
+  CLOSE (kanal)
+
+  CALL get_git_ver
 
   CALL tic(c1)
 !!!$   'crmod.cfg' oeffnen
@@ -68,7 +81,7 @@ program fem
   open(12,file=TRIM(fetxt),status='old',err=999)
 
 !!!$   Allgemeine Parameter setzen
-  kanal = 11
+
 
 !!!$   "singularity removal" ?
 !!!$   ak        lsr = .true.
@@ -83,6 +96,7 @@ program fem
   wkfak = .false.
   lana = .FALSE.
   lprior = .false. ! kann prior modell verrauschen
+  ldc = .FALSE.
   lnsepri = .false.
 !!!$   ak        lkpot = .true.
 !!!$   ak        dkpot = '..\tmp\kpot.ctr'
