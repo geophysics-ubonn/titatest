@@ -170,7 +170,6 @@ get_git_ver.o:	my_git_version.h
 
 kont1.o:	variomodel.o get_git_ver.o
 
-
 rall.o:		make_noise.o variomodel.o
 
 rsigma.o:       make_noise.o
@@ -178,7 +177,6 @@ rsigma.o:       make_noise.o
 update.o:	cg_mod.o
 
 inv.o:		$(f90crt) $(forcrt) $(f90crtsub)
-
 
 minimalbeispiel.o:	tic_toc.o
 
