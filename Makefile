@@ -98,7 +98,7 @@ f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
 		  vredc.o vre.o wdatm.o \
 		  wkpot.o wout.o wpot.o wsens.o \
 		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  tic_toc.o make_noise.o get_unit.o 
+		  tic_toc.o make_noise.o get_unit.o
 # Minimalbeispiel
 f90mini		= minimalbeispiel.o
 # get_git_version tags		
@@ -174,7 +174,9 @@ rsigma.o:       make_noise.o
 
 update.o:	cg_mod.o
 
-inv.o:		$(f90crt) $(forcrt) $(f90crtsub) get_git_ver.o
+fem.o:		$(f90crm) $(f90crmsub) $(ggvo)
+
+inv.o:		$(f90crt) $(f90crtsub) $(ggvo)
 
 minimalbeispiel.o:	tic_toc.o
 
