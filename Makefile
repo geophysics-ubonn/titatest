@@ -164,9 +164,7 @@ cg_mod.o:	cjgmod.o alloci.o femmod.o elemmod.o invmod.o errmod.o \
 brough_mod.o:	alloci.o invmod.o konvmod.o modelmod.o elemmod.o \
 		errmod.o datmod.o
 
-
 get_git_ver.o:	my_git_version.h
-
 
 kont1.o:	variomodel.o get_git_ver.o
 
@@ -176,7 +174,7 @@ rsigma.o:       make_noise.o
 
 update.o:	cg_mod.o
 
-inv.o:		$(f90crt) $(forcrt) $(f90crtsub)
+inv.o:		$(f90crt) $(forcrt) $(f90crtsub) get_git_ver.o
 
 minimalbeispiel.o:	tic_toc.o
 
@@ -197,14 +195,12 @@ cbn:
 ggv:		
 		./get_git_version.sh
 
-crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) \
-		$(ggvo)
+crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o CRTomo \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 
-crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) \
-		$(ggvo)
+crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o CRMod \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
