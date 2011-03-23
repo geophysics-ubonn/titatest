@@ -45,7 +45,7 @@ f90crt		= alloci.o femmod.o \
 		  datmod.o invmod.o cjgmod.o sigmamod.o \
 		  electrmod.o modelmod.o elemmod.o wavenmod.o \
 		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  invhpmod.o ompmod.o get_git_ver.o
+		  invhpmod.o ompmod.o
 
 f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  bessi0.o bessi1.o bessk0.o bessk1.o \
@@ -74,7 +74,7 @@ fcrt		= inv.o
 f90crm		= alloci.o femmod.o datmod.o \
 		  invmod.o sigmamod.o electrmod.o modelmod.o \
 		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o \
-		  pathmod.o ompmod.o get_git_ver.o
+		  pathmod.o ompmod.o
 
 fcrm		= fem.o
 
@@ -96,6 +96,9 @@ f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
 		  tic_toc.o make_noise.o get_unit.o 
 # Minimalbeispiel
 f90mini		= minimalbeispiel.o
+# get_git_version tags		
+ggvo		= get_git_ver.o
+
 ################################################################
 # rules
 %.o:		%.for
@@ -185,14 +188,16 @@ cbn:
 ggv:		
 		./get_git_version.sh
 
-crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
+crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) \
+		$(ggvo)
 		$(F90) $(FFLAG90) -o CRTomo \
-		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
+		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 
-crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
+crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) \
+		$(ggvo)
 		$(F90) $(FFLAG90) -o CRMod \
-		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
+		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
 
 ctm:		
