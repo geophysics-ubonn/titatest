@@ -31,10 +31,12 @@ PR3		= ctm
 # Minimalbeispiel
 PR4		= minimal
 
-MACHINE		= $(shell uname -n)_$(F90)_master
+BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
+MACHINE		= $(shell uname -n)
+PREFIX		= $(MACHINE)_$(F90)_$(BRANCH)
 ################################################################
 # default
-all:		$(C1) $(PR1) $(PR2) $(PR3) $(PR4) install
+all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
 ################################################################
 # this is for evry one here
 ferr		= get_error.o
@@ -186,12 +188,12 @@ ggv:
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
 		$(F90) $(FFLAG90) -o CRTomo \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr)
-		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE) 
+		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
 		$(F90) $(FFLAG90) -o CRMod \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr)
-		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
+		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -200,8 +202,8 @@ minimal:	$(C1) $(f90mini)
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
 
 install:	$(crt) $(crm)				
-		$(CP) CRTomo $(WPATH)/CRTomo_$(MACHINE)
-		$(CP) CRMod $(WPATH)/CRMod_$(MACHINE)
+		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
+		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
 		cd ./cutmckee ; make install
 
 clean:		
