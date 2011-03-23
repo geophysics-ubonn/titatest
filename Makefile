@@ -119,6 +119,9 @@ $(f90crt):	%.o : %.f90
 $(f90crtsub):	%.o : %.f90		
 		$(F90) $(FFLAG90) -c $<
 
+$(ggvo):	%.o : %.f90		
+		$(F90) $(FFLAG90) -c $<
+
 $(ferr):	error.txt get_error.f90
 		./make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
