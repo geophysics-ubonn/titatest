@@ -1,11 +1,8 @@
 #!/bin/bash
 
-git checkout testing
-git pull
-git checkout dev
-git pull
-git checkout master
-git pull
-git push
-git checkout testing
-git branch
+liste=`git branch|sed 's/\*//g' `
+echo $liste
+for x in $liste;do
+	git checkout $x
+	git pull
+done
