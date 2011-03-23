@@ -5,7 +5,7 @@ CRTomo*
 minimal*
 mini_*
 forfiles
-my_git_version.h
+*.h
 cutmckee/crerror.h
 *.mod
 *#
