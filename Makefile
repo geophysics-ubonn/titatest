@@ -170,7 +170,6 @@ update.o:	cg_mod.o
 
 inv.o:		$(f90crt) $(forcrt) $(f90crtsub)
 
-
 minimalbeispiel.o:	tic_toc.o
 
 ###############################################################
