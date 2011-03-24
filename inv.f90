@@ -496,7 +496,7 @@ PROGRAM inv
                  IF (lffhom) THEN
                     write(*,*)&
                          ' ******* Restarting phase model ********'
-                    write(fpinv,*)&
+                    write(fprun,*)&
                          ' ******* Restarting phase model ********'
                     fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
                     OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
