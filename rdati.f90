@@ -34,7 +34,7 @@ subroutine rdati(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i,ifp1,ifp2
+  INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
@@ -89,6 +89,9 @@ subroutine rdati(kanal,datei)
 !!!$     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
   IF ( lnse ) THEN
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
+     CALL get_unit(ifp3)
+     OPEN (ifp3,FILE='inv.mynoise_voltages',STATUS='replace')
+     WRITE (ifp3,*) nanz
      CALL get_unit(ifp1)
      OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
      WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//&
@@ -240,7 +243,7 @@ subroutine rdati(kanal,datei)
 
            WRITE(ifp1,'(G14.4)')bet
 
-
+           WRITE (ifp3,*) strnr(i),vnr(i),bet,pha
         END IF
 
      end if
@@ -313,8 +316,9 @@ subroutine rdati(kanal,datei)
 !!!$     'datei' schliessen
   close(kanal)
   IF ( lnse ) THEN
-     close(ifp1)
-     IF (.not.ldc) close (ifp2)
+     CLOSE (ifp1)
+     IF (.not.ldc) CLOSE (ifp2)
+     CLOSE (ifp3)
   END IF
   errnr = 0
   IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
