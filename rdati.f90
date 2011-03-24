@@ -34,7 +34,7 @@ subroutine rdati(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i,ifp1,ifp2
+  INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
@@ -91,6 +91,9 @@ subroutine rdati(kanal,datei)
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
      CALL get_unit(ifp1)
      OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
+     CALL get_unit(ifp3)
+     OPEN (ifp3,FILE='inv.mynoise_voltage',STATUS='replace')
+     WRITE (ifp3,*)nanz
      WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//&
           ACHAR(9)//ACHAR(9)//'bet(old)'//ACHAR(9)//'bet(new)'
      IF (.NOT. ldc) THEN
@@ -239,7 +242,8 @@ subroutine rdati(kanal,datei)
            bet = bet + rnd_r(i) * eps_r ! add noise
 
            WRITE(ifp1,'(G14.4)')bet
-
+           ! write out full noisy data as measured voltages..
+           WRITE (ifp3,*)strnr(i),vnr(i),bet,pha
 
         END IF
 
@@ -313,8 +317,9 @@ subroutine rdati(kanal,datei)
 !!!$     'datei' schliessen
   close(kanal)
   IF ( lnse ) THEN
-     close(ifp1)
-     IF (.not.ldc) close (ifp2)
+     CLOSE (ifp1)
+     IF (.not.ldc) CLOSE (ifp2)
+     CLOSE (ifp3)
   END IF
   errnr = 0
   IF (ALLOCATED (rnd_r)) DEALLOCATE (rnd_r)
