@@ -242,7 +242,7 @@ subroutine rdati(kanal,datei)
            bet = bet + rnd_r(i) * eps_r ! add noise
 
            WRITE(ifp1,'(G14.4)')bet
-
+           ! write out full noisy data as measured voltages..
            WRITE (ifp3,*) strnr(i),vnr(i),bet,pha
         END IF
 
