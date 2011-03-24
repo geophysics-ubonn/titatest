@@ -38,7 +38,7 @@ PR5		= minimal_omp
 
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
-PREFIX		= $(MACHINE)_$(F90)_$(BRANCH)
+PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
 ################################################################
 # default
 all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
