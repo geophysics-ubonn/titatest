@@ -56,7 +56,7 @@ subroutine kont2(lsetup)
   fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
   open(fpcjg,file=TRIM(fetxt),status='old',err=1000,position='append')
   errnr = 4
-
+  ncg = INT(cgres(1))
 !!!$     Erste Iteration (?)
   if (lsetup) then
      IF (lip) THEN          ! FPI?
