@@ -97,8 +97,11 @@ subroutine blam0()
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
   lammax = lammax * 5d0
-
-  WRITE (*,'(t5,a,F12.1)')'found lam_0 ',lammax
+  IF (lammax > 1e10) THEN
+     WRITE (*,'(t5,a,G12.1)')'found lam_0 ',lammax
+  ELSE
+     WRITE (*,'(t5,a,F12.1)')'found lam_0 ',lammax
+  END IF
 !!!$     ak Synthetic Example (JoH)
 !!!$     ak        lammax = lammax * 1d1
 
