@@ -237,7 +237,7 @@ PROGRAM inv
      DO WHILE (.NOT.converged) ! optimization loop
 
 !!!$   Control output
-        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')ACHAR(13)//&
+        write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')ACHAR(13)//&
              ' Iteration ',it,', ',itr,' : Calculating Potentials',''
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
@@ -413,7 +413,7 @@ PROGRAM inv
         call dmisft(lsetup.OR.lsetip)
 !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         if (errnr.ne.0) goto 999
-
+        WRITE (*,'(a,F8.3)',ADVANCE='no')'actual fit',nrmsd
 !!!$   'nrmsd=0' ausschliessen
         if (nrmsd.lt.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
@@ -561,9 +561,9 @@ PROGRAM inv
            IF (lrobust) wmatd2 = wmatd
 
 !!!$   Kontrollausgaben
-           write (*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no') &
+           write (*,'(a,i3,a,i3,a,t63,a,t78,F8.3,t100,a)',ADVANCE='no') &
                 ACHAR(13)//' Iteration ',it,', ',itr,&
-                ' : Calculating Sensitivities',''
+                ' : Calculating Sensitivities','fit',nrmsd,''
 
            write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
@@ -698,7 +698,7 @@ PROGRAM inv
            end if
         end if
 !!!$   Kontrollausgaben
-        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
+        write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
              ACHAR(13)//' Iteration ',it,', ',itr,&
              ' : Updating',''
 
