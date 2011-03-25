@@ -221,9 +221,10 @@ subroutine update()
      end if
 
 !!!$     Verbesserung skalieren
-     do j=1,manz
-        dpar(j) = dpar(j)*dcmplx(cgfac(j))
-     end do
+     dpar = dpar * DCMPLX(cgfac)
+!!$     do j=1,manz
+!!$        dpar(j) = dpar(j)*dcmplx(cgfac(j))
+!!$     end do
 
   else                      ! (llam==.TRUE.)
 
