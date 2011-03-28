@@ -195,7 +195,7 @@ cbn:
 			mkdir ~/bin; \
 		fi
 ggv:		
-		./get_git_version.sh
+		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o CRTomo \

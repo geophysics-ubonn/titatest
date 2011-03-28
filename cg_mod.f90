@@ -432,26 +432,28 @@ CONTAINS
 
        dr = 0d0
        DO j=1,manz
-          dr = dr + DBLE(CONJG(rvec(j)) * rvec(j))
+          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
        END DO
 
        if (k.eq.1) then
           dr0  = dr*eps
           beta = 0d0
        else
+          if (dr.le.dr0) goto 10
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
-!!$          beta = DOT_PRODUCT(bvec,rvec) 
+!!$          beta = 0d0
+!!$          do j=1,manz
+!!$             beta = beta + dconjg(bvec(j))*rvec(j)
+!!$          end do
 !!$          beta = beta * -alpha/dr1
        END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
-       if (dr.le.dr0) goto 10
-
-       pvec = rvec + beta * pvec
+       pvec = rvec + DCMPLX(beta) * pvec
 
        CALL bap
 
@@ -470,13 +472,13 @@ CONTAINS
 
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + DBLE(CONJG(pvec(j)) * bvec(j))
+          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
        END DO
 
        alpha = dr/dr1
        
-       dpar = dpar + alpha * pvec
-       rvec = rvec - alpha * bvec
+       dpar = dpar + DCMPLX(alpha) * pvec
+       rvec = rvec - DCMPLX(alpha) * bvec
 
        dr1 = dr
 
