@@ -119,7 +119,7 @@ CONTAINS
 
     dpar = DCMPLX(0.)
     rvecdc = bvecdc
-    pvecdc = 0.
+    pvecdc = 0d0
 
     fetxt = 'CG iteration'
 
