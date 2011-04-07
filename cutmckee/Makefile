@@ -18,6 +18,8 @@ FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -l
 FLIBMPI         = 
 FLIBLINBLAS     = -llapack -lblas
 FLIBLINBLAS     = 
+F90             = ifort
+FFLAG90         = -O3 -fast -parallel
 FLIB            = -lm
 FLIBF77         = -lm
 
