@@ -28,7 +28,10 @@ PROG	        = CutMcK
 # target
 PR1		= ctm
 # machine name
+BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
+PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+
 # default targets
 all:		$(PR1) install
 
@@ -72,4 +75,4 @@ clean:
 		$(PROG)
 
 install:	$(PROG)
-		$(CP) $(PROG) $(WPATH)/$(PROG)_$(MACHINE)
+		$(CP) $(PROG) $(WPATH)/$(PROG)_$(PREFIX)
