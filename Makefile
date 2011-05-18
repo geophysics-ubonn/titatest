@@ -14,7 +14,7 @@ WPATH 		= ~/bin
 # gfortran								   #
 ############################################################################
 F90		= gfortran
-FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 ## Only un-comment for debug purpose
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-automatic -fno-signed-zeros -ffinite-math-only
@@ -24,8 +24,8 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 # make sure to comment all other compiler flags down below in order to use # 
 # ifort									   #
 ############################################################################
-#F90		= ifort
-#FFLAG90		= -O3 -fast -parallel
+F90		= ifort
+FFLAG90		= -O3 -fast -parallel
 ## Only un-comment for debug purpose
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
