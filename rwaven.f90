@@ -125,6 +125,10 @@ subroutine rwaven()
   end do
 
 !!!$     Laguerre-Integration
+!!!$ Compute abcissas and weights for the numerical integration
+!!!$ of the upper integral (see AK Diss, p. 161ff.)
+!!!$ the alpha = 0d0 value removes the exp function in the
+!!!$ Gauss-Laguere formula (Numerical recipies, p. 144, 1992)
   call gaulag(kwn(ganz+1),kwnwi(ganz+1),lanz,0d0)
 
   do i=ganz+1,ganz+lanz
