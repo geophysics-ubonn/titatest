@@ -1,69 +1,69 @@
 
 ## determine arch type and add 64 bit directives, if possible
-ARCH           =$(shell uname -a)
+#ARCH           =$(shell uname -a)
 
 
 ###
 bin_PROGRAMS = CRTomo CRMod
 ###
 ### CRMod source files
-f90crm		= alloci.o femmod.o datmod.o \
-		  invmod.o sigmamod.o electrmod.o modelmod.o \
-		  elemmod.o wavenmod.o randbmod.o errmod.o konvmod.o \
-		  pathmod.o ompmod.o
+f90crm		= alloci.f90 femmod.f90 datmod.f90 \
+		  invmod.f90 sigmamod.f90 electrmod.f90 modelmod.f90 \
+		  elemmod.f90 wavenmod.f90 randbmod.f90 errmod.f90 konvmod.f90 \
+		  pathmod.f90 ompmod.f90
 
-fcrm		= fem.o
+fcrm		= fem.f90
 
-f90crmsub	= bbsens.o bessi0.o bessi1.o bessk0.o bessk1.o \
-		  beta.o bkfak.o bpot.o \
-		  bsendc.o bsens.o bsensi.o \
-		  bsytop.o bvolt.o bvolti.o chareal.o \
-		  chkpol.o choldc.o chol.o \
-		  elem1.o elem3.o elem4.o \
-		  elem5.o elem8.o filpat.o \
-		  kompadc.o kompbdc.o kompb.o \
-		  potana.o precal.o \
-		  randb2.o randb.o randdc.o rdatm.o \
-		  relectr.o relem.o rrandb.o rsigma.o refsig.o \
-		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
-		  vredc.o vre.o wdatm.o \
-		  wkpot.o wout.o wpot.o wsens.o \
-		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  tic_toc.o make_noise.o get_unit.o
+f90crmsub	= bbsens.f90 bessi0.f90 bessi1.f90 bessk0.f90 bessk1.f90 \
+		  beta.f90 bkfak.f90 bpot.f90 \
+		  bsendc.f90 bsens.f90 bsensi.f90 \
+		  bsytop.f90 bvolt.f90 bvolti.f90 chareal.f90 \
+		  chkpol.f90 choldc.f90 chol.f90 \
+		  elem1.f90 elem3.f90 elem4.f90 \
+		  elem5.f90 elem8.f90 filpat.f90 \
+		  kompadc.f90 kompbdc.f90 kompb.f90 \
+		  potana.f90 precal.f90 \
+		  randb2.f90 randb.f90 randdc.f90 rdatm.f90 \
+		  relectr.f90 relem.f90 rrandb.f90 rsigma.f90 refsig.f90 \
+		  rtrafo.f90 rwaven.f90 scalab.f90 scaldc.f90 sort.f90 \
+		  vredc.f90 vre.f90 wdatm.f90 \
+		  wkpot.f90 wout.f90 wpot.f90 wsens.f90 \
+		  gammln.f90 gaulag.f90 gauleg.f90 intcha.f90 kompab.f90 \
+		  tic_toc.f90 make_noise.f90 get_unit.f90
 
 
 # CRTomo objects
-f90crt		= alloci.o femmod.o \
-		  datmod.o invmod.o cjgmod.o sigmamod.o \
-		  electrmod.o modelmod.o elemmod.o wavenmod.o \
-		  randbmod.o errmod.o konvmod.o pathmod.o \
-		  invhpmod.o ompmod.o
+f90crt		= alloci.f90 femmod.f90 \
+		  datmod.f90 invmod.f90 modelmod.f90 cjgmod.f90 sigmamod.f90 \
+		  electrmod.f90  elemmod.f90 wavenmod.f90 \
+		  randbmod.f90 errmod.f90 konvmod.f90 pathmod.f90 \
+		  invhpmod.f90 ompmod.f90
 
-f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
-		  bessi0.o bessi1.o bessk0.o bessk1.o \
-		  beta.o bkfak.o blam0.o bnachbar.o bpar.o bpot.o \
-		  bsendc.o bsens.o bsensi.o \
-		  bsigm0.o bsigma.o bsytop.o bvolt.o bvolti.o chareal.o \
-		  chkpol.o choldc.o chol.o dmisft.o \
-		  elem1.o elem3.o elem4.o \
-		  elem5.o elem8.o filpat.o \
-		  chold.o cholz.o linvd.o linvz.o \
-		  mdian1.o parfit.o potana.o precal.o rall.o \
-		  gammln.o gaulag.o gauleg.o intcha.o kompab.o \
-		  kompadc.o kompbdc.o kompb.o kont1.o kont2.o \
-		  randb2.o randb.o randdc.o rdati.o rdatm.o \
-		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
-		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
-		  update.o vredc.o vre.o wdatm.o \
-		  wkpot.o wout.o wpot.o wsens.o \
-		  gauss_dble.o gauss_cmplx.o get_unit.o \
-		  make_noise.o tic_toc.o variomodel.o bvariogram.o \
-		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o \
+f90crtsub	= bbsedc.f90 bbsens.f90 besp_elem.f90 \
+		  bessi0.f90 bessi1.f90 bessk0.f90 bessk1.f90 \
+		  beta.f90 bkfak.f90 blam0.f90 bnachbar.f90 bpar.f90 bpot.f90 \
+		  bsendc.f90 bsens.f90 bsensi.f90 \
+		  bsigm0.f90 bsigma.f90 bsytop.f90 bvolt.f90 bvolti.f90 chareal.f90 \
+		  chkpol.f90 choldc.f90 chol.f90 dmisft.f90 \
+		  elem1.f90 elem3.f90 elem4.f90 \
+		  elem5.f90 elem8.f90 filpat.f90 \
+		  chold.f90 cholz.f90 linvd.f90 linvz.f90 \
+		  mdian1.f90 parfit.f90 potana.f90 precal.f90 rall.f90 \
+		  gammln.f90 gaulag.f90 gauleg.f90 intcha.f90 kompab.f90 \
+		  kompadc.f90 kompbdc.f90 kompb.f90 kont1.f90 kont2.f90 \
+		  randb2.f90 randb.f90 randdc.f90 rdati.f90 rdatm.f90 \
+		  refsig.f90 relectr.f90 relem.f90 rrandb.f90 rsigma.f90 \
+		  rtrafo.f90 rwaven.f90 scalab.f90 scaldc.f90 sort.f90 \
+		  update.f90 vredc.f90 vre.f90 wdatm.f90 \
+		  wkpot.f90 wout.f90 wpot.f90 wsens.f90 \
+		  gauss_dble.f90 gauss_cmplx.f90 get_unit.f90 \
+		  make_noise.f90 tic_toc.f90 variomodel.f90 bvariogram.f90 \
+		  cg_mod.f90 bsmatm_mod.f90 bmcm_mod.f90 brough_mod.f90 
 
-fcrt		= inv.o
+fcrt		= inv.f90
 
 
-CRTomo_SOURCES = $(f90crt) $(fcrt) $(f90crtsub)
+CRTomo_SOURCES = $(f90crt) $(f90crtsub)$ $(fcrt)
 CRTomo_FFLAGS = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -I ../inc 
 # check if compiling on 64 bit, add memory model flag
 #if "$(ARCH)" == "x86_64"
