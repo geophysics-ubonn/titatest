@@ -1,0 +1,330 @@
+001 Error opening
+001
+001
+002 End of File
+002
+002 encountered
+003 Error reading
+003
+003
+004 Error writing
+004
+004
+005 Max. #
+005 nodes
+005 exceeded
+006 Max. #
+006 element types
+006 exceeded
+007 Max.
+007 bandwidth
+007 exceeded
+008 Max. #
+008 element nodes
+008 exceeded
+009 Max. #
+009 elements
+009 exceeded
+010 Max. #
+010 boundary elements
+010 exceeded
+011 Resistivity
+011 <= 0
+011
+012 Max. #
+012 electrodes
+012 exceeded
+013 rwdanz > rwdmax
+013
+013
+014 Max. #
+014 measurements
+014 exceeded
+015 Inadmissible
+015 name of file
+015
+016 panz > pmax
+016
+016
+017 stranz > strmax
+017
+017
+018 Inadmissible
+018 element type
+018
+019 Bandwith
+019 of FE matrix
+019 exceeded
+020 Array subscript
+020 exceeded
+020 allocated area
+021 stranz > relmax
+021
+021
+022 Max. grade
+022 exceeded
+022
+023 # init.nodes
+023 = 0
+023
+024 Max. #
+024 init.nodes
+024 exceeded
+025 # init.nodes
+025 > # nodes
+025
+026 Determinant
+026 of FE matrix
+026 <= 0
+027 FE matrix element
+027 <= 0
+027
+028 FE matrix
+028 indefinite
+028
+029 Electrode node
+029 > # nodes
+029
+030 rwdnr(i) > sanz
+030
+030
+031 Init.node
+031 > # nodes
+031
+032 Max. #
+032 wavenumbers
+032 exceeded
+033 rwnanz > relmax
+033
+033
+034 Execution time :
+034
+034
+035 Error during calculation
+035 of boundary elements.
+035 Check electrode positions.
+036 Array subscript
+036 exceeded
+036 allocated area
+037 Wavenumber
+037 <= 0
+037
+038 Error during back
+038 transformation.
+038 Check wavenumbers.
+039 Resistivity
+039 = 0
+039
+040 Wavenumber
+040 too small
+040
+041 Wavenumber
+041 too large
+041
+042 Max. #
+042 model parameters
+042 exceeded
+043 Error during back
+043 transformation.
+043 Check wavenumbers.
+044 Error during back
+044 transformation.
+044 Check wavenumbers.
+045 Error in rtrafm
+045
+045
+046 Inadmissible
+046 electrode denotation
+046
+047 # elements
+047 inconsistent
+047
+048 Inadmissible
+048 electrode denotation
+048
+049 Max. #
+049 measurements
+049 exceeded
+050 # model parameters
+050 and # elements
+050 inconsistent
+051 Max. #
+051 model parameters
+051 exceeded
+052 kanz > sanz
+052
+052
+053 knr > sanz
+053
+053
+054 Electrode
+054 > # electrodes
+054
+055 sensj = 0
+055
+055
+056 sensi = 0
+056
+056
+057 Inadmissible
+057 noise level
+057
+058 Inadmissible
+058 type of reconstruction
+058
+059 Relaxation parameter
+059 lambda < 1
+059
+060 Inadmissible
+060 index of 1st iteration
+060
+061 Inadmissible
+061 max. #
+061 iterations
+062 Min. data RMS
+062 < 1e-12
+062
+063 Max. #
+063 model parameters
+063 exceeded
+064 Inadmissible
+064 min. rel. decrease
+064 of data RMS
+065 Inadmissible
+065 resistivity constraints
+065
+066 Inadmissible
+066 filter window
+066
+067 Inadmissible
+067 parameter alpha
+067
+068 Inadmissible
+068 filter repetition
+068
+069 nx, nz
+069 inconsistent
+069
+070 # model parameters,
+070 # elements
+070 inconsistent
+071 Min. voltage
+071 vmin < 0
+071
+072 # wavenumbers
+072 < 5
+072
+073 Distance between
+073 electrodes
+073 <= 0
+074 Distance between
+074 electrode and
+074 boundary <= 0
+075 nanz > (mbmax+1)*smax
+075
+075
+076 manz > smax*emax
+076
+076
+077 Damping parameter
+077 nmin >= 0
+077
+078 Increasing RMS.
+078 Execution time:
+078
+079 Max. # iterations.
+079 Execution time:
+079
+080 Min. RMS .
+080 Execution time:
+080
+081 Min. rel. RMS decrease .
+081 Execution time:
+081
+082 Modelled voltage
+082 = 0
+082
+083 Inadmissible
+083 max. # relaxation
+083 iterations
+084 Inadmissible
+084 min. CG error
+084
+085 Inadmissible
+085 regularisation
+085 parameters
+086 Inadmissible
+086 Fourier
+086 transformation
+087 Negative
+087 polarity
+087
+088 Standard deviation
+088 <= 0
+088
+089 nx < 2
+089 or
+089 nz < 2
+090 Min. L1 norm
+090 < 1
+090
+091 Inadmissible
+091 background
+091 resistivity
+092 Min. step-length
+092 for 2nd time
+092
+093 Infinite
+093 geometrical factor
+093
+094 Magnitude
+094 <= 0
+094
+095 Phase
+095 > pi
+095
+096 Inadmissible
+096 smoothing parameter
+096
+097 Out of memory
+097
+097
+098 Inadmissible
+098 step factor
+098
+099 All data
+099 excluded
+099
+100 Specify
+100 starting model
+100
+101 Combined usage of homogeneous
+101 Dirichlet and mixed boundary
+101 condition unallowed
+102 Specify
+102 fictitious sink node
+102
+103 Specify
+103 Dirichtlet node
+103
+104 Invalid parameters in
+104 resistance error model
+104
+105 Invalid parameters in
+105 phase error model
+105
+106 Mixed boundary condition
+106 not implemented for pure 2D
+106
+107 Cholesky decomposition failed
+107 factorization
+107
+108 Solving linear system failed
+108 indefinite?
+108
+109 Min. stepsize reached
+109 Execution time:
+109
+110 Mixed boundary condition not  
+110 yet implemented for 2D case
+110

@@ -1,0 +1,43 @@
+c 'invhp.fin'
+
+c Andreas Kemna                                            16-Apr-1996
+c                                       Letzte Aenderung   16-Jul-2007
+
+c.....................................................................
+
+c Kanalnummer
+        integer         * 4     kanal
+
+c Dateinamen
+        character       * 128   delem,
+     1                          delectr,
+     1                          dstrom,
+     1                          dsigma,
+     1                          dvolt,
+     1                          dsens,
+     1                          dstart,
+cdiff+<
+     1                          dd0,
+     1                          dm0,
+     1                          dfm0,
+cdiff+>
+     1                          drandb
+
+c Schalter ob allererste Iteration (Initialisierung)
+        logical         * 4     lsetup
+
+c Schalter ob "final phase improvement" initialisiert werden soll
+        logical         * 4     lsetip
+
+c Schalter ob weiterer Datensatz invertiert werden soll
+        logical         * 4     lagain
+
+c Indexvariablen
+        integer         * 4     j,k,l
+
+c Zeitvariablen
+        real            * 4     izeit,
+     1                          tazeit(2)
+
+c Zusaetzliche Fehlervariable
+        integer         * 4     errnr2

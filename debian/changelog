@@ -1,0 +1,5 @@
+crtools (0.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Maximilian Weigand <mweigand@geo.uni-bonn.de>  Mon, 15 Feb 2010 15:19:35 +0100
