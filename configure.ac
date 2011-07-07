@@ -10,7 +10,7 @@ AC_CONFIG_SRCDIR([src/inv.f90])
 AM_INIT_AUTOMAKE
 
 # CRTomo and CRMod error generation
-AC_CONFIG_COMMANDS_PRE([cd inc; ./../make_crerr.sh; cd ..;])
+AC_CONFIG_COMMANDS_PRE([cd src; ./../make_crerr.sh; cd ..;])
 
 # CutMcK error generation
 AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../make_crerr.sh; cd ..;])

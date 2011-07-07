@@ -32,6 +32,8 @@ rm config.log
 rm config.status
 rm config.sub
 
+rm Man/Makefile
+
 rm configure
 
 rm install-sh

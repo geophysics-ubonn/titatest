@@ -82,7 +82,8 @@ am__objects_3 = CRMod-bbsens.$(OBJEXT) CRMod-bessi0.$(OBJEXT) \
 	CRMod-gaulag.$(OBJEXT) CRMod-gauleg.$(OBJEXT) \
 	CRMod-intcha.$(OBJEXT) CRMod-kompab.$(OBJEXT) \
 	CRMod-tic_toc.$(OBJEXT) CRMod-make_noise.$(OBJEXT) \
-	CRMod-get_unit.$(OBJEXT)
+	CRMod-get_unit.$(OBJEXT) CRMod-get_git_ver.$(OBJEXT) \
+	CRMod-get_error.$(OBJEXT)
 am_CRMod_OBJECTS = $(am__objects_1) $(am__objects_2) $(am__objects_3)
 CRMod_OBJECTS = $(am_CRMod_OBJECTS)
 CRMod_LDADD = $(LDADD)
@@ -95,9 +96,53 @@ am__objects_4 = CRTomo-alloci.$(OBJEXT) CRTomo-femmod.$(OBJEXT) \
 	CRTomo-elemmod.$(OBJEXT) CRTomo-wavenmod.$(OBJEXT) \
 	CRTomo-randbmod.$(OBJEXT) CRTomo-errmod.$(OBJEXT) \
 	CRTomo-konvmod.$(OBJEXT) CRTomo-pathmod.$(OBJEXT) \
-	CRTomo-invhpmod.$(OBJEXT) CRTomo-ompmod.$(OBJEXT)
-am__objects_5 = CRTomo-inv.$(OBJEXT)
-am_CRTomo_OBJECTS = $(am__objects_4) $(am__objects_5)
+	CRTomo-invhpmod.$(OBJEXT) CRTomo-ompmod.$(OBJEXT) \
+	CRTomo-cg_mod.$(OBJEXT) CRTomo-tic_toc.$(OBJEXT) \
+	CRTomo-variomodel.$(OBJEXT) CRTomo-bsmatm_mod.$(OBJEXT) \
+	CRTomo-bmcm_mod.$(OBJEXT) CRTomo-brough_mod.$(OBJEXT) \
+	CRTomo-get_git_ver.$(OBJEXT)
+am__objects_5 = CRTomo-bbsedc.$(OBJEXT) CRTomo-bbsens.$(OBJEXT) \
+	CRTomo-besp_elem.$(OBJEXT) CRTomo-bessi0.$(OBJEXT) \
+	CRTomo-bessi1.$(OBJEXT) CRTomo-bessk0.$(OBJEXT) \
+	CRTomo-bessk1.$(OBJEXT) CRTomo-beta.$(OBJEXT) \
+	CRTomo-bkfak.$(OBJEXT) CRTomo-blam0.$(OBJEXT) \
+	CRTomo-bnachbar.$(OBJEXT) CRTomo-bpar.$(OBJEXT) \
+	CRTomo-bpot.$(OBJEXT) CRTomo-bsendc.$(OBJEXT) \
+	CRTomo-bsens.$(OBJEXT) CRTomo-bsensi.$(OBJEXT) \
+	CRTomo-bsigm0.$(OBJEXT) CRTomo-bsigma.$(OBJEXT) \
+	CRTomo-bsytop.$(OBJEXT) CRTomo-bvolt.$(OBJEXT) \
+	CRTomo-bvolti.$(OBJEXT) CRTomo-chareal.$(OBJEXT) \
+	CRTomo-chkpol.$(OBJEXT) CRTomo-choldc.$(OBJEXT) \
+	CRTomo-chol.$(OBJEXT) CRTomo-dmisft.$(OBJEXT) \
+	CRTomo-elem1.$(OBJEXT) CRTomo-elem3.$(OBJEXT) \
+	CRTomo-elem4.$(OBJEXT) CRTomo-elem5.$(OBJEXT) \
+	CRTomo-elem8.$(OBJEXT) CRTomo-filpat.$(OBJEXT) \
+	CRTomo-chold.$(OBJEXT) CRTomo-cholz.$(OBJEXT) \
+	CRTomo-linvd.$(OBJEXT) CRTomo-linvz.$(OBJEXT) \
+	CRTomo-mdian1.$(OBJEXT) CRTomo-parfit.$(OBJEXT) \
+	CRTomo-potana.$(OBJEXT) CRTomo-precal.$(OBJEXT) \
+	CRTomo-make_noise.$(OBJEXT) CRTomo-rall.$(OBJEXT) \
+	CRTomo-gammln.$(OBJEXT) CRTomo-gaulag.$(OBJEXT) \
+	CRTomo-gauleg.$(OBJEXT) CRTomo-intcha.$(OBJEXT) \
+	CRTomo-kompab.$(OBJEXT) CRTomo-kompadc.$(OBJEXT) \
+	CRTomo-kompbdc.$(OBJEXT) CRTomo-kompb.$(OBJEXT) \
+	CRTomo-kont1.$(OBJEXT) CRTomo-kont2.$(OBJEXT) \
+	CRTomo-randb2.$(OBJEXT) CRTomo-randb.$(OBJEXT) \
+	CRTomo-randdc.$(OBJEXT) CRTomo-rdati.$(OBJEXT) \
+	CRTomo-rdatm.$(OBJEXT) CRTomo-refsig.$(OBJEXT) \
+	CRTomo-relectr.$(OBJEXT) CRTomo-relem.$(OBJEXT) \
+	CRTomo-rrandb.$(OBJEXT) CRTomo-rsigma.$(OBJEXT) \
+	CRTomo-rtrafo.$(OBJEXT) CRTomo-rwaven.$(OBJEXT) \
+	CRTomo-scalab.$(OBJEXT) CRTomo-scaldc.$(OBJEXT) \
+	CRTomo-sort.$(OBJEXT) CRTomo-update.$(OBJEXT) \
+	CRTomo-vredc.$(OBJEXT) CRTomo-vre.$(OBJEXT) \
+	CRTomo-wdatm.$(OBJEXT) CRTomo-wkpot.$(OBJEXT) \
+	CRTomo-wout.$(OBJEXT) CRTomo-wpot.$(OBJEXT) \
+	CRTomo-wsens.$(OBJEXT) CRTomo-gauss_dble.$(OBJEXT) \
+	CRTomo-gauss_cmplx.$(OBJEXT) CRTomo-get_unit.$(OBJEXT) \
+	CRTomo-bvariogram.$(OBJEXT) CRTomo-get_error.$(OBJEXT)
+am__objects_6 = CRTomo-inv.$(OBJEXT)
+am_CRTomo_OBJECTS = $(am__objects_4) $(am__objects_5) $(am__objects_6)
 CRTomo_OBJECTS = $(am_CRTomo_OBJECTS)
 CRTomo_LDADD = $(LDADD)
 CRTomo_LINK = $(FCLD) $(CRTomo_FCFLAGS) $(FCFLAGS) $(CRTomo_LDFLAGS) \
@@ -216,7 +261,7 @@ f90crmsub = bbsens.f90 bessi0.f90 bessi1.f90 bessk0.f90 bessk1.f90 \
 		  vredc.f90 vre.f90 wdatm.f90 \
 		  wkpot.f90 wout.f90 wpot.f90 wsens.f90 \
 		  gammln.f90 gaulag.f90 gauleg.f90 intcha.f90 kompab.f90 \
-		  tic_toc.f90 make_noise.f90 get_unit.f90
+		  tic_toc.f90 make_noise.f90 get_unit.f90 get_git_ver.f90 get_error.f90 
 
 
 # CRTomo objects
@@ -224,7 +269,8 @@ f90crt = alloci.f90 femmod.f90 \
 		  datmod.f90 invmod.f90 modelmod.f90 cjgmod.f90 sigmamod.f90 \
 		  electrmod.f90  elemmod.f90 wavenmod.f90 \
 		  randbmod.f90 errmod.f90 konvmod.f90 pathmod.f90 \
-		  invhpmod.f90 ompmod.f90
+		  invhpmod.f90 ompmod.f90 cg_mod.f90 tic_toc.f90 variomodel.f90 bsmatm_mod.f90 bmcm_mod.f90 \
+		  brough_mod.f90 get_git_ver.f90
 
 f90crtsub = bbsedc.f90 bbsens.f90 besp_elem.f90 \
 		  bessi0.f90 bessi1.f90 bessk0.f90 bessk1.f90 \
@@ -235,7 +281,7 @@ f90crtsub = bbsedc.f90 bbsens.f90 besp_elem.f90 \
 		  elem1.f90 elem3.f90 elem4.f90 \
 		  elem5.f90 elem8.f90 filpat.f90 \
 		  chold.f90 cholz.f90 linvd.f90 linvz.f90 \
-		  mdian1.f90 parfit.f90 potana.f90 precal.f90 rall.f90 \
+		  mdian1.f90 parfit.f90 potana.f90 precal.f90 make_noise.f90 rall.f90 \
 		  gammln.f90 gaulag.f90 gauleg.f90 intcha.f90 kompab.f90 \
 		  kompadc.f90 kompbdc.f90 kompb.f90 kont1.f90 kont2.f90 \
 		  randb2.f90 randb.f90 randdc.f90 rdati.f90 rdatm.f90 \
@@ -244,11 +290,10 @@ f90crtsub = bbsedc.f90 bbsens.f90 besp_elem.f90 \
 		  update.f90 vredc.f90 vre.f90 wdatm.f90 \
 		  wkpot.f90 wout.f90 wpot.f90 wsens.f90 \
 		  gauss_dble.f90 gauss_cmplx.f90 get_unit.f90 \
-		  make_noise.f90 tic_toc.f90 variomodel.f90 bvariogram.f90 \
-		  cg_mod.f90 bsmatm_mod.f90 bmcm_mod.f90 brough_mod.f90 
+		   bvariogram.f90 get_error.f90
 
 fcrt = inv.f90
-CRTomo_SOURCES = $(f90crt) $(f90crtsub)$ $(fcrt)
+CRTomo_SOURCES = $(f90crt) $(f90crtsub) $(fcrt)
 CRTomo_FFLAGS = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -I ../inc 
 # check if compiling on 64 bit, add memory model flag
 #if "$(ARCH)" == "x86_64"
@@ -788,6 +833,18 @@ CRMod-get_unit.o: get_unit.f90
 CRMod-get_unit.obj: get_unit.f90
 	$(FC) $(CRMod_FCFLAGS) $(FCFLAGS) -c -o CRMod-get_unit.obj `if test -f 'get_unit.f90'; then $(CYGPATH_W) 'get_unit.f90'; else $(CYGPATH_W) '$(srcdir)/get_unit.f90'; fi`
 
+CRMod-get_git_ver.o: get_git_ver.f90
+	$(FC) $(CRMod_FCFLAGS) $(FCFLAGS) -c -o CRMod-get_git_ver.o `test -f 'get_git_ver.f90' || echo '$(srcdir)/'`get_git_ver.f90
+
+CRMod-get_git_ver.obj: get_git_ver.f90
+	$(FC) $(CRMod_FCFLAGS) $(FCFLAGS) -c -o CRMod-get_git_ver.obj `if test -f 'get_git_ver.f90'; then $(CYGPATH_W) 'get_git_ver.f90'; else $(CYGPATH_W) '$(srcdir)/get_git_ver.f90'; fi`
+
+CRMod-get_error.o: get_error.f90
+	$(FC) $(CRMod_FCFLAGS) $(FCFLAGS) -c -o CRMod-get_error.o `test -f 'get_error.f90' || echo '$(srcdir)/'`get_error.f90
+
+CRMod-get_error.obj: get_error.f90
+	$(FC) $(CRMod_FCFLAGS) $(FCFLAGS) -c -o CRMod-get_error.obj `if test -f 'get_error.f90'; then $(CYGPATH_W) 'get_error.f90'; else $(CYGPATH_W) '$(srcdir)/get_error.f90'; fi`
+
 CRTomo-alloci.o: alloci.f90
 	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-alloci.o `test -f 'alloci.f90' || echo '$(srcdir)/'`alloci.f90
 
@@ -883,6 +940,528 @@ CRTomo-ompmod.o: ompmod.f90
 
 CRTomo-ompmod.obj: ompmod.f90
 	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-ompmod.obj `if test -f 'ompmod.f90'; then $(CYGPATH_W) 'ompmod.f90'; else $(CYGPATH_W) '$(srcdir)/ompmod.f90'; fi`
+
+CRTomo-cg_mod.o: cg_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-cg_mod.o `test -f 'cg_mod.f90' || echo '$(srcdir)/'`cg_mod.f90
+
+CRTomo-cg_mod.obj: cg_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-cg_mod.obj `if test -f 'cg_mod.f90'; then $(CYGPATH_W) 'cg_mod.f90'; else $(CYGPATH_W) '$(srcdir)/cg_mod.f90'; fi`
+
+CRTomo-tic_toc.o: tic_toc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-tic_toc.o `test -f 'tic_toc.f90' || echo '$(srcdir)/'`tic_toc.f90
+
+CRTomo-tic_toc.obj: tic_toc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-tic_toc.obj `if test -f 'tic_toc.f90'; then $(CYGPATH_W) 'tic_toc.f90'; else $(CYGPATH_W) '$(srcdir)/tic_toc.f90'; fi`
+
+CRTomo-variomodel.o: variomodel.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-variomodel.o `test -f 'variomodel.f90' || echo '$(srcdir)/'`variomodel.f90
+
+CRTomo-variomodel.obj: variomodel.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-variomodel.obj `if test -f 'variomodel.f90'; then $(CYGPATH_W) 'variomodel.f90'; else $(CYGPATH_W) '$(srcdir)/variomodel.f90'; fi`
+
+CRTomo-bsmatm_mod.o: bsmatm_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsmatm_mod.o `test -f 'bsmatm_mod.f90' || echo '$(srcdir)/'`bsmatm_mod.f90
+
+CRTomo-bsmatm_mod.obj: bsmatm_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsmatm_mod.obj `if test -f 'bsmatm_mod.f90'; then $(CYGPATH_W) 'bsmatm_mod.f90'; else $(CYGPATH_W) '$(srcdir)/bsmatm_mod.f90'; fi`
+
+CRTomo-bmcm_mod.o: bmcm_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bmcm_mod.o `test -f 'bmcm_mod.f90' || echo '$(srcdir)/'`bmcm_mod.f90
+
+CRTomo-bmcm_mod.obj: bmcm_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bmcm_mod.obj `if test -f 'bmcm_mod.f90'; then $(CYGPATH_W) 'bmcm_mod.f90'; else $(CYGPATH_W) '$(srcdir)/bmcm_mod.f90'; fi`
+
+CRTomo-brough_mod.o: brough_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-brough_mod.o `test -f 'brough_mod.f90' || echo '$(srcdir)/'`brough_mod.f90
+
+CRTomo-brough_mod.obj: brough_mod.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-brough_mod.obj `if test -f 'brough_mod.f90'; then $(CYGPATH_W) 'brough_mod.f90'; else $(CYGPATH_W) '$(srcdir)/brough_mod.f90'; fi`
+
+CRTomo-get_git_ver.o: get_git_ver.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_git_ver.o `test -f 'get_git_ver.f90' || echo '$(srcdir)/'`get_git_ver.f90
+
+CRTomo-get_git_ver.obj: get_git_ver.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_git_ver.obj `if test -f 'get_git_ver.f90'; then $(CYGPATH_W) 'get_git_ver.f90'; else $(CYGPATH_W) '$(srcdir)/get_git_ver.f90'; fi`
+
+CRTomo-bbsedc.o: bbsedc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bbsedc.o `test -f 'bbsedc.f90' || echo '$(srcdir)/'`bbsedc.f90
+
+CRTomo-bbsedc.obj: bbsedc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bbsedc.obj `if test -f 'bbsedc.f90'; then $(CYGPATH_W) 'bbsedc.f90'; else $(CYGPATH_W) '$(srcdir)/bbsedc.f90'; fi`
+
+CRTomo-bbsens.o: bbsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bbsens.o `test -f 'bbsens.f90' || echo '$(srcdir)/'`bbsens.f90
+
+CRTomo-bbsens.obj: bbsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bbsens.obj `if test -f 'bbsens.f90'; then $(CYGPATH_W) 'bbsens.f90'; else $(CYGPATH_W) '$(srcdir)/bbsens.f90'; fi`
+
+CRTomo-besp_elem.o: besp_elem.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-besp_elem.o `test -f 'besp_elem.f90' || echo '$(srcdir)/'`besp_elem.f90
+
+CRTomo-besp_elem.obj: besp_elem.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-besp_elem.obj `if test -f 'besp_elem.f90'; then $(CYGPATH_W) 'besp_elem.f90'; else $(CYGPATH_W) '$(srcdir)/besp_elem.f90'; fi`
+
+CRTomo-bessi0.o: bessi0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessi0.o `test -f 'bessi0.f90' || echo '$(srcdir)/'`bessi0.f90
+
+CRTomo-bessi0.obj: bessi0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessi0.obj `if test -f 'bessi0.f90'; then $(CYGPATH_W) 'bessi0.f90'; else $(CYGPATH_W) '$(srcdir)/bessi0.f90'; fi`
+
+CRTomo-bessi1.o: bessi1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessi1.o `test -f 'bessi1.f90' || echo '$(srcdir)/'`bessi1.f90
+
+CRTomo-bessi1.obj: bessi1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessi1.obj `if test -f 'bessi1.f90'; then $(CYGPATH_W) 'bessi1.f90'; else $(CYGPATH_W) '$(srcdir)/bessi1.f90'; fi`
+
+CRTomo-bessk0.o: bessk0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessk0.o `test -f 'bessk0.f90' || echo '$(srcdir)/'`bessk0.f90
+
+CRTomo-bessk0.obj: bessk0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessk0.obj `if test -f 'bessk0.f90'; then $(CYGPATH_W) 'bessk0.f90'; else $(CYGPATH_W) '$(srcdir)/bessk0.f90'; fi`
+
+CRTomo-bessk1.o: bessk1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessk1.o `test -f 'bessk1.f90' || echo '$(srcdir)/'`bessk1.f90
+
+CRTomo-bessk1.obj: bessk1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bessk1.obj `if test -f 'bessk1.f90'; then $(CYGPATH_W) 'bessk1.f90'; else $(CYGPATH_W) '$(srcdir)/bessk1.f90'; fi`
+
+CRTomo-beta.o: beta.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-beta.o `test -f 'beta.f90' || echo '$(srcdir)/'`beta.f90
+
+CRTomo-beta.obj: beta.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-beta.obj `if test -f 'beta.f90'; then $(CYGPATH_W) 'beta.f90'; else $(CYGPATH_W) '$(srcdir)/beta.f90'; fi`
+
+CRTomo-bkfak.o: bkfak.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bkfak.o `test -f 'bkfak.f90' || echo '$(srcdir)/'`bkfak.f90
+
+CRTomo-bkfak.obj: bkfak.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bkfak.obj `if test -f 'bkfak.f90'; then $(CYGPATH_W) 'bkfak.f90'; else $(CYGPATH_W) '$(srcdir)/bkfak.f90'; fi`
+
+CRTomo-blam0.o: blam0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-blam0.o `test -f 'blam0.f90' || echo '$(srcdir)/'`blam0.f90
+
+CRTomo-blam0.obj: blam0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-blam0.obj `if test -f 'blam0.f90'; then $(CYGPATH_W) 'blam0.f90'; else $(CYGPATH_W) '$(srcdir)/blam0.f90'; fi`
+
+CRTomo-bnachbar.o: bnachbar.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bnachbar.o `test -f 'bnachbar.f90' || echo '$(srcdir)/'`bnachbar.f90
+
+CRTomo-bnachbar.obj: bnachbar.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bnachbar.obj `if test -f 'bnachbar.f90'; then $(CYGPATH_W) 'bnachbar.f90'; else $(CYGPATH_W) '$(srcdir)/bnachbar.f90'; fi`
+
+CRTomo-bpar.o: bpar.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bpar.o `test -f 'bpar.f90' || echo '$(srcdir)/'`bpar.f90
+
+CRTomo-bpar.obj: bpar.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bpar.obj `if test -f 'bpar.f90'; then $(CYGPATH_W) 'bpar.f90'; else $(CYGPATH_W) '$(srcdir)/bpar.f90'; fi`
+
+CRTomo-bpot.o: bpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bpot.o `test -f 'bpot.f90' || echo '$(srcdir)/'`bpot.f90
+
+CRTomo-bpot.obj: bpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bpot.obj `if test -f 'bpot.f90'; then $(CYGPATH_W) 'bpot.f90'; else $(CYGPATH_W) '$(srcdir)/bpot.f90'; fi`
+
+CRTomo-bsendc.o: bsendc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsendc.o `test -f 'bsendc.f90' || echo '$(srcdir)/'`bsendc.f90
+
+CRTomo-bsendc.obj: bsendc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsendc.obj `if test -f 'bsendc.f90'; then $(CYGPATH_W) 'bsendc.f90'; else $(CYGPATH_W) '$(srcdir)/bsendc.f90'; fi`
+
+CRTomo-bsens.o: bsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsens.o `test -f 'bsens.f90' || echo '$(srcdir)/'`bsens.f90
+
+CRTomo-bsens.obj: bsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsens.obj `if test -f 'bsens.f90'; then $(CYGPATH_W) 'bsens.f90'; else $(CYGPATH_W) '$(srcdir)/bsens.f90'; fi`
+
+CRTomo-bsensi.o: bsensi.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsensi.o `test -f 'bsensi.f90' || echo '$(srcdir)/'`bsensi.f90
+
+CRTomo-bsensi.obj: bsensi.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsensi.obj `if test -f 'bsensi.f90'; then $(CYGPATH_W) 'bsensi.f90'; else $(CYGPATH_W) '$(srcdir)/bsensi.f90'; fi`
+
+CRTomo-bsigm0.o: bsigm0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsigm0.o `test -f 'bsigm0.f90' || echo '$(srcdir)/'`bsigm0.f90
+
+CRTomo-bsigm0.obj: bsigm0.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsigm0.obj `if test -f 'bsigm0.f90'; then $(CYGPATH_W) 'bsigm0.f90'; else $(CYGPATH_W) '$(srcdir)/bsigm0.f90'; fi`
+
+CRTomo-bsigma.o: bsigma.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsigma.o `test -f 'bsigma.f90' || echo '$(srcdir)/'`bsigma.f90
+
+CRTomo-bsigma.obj: bsigma.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsigma.obj `if test -f 'bsigma.f90'; then $(CYGPATH_W) 'bsigma.f90'; else $(CYGPATH_W) '$(srcdir)/bsigma.f90'; fi`
+
+CRTomo-bsytop.o: bsytop.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsytop.o `test -f 'bsytop.f90' || echo '$(srcdir)/'`bsytop.f90
+
+CRTomo-bsytop.obj: bsytop.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bsytop.obj `if test -f 'bsytop.f90'; then $(CYGPATH_W) 'bsytop.f90'; else $(CYGPATH_W) '$(srcdir)/bsytop.f90'; fi`
+
+CRTomo-bvolt.o: bvolt.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvolt.o `test -f 'bvolt.f90' || echo '$(srcdir)/'`bvolt.f90
+
+CRTomo-bvolt.obj: bvolt.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvolt.obj `if test -f 'bvolt.f90'; then $(CYGPATH_W) 'bvolt.f90'; else $(CYGPATH_W) '$(srcdir)/bvolt.f90'; fi`
+
+CRTomo-bvolti.o: bvolti.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvolti.o `test -f 'bvolti.f90' || echo '$(srcdir)/'`bvolti.f90
+
+CRTomo-bvolti.obj: bvolti.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvolti.obj `if test -f 'bvolti.f90'; then $(CYGPATH_W) 'bvolti.f90'; else $(CYGPATH_W) '$(srcdir)/bvolti.f90'; fi`
+
+CRTomo-chareal.o: chareal.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chareal.o `test -f 'chareal.f90' || echo '$(srcdir)/'`chareal.f90
+
+CRTomo-chareal.obj: chareal.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chareal.obj `if test -f 'chareal.f90'; then $(CYGPATH_W) 'chareal.f90'; else $(CYGPATH_W) '$(srcdir)/chareal.f90'; fi`
+
+CRTomo-chkpol.o: chkpol.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chkpol.o `test -f 'chkpol.f90' || echo '$(srcdir)/'`chkpol.f90
+
+CRTomo-chkpol.obj: chkpol.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chkpol.obj `if test -f 'chkpol.f90'; then $(CYGPATH_W) 'chkpol.f90'; else $(CYGPATH_W) '$(srcdir)/chkpol.f90'; fi`
+
+CRTomo-choldc.o: choldc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-choldc.o `test -f 'choldc.f90' || echo '$(srcdir)/'`choldc.f90
+
+CRTomo-choldc.obj: choldc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-choldc.obj `if test -f 'choldc.f90'; then $(CYGPATH_W) 'choldc.f90'; else $(CYGPATH_W) '$(srcdir)/choldc.f90'; fi`
+
+CRTomo-chol.o: chol.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chol.o `test -f 'chol.f90' || echo '$(srcdir)/'`chol.f90
+
+CRTomo-chol.obj: chol.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chol.obj `if test -f 'chol.f90'; then $(CYGPATH_W) 'chol.f90'; else $(CYGPATH_W) '$(srcdir)/chol.f90'; fi`
+
+CRTomo-dmisft.o: dmisft.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-dmisft.o `test -f 'dmisft.f90' || echo '$(srcdir)/'`dmisft.f90
+
+CRTomo-dmisft.obj: dmisft.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-dmisft.obj `if test -f 'dmisft.f90'; then $(CYGPATH_W) 'dmisft.f90'; else $(CYGPATH_W) '$(srcdir)/dmisft.f90'; fi`
+
+CRTomo-elem1.o: elem1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem1.o `test -f 'elem1.f90' || echo '$(srcdir)/'`elem1.f90
+
+CRTomo-elem1.obj: elem1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem1.obj `if test -f 'elem1.f90'; then $(CYGPATH_W) 'elem1.f90'; else $(CYGPATH_W) '$(srcdir)/elem1.f90'; fi`
+
+CRTomo-elem3.o: elem3.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem3.o `test -f 'elem3.f90' || echo '$(srcdir)/'`elem3.f90
+
+CRTomo-elem3.obj: elem3.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem3.obj `if test -f 'elem3.f90'; then $(CYGPATH_W) 'elem3.f90'; else $(CYGPATH_W) '$(srcdir)/elem3.f90'; fi`
+
+CRTomo-elem4.o: elem4.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem4.o `test -f 'elem4.f90' || echo '$(srcdir)/'`elem4.f90
+
+CRTomo-elem4.obj: elem4.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem4.obj `if test -f 'elem4.f90'; then $(CYGPATH_W) 'elem4.f90'; else $(CYGPATH_W) '$(srcdir)/elem4.f90'; fi`
+
+CRTomo-elem5.o: elem5.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem5.o `test -f 'elem5.f90' || echo '$(srcdir)/'`elem5.f90
+
+CRTomo-elem5.obj: elem5.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem5.obj `if test -f 'elem5.f90'; then $(CYGPATH_W) 'elem5.f90'; else $(CYGPATH_W) '$(srcdir)/elem5.f90'; fi`
+
+CRTomo-elem8.o: elem8.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem8.o `test -f 'elem8.f90' || echo '$(srcdir)/'`elem8.f90
+
+CRTomo-elem8.obj: elem8.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-elem8.obj `if test -f 'elem8.f90'; then $(CYGPATH_W) 'elem8.f90'; else $(CYGPATH_W) '$(srcdir)/elem8.f90'; fi`
+
+CRTomo-filpat.o: filpat.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-filpat.o `test -f 'filpat.f90' || echo '$(srcdir)/'`filpat.f90
+
+CRTomo-filpat.obj: filpat.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-filpat.obj `if test -f 'filpat.f90'; then $(CYGPATH_W) 'filpat.f90'; else $(CYGPATH_W) '$(srcdir)/filpat.f90'; fi`
+
+CRTomo-chold.o: chold.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chold.o `test -f 'chold.f90' || echo '$(srcdir)/'`chold.f90
+
+CRTomo-chold.obj: chold.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-chold.obj `if test -f 'chold.f90'; then $(CYGPATH_W) 'chold.f90'; else $(CYGPATH_W) '$(srcdir)/chold.f90'; fi`
+
+CRTomo-cholz.o: cholz.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-cholz.o `test -f 'cholz.f90' || echo '$(srcdir)/'`cholz.f90
+
+CRTomo-cholz.obj: cholz.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-cholz.obj `if test -f 'cholz.f90'; then $(CYGPATH_W) 'cholz.f90'; else $(CYGPATH_W) '$(srcdir)/cholz.f90'; fi`
+
+CRTomo-linvd.o: linvd.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-linvd.o `test -f 'linvd.f90' || echo '$(srcdir)/'`linvd.f90
+
+CRTomo-linvd.obj: linvd.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-linvd.obj `if test -f 'linvd.f90'; then $(CYGPATH_W) 'linvd.f90'; else $(CYGPATH_W) '$(srcdir)/linvd.f90'; fi`
+
+CRTomo-linvz.o: linvz.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-linvz.o `test -f 'linvz.f90' || echo '$(srcdir)/'`linvz.f90
+
+CRTomo-linvz.obj: linvz.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-linvz.obj `if test -f 'linvz.f90'; then $(CYGPATH_W) 'linvz.f90'; else $(CYGPATH_W) '$(srcdir)/linvz.f90'; fi`
+
+CRTomo-mdian1.o: mdian1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-mdian1.o `test -f 'mdian1.f90' || echo '$(srcdir)/'`mdian1.f90
+
+CRTomo-mdian1.obj: mdian1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-mdian1.obj `if test -f 'mdian1.f90'; then $(CYGPATH_W) 'mdian1.f90'; else $(CYGPATH_W) '$(srcdir)/mdian1.f90'; fi`
+
+CRTomo-parfit.o: parfit.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-parfit.o `test -f 'parfit.f90' || echo '$(srcdir)/'`parfit.f90
+
+CRTomo-parfit.obj: parfit.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-parfit.obj `if test -f 'parfit.f90'; then $(CYGPATH_W) 'parfit.f90'; else $(CYGPATH_W) '$(srcdir)/parfit.f90'; fi`
+
+CRTomo-potana.o: potana.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-potana.o `test -f 'potana.f90' || echo '$(srcdir)/'`potana.f90
+
+CRTomo-potana.obj: potana.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-potana.obj `if test -f 'potana.f90'; then $(CYGPATH_W) 'potana.f90'; else $(CYGPATH_W) '$(srcdir)/potana.f90'; fi`
+
+CRTomo-precal.o: precal.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-precal.o `test -f 'precal.f90' || echo '$(srcdir)/'`precal.f90
+
+CRTomo-precal.obj: precal.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-precal.obj `if test -f 'precal.f90'; then $(CYGPATH_W) 'precal.f90'; else $(CYGPATH_W) '$(srcdir)/precal.f90'; fi`
+
+CRTomo-make_noise.o: make_noise.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-make_noise.o `test -f 'make_noise.f90' || echo '$(srcdir)/'`make_noise.f90
+
+CRTomo-make_noise.obj: make_noise.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-make_noise.obj `if test -f 'make_noise.f90'; then $(CYGPATH_W) 'make_noise.f90'; else $(CYGPATH_W) '$(srcdir)/make_noise.f90'; fi`
+
+CRTomo-rall.o: rall.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rall.o `test -f 'rall.f90' || echo '$(srcdir)/'`rall.f90
+
+CRTomo-rall.obj: rall.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rall.obj `if test -f 'rall.f90'; then $(CYGPATH_W) 'rall.f90'; else $(CYGPATH_W) '$(srcdir)/rall.f90'; fi`
+
+CRTomo-gammln.o: gammln.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gammln.o `test -f 'gammln.f90' || echo '$(srcdir)/'`gammln.f90
+
+CRTomo-gammln.obj: gammln.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gammln.obj `if test -f 'gammln.f90'; then $(CYGPATH_W) 'gammln.f90'; else $(CYGPATH_W) '$(srcdir)/gammln.f90'; fi`
+
+CRTomo-gaulag.o: gaulag.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gaulag.o `test -f 'gaulag.f90' || echo '$(srcdir)/'`gaulag.f90
+
+CRTomo-gaulag.obj: gaulag.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gaulag.obj `if test -f 'gaulag.f90'; then $(CYGPATH_W) 'gaulag.f90'; else $(CYGPATH_W) '$(srcdir)/gaulag.f90'; fi`
+
+CRTomo-gauleg.o: gauleg.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauleg.o `test -f 'gauleg.f90' || echo '$(srcdir)/'`gauleg.f90
+
+CRTomo-gauleg.obj: gauleg.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauleg.obj `if test -f 'gauleg.f90'; then $(CYGPATH_W) 'gauleg.f90'; else $(CYGPATH_W) '$(srcdir)/gauleg.f90'; fi`
+
+CRTomo-intcha.o: intcha.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-intcha.o `test -f 'intcha.f90' || echo '$(srcdir)/'`intcha.f90
+
+CRTomo-intcha.obj: intcha.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-intcha.obj `if test -f 'intcha.f90'; then $(CYGPATH_W) 'intcha.f90'; else $(CYGPATH_W) '$(srcdir)/intcha.f90'; fi`
+
+CRTomo-kompab.o: kompab.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompab.o `test -f 'kompab.f90' || echo '$(srcdir)/'`kompab.f90
+
+CRTomo-kompab.obj: kompab.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompab.obj `if test -f 'kompab.f90'; then $(CYGPATH_W) 'kompab.f90'; else $(CYGPATH_W) '$(srcdir)/kompab.f90'; fi`
+
+CRTomo-kompadc.o: kompadc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompadc.o `test -f 'kompadc.f90' || echo '$(srcdir)/'`kompadc.f90
+
+CRTomo-kompadc.obj: kompadc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompadc.obj `if test -f 'kompadc.f90'; then $(CYGPATH_W) 'kompadc.f90'; else $(CYGPATH_W) '$(srcdir)/kompadc.f90'; fi`
+
+CRTomo-kompbdc.o: kompbdc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompbdc.o `test -f 'kompbdc.f90' || echo '$(srcdir)/'`kompbdc.f90
+
+CRTomo-kompbdc.obj: kompbdc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompbdc.obj `if test -f 'kompbdc.f90'; then $(CYGPATH_W) 'kompbdc.f90'; else $(CYGPATH_W) '$(srcdir)/kompbdc.f90'; fi`
+
+CRTomo-kompb.o: kompb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompb.o `test -f 'kompb.f90' || echo '$(srcdir)/'`kompb.f90
+
+CRTomo-kompb.obj: kompb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kompb.obj `if test -f 'kompb.f90'; then $(CYGPATH_W) 'kompb.f90'; else $(CYGPATH_W) '$(srcdir)/kompb.f90'; fi`
+
+CRTomo-kont1.o: kont1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kont1.o `test -f 'kont1.f90' || echo '$(srcdir)/'`kont1.f90
+
+CRTomo-kont1.obj: kont1.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kont1.obj `if test -f 'kont1.f90'; then $(CYGPATH_W) 'kont1.f90'; else $(CYGPATH_W) '$(srcdir)/kont1.f90'; fi`
+
+CRTomo-kont2.o: kont2.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kont2.o `test -f 'kont2.f90' || echo '$(srcdir)/'`kont2.f90
+
+CRTomo-kont2.obj: kont2.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-kont2.obj `if test -f 'kont2.f90'; then $(CYGPATH_W) 'kont2.f90'; else $(CYGPATH_W) '$(srcdir)/kont2.f90'; fi`
+
+CRTomo-randb2.o: randb2.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randb2.o `test -f 'randb2.f90' || echo '$(srcdir)/'`randb2.f90
+
+CRTomo-randb2.obj: randb2.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randb2.obj `if test -f 'randb2.f90'; then $(CYGPATH_W) 'randb2.f90'; else $(CYGPATH_W) '$(srcdir)/randb2.f90'; fi`
+
+CRTomo-randb.o: randb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randb.o `test -f 'randb.f90' || echo '$(srcdir)/'`randb.f90
+
+CRTomo-randb.obj: randb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randb.obj `if test -f 'randb.f90'; then $(CYGPATH_W) 'randb.f90'; else $(CYGPATH_W) '$(srcdir)/randb.f90'; fi`
+
+CRTomo-randdc.o: randdc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randdc.o `test -f 'randdc.f90' || echo '$(srcdir)/'`randdc.f90
+
+CRTomo-randdc.obj: randdc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-randdc.obj `if test -f 'randdc.f90'; then $(CYGPATH_W) 'randdc.f90'; else $(CYGPATH_W) '$(srcdir)/randdc.f90'; fi`
+
+CRTomo-rdati.o: rdati.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rdati.o `test -f 'rdati.f90' || echo '$(srcdir)/'`rdati.f90
+
+CRTomo-rdati.obj: rdati.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rdati.obj `if test -f 'rdati.f90'; then $(CYGPATH_W) 'rdati.f90'; else $(CYGPATH_W) '$(srcdir)/rdati.f90'; fi`
+
+CRTomo-rdatm.o: rdatm.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rdatm.o `test -f 'rdatm.f90' || echo '$(srcdir)/'`rdatm.f90
+
+CRTomo-rdatm.obj: rdatm.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rdatm.obj `if test -f 'rdatm.f90'; then $(CYGPATH_W) 'rdatm.f90'; else $(CYGPATH_W) '$(srcdir)/rdatm.f90'; fi`
+
+CRTomo-refsig.o: refsig.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-refsig.o `test -f 'refsig.f90' || echo '$(srcdir)/'`refsig.f90
+
+CRTomo-refsig.obj: refsig.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-refsig.obj `if test -f 'refsig.f90'; then $(CYGPATH_W) 'refsig.f90'; else $(CYGPATH_W) '$(srcdir)/refsig.f90'; fi`
+
+CRTomo-relectr.o: relectr.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-relectr.o `test -f 'relectr.f90' || echo '$(srcdir)/'`relectr.f90
+
+CRTomo-relectr.obj: relectr.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-relectr.obj `if test -f 'relectr.f90'; then $(CYGPATH_W) 'relectr.f90'; else $(CYGPATH_W) '$(srcdir)/relectr.f90'; fi`
+
+CRTomo-relem.o: relem.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-relem.o `test -f 'relem.f90' || echo '$(srcdir)/'`relem.f90
+
+CRTomo-relem.obj: relem.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-relem.obj `if test -f 'relem.f90'; then $(CYGPATH_W) 'relem.f90'; else $(CYGPATH_W) '$(srcdir)/relem.f90'; fi`
+
+CRTomo-rrandb.o: rrandb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rrandb.o `test -f 'rrandb.f90' || echo '$(srcdir)/'`rrandb.f90
+
+CRTomo-rrandb.obj: rrandb.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rrandb.obj `if test -f 'rrandb.f90'; then $(CYGPATH_W) 'rrandb.f90'; else $(CYGPATH_W) '$(srcdir)/rrandb.f90'; fi`
+
+CRTomo-rsigma.o: rsigma.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rsigma.o `test -f 'rsigma.f90' || echo '$(srcdir)/'`rsigma.f90
+
+CRTomo-rsigma.obj: rsigma.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rsigma.obj `if test -f 'rsigma.f90'; then $(CYGPATH_W) 'rsigma.f90'; else $(CYGPATH_W) '$(srcdir)/rsigma.f90'; fi`
+
+CRTomo-rtrafo.o: rtrafo.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rtrafo.o `test -f 'rtrafo.f90' || echo '$(srcdir)/'`rtrafo.f90
+
+CRTomo-rtrafo.obj: rtrafo.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rtrafo.obj `if test -f 'rtrafo.f90'; then $(CYGPATH_W) 'rtrafo.f90'; else $(CYGPATH_W) '$(srcdir)/rtrafo.f90'; fi`
+
+CRTomo-rwaven.o: rwaven.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rwaven.o `test -f 'rwaven.f90' || echo '$(srcdir)/'`rwaven.f90
+
+CRTomo-rwaven.obj: rwaven.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-rwaven.obj `if test -f 'rwaven.f90'; then $(CYGPATH_W) 'rwaven.f90'; else $(CYGPATH_W) '$(srcdir)/rwaven.f90'; fi`
+
+CRTomo-scalab.o: scalab.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-scalab.o `test -f 'scalab.f90' || echo '$(srcdir)/'`scalab.f90
+
+CRTomo-scalab.obj: scalab.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-scalab.obj `if test -f 'scalab.f90'; then $(CYGPATH_W) 'scalab.f90'; else $(CYGPATH_W) '$(srcdir)/scalab.f90'; fi`
+
+CRTomo-scaldc.o: scaldc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-scaldc.o `test -f 'scaldc.f90' || echo '$(srcdir)/'`scaldc.f90
+
+CRTomo-scaldc.obj: scaldc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-scaldc.obj `if test -f 'scaldc.f90'; then $(CYGPATH_W) 'scaldc.f90'; else $(CYGPATH_W) '$(srcdir)/scaldc.f90'; fi`
+
+CRTomo-sort.o: sort.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-sort.o `test -f 'sort.f90' || echo '$(srcdir)/'`sort.f90
+
+CRTomo-sort.obj: sort.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-sort.obj `if test -f 'sort.f90'; then $(CYGPATH_W) 'sort.f90'; else $(CYGPATH_W) '$(srcdir)/sort.f90'; fi`
+
+CRTomo-update.o: update.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-update.o `test -f 'update.f90' || echo '$(srcdir)/'`update.f90
+
+CRTomo-update.obj: update.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-update.obj `if test -f 'update.f90'; then $(CYGPATH_W) 'update.f90'; else $(CYGPATH_W) '$(srcdir)/update.f90'; fi`
+
+CRTomo-vredc.o: vredc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-vredc.o `test -f 'vredc.f90' || echo '$(srcdir)/'`vredc.f90
+
+CRTomo-vredc.obj: vredc.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-vredc.obj `if test -f 'vredc.f90'; then $(CYGPATH_W) 'vredc.f90'; else $(CYGPATH_W) '$(srcdir)/vredc.f90'; fi`
+
+CRTomo-vre.o: vre.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-vre.o `test -f 'vre.f90' || echo '$(srcdir)/'`vre.f90
+
+CRTomo-vre.obj: vre.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-vre.obj `if test -f 'vre.f90'; then $(CYGPATH_W) 'vre.f90'; else $(CYGPATH_W) '$(srcdir)/vre.f90'; fi`
+
+CRTomo-wdatm.o: wdatm.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wdatm.o `test -f 'wdatm.f90' || echo '$(srcdir)/'`wdatm.f90
+
+CRTomo-wdatm.obj: wdatm.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wdatm.obj `if test -f 'wdatm.f90'; then $(CYGPATH_W) 'wdatm.f90'; else $(CYGPATH_W) '$(srcdir)/wdatm.f90'; fi`
+
+CRTomo-wkpot.o: wkpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wkpot.o `test -f 'wkpot.f90' || echo '$(srcdir)/'`wkpot.f90
+
+CRTomo-wkpot.obj: wkpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wkpot.obj `if test -f 'wkpot.f90'; then $(CYGPATH_W) 'wkpot.f90'; else $(CYGPATH_W) '$(srcdir)/wkpot.f90'; fi`
+
+CRTomo-wout.o: wout.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wout.o `test -f 'wout.f90' || echo '$(srcdir)/'`wout.f90
+
+CRTomo-wout.obj: wout.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wout.obj `if test -f 'wout.f90'; then $(CYGPATH_W) 'wout.f90'; else $(CYGPATH_W) '$(srcdir)/wout.f90'; fi`
+
+CRTomo-wpot.o: wpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wpot.o `test -f 'wpot.f90' || echo '$(srcdir)/'`wpot.f90
+
+CRTomo-wpot.obj: wpot.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wpot.obj `if test -f 'wpot.f90'; then $(CYGPATH_W) 'wpot.f90'; else $(CYGPATH_W) '$(srcdir)/wpot.f90'; fi`
+
+CRTomo-wsens.o: wsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wsens.o `test -f 'wsens.f90' || echo '$(srcdir)/'`wsens.f90
+
+CRTomo-wsens.obj: wsens.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-wsens.obj `if test -f 'wsens.f90'; then $(CYGPATH_W) 'wsens.f90'; else $(CYGPATH_W) '$(srcdir)/wsens.f90'; fi`
+
+CRTomo-gauss_dble.o: gauss_dble.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauss_dble.o `test -f 'gauss_dble.f90' || echo '$(srcdir)/'`gauss_dble.f90
+
+CRTomo-gauss_dble.obj: gauss_dble.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauss_dble.obj `if test -f 'gauss_dble.f90'; then $(CYGPATH_W) 'gauss_dble.f90'; else $(CYGPATH_W) '$(srcdir)/gauss_dble.f90'; fi`
+
+CRTomo-gauss_cmplx.o: gauss_cmplx.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauss_cmplx.o `test -f 'gauss_cmplx.f90' || echo '$(srcdir)/'`gauss_cmplx.f90
+
+CRTomo-gauss_cmplx.obj: gauss_cmplx.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-gauss_cmplx.obj `if test -f 'gauss_cmplx.f90'; then $(CYGPATH_W) 'gauss_cmplx.f90'; else $(CYGPATH_W) '$(srcdir)/gauss_cmplx.f90'; fi`
+
+CRTomo-get_unit.o: get_unit.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_unit.o `test -f 'get_unit.f90' || echo '$(srcdir)/'`get_unit.f90
+
+CRTomo-get_unit.obj: get_unit.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_unit.obj `if test -f 'get_unit.f90'; then $(CYGPATH_W) 'get_unit.f90'; else $(CYGPATH_W) '$(srcdir)/get_unit.f90'; fi`
+
+CRTomo-bvariogram.o: bvariogram.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvariogram.o `test -f 'bvariogram.f90' || echo '$(srcdir)/'`bvariogram.f90
+
+CRTomo-bvariogram.obj: bvariogram.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-bvariogram.obj `if test -f 'bvariogram.f90'; then $(CYGPATH_W) 'bvariogram.f90'; else $(CYGPATH_W) '$(srcdir)/bvariogram.f90'; fi`
+
+CRTomo-get_error.o: get_error.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_error.o `test -f 'get_error.f90' || echo '$(srcdir)/'`get_error.f90
+
+CRTomo-get_error.obj: get_error.f90
+	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-get_error.obj `if test -f 'get_error.f90'; then $(CYGPATH_W) 'get_error.f90'; else $(CYGPATH_W) '$(srcdir)/get_error.f90'; fi`
 
 CRTomo-inv.o: inv.f90
 	$(FC) $(CRTomo_FCFLAGS) $(FCFLAGS) -c -o CRTomo-inv.o `test -f 'inv.f90' || echo '$(srcdir)/'`inv.f90
@@ -1088,8 +1667,8 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 # die Includedatei crerr.h muss neu generiert werden, wenn error.txt sich ändert
-get_error.f90:	../inc/error.txt
-		cd ../inc; ./../make_crerr.sh; cd ../src;
+#get_error.f90:	../error.txt
+#		cd ..; ./../make_crerr.sh; cd src;
 
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
 clean-local:	

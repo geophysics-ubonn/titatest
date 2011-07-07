@@ -44,19 +44,29 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_1 =
-am_CutMcK_OBJECTS = $(am__objects_1) $(am__objects_1) $(am__objects_1)
+am__objects_1 = CutMcK-elemmod.$(OBJEXT) CutMcK-electrmod.$(OBJEXT)
+am__objects_2 = CutMcK-relem.$(OBJEXT) CutMcK-welem.$(OBJEXT) \
+	CutMcK-relectr.$(OBJEXT) CutMcK-welectr.$(OBJEXT)
+am__objects_3 = CutMcK-get_error.$(OBJEXT)
+am_CutMcK_OBJECTS = $(am__objects_1) $(am__objects_2) $(am__objects_3) \
+	CutMcK-cutmck.$(OBJEXT)
 CutMcK_OBJECTS = $(am_CutMcK_OBJECTS)
 CutMcK_LDADD = $(LDADD)
-CutMcK_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(CutMcK_LDFLAGS) \
+CutMcK_LINK = $(F77LD) $(CutMcK_FFLAGS) $(FFLAGS) $(CutMcK_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+F77COMPILE = $(F77) $(AM_FFLAGS) $(FFLAGS)
+F77LD = $(F77)
+F77LINK = $(F77LD) $(AM_FFLAGS) $(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
+FCCOMPILE = $(FC) $(AM_FCFLAGS) $(FCFLAGS)
+FCLD = $(FC)
+FCLINK = $(FCLD) $(AM_FCFLAGS) $(FCFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
+	$@
 SOURCES = $(CutMcK_SOURCES)
 DIST_SOURCES = $(CutMcK_SOURCES)
+ETAGS = etags
+CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -140,16 +150,17 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = error.txt
-cOBJ = cutmck.o relem.o welem.o relectr.o welectr.o
-cOBJF90 = elemmod.o electrmod.o
-cOBJERR = get_error.o
-CutMcK_SOURCES = $(cOBJ) $(cOBJF90) $(cOBJERR)
+cOBJ = relem.f welem.f relectr.f welectr.f
+cOBJF90 = elemmod.f90 electrmod.f90
+cOBJERR = get_error.f90
+CutMcK_SOURCES = $(cOBJF90) $(cOBJ) $(cOBJERR) cutmck.f 
 CutMcK_FFLAGS = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
 CutMcK_FCFLAGS = $(CutMcK_FFLAGS)
 CutMcK_LDFLAGS = -lm # -llapack -lblas
 all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .f .f90 .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -226,12 +237,118 @@ mostlyclean-compile:
 
 distclean-compile:
 	-rm -f *.tab.c
+
+.f.o:
+	$(F77COMPILE) -c -o $@ $<
+
+.f.obj:
+	$(F77COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+CutMcK-relem.o: relem.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-relem.o `test -f 'relem.f' || echo '$(srcdir)/'`relem.f
+
+CutMcK-relem.obj: relem.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-relem.obj `if test -f 'relem.f'; then $(CYGPATH_W) 'relem.f'; else $(CYGPATH_W) '$(srcdir)/relem.f'; fi`
+
+CutMcK-welem.o: welem.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-welem.o `test -f 'welem.f' || echo '$(srcdir)/'`welem.f
+
+CutMcK-welem.obj: welem.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-welem.obj `if test -f 'welem.f'; then $(CYGPATH_W) 'welem.f'; else $(CYGPATH_W) '$(srcdir)/welem.f'; fi`
+
+CutMcK-relectr.o: relectr.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-relectr.o `test -f 'relectr.f' || echo '$(srcdir)/'`relectr.f
+
+CutMcK-relectr.obj: relectr.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-relectr.obj `if test -f 'relectr.f'; then $(CYGPATH_W) 'relectr.f'; else $(CYGPATH_W) '$(srcdir)/relectr.f'; fi`
+
+CutMcK-welectr.o: welectr.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-welectr.o `test -f 'welectr.f' || echo '$(srcdir)/'`welectr.f
+
+CutMcK-welectr.obj: welectr.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-welectr.obj `if test -f 'welectr.f'; then $(CYGPATH_W) 'welectr.f'; else $(CYGPATH_W) '$(srcdir)/welectr.f'; fi`
+
+CutMcK-cutmck.o: cutmck.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-cutmck.o `test -f 'cutmck.f' || echo '$(srcdir)/'`cutmck.f
+
+CutMcK-cutmck.obj: cutmck.f
+	$(F77) $(CutMcK_FFLAGS) $(FFLAGS) -c -o CutMcK-cutmck.obj `if test -f 'cutmck.f'; then $(CYGPATH_W) 'cutmck.f'; else $(CYGPATH_W) '$(srcdir)/cutmck.f'; fi`
+
+.f90.o:
+	$(FCCOMPILE) -c -o $@ $<
+
+.f90.obj:
+	$(FCCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+CutMcK-elemmod.o: elemmod.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-elemmod.o `test -f 'elemmod.f90' || echo '$(srcdir)/'`elemmod.f90
+
+CutMcK-elemmod.obj: elemmod.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-elemmod.obj `if test -f 'elemmod.f90'; then $(CYGPATH_W) 'elemmod.f90'; else $(CYGPATH_W) '$(srcdir)/elemmod.f90'; fi`
+
+CutMcK-electrmod.o: electrmod.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-electrmod.o `test -f 'electrmod.f90' || echo '$(srcdir)/'`electrmod.f90
+
+CutMcK-electrmod.obj: electrmod.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-electrmod.obj `if test -f 'electrmod.f90'; then $(CYGPATH_W) 'electrmod.f90'; else $(CYGPATH_W) '$(srcdir)/electrmod.f90'; fi`
+
+CutMcK-get_error.o: get_error.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-get_error.o `test -f 'get_error.f90' || echo '$(srcdir)/'`get_error.f90
+
+CutMcK-get_error.obj: get_error.f90
+	$(FC) $(CutMcK_FCFLAGS) $(FCFLAGS) -c -o CutMcK-get_error.obj `if test -f 'get_error.f90'; then $(CYGPATH_W) 'get_error.f90'; else $(CYGPATH_W) '$(srcdir)/get_error.f90'; fi`
+
+ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
+	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
+	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+	mkid -fID $$unique
 tags: TAGS
-TAGS:
 
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	set x; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
+	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+	shift; \
+	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
+	  test -n "$$unique" || unique=$$empty_fix; \
+	  if test $$# -gt 0; then \
+	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
+	      "$$@" $$unique; \
+	  else \
+	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
+	      $$unique; \
+	  fi; \
+	fi
 ctags: CTAGS
-CTAGS:
+CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
+		$(TAGS_FILES) $(LISP)
+	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	unique=`for i in $$list; do \
+	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+	  done | \
+	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
+	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+	test -z "$(CTAGS_ARGS)$$unique" \
+	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
+	     $$unique
 
+GTAGS:
+	here=`$(am__cd) $(top_builddir) && pwd` \
+	  && $(am__cd) $(top_srcdir) \
+	  && gtags -i $(GTAGS_ARGS) "$$here"
+
+distclean-tags:
+	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -301,7 +418,8 @@ clean-am: clean-binPROGRAMS clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-tags
 
 dvi: dvi-am
 
@@ -363,23 +481,23 @@ uninstall-am: uninstall-binPROGRAMS
 
 .MAKE: install-am install-strip
 
-.PHONY: all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-local distclean distclean-compile \
-	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-local ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am \
-	uninstall-binPROGRAMS
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS
 
 
 # die Includedatei crerr.h muss neu generiert werden, wenn error.txt sich ändert
-get_error.f90:	error.txt
-		./../make_crerr.sh; 
+#get_error.f90:	error.txt
+#		./../make_crerr.sh; 
 
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
 clean-local:
