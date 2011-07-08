@@ -14,7 +14,7 @@ fi
 
 mkdir package
 
-mv crtools*.bz2 package
+mv crtomomod*.bz2 package
 cd package
-tar xvjf crtools*.bz2
+tar xvjf crtomomod*.bz2
 

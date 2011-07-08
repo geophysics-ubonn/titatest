@@ -4,7 +4,7 @@
 
 
 ###
-bin_PROGRAMS = CRTomo CRMod
+bin_PROGRAMS = CRTomo_stable CRMod_stable
 ###
 ### CRMod source files
 f90crm		= alloci.f90 femmod.f90 datmod.f90 \
@@ -61,32 +61,21 @@ f90crtsub	= bbsedc.f90 bbsens.f90 besp_elem.f90 \
 		  gauss_dble.f90 gauss_cmplx.f90 get_unit.f90 \
 		   bvariogram.f90 get_error.f90
 		  
-
 fcrt		= inv.f90
 
+CRTomo_stable_SOURCES = $(f90crt) $(f90crtsub) $(fcrt)
+CRTomo_stable_FFLAGS = -O4 -march=native -ftree-vectorize -ftree-vectorize -funroll-loops -finline-functions -fexpensive-optimizations -ffast-math -I ../inc 
+CRTomo_stable_FCFLAGS = $(CRTomo_stable_FFLAGS)
+CRTomo_stable_LDFLAGS = -lm
 
-CRTomo_SOURCES = $(f90crt) $(f90crtsub) $(fcrt)
-CRTomo_FFLAGS = -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math -I ../inc 
-# check if compiling on 64 bit, add memory model flag
-#if "$(ARCH)" == "x86_64"
-#	CRTomo_FFLAGS = $(CRTomo_FFLAGS) -mcmodel=medium
-#endif
-
-
-CRTomo_FCFLAGS = $(CRTomo_FFLAGS)
-CRTomo_LDFLAGS = -lm
-
-CRMod_SOURCES = $(f90crm) $(fcrm) $(f90crmsub)
-CRMod_FFLAGS = $(CRTomo_FFLAGS)
-CRMod_FCFLAGS = $(CRMod_FFLAGS)
-CRMod_LDFLAGS = $(CRTomo_LDFLAGS)
-
-
-# die Includedatei crerr.h muss neu generiert werden, wenn error.txt sich ändert
-#get_error.f90:	../error.txt
-#		cd ..; ./../make_crerr.sh; cd src;
+CRMod_stable_SOURCES = $(f90crm) $(fcrm) $(f90crmsub)
+CRMod_stable_FFLAGS = $(CRTomo_stable_FFLAGS)
+CRMod_stable_FCFLAGS = $(CRMod_stable_FFLAGS)
+CRMod_stable_LDFLAGS = $(CRTomo_stable_LDFLAGS)
 
 
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
 clean-local:	
 		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
+
+EXTRA_DIST = error.txt my_git_version.h

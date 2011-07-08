@@ -1,4 +1,4 @@
-EXTRA_DIST = error.txt
+EXTRA_DIST = error.txt err.fin
 
 bin_PROGRAMS = CutMcK
 
