@@ -46,7 +46,7 @@ if [ -d package ]; then
 fi
 
 ./prep_deb_package.sh
-cd package/crtools-0.1
+cd package/crtomomod*
 dpkg-buildpackage
 cd ../../
 
@@ -68,7 +68,7 @@ do
 	cd "$cur_dir"
 
 	# scp to malm
-	scp  "$pbuilder_target_loc"/$distri/result/crtools* mweigand@malm:/users/mweigand/www/$distri
+	scp  "$pbuilder_target_loc"/$distri/result/crtomomod* mweigand@malm:/users/mweigand/www/$distri
 
 done
 
