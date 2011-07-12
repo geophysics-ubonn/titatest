@@ -46,3 +46,6 @@ test -z depcomp || rm depcomp
 rm -r autom4te.cache
 
 rm -rf package
+
+rm -rf crtomomod-1.0/
+rm -f debian/crtomomod.debhelper.log
