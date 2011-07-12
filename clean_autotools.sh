@@ -24,6 +24,7 @@ rm cutmck/crerror.h
 # Autotools
 rm Makefile src/Makefile cutmckee/Makefile
 rm Makefile.in src/Makefile cutmckee/Makefile
+rm man/Makefile
 
 rm aclocal.m4
 
