@@ -57,8 +57,8 @@ cd package
 for distri in squeeze # karmic lucid
 do
 	echo "cleaning $distri build dir"
-	pbuilder --clean --basetgz  "$pbuilder_target_loc"/$distri-base.tgz --buildresult  "$pbuilder_target_loc"/$distri/result
-	echo "building package"
+	DIST=$distri pbuilder --clean --basetgz  "$pbuilder_target_loc"/$distri-base.tgz --buildresult  "$pbuilder_target_loc"/$distri/result
+	DIST=$distri echo "building package"
 	pbuilder --build --basetgz  "$pbuilder_target_loc"/$distri-base.tgz --buildresult  "$pbuilder_target_loc"/$distri/result *.dsc
 
 	# create rpm
@@ -68,7 +68,7 @@ do
 	cd "$cur_dir"
 
 	# scp to malm
-	scp  "$pbuilder_target_loc"/$distri/result/crtomomod* mweigand@malm:/users/mweigand/www/$distri
+#	scp  "$pbuilder_target_loc"/$distri/result/crtomomod* mweigand@malm:/users/mweigand/www/$distri
 
 done
 

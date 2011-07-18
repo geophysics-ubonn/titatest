@@ -1,10 +1,10 @@
-Source: crtools
+Source: crtomomod
 Section: misc
 Priority: extra
 Maintainer: Maximilian Weigand <mweigand@geo.uni-bonn.de>
 Build-Depends: debhelper (>= 6), autotools-dev, gfortran
 Standards-Version: 3.8.3
-Homepage: geo.uni-bonn.de 
+Homepage: http://www.geo.uni-bonn.de 
 
 Package: crtomomod
 Architecture: any
