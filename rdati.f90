@@ -247,7 +247,15 @@ subroutine rdati(kanal,datei)
 
            IF (bet < 0.0) THEN
 
-              fetxt = '(+noise) -> Magnitude < 0.0'
+              fetxt = '-- check noise parameters (Magnitude < 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
+
+           IF (pha > 0.0) THEN
+
+              fetxt = '-- check noise parameters (Phase > 0)'
               errnr = 57
               GOTO 1000
 
