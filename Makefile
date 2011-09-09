@@ -231,7 +231,10 @@ minimal_prec:	$(C1) $(f90mini)
 minimal_omp:	$(C1) minimal_omp.f90 
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
-dox:
+dox:            
+		./make_doxygen.sh $(PROG)
+		$(DOC) doxy.inp
+
 		
 install:	$(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
