@@ -1,3 +1,9 @@
+!!!$ Gauss-Legendre "integration"
+!!!$ Numerical Recipies (1986), p. 125, subroute GAULEG
+!!!$ Returns the abcissas (x) and weights(w) of length n
+!!!$ For a gauss-quadrature integration.
+!!!$ Provideds x_i and w_i for the formula: 
+!!!$ \sum_{x_1}^{x_2} f(x) dx = \sum_{i=1}^N w_i f(x_i)
 SUBROUTINE gauleg(x1,x2,x,w,n)
   IMPLICIT none
   INTEGER (KIND = 4)  :: n

@@ -8,15 +8,27 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
+############################################################################
+# 			gfortran compiler flags 			   #
+# make sure to comment all other compiler flags down below in order to use # 
+# gfortran								   #
+############################################################################
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-signed-zeros -ffinite-math-only
 #FFLAG90         = -pg
 
+############################################################################
+# 			ifort compiler flags 				   #
+# make sure to comment all other compiler flags above in order to use      # 
+# ifort									   #
+############################################################################
 #F90		= ifort
-#FFLAG90		= -O3 -fast -openmp #-parallel
+#FFLAG90		= -O3 -fast -parallel
+## Only un-comment for debug purpose
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds -openmp
@@ -39,6 +51,9 @@ PR5		= minimal_omp
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+
+DOC		= doxygen
+
 ################################################################
 # default
 all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
@@ -216,6 +231,8 @@ minimal_prec:	$(C1) $(f90mini)
 minimal_omp:	$(C1) minimal_omp.f90 
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
+dox:
+		
 install:	$(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
