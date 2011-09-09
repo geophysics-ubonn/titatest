@@ -29,7 +29,7 @@ MODULE cg_mod
 
   PUBLIC :: cjg
 !!!$ controls whather we have REAL or COMPLEX case
-  
+
 
 !!!$ DC subroutines
   PRIVATE :: cjggdc
@@ -88,7 +88,7 @@ CONTAINS
     end if
 
   END SUBROUTINE cjg
-  
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                          DC_PART                               !!!!
@@ -182,8 +182,8 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-!    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
-    
+    !    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+
     RETURN
 
   end subroutine cjggdc
@@ -205,9 +205,9 @@ CONTAINS
 
     apdc = 0D0
 
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
-    !!$!$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
+    !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
+    !$OMP DO
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
        if (ldc) then
@@ -220,7 +220,7 @@ CONTAINS
           end do
        end if
     end do
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
   END SUBROUTINE bapdc
 
   subroutine bpdc()
@@ -341,9 +341,9 @@ CONTAINS
 
     bvecdc = 0D0
 !!!$    R^m * p  berechnen (skaliert)
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
-    !!$!$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
+    !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
+    !$OMP DO
     do j = 1 , manz
        DO i = j , manz
           dum = pvecdc(i) * smatm(i,j) * cgfac(i)
@@ -354,7 +354,7 @@ CONTAINS
           END IF
        END DO
     end do
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
   end subroutine bpdcsto
 
   SUBROUTINE bbdc
@@ -373,9 +373,9 @@ CONTAINS
 
 !!!$....................................................................
 
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
-    !!$!$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
+    !$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
+    !$OMP DO
     do j=1,manz
        dum = 0d0
 
@@ -394,7 +394,7 @@ CONTAINS
        bvecdc(j) = dum + lam*bvecdc(j)
        bvecdc(j) = bvecdc(j)*cgfac(j)
     end do
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
 
   end subroutine bbdc
 
@@ -412,7 +412,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-!    COMPLEX(KIND(0D0)) :: beta
+    !    COMPLEX(KIND(0D0)) :: beta
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
@@ -476,7 +476,7 @@ CONTAINS
        END DO
 
        alpha = dr/dr1
-       
+
        dpar = dpar + DCMPLX(alpha) * pvec
        rvec = rvec - DCMPLX(alpha) * bvec
 
@@ -492,7 +492,7 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    
+
   end subroutine cjggra
 
   SUBROUTINE bap
@@ -513,17 +513,17 @@ CONTAINS
 !!!$....................................................................
 
 !!!$    A * p  berechnen (skaliert)
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
-    !!$!$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
+    !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
+    !$OMP DO
     do i=1,nanz
        ap(i) = dcmplx(0d0)
-       
+
        do j=1,manz
           ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
     end do
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
 
   END SUBROUTINE bap
 
@@ -645,9 +645,9 @@ CONTAINS
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
-    !!$!$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
+    !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
+    !$OMP DO
     DO j=1, manz
        bvec(j) = DCMPLX(0D0)
        DO i = j, manz
@@ -659,7 +659,7 @@ CONTAINS
           END IF
        END DO
     END DO
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
 
   end subroutine bpsto
 
@@ -680,9 +680,9 @@ CONTAINS
 
 !!!$....................................................................
 !!!$    
-    !!$!$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (cdum) &
-    !!$!$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
-    !!$!$OMP DO
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (cdum) &
+    !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
+    !$OMP DO
 
     do j=1,manz
        cdum = dcmplx(0d0)
@@ -696,7 +696,7 @@ CONTAINS
        bvec(j) = bvec(j)*dcmplx(cgfac(j))
     end do
 
-    !!$!$OMP END PARALLEL
+    !$OMP END PARALLEL
 
   END SUBROUTINE bb
 
