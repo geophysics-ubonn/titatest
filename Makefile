@@ -33,6 +33,10 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds -openmp
 
+CRT		= CRTomo
+
+CRM		= CRMod
+
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # invokes get_git_version.sh
@@ -213,14 +217,14 @@ ggv:
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRTomo \
+		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRMod \
+		$(F90) $(FFLAG90) -o $(CRM) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -232,7 +236,7 @@ minimal_omp:	$(C1) minimal_omp.f90
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
 dox:            
-		./make_doxygen.sh $(PROG)
+		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
 		
