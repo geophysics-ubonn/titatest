@@ -539,11 +539,10 @@ CONTAINS
 !!!$    get time
     CALL TIC(c1)
 
-    !$OMP PARALLEL SHARED (cov_m_dc,ata_dc,ata_reg_dc)
-
+!    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m_dc,ata_dc,ata_reg_dc)
     ata_reg_dc= MATMUL(cov_m_dc,ata_dc) ! that's it...
+!    !$OMP END PARALLEL
 
-    !$OMP END PARALLEL
     csz = 'solution time'
     CALL TOC(c1,csz)
 
@@ -558,7 +557,7 @@ CONTAINS
 
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
+       WRITE (kanal,*)LOG10(dig(i)),dig(i)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -617,11 +616,9 @@ CONTAINS
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
-    !$OMP PARALLEL SHARED (ata_reg_dc,cov_m_dc,ata_dc)
-
+!    !$OMP PARALLEL DEFAULT (none) SHARED (ata_reg_dc,cov_m_dc,ata_dc)
     ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
-    
-    !$OMP END PARALLEL
+!    !$OMP END PARALLEL
     
     ALLOCATE (dig(manz))
 
