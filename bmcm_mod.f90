@@ -213,7 +213,7 @@ CONTAINS
 !!!$    Copyright Andreas Kemna 2009
 !!!$    Created by  Roland Martin                            02-Nov-2009
 !!!$    
-!!!$    Last changed      RM                                   20-Feb-2010
+!!!$    Last changed      RM                                   20-Feb-2011
 !!!$
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
@@ -489,7 +489,7 @@ CONTAINS
     dig_max = MAXVAL(dig)
 
     errnr = 1
-    OPEN (kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
     WRITE (kanal,*)manz
@@ -558,12 +558,20 @@ CONTAINS
 
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)ABS(dig(i)),LOG10(dig(i))
+       WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
 
+    CLOSE(kanal)
+
+
+    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+    WRITE (kanal,*)manz
+    DO i=1,manz/3
+       WRITE (kanal,*)ata_reg_dc(i,:)
+    END DO
     CLOSE(kanal)
 
     DEALLOCATE (dig)
@@ -626,7 +634,7 @@ CONTAINS
 
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig(i)
+       WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig(i))
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -932,17 +940,18 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig2(i))
+       WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig(i))
     END DO
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
     WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
     CLOSE(kanal)
+    GOTO 998
 
     errnr = 1
     OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
@@ -959,7 +968,7 @@ CONTAINS
     CLOSE(kanal)
 
 
-    DEALLOCATE (dig)
+998 DEALLOCATE (dig)
     IF (ALLOCATED(work)) DEALLOCATE (dig2,work)
 
     errnr = 0
@@ -1003,17 +1012,18 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)LOG10(DBLE(dig(i))),DBLE(dig(i))
+       WRITE (kanal,*)LOG10(DBLE(dig(i))/dig_max),DBLE(dig(i))
     END DO
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
     WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
     CLOSE(kanal)
+    GOTO 998
 
     errnr = 1
     OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
@@ -1028,7 +1038,7 @@ CONTAINS
     WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
     CLOSE(kanal)
 
-    DEALLOCATE (dig)
+998    DEALLOCATE (dig)
 
     errnr = 0
 
@@ -1073,7 +1083,7 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
@@ -1084,6 +1094,7 @@ CONTAINS
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
     WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
     CLOSE(kanal)
+    GOTO 998
 
     errnr = 1
     OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
@@ -1101,7 +1112,7 @@ CONTAINS
     CLOSE(kanal)
 
 
-    DEALLOCATE (dig)
+998 DEALLOCATE (dig)
 
     errnr = 0
 999 RETURN
