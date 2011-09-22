@@ -222,7 +222,6 @@ ctm:
 
 dox:		
 		./make_doxygen.sh $(CRT)
-		doxygen < dox.inp
 
 minimal:	$(C1) $(f90mini)
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
