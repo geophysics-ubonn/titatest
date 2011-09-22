@@ -203,10 +203,14 @@ CONTAINS
 
 !!!$....................................................................
 
+    
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
-    !$OMP DO
+
     apdc = 0D0
+
+    !$OMP DO
+
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
        if (ldc) then
@@ -341,8 +345,10 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
     !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
-    !$OMP DO
+
     bvecdc = 0D0
+
+    !$OMP DO
     do j = 1 , manz
        DO i = j , manz
           dum = pvecdc(i) * smatm(i,j) * cgfac(i)
@@ -523,26 +529,6 @@ CONTAINS
        end do
     end do
     !$OMP END PARALLEL
-
-  END SUBROUTINE bap
-
-  subroutine bp()
-!!!$
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$
-!!!$    Andreas Kemna                                        29-Feb-1996
-!!!$     
-!!!$    Last changes      RM                                   Jul-2010
-!!!$    
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-
-!!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
-    INTEGER         ::     i,j
-
-=======
-    !!$!$OMP END PARALLEL
 
   END SUBROUTINE bap
 
