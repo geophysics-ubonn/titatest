@@ -19,3 +19,6 @@ cutmckee/crerror.h
 *.directory
 *.lot
 *.toc
+doxy.inp
+html
+latex
