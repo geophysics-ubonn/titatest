@@ -134,9 +134,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     ak        mqrms = 5d-2
 !!!$     CG-Epsilon
   eps = 1d-4
-  print*
-  print*,eps
-  print*
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
