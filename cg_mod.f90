@@ -117,9 +117,9 @@ CONTAINS
        bvecdc = dble(bvec)
     end if
 
-    dpar = DCMPLX(0.)
+    dpar = DCMPLX(0D0)
     rvecdc = bvecdc
-    pvecdc = 0d0
+    pvecdc = 0D0
 
     fetxt = 'CG iteration'
 
@@ -203,13 +203,16 @@ CONTAINS
 
 !!!$....................................................................
 
+    
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
+
+    apdc = 0D0
+
     !$OMP DO
+
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
-       apdc(i) = 0d0
-
        if (ldc) then
           do j=1,manz
              apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
@@ -342,9 +345,11 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
     !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
+
+    bvecdc = 0D0
+
     !$OMP DO
     do j = 1 , manz
-       bvecdc(j) = 0.
        DO i = j , manz
           dum = pvecdc(i) * smatm(i,j) * cgfac(i)
           IF (i == j) THEN
@@ -649,7 +654,7 @@ CONTAINS
     !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
     !$OMP DO
     DO j=1, manz
-       bvec(j) = 0.
+       bvec(j) = DCMPLX(0D0)
        DO i = j, manz
           cdum = pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
           IF (i == j) THEN

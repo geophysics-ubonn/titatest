@@ -8,18 +8,34 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
+############################################################################
+# 			gfortran compiler flags 			   #
+# make sure to comment all other compiler flags down below in order to use # 
+# gfortran								   #
+############################################################################
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
 		-fimplicit-none -fno-signed-zeros -ffinite-math-only
 #FFLAG90         = -pg
 
+############################################################################
+# 			ifort compiler flags 				   #
+# make sure to comment all other compiler flags above in order to use      # 
+# ifort									   #
+############################################################################
 #F90		= ifort
-#FFLAG90		= -O3 -fast -openmp #-parallel
+#FFLAG90		= -O3 -fast -parallel
+## Only un-comment for debug purpose
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds -openmp
+
+CRT		= CRTomo
+
+CRM		= CRMod
 
 # das hier chek obs ein bin im home gibt
 C1		= cbn
@@ -39,6 +55,9 @@ PR5		= minimal_omp
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+
+DOC		= doxygen
+
 ################################################################
 # default
 all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
@@ -198,14 +217,14 @@ ggv:
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRTomo \
+		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRMod \
+		$(F90) $(FFLAG90) -o $(CRM) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -216,6 +235,11 @@ minimal_prec:	$(C1) $(f90mini)
 minimal_omp:	$(C1) minimal_omp.f90 
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
+dox:            
+		./make_doxygen.sh $(CRT)
+		$(DOC) doxy.inp
+
+		
 install:	$(crt) $(crm)				
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
