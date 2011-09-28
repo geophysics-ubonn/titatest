@@ -44,14 +44,14 @@ subroutine update()
      dpar2 = dpar
      cgres2 = cgres
 
-!!!$     Smoothnessvektor berechnen
-!!!$     triang>
+!!!$     Smoothnessvektor berechnen, bzw die RHS (Right Hand Side)
+!!!$       b_q = A_q^h*C_d^-1*A_q*(d-f(m_q))-\lam C_m^-1 m_q
      if (ltri==0) then
-!!!$     triang<
         do i=1,manz
            cdum = dcmplx(0d0)
 !!!$     diff+<
            if (.not.lprior) then
+!!!$ C_m^-1 * m_q
 !!!$     diff+>
               if (i.gt.1) cdum = dcmplx(smatm(i-1,2))*par(i-1)
               if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
@@ -61,6 +61,7 @@ subroutine update()
               bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
 !!!$     diff+<
            else
+!!!$ C_m^-1 * (m_q - m_0)
               if (i.gt.1) cdum = dcmplx(smatm(i-1,2)) * (par(i-1)-m0(i-1))
               if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2)) * &
                    (par(i+1)-m0(i+1))
@@ -82,6 +83,8 @@ subroutine update()
 !!!$     triang>
      ELSE IF (ltri == 1.OR.ltri == 2.OR. &
           (ltri > 4 .AND. ltri < 15)) then
+!!!$ C_m^-1 * m_q
+!!!$ C_m^-1 * (m_q - m_0)
         DO i=1,manz
            cdum = dcmplx(0d0)
            DO ij=1,smaxs
@@ -110,7 +113,9 @@ subroutine update()
      END IF
 !!!$     triang<
 
-!!!$     Skalierungsfaktoren bestimmen
+!!!$  Skalierungsfaktoren bestimmen
+!!!$ Preconditioning factors: 
+!!!$ cgfac = diag(A^h_q * C_d^-1 * A + \lam C_m^-1)^-1
      do j=1,manz
         dum = 0d0
 
@@ -131,28 +136,32 @@ subroutine update()
            end do
         end if
         dum2 = dum
-!!!$     triang< 
+
         IF (ltri==0) THEN
-           dum    = dum + lam*smatm(j,1)
+
+           dum    = dum + lam * smatm(j,1)
 
         ELSE IF (ltri == 1.OR.ltri == 2.OR. &
              (ltri > 4 .AND. ltri < 15)) THEN
-           dum    = dum + lam*smatm(j,smaxs+1)
+
+           dum    = dum + lam * smatm(j,smaxs+1)
 
         ELSE IF (ltri == 3.OR.ltri == 4) THEN
+
            dum = dum + lam * smatm(j,1)
 
         ELSE IF (ltri == 15) THEN
-           dum    = dum + lam*smatm(j,j)
+
+           dum    = dum + lam * smatm(j,j)
 
         END IF
-!!!$     triang> 
-
         cgfac(j) = 1d0/dsqrt(dum)
      end do
 
 !!!$     Konstantenvektor berechen und skalieren (RHS)
-     do j=1,manz
+!!!$ the other part of the RHS system...
+!!!$ A_q^h * C_d^-1 * (d-f(m_q)) + \lam C_m^-1 (m_q,(m_q-m_0))
+    do j=1,manz
 
         cdum = dcmplx(0d0)
 

@@ -23,7 +23,7 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 
 ############################################################################
 # 			ifort compiler flags 				   #
-# make sure to comment all other compiler flags above in order to use      # 
+# make sure to comment all other compiler flags from above in order to use # 
 # ifort									   #
 ############################################################################
 #F90		= ifort
@@ -37,6 +37,9 @@ CRT		= CRTomo
 
 CRM		= CRMod
 
+CRT		= CRTomo
+
+CRM		= CRMod
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # invokes get_git_version.sh
@@ -55,7 +58,6 @@ PR5		= minimal_omp
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
-
 DOC		= doxygen
 
 ################################################################
@@ -240,7 +242,7 @@ dox:
 		$(DOC) doxy.inp
 
 		
-install:	$(crt) $(crm)				
+install:	$(crt) $(crm) dox
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
 		cd ./cutmckee ; make install

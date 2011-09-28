@@ -565,13 +565,14 @@ CONTAINS
 
     CLOSE(kanal)
 
-
+    errnr = 1
     open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
-    WRITE (kanal,*)manz
-    DO i=1,manz/3
-       WRITE (kanal,*)ata_reg_dc(i,:)
+    errnr = 4
+    DO i=1,27,1
+       WRITE (kanal,*)ata_reg_dc(i,1:100:3)
     END DO
-    CLOSE(kanal)
+
+    CLOSE (kanal)
 
     DEALLOCATE (dig)
 
