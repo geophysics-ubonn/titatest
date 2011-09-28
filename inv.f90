@@ -43,7 +43,7 @@ PROGRAM inv
   IMPLICIT none
 
   CHARACTER(256)         :: ftext
-  INTEGER                :: c1,i,count
+  INTEGER                :: c1,i,count,mythreads,maxthreads
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
@@ -80,6 +80,7 @@ PROGRAM inv
 !!!$   Allgemeine Parameter setzen
   DO WHILE ( lagain ) ! this loop exits after all files are processed
 
+
      errnr2 = 0
 !!!$   Benoetigte Variablen einlesen
      call rall(kanal,delem,delectr,dstrom,drandb,&
@@ -89,7 +90,32 @@ PROGRAM inv
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
-
+     NTHREADS = 1
+!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
+     maxthreads = OMP_GET_MAX_THREADS()
+     IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
+        mythreads = kwnanz
+        PRINT*,'Rescheduling..'
+        IF ( mythreads <= maxthreads ) THEN ! best case,
+!!!$ the number of processors is greater or equal the assumed
+!!!$ workload
+           PRINT*,'perfect match'
+        ELSE 
+!!!$ is smaller than the minimum workload.. now we have to devide a bit..
+           PRINT*,'less nodes than wavenumbers'
+           DO i = 1, INT(kwnanz/2)
+              mythreads = INT(kwnanz / i) + 1
+              IF (mythreads < maxthreads) EXIT
+           END DO
+        END IF
+        NTHREADS = mythreads
+     END IF
+     CALL OMP_SET_NUM_THREADS ( NTHREADS )
+     ! recheck ..
+     i = OMP_GET_MAX_THREADS()
+     WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
+!!!$
+     
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !!!$   zur Berechnung der gemischten Randbedingung bestimmen
      call precal()

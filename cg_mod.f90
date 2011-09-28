@@ -343,12 +343,9 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
     !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
-<<<<<<< HEAD
 
     bvecdc = 0D0
 
-=======
->>>>>>> master
     !$OMP DO
     do j = 1 , manz
        DO i = j , manz
