@@ -447,7 +447,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      goto 999
   else if (.not.ldc.and.lfphai.and.&
     ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR. &
-    ((stabp0 == 0d0).and.(stabpA2 == 0d0)))) then
+    ((stabp0 == 0d0).and.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) then
      fetxt = ' '
      errnr = 105
      goto 999
