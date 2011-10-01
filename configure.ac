@@ -12,8 +12,12 @@ AM_INIT_AUTOMAKE
 # CRTomo and CRMod error generation
 AC_CONFIG_COMMANDS_PRE([cd src; ./../make_crerr.sh; cd ..;])
 
+# CRTomo git version generation
+AC_CONFIG_COMMANDS_PRE([cd src; ./../get_git_version.sh; cd ..;])
+
 # CutMcK error generation
 AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../make_crerr.sh; cd ..;])
+
 
 # old (development) Makefile should be moved to a save place
 #AC_CONFIG_COMMANDS_PRE([mv src/Makefile src/old.Makefile])
