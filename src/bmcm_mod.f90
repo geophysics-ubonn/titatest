@@ -482,7 +482,7 @@ CONTAINS
     dig_max = MAXVAL(dig)
 
     errnr = 1
-    OPEN (kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
     WRITE (kanal,*)manz
@@ -548,6 +548,15 @@ CONTAINS
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
 
     CLOSE(kanal)
+
+    errnr = 1
+    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+    errnr = 4
+    DO i=1,27,1
+       WRITE (kanal,*)ata_reg_dc(i,1:100:3)
+    END DO
+
+    CLOSE (kanal)
 
     DEALLOCATE (dig)
 
@@ -900,7 +909,7 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
@@ -967,7 +976,7 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
@@ -1037,7 +1046,7 @@ CONTAINS
 
 !!!$    write out real and imaginary part
     errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_re',status='replace',err=999)
+    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     dig_min = MINVAL(DBLE(dig))
     dig_max = MAXVAL(DBLE(dig))
