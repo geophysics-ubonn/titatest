@@ -52,11 +52,12 @@ subroutine wout(kanal,dsigma,dvolt)
 
 !!!$     'dsigma' modifizieren
 
-  IF (it>9) THEN
-     WRITE (ci,'(I2)')it
-  ELSE 
-     WRITE (ci,'(a,I1)')'0',it
-  END IF
+  WRITE (ci,'(I2.2)')it
+!!$  IF (it>9) THEN
+!!$     WRITE (ci,'(I2)')it
+!!$  ELSE 
+!!$     WRITE (ci,'(a,I1)')'0',it
+!!$  END IF
   htxt = filpat(dsigma,idum2,1,slash(1:1))
   idum = idum2+index(dsigma(idum2+1:80),'.')-1
   htxt  = dsigma(1:idum)//ci//dsigma(idum+1:idum+4)

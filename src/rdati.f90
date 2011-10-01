@@ -244,6 +244,23 @@ subroutine rdati(kanal,datei)
            WRITE(ifp1,'(G14.4)')bet
            ! write out full noisy data as measured voltages..
            WRITE (ifp3,*)strnr(i),vnr(i),bet,pha
+
+           IF (bet < 0.0) THEN
+
+              fetxt = '-- check noise parameters (Magnitude < 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
+
+           IF (pha > 0.0) THEN
+
+              fetxt = '-- check noise parameters (Phase > 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
+
         END IF
 
      end if

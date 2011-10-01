@@ -369,7 +369,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lnse = ( stabw0 < 0 )     ! couple error and noise model
   IF ( lnse ) THEN
-     stabw0 = -stabw0
+     stabw0 = -stabw0 ! reset standard deviation to positive val
      IF (lnse2) print*,'overriding seperate noise model'
      lnse2 = .FALSE.        ! overrides the lnse2 switch
 !!!$     copy error model into noise model
