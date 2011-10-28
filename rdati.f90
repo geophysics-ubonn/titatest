@@ -252,7 +252,6 @@ subroutine rdati(kanal,datei)
               GOTO 1000
 
            END IF
-
            IF (pha > 0.0) THEN
 
               fetxt = '-- check noise parameters (Phase > 0)'
@@ -289,7 +288,7 @@ subroutine rdati(kanal,datei)
      end if
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-     wmatdr(i) = 1d0/(stabw**2.)
+     wmatdr(i) = 1d0/(stabw**2.)  !=C_d^{-1} !!!!
      wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
