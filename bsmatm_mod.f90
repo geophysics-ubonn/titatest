@@ -449,6 +449,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
     REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
+    INTEGER :: j
 !!!$.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
@@ -462,13 +463,17 @@ CONTAINS
 
     IF (ltri==3) THEN
 
-       smatm = 1.0 ! Levenberg Damping
+       smatm = 1d0 ! Levenberg Damping
 
     ELSE
 
        CALL bcsens (csensmax,csensavg)
 
-       smatm(:,1) = csens
+       DO j = 1,manz
+
+          smatm(j,1) = csensmax/csens(j)
+
+       END DO
 
     END IF
 
