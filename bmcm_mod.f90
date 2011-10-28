@@ -342,7 +342,7 @@ CONTAINS
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
        WRITE (kanal,*)dig(i),LOG10(dig(i))
     END DO
@@ -460,7 +460,7 @@ CONTAINS
     OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
        WRITE (kanal,*)dig(i),SQRT(dig(i))*1d2
     END DO
@@ -523,7 +523,7 @@ CONTAINS
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
        WRITE (kanal,*)dig(i),LOG10(dig(i))-LOG10(dig_max)
     END DO
@@ -598,7 +598,7 @@ CONTAINS
     dig_min = MINVAL(dig) 
     dig_max = MAXVAL(dig)
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
        WRITE (kanal,*)dig(i),SQRT(dig(i))*1d2
     END DO
