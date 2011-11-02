@@ -337,7 +337,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum1,dum2
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
