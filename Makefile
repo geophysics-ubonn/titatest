@@ -89,7 +89,7 @@ f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o \
-		  wkpot.o wout.o wpot.o wsens.o \
+		  wkpot.o wout.o wout_up.o wpot.o wsens.o \
 		  gauss_dble.o gauss_cmplx.o get_unit.o \
 		  make_noise.o tic_toc.o variomodel.o bvariogram.o \
 		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o \
@@ -241,7 +241,6 @@ dox:
 		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
-		
 install:	$(crt) $(crm) dox
 		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
 		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
