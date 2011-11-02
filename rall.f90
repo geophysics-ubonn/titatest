@@ -344,8 +344,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 100 BACKSPACE (fpcfg)
 
 
-101 IF (lsto) PRINT*,'Stochastische Regularisierung'
-
+101 IF (lsto) THEN
+     PRINT*,'Stochastische Regularisierung'
+     eps = eps*1d-2
+  END IF
   IF (ltri > 4 .AND. ltri < 15) THEN
      fetxt = 'rall -> beta value'
      CALL read_comments(fpcfg)

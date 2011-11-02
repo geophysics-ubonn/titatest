@@ -337,25 +337,25 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(KIND(0D0))    ::     dum1,dum2
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
-    !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
 
-    bvecdc = 0D0
+    bvecdc = MATMUL(smatm,pvecdc)
+    bvecdc = bvecdc * cgfac
 
+    RETURN
+
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum,bvecdc) &
+    !$OMP SHARED (manz,pvecdc,cgfac,smatm)
     !$OMP DO
     do j = 1 , manz
-       DO i = j , manz
-          dum = pvecdc(i) * smatm(i,j) * cgfac(i)
-          IF (i == j) THEN
-             bvecdc(j) = bvecdc(j) + dum
-          ELSE
-             bvecdc(j) = bvecdc(j) + 2D0 * dum
-          END IF
+       dum = 0d0
+       DO i = 1 , manz
+          dum = dum + pvecdc(i) * smatm(i,j) * cgfac(i)
        END DO
+       bvecdc(j) = bvecdc(j) + dum
     end do
     !$OMP END PARALLEL
   end subroutine bpdcsto
@@ -648,19 +648,21 @@ CONTAINS
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
-    !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
+
+    bvec = MATMUL(DCMPLX(smatm),pvec)
+    bvec = bvec * DCMPLX(cgfac)
+
+    RETURN
+
+    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum,bvec) &
+    !$OMP SHARED (manz,pvec,cgfac,smatm)
     !$OMP DO
     DO j=1, manz
-       bvec(j) = DCMPLX(0D0)
-       DO i = j, manz
-          cdum = pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
-          IF (i == j) THEN
-             bvec(j) = bvec(j) + cdum
-          ELSE
-             bvec(j) = bvec(j) + 2D0 * cdum
-          END IF
+       cdum = DCMPLX(0d0)
+       DO i = 1, manz
+          cdum = cdum + pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
        END DO
+       bvec(j) = cdum
     END DO
     !$OMP END PARALLEL
 

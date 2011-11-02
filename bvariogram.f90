@@ -259,12 +259,12 @@ SUBROUTINE bvariogram
   par_vari = 10**par_vari
 
   fetxt = ''
-  CALL SYSTEM('which gnuplot > tmp.gnuplot')
-  OPEN (ifp,FILE='tmp.gnuplot',STATUS='old',ERR=999)
-  READ (ifp,'(a)',ERR=100)fetxt
-  CLOSE (ifp)
-  my_buff = TRIM(ADJUSTL(fetxt))//' < variogram.gnu >& /dev/null'
-  IF (fetxt /= '') CALL SYSTEM (TRIM(my_buff))
+!!$  CALL SYSTEM('which gnuplot > tmp.gnuplot')
+!!$  OPEN (ifp,FILE='tmp.gnuplot',STATUS='old',ERR=999)
+!!$  READ (ifp,'(a)',ERR=100)fetxt
+!!$  CLOSE (ifp)
+!!$  my_buff = TRIM(ADJUSTL(fetxt))//' < variogram.gnu >& /dev/null'
+!!$  IF (fetxt /= '') CALL SYSTEM (TRIM(my_buff))
   
 100 DEALLOCATE (gam_x,gam_y,gam)
   DEALLOCATE (ngam_x,ngam_y,ngam)
