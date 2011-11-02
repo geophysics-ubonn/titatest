@@ -63,7 +63,7 @@ CONTAINS
     lam = lamalt
     WRITE (*,'(/a,G10.3,a/)')'take current lambda ?',lam,&
          ACHAR(9)//':'//ACHAR(9)
-    IF (BTEST(mswitch,5)) THEN 
+    IF (BTEST(mswitch,6)) THEN 
        READ (*,*)fetxt
        IF (fetxt/='')READ(fetxt,*)lam
        WRITE (*,*)'No, set lambda to ',lam
