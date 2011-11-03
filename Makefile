@@ -18,7 +18,7 @@ FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops 
 ## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
-		-fimplicit-none -fno-signed-zeros -ffinite-math-only
+		-fimplicit-none -fno-signed-zeros -ffinite-math-only -fopenmp
 #FFLAG90         = -pg
 
 ############################################################################
@@ -241,10 +241,9 @@ dox:
 		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
-		
 install:	$(crt) $(crm) dox
-		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
-		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
+		$(CP) CRTomo $(WPATH)/CRTomo
+		$(CP) CRMod $(WPATH)/CRMod
 		cd ./cutmckee ; make install
 
 clean:		
