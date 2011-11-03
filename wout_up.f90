@@ -1,4 +1,4 @@
-subroutine wout_up(kanal,it,itr,dsigma,dvolt)
+subroutine wout_up(kanal,it,itr)
 
 !!!$     Unterprogramm zum Schreiben der Widerstandsverteilung und der
 !!!$     modellierten Daten inkl. Elektrodenkennungen.
@@ -13,7 +13,7 @@ subroutine wout_up(kanal,it,itr,dsigma,dvolt)
   USE modelmod, ONLY : mnr
   USE elemmod, ONLY : elanz, espx, espy 
   USE errmod, ONLY : errnr, fetxt
-  USE konvmod, ONLY: lprior, ldiff, pharms, betrms, lverb, nrmsd, lconsi
+  USE konvmod, ONLY: lprior, ldiff, pharms, betrms, lverb, nrmsd
   USE pathmod, ONLY : ramd, lnramd, slash, mkdir, rmdir
 
   IMPLICIT none
@@ -49,12 +49,16 @@ subroutine wout_up(kanal,it,itr,dsigma,dvolt)
 !!$!!!$ IT_<number> with number in three digits..
 !!$  CHARACTER(3)    ::   ci ! iteration number as string
 
+!!!$     Dateinamen
+  CHARACTER (80)   ::  foutfn
+
   LOGICAL :: crtf
 !!!$.....................................................................
 
 !!$ formatstrings
   
   
+  foutfn = 'update'
   WRITE (ci,'(I2.2)')it
   WRITE (cu,'(I3.3)')itr
 
@@ -81,18 +85,18 @@ subroutine wout_up(kanal,it,itr,dsigma,dvolt)
   CALL SYSTEM (mkdir//TRIM(itdir))
   
 !!!$ write data to iteration directory
-!!$ extracting the 'rho' from dsigma path 
-  file = TRIM(itdir)//slash//TRIM(dsigma)//'.mag'
-  !     print*,'Trying to write '//TRIM(file)
+!!$ extracting the 'rho' from foutfn path 
+  file = TRIM(itdir)//slash//TRIM(foutfn)//'.mag'
+  print*,'Trying to write '//TRIM(file)
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
   WRITE (kanal,*,err=1000) elanz
   WRITE (kanal,'(3(F10.4,2x))',err=1000) (real(espx(i)),REAL(espy(i)),&
        real(dlog10(cdabs(1d0/sigma(i)))),i=1,elanz)
   CLOSE (kanal)
 
-
-  file = TRIM(itdir)//slash//TRIM(dsigma)//'.pha'
-  !     print*,'Trying to write '//TRIM(file)
+!  print*,TRIM(foutfn),TRIM(dvolt)
+  file = TRIM(itdir)//slash//TRIM(foutfn)//'.pha'
+  print*,'Trying to write '//TRIM(file)
   errnr = 1
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
   errnr = 4
@@ -102,8 +106,8 @@ subroutine wout_up(kanal,it,itr,dsigma,dvolt)
      
   CLOSE (kanal)
 
-  file = TRIM(itdir)//slash//TRIM(dsigma)//'.modl'
-  !     print*,'Trying to write '//TRIM(file)
+  file = TRIM(itdir)//slash//TRIM(foutfn)//'.modl'
+  print*,'Trying to write '//TRIM(file)
   errnr = 1
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
   errnr = 4
