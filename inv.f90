@@ -745,6 +745,10 @@ PROGRAM inv
         CALL bsigma
         if (errnr.ne.0) goto 999
 
+        IF (lverb) THEN
+           call wout_up(kanal,it,itr)
+           if (errnr.ne.0) goto 999
+        END IF
 !!!$   Roughness bestimmen
         CALL brough
 
