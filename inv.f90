@@ -723,6 +723,7 @@ PROGRAM inv
 !!!$   Step-length speichern
               stpalt = step
            end if
+           itr = itr + 1
         end if
 !!!$   Kontrollausgaben
         write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&

@@ -343,21 +343,24 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
 
     bvecdc = MATMUL(smatm,pvecdc)
-    bvecdc = bvecdc * cgfac
+    DO i = 1, manz
+       bvecdc(i) = bvecdc(i) * cgfac(i)
+    END DO
+!    bvecdc = bvecdc * cgfac
 
     RETURN
-
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum,bvecdc) &
-    !$OMP SHARED (manz,pvecdc,cgfac,smatm)
-    !$OMP DO
+!!$
+!!$    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum,bvecdc) &
+!!$    !$OMP SHARED (manz,pvecdc,cgfac,smatm)
+!!$    !$OMP DO
     do j = 1 , manz
        dum = 0d0
        DO i = 1 , manz
           dum = dum + pvecdc(i) * smatm(i,j) * cgfac(i)
        END DO
-       bvecdc(j) = bvecdc(j) + dum
+       bvecdc(j) = dum
     end do
-    !$OMP END PARALLEL
+!!$    !$OMP END PARALLEL
   end subroutine bpdcsto
 
   SUBROUTINE bbdc

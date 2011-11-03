@@ -13,7 +13,7 @@ subroutine wout_up(kanal,it,itr)
   USE modelmod, ONLY : mnr
   USE elemmod, ONLY : elanz, espx, espy 
   USE errmod, ONLY : errnr, fetxt
-  USE konvmod, ONLY: lprior, ldiff, pharms, betrms, lverb, nrmsd
+  USE konvmod, ONLY: pharms, betrms, lverb, nrmsd, lam
   USE pathmod, ONLY : ramd, lnramd, slash, mkdir, rmdir
 
   IMPLICIT none
@@ -87,21 +87,21 @@ subroutine wout_up(kanal,it,itr)
 !!!$ write data to iteration directory
 !!$ extracting the 'rho' from foutfn path 
   file = TRIM(itdir)//slash//TRIM(foutfn)//'.mag'
-  print*,'Trying to write '//TRIM(file)
+!  print*,'Trying to write '//TRIM(file)
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
-  WRITE (kanal,*,err=1000) elanz
-  WRITE (kanal,'(3(F10.4,2x))',err=1000) (real(espx(i)),REAL(espy(i)),&
+  WRITE (kanal,*,err=1000) elanz,betrms,lam
+  WRITE (kanal,'(3(G12.4,2x))',err=1000) (real(espx(i)),REAL(espy(i)),&
        real(dlog10(cdabs(1d0/sigma(i)))),i=1,elanz)
   CLOSE (kanal)
 
 !  print*,TRIM(foutfn),TRIM(dvolt)
   file = TRIM(itdir)//slash//TRIM(foutfn)//'.pha'
-  print*,'Trying to write '//TRIM(file)
+!  print*,'Trying to write '//TRIM(file)
   errnr = 1
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
   errnr = 4
-  WRITE (kanal,*,err=1000) elanz
-  WRITE (kanal,'(3(F10.4,2x))',err=1000)(real(espx(i)),real(espy(i)),&
+  WRITE (kanal,*,err=1000) elanz,pharms,lam
+  WRITE (kanal,'(3(G12.4,2x))',err=1000)(real(espx(i)),real(espy(i)),&
        REAL(1d3*datan2(AIMAG(1d0/sigma(i)),REAL(1./sigma(i)))),i=1,elanz)
      
   CLOSE (kanal)
@@ -111,8 +111,8 @@ subroutine wout_up(kanal,it,itr)
   errnr = 1
   OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
   errnr = 4
-  write(kanal,*,err=1000) elanz
-  WRITE (kanal,'(3(F10.4,2x))',err=1000)(1./REAL(sigma(i)),&
+  write(kanal,*,err=1000) elanz,nrmsd,lam
+  WRITE (kanal,'(2(G12.4,2x))',err=1000)(1./REAL(sigma(i)),&
        real(1d3*datan2(AIMAG(1./sigma(i)),dble(1./sigma(i)))),&
        i=1,elanz)
      

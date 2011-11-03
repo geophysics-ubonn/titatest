@@ -798,10 +798,10 @@ CONTAINS
        IF (lverb) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
             ACCESS='sequential',FORM='formatted')
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var) &
-       !$OMP PRIVATE (i,j,hx,hy)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var) &
+!!$       !$OMP PRIVATE (i,j,hx,hy)
+!!$       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO i = 1 , manz
           WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
                'cov/',REAL(i*(100./manz)),'%',''
@@ -826,7 +826,7 @@ CONTAINS
 
           END DO
        END DO
-       !$OMP END PARALLEL
+!!$       !$OMP END PARALLEL
        IF (lverb) THEN
           CLOSE (ifp)
 
@@ -857,10 +857,10 @@ CONTAINS
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
           CALL LINVD(smatm,work,manz,lverb)
           DEALLOCATE (work)
-          !$OMP PARALLEL DEFAULT (none) &
-          !$OMP SHARED (smatm,manz,epsi,lverb,ifp) &
-          !$OMP PRIVATE (i,j)
-          !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+!!$          !$OMP PARALLEL DEFAULT (none) &
+!!$          !$OMP SHARED (smatm,manz,epsi,lverb,ifp) &
+!!$          !$OMP PRIVATE (i,j)
+!!$          !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
           DO i= 1, manz
              IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
                   'Filling upper C_m',REAL( i * (100./manz)),'%'
@@ -878,7 +878,7 @@ CONTAINS
 
              END DO
           END DO
-          !$OMP END PARALLEL
+!!$          !$OMP END PARALLEL
        END IF
 
        IF (lverb) THEN
