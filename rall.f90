@@ -346,7 +346,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 101 IF (lsto) THEN
      PRINT*,'Stochastische Regularisierung'
-     eps = eps*1d-2
+!     eps = eps*1d-2
   END IF
   IF (ltri > 4 .AND. ltri < 15) THEN
      fetxt = 'rall -> beta value'
