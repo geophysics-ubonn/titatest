@@ -331,7 +331,7 @@ CONTAINS
 
     ELSE IF (ltri == 15) THEN
 
-       ata_reg= ata + smatm ! for full C_m..w
+       ata_reg= ata + lam * smatm ! for full C_m..w
 
        DO j=1,manz
           dig(j) = ata_reg(j,j)
@@ -533,14 +533,14 @@ CONTAINS
 
     CLOSE(kanal)
 
-!!$    errnr = 1
-!!$    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
-!!$    errnr = 4
-!!$    DO i=1,27,1
-!!$       WRITE (kanal,*)ata_reg_dc(i,1:100:3)
-!!$    END DO
-!!$
-!!$    CLOSE (kanal)
+    errnr = 1
+    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+    errnr = 4
+    DO i = 1, manz
+       WRITE (kanal,*)ata_reg(i,:)
+    END DO
+
+    CLOSE (kanal)
 
     DEALLOCATE (dig)
 

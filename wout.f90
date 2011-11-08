@@ -148,6 +148,16 @@ subroutine wout(kanal,dsigma,dvolt)
 !!!$     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
      end do
      close(kanal)
+
+     fetxt = htxt(1:idum-4)//'sig'
+     errnr = 1
+     open(kanal,file=TRIM(fetxt),status='replace',err=999)
+     errnr = 4
+     write(kanal,*,err=1000) elanz,betrms,pharms
+     do i=1,elanz
+        write(kanal,*,err=1000)REAL(sigma(i)),IMAG(sigma(i))
+     end do
+     close(kanal)
   end if
 
 !!!$     'dvolt' modifizieren
