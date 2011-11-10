@@ -17,7 +17,7 @@ MODULE bmcm_mod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar,&
        ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
-  USE elemmod, ONLY : smaxs
+  USE elemmod, ONLY : smaxs,espx,espy
   USE invmod , ONLY : lip,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb
@@ -165,6 +165,8 @@ CONTAINS
     INTEGER                       :: i,j,k
     REAL,DIMENSION(:),ALLOCATABLE :: dig
     REAL                          :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$....................................................................
 
 !!!$  A^TC_d^-1A
@@ -177,12 +179,14 @@ CONTAINS
 
     ata = 0d0
 
+    CALL TIC(c1)
+
     IF (ldc) THEN
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
-       !$OMP PRIVATE (i,j,k)
-       !$OMP DO
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
+!!$       !$OMP PRIVATE (i,j,k)
+!!$       !$OMP DO
        DO k=1,manz
           !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
           !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
@@ -195,10 +199,10 @@ CONTAINS
           END DO
           dig(k) = ata(k,k)
        END DO
-       !$OMP END PARALLEL
+!!$       !$OMP END PARALLEL
 
     ELSE
-
+       print*,'NON DC'
        !$OMP PARALLEL DEFAULT (none) &
        !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
        !$OMP PRIVATE (i,j,k)
@@ -217,6 +221,9 @@ CONTAINS
        END DO
        !$OMP END PARALLEL
     END IF
+
+    csz = 'ATA time'
+    CALL TOC(c1,csz)
 
 !!!$    get min/max
     dig_min = MINVAL(dig)
@@ -254,6 +261,8 @@ CONTAINS
     INTEGER                        :: i,j,k
     REAL,DIMENSION(:),ALLOCATABLE  :: dig
     REAL                           :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 
 !!!$  A^TC_d^-1A+lamC_m
@@ -264,7 +273,15 @@ CONTAINS
 
     ALLOCATE(dig(manz))
 
+    CALL TIC (c1)
+
     IF (ltri == 0) THEN
+
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nx) &
+!!$       !$OMP PRIVATE (i,j)
+!!$       !$OMP DO
+
        DO j=1,manz
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
@@ -287,6 +304,8 @@ CONTAINS
 
           dig(j) = ata_reg(j,j)
        END DO
+       
+!!$       !$OMP END PARALLEL
 
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
@@ -299,12 +318,17 @@ CONTAINS
 
     ELSE IF (ltri == 1.OR.ltri == 2.OR.(ltri > 4 .AND. ltri < 15)) THEN
 
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nachbar,smaxs) &
+!!$       !$OMP PRIVATE (i,j)
+!!$       !$OMP DO
+
        DO j=1,manz
 
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
 
-          DO i=1,manz
+          DO i=1,j
 
              IF (i==j) THEN   ! sparse C_m
 
@@ -323,11 +347,15 @@ CONTAINS
 
              END IF
 
+             ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
+
           END DO
 
           dig(j) = ata_reg(j,j)
 
        END DO
+       
+!!$       !$OMP END PARALLEL
 
     ELSE IF (ltri == 15) THEN
 
@@ -338,6 +366,9 @@ CONTAINS
        END DO
 
     END IF
+
+    csz = 'ATA+RTR time'
+    CALL TOC(c1,csz)
 
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
@@ -385,13 +416,8 @@ CONTAINS
 
     errnr = 1
 
-    ALLOCATE (work(manz,manz),STAT=errnr)
-    IF (errnr/=0) THEN
-       fetxt = 'Allocation problem WORK in bmcm'
-       errnr = 97
-       RETURN
-    END IF
-    ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
+    ALLOCATE (dig(manz)) !dig is a working array and contains main diagonal
+
 
 !!!$    get time
     CALL TIC(c1)
@@ -409,11 +435,22 @@ CONTAINS
           errnr = 108
           RETURN
        END IF
+
+       csz = 'Factorization time'
+       CALL TOC(c1,csz)
+
+
+       CALL TIC(c1)
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
 
        CALL LINVD(cov_m,dig,manz,lverb)
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
+
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (cov_m,manz,lverb) &
+!!$       !$OMP PRIVATE (i,j)
+!!$       !$OMP DO
 
        DO i= 1 , manz
 
@@ -425,7 +462,14 @@ CONTAINS
              cov_m(i,j) = cov_m(j,i)
 
           END DO
+
        END DO
+
+!!$       !$OMP END PARALLEL
+
+       csz = 'Inversion time'
+       CALL TOC(c1,csz)
+
 
     ELSE
        WRITE (*,'(a)',ADVANCE='no')'Inverting Matrix (Gauss elemination)'
@@ -439,18 +483,34 @@ CONTAINS
           errnr = 108
           RETURN
        END IF
+
+       csz = 'Inversion time'
+       CALL TOC(c1,csz)
+
     END IF
 
-    csz = 'solution time'
-    CALL TOC(c1,csz)
-!    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m,ata_reg,work)
-    work = MATMUL(cov_m,ata_reg)
-!    !$OMP END PARALLEL
+    IF (lverb) THEN
+
+       ALLOCATE (work(manz,manz),STAT=errnr)
+       IF (errnr/=0) THEN
+          fetxt = 'Allocation problem WORK in bmcm'
+          errnr = 97
+          RETURN
+       END IF
+
+!!$    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m,ata_reg,work)
+       work = MATMUL(cov_m,ata_reg)
+!!$    !$OMP END PARALLEL
+       DO i=1,manz
+          IF (ABS(work(i,i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&
+               ,i,work(i,i)
+       END DO
+       DEALLOCATE (work)
+
+    END IF
+
     DO i=1,manz
        dig(i) = cov_m(i,i)
-       dig2(i) = work(i,i)
-       IF (ABS(dig2(i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&
-            ,i,dig(i),dig2(i)
     END DO
 
     dig_min = MINVAL(dig)
@@ -470,7 +530,7 @@ CONTAINS
 
     CLOSE(kanal)
 
-    DEALLOCATE (dig,dig2,work)
+    DEALLOCATE (dig)
 
     errnr = 0
 999 RETURN
@@ -492,9 +552,9 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
-    INTEGER                                      :: i,kanal
+    INTEGER                                      :: i,j,kanal
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-    REAL(KIND(0D0))                              :: dig_min,dig_max
+    REAL(KIND(0D0))                              :: dig_min,dig_max,dum
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -507,11 +567,9 @@ CONTAINS
 !!!$    get time
     CALL TIC(c1)
 
-!    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m_dc,ata_dc,ata_reg_dc)
     ata_reg = MATMUL(cov_m,ata) ! that's it...
-!    !$OMP END PARALLEL
 
-    csz = 'solution time'
+    csz = 'MATMUL time'
     CALL TOC(c1,csz)
 
     ALLOCATE (dig(manz)) !prepare to write out main diagonal
@@ -533,14 +591,17 @@ CONTAINS
 
     CLOSE(kanal)
 
-    errnr = 1
-    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
-    errnr = 4
-    DO i = 1, manz
-       WRITE (kanal,*)ata_reg(i,:)
-    END DO
+    IF (lverb) THEN
 
-    CLOSE (kanal)
+       errnr = 1
+       open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+       errnr = 4
+       DO i = 1, manz
+          WRITE (kanal,*)espx(i),espy(i),(ata_reg(i,j),j=i,manz)
+       END DO
+       
+       CLOSE (kanal)
+    END IF
 
     DEALLOCATE (dig)
 
@@ -575,6 +636,8 @@ CONTAINS
     INTEGER                                      :: i
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 !!!$   vorher wurde schon 
 !!!$   ata_reg_dc= (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A berechnet
@@ -585,10 +648,14 @@ CONTAINS
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
-!    !$OMP PARALLEL DEFAULT (none) SHARED (ata_reg,cov_m,ata)
+!!!$    get time
+    CALL TIC(c1)
+
     ata = MATMUL (ata_reg,cov_m)
-!    !$OMP END PARALLEL
     
+    csz = 'MATMUL time'
+    CALL TOC(c1,csz)
+
     ALLOCATE (dig(manz))
 
     DO i=1,manz
