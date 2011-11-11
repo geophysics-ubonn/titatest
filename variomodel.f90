@@ -163,7 +163,7 @@ CONTAINS
     CASE (1)
        mvario = varianz * (1d0 - DEXP(-r2)) !from GSlib
     CASE (2)
-       IF (r < 1.) THEN
+       IF (r < 1d0) THEN
           mvario = varianz * (r * (1.5d0 - .5d0 * r2)) !from GSlib
        ELSE
           mvario = varianz
@@ -186,7 +186,7 @@ CONTAINS
     
     r2 = r**2d0
 
-    IF (c2 == 1) r2 = r**1.99999 ! this is odd.. if we put it to 2., C_m is no longer
+    IF (c2 == 1) r2 = r**1.9 ! this is odd.. if we put it to 2., C_m is no longer
 !!$ pos definite.. but with 1.99999, which is in fact nearly 2. it is ok
 !!$ happens not all the time but sometimes..
 !!$ the digit can vary up to 7 digits behind the dot. With 8 digits it becomes
@@ -199,7 +199,7 @@ CONTAINS
        mcova = varianz * DEXP(-r2) !from GSlib
     CASE (2)
        IF ( ABS(r) < 1d0 ) THEN
-          mcova = varianz * (1d0 - r * (1.5d0 - .5d0*r2) ) !from GSlib
+          mcova = varianz * (1d0 - r * (1.5d0 - .5d0 * r2) ) !from GSlib
        ELSE
           mcova = 0d0
        END IF
