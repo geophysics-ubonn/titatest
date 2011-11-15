@@ -186,7 +186,7 @@ CONTAINS
     
     r2 = r**2d0
 
-    IF (c2 == 1) r2 = r**1.9 ! this is odd.. if we put it to 2., C_m is no longer
+    !IF (c2 == 1) r2 = r**1.9 ! this is odd.. if we put it to 2., C_m is no longer
 !!$ pos definite.. but with 1.99999, which is in fact nearly 2. it is ok
 !!$ happens not all the time but sometimes..
 !!$ the digit can vary up to 7 digits behind the dot. With 8 digits it becomes
