@@ -795,11 +795,8 @@ CONTAINS
 
     ELSE
 
-       IF (lverb_dat) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
-            ACCESS='sequential',FORM='formatted')
-
        !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var,lverb_dat) &
+       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var) &
        !$OMP PRIVATE (i,j,hx,hy)
        !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO i = 1 , manz
@@ -825,14 +822,16 @@ CONTAINS
 !!$             END IF
 
           END DO
-          IF (lverb_dat) WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
        END DO
        !$OMP END PARALLEL
-       IF (lverb_dat) THEN
-          CLOSE (ifp)
 
-          OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
-               ACCESS='sequential',FORM='formatted')
+       IF (lverb_dat) THEN
+          OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
+          DO i = 1,manz
+             WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
+          END DO
+          CLOSE (ifp)
        END IF
 
        IF (lverb) myold = smatm
@@ -861,7 +860,7 @@ CONTAINS
           CALL LINVD(smatm,work,manz,lverb)
           DEALLOCATE (work)
           !$OMP PARALLEL DEFAULT (none) &
-          !$OMP SHARED (smatm,manz,epsi,lverb,ifp,lverb_dat,espx,espy) &
+          !$OMP SHARED (smatm,manz,epsi,lverb) &
           !$OMP PRIVATE (i,j)
           !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
           DO i= 1, manz
@@ -880,7 +879,6 @@ CONTAINS
 !!$                END IF
 
              END DO
-             IF (lverb_dat) WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
           END DO
           !$OMP END PARALLEL
           IF (lverb_dat) CLOSE (ifp)
@@ -918,6 +916,20 @@ CONTAINS
 
     END IF
     IF (ALLOCATED(proof)) DEALLOCATE (proof)
+
+       IF (lverb_dat) THEN
+          OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+            ACCESS='sequential',FORM='formatted')
+
+          CLOSE (ifp)
+          OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
+               ACCESS='sequential',FORM='formatted')
+          DO i = 1,manz
+             WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
+          END DO
+          CLOSE (ifp)
+       END IF
+
 
   END SUBROUTINE bsmatmsto
 
