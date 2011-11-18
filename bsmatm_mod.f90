@@ -18,7 +18,7 @@ MODULE bsmatm_mod
   USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz
   USE invmod , ONLY : lip,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt
@@ -795,15 +795,15 @@ CONTAINS
 
     ELSE
 
-       IF (lverb) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+       IF (lverb_dat) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
             ACCESS='sequential',FORM='formatted')
 
        !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var) &
+       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var,lverb_dat) &
        !$OMP PRIVATE (i,j,hx,hy)
        !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO i = 1 , manz
-          WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
+          IF (lverb) WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
                'cov/',REAL(i*(100./manz)),'%',''
 
           smatm(i,i) = var ! nugget (=variance) effect on the main
@@ -819,21 +819,24 @@ CONTAINS
 
              smatm(j,i) = smatm(i,j) ! lower triangle
 
-             IF (smatm(i,j)>epsi.AND.lverb) THEN
-                WRITE (ifp,*)i,j
-                WRITE (ifp,*)j,i
-             END IF
+!!$             IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
+!!$                WRITE (ifp,*)i,j
+!!$                WRITE (ifp,*)j,i
+!!$             END IF
 
           END DO
+          IF (lverb_dat) WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
        END DO
        !$OMP END PARALLEL
-       IF (lverb) THEN
+       IF (lverb_dat) THEN
           CLOSE (ifp)
 
           OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
                ACCESS='sequential',FORM='formatted')
-          myold = smatm
        END IF
+
+       IF (lverb) myold = smatm
+
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
@@ -858,7 +861,7 @@ CONTAINS
           CALL LINVD(smatm,work,manz,lverb)
           DEALLOCATE (work)
           !$OMP PARALLEL DEFAULT (none) &
-          !$OMP SHARED (smatm,manz,epsi,lverb,ifp) &
+          !$OMP SHARED (smatm,manz,epsi,lverb,ifp,lverb_dat,espx,espy) &
           !$OMP PRIVATE (i,j)
           !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
           DO i= 1, manz
@@ -871,14 +874,16 @@ CONTAINS
 
                 smatm(i,j) = smatm(j,i)
 
-                IF (smatm(i,j)>epsi.AND.lverb) THEN
-                   WRITE (ifp,*)i,j
-                   WRITE (ifp,*)j,i
-                END IF
+!!$                IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
+!!$                   WRITE (ifp,*)i,j
+!!$                   WRITE (ifp,*)j,i
+!!$                END IF
 
              END DO
+             IF (lverb_dat) WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
           END DO
           !$OMP END PARALLEL
+          IF (lverb_dat) CLOSE (ifp)
        END IF
 
        IF (lverb) THEN
@@ -889,8 +894,6 @@ CONTAINS
                   ,i,proof(i,i)
           END DO
 
-
-          CLOSE (ifp)
        END IF
 
        IF (errnr == 0) THEN

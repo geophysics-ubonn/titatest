@@ -20,12 +20,13 @@ MODULE bmcm_mod
   USE elemmod, ONLY : smaxs,espx,espy
   USE invmod , ONLY : lip,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,lverb_dat
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
+  USE ompmod
 
   IMPLICIT none
 
@@ -183,10 +184,10 @@ CONTAINS
 
     IF (ldc) THEN
 
-!!$       !$OMP PARALLEL DEFAULT (none) &
-!!$       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
-!!$       !$OMP PRIVATE (i,j,k)
-!!$       !$OMP DO
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
+       !$OMP PRIVATE (i,j,k)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO k=1,manz
           !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
           !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
@@ -199,14 +200,14 @@ CONTAINS
           END DO
           dig(k) = ata(k,k)
        END DO
-!!$       !$OMP END PARALLEL
+       !$OMP END PARALLEL
 
     ELSE
        print*,'NON DC'
        !$OMP PARALLEL DEFAULT (none) &
        !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
        !$OMP PRIVATE (i,j,k)
-       !$OMP DO
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO k=1,manz
           !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
           !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
@@ -277,10 +278,10 @@ CONTAINS
 
     IF (ltri == 0) THEN
 
-!!$       !$OMP PARALLEL DEFAULT (none) &
-!!$       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nx) &
-!!$       !$OMP PRIVATE (i,j)
-!!$       !$OMP DO
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nx) &
+       !$OMP PRIVATE (i,j)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 
        DO j=1,manz
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
@@ -305,7 +306,7 @@ CONTAINS
           dig(j) = ata_reg(j,j)
        END DO
        
-!!$       !$OMP END PARALLEL
+       !$OMP END PARALLEL
 
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
@@ -318,10 +319,10 @@ CONTAINS
 
     ELSE IF (ltri == 1.OR.ltri == 2.OR.(ltri > 4 .AND. ltri < 15)) THEN
 
-!!$       !$OMP PARALLEL DEFAULT (none) &
-!!$       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nachbar,smaxs) &
-!!$       !$OMP PRIVATE (i,j)
-!!$       !$OMP DO
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nachbar,smaxs) &
+       !$OMP PRIVATE (i,j)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 
        DO j=1,manz
 
@@ -355,7 +356,7 @@ CONTAINS
 
        END DO
        
-!!$       !$OMP END PARALLEL
+       !$OMP END PARALLEL
 
     ELSE IF (ltri == 15) THEN
 
@@ -447,10 +448,10 @@ CONTAINS
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
 
-!!$       !$OMP PARALLEL DEFAULT (none) &
-!!$       !$OMP SHARED (cov_m,manz,lverb) &
-!!$       !$OMP PRIVATE (i,j)
-!!$       !$OMP DO
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (cov_m,manz,lverb) &
+       !$OMP PRIVATE (i,j)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 
        DO i= 1 , manz
 
@@ -465,7 +466,7 @@ CONTAINS
 
        END DO
 
-!!$       !$OMP END PARALLEL
+       !$OMP END PARALLEL
 
        csz = 'Inversion time'
        CALL TOC(c1,csz)
@@ -530,6 +531,18 @@ CONTAINS
 
     CLOSE(kanal)
 
+    IF (lverb_dat) THEN
+
+       errnr = 1
+       open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+       errnr = 4
+       DO i = 1, manz
+          WRITE (kanal,*)espx(i),espy(i),(cov_m(i,j),j=i,manz)
+       END DO
+       
+       CLOSE (kanal)
+    END IF
+
     DEALLOCATE (dig)
 
     errnr = 0
@@ -591,7 +604,7 @@ CONTAINS
 
     CLOSE(kanal)
 
-    IF (lverb) THEN
+    IF (lverb_dat) THEN
 
        errnr = 1
        open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)

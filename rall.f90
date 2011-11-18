@@ -492,6 +492,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
 
+  lverb_dat = BTEST (mswitch,11) ! +2048 writing out full resolution, covariance and cm0
+
   IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
 
   lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
@@ -544,8 +546,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         goto 999
      END IF
   END IF
-  lvario = lvario.OR. &       ! if already set or
-       (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
+!!$  lvario = lvario.OR. &       ! if already set or
+!!$       (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
 
   IF (lvario) CALL set_vario (nx,alfx,alfz,esp_mit,esp_med) ! nx is than
   !     the variogram and covariance function type, see variomodel.f90

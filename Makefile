@@ -222,6 +222,7 @@ crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
+		$(CP) $(CRT) $(WPATH)/$(CRT)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o $(CRM) \
