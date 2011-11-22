@@ -243,9 +243,9 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 99 fetxt = 'rall -> Gitter nx'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) nx
-  fetxt = 'rall -> Gitter nz'
+  fetxt = 'rall -> (lamfix) Gitter nz'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) nz
+  READ (fpcfg,*,end=1001,err=999) lamfix
   fetxt = 'rall -> Anisotropie /x'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) alfx
@@ -413,6 +413,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   ELSE
      PRINT*,'No Data noise!!'
   END IF
+
+  nz = INT(lamfix)
 
   IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 

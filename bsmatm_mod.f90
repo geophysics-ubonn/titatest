@@ -827,7 +827,7 @@ CONTAINS
 
        IF (lverb_dat) THEN
           OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
-            ACCESS='sequential',FORM='formatted')
+               ACCESS='sequential',FORM='formatted')
           DO i = 1,manz
              WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
           END DO
@@ -868,15 +868,15 @@ CONTAINS
                   'Filling upper C_m',REAL( i * (100./manz)),'%'
              DO j = 1, i - 1
 
-!!$                IF (lverb) WRITE (*,'(A,t45,F6.2,A)',ADVANCE='no')&
-!!$                     ACHAR(13)//'Filling lower/',REAL( i * (100./manz)),'%'
+!!$!                IF (lverb) WRITE (*,'(A,t45,F6.2,A)',ADVANCE='no')&
+!!$!                     ACHAR(13)//'Filling lower/',REAL( i * (100./manz)),'%'
 
                 smatm(i,j) = smatm(j,i)
 
-!!$                IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
-!!$                   WRITE (ifp,*)i,j
-!!$                   WRITE (ifp,*)j,i
-!!$                END IF
+!!$!                IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
+!!$!                   WRITE (ifp,*)i,j
+!!$!                   WRITE (ifp,*)j,i
+!!$!                END IF
 
              END DO
           END DO
@@ -913,15 +913,8 @@ CONTAINS
 
        END IF
 
-
-    END IF
-    IF (ALLOCATED(proof)) DEALLOCATE (proof)
-
+!!!!$ verbose output of inverse smatm data
        IF (lverb_dat) THEN
-          OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
-            ACCESS='sequential',FORM='formatted')
-
-          CLOSE (ifp)
           OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
                ACCESS='sequential',FORM='formatted')
           DO i = 1,manz
@@ -930,6 +923,11 @@ CONTAINS
           CLOSE (ifp)
        END IF
 
+
+    END IF
+    IF (ALLOCATED(proof)) DEALLOCATE (proof)
+
+    STOP
 
   END SUBROUTINE bsmatmsto
 
