@@ -15,4 +15,8 @@ MODULE pathmod
 !!$c Laenge des RAM-Disk-Pfades
   INTEGER(KIND = 4),PUBLIC ::     lnramd
 
+!!$c UNIX COMMANDS
+  CHARACTER(6),PUBLIC,PARAMETER :: mkdir='mkdir '
+  CHARACTER(6),PUBLIC,PARAMETER :: rmdir='rm -R '
+
 END MODULE pathmod

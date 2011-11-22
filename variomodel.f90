@@ -65,18 +65,18 @@ CONTAINS
     REAL(KIND(0D0)),INTENT(IN)  :: ax,ay ! ax/ay anisotropy coefficients
     REAL(KIND(0D0)),INTENT(IN)  :: esp_mit,esp_med ! aus (besp_elem.for)
 
-    omev = 1.5 ! 0<ome<2
+    omev = 1.5d0 ! 0<ome<2
     omec = omev
     tfac = omev ! just a "educated guess"
 
     c2 = INT(type/10) ! this sets the switches from outside
     c1 = type-c2*10
 
-    IF (ax == 0.) THEN ! taking default values if no value
+    IF (ABS(ax) < EPSILON(ax)) THEN ! taking default values if no value
        axs = esp_mit ! arithmetical mean of bnachbar
        ays = esp_mit
        PRINT*,'Choosing mean ESP distance as scale length:',esp_mit
-    ELSE IF (ay == 0.) THEN
+    ELSE IF (ABS(ay) < EPSILON(ay)) THEN
        axs = esp_med ! median
        ays = esp_med
        PRINT*,'Choosing median ESP distance as scale length:',esp_med
@@ -154,24 +154,24 @@ CONTAINS
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
     REAL (KIND (0D0))             :: r,r2 ! distances
 
-    mvario = 0.
+    mvario = 0d0
 
-    r = SQRT((lagx / Ix_v)**2. + (lagy / Iy_v)**2.)
+    r = DSQRT((lagx / Ix_v)**2d0 + (lagy / Iy_v)**2d0)
     r2 = r*r ! just to be sure to have less numerical issues
 
     SELECT CASE (c1)
     CASE (1)
-       mvario = varianz * (1. - EXP(-r2)) !from GSlib
+       mvario = varianz * (1d0 - DEXP(-r2)) !from GSlib
     CASE (2)
-       IF (r < 1.) THEN
-          mvario = varianz * (r * (1.5 - .5*r2)) !from GSlib
+       IF (r < 1d0) THEN
+          mvario = varianz * (r * (1.5d0 - .5d0 * r2)) !from GSlib
        ELSE
           mvario = varianz
        END IF
     CASE (3)
        mvario = varianz * r**omec !from GSlib
     CASE DEFAULT
-       mvario = varianz*(1. - EXP(-r)) !from GSlib
+       mvario = varianz*(1d0 - DEXP(-r)) !from GSlib
     END SELECT
     
   END FUNCTION mvario
@@ -180,13 +180,13 @@ CONTAINS
     ! lag = distance/korrelation (lag) varianz = variance (sill)
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
     REAL (KIND (0D0))             :: r,r2 ! distances
-    mcova = 0.
+    mcova = 0d0
     
-    r = SQRT((lagx / Ix_c)**2. + (lagy / Iy_c)**2.)
+    r = DSQRT((lagx / Ix_c)**2d0 + (lagy / Iy_c)**2d0)
     
-    r2 = r*r 
+    r2 = r**2d0
 
-    IF (c2 == 1) r2 = r**1.99999 ! this is odd.. if we put it to 2., C_m is no longer
+    !IF (c2 == 1) r2 = r**1.9 ! this is odd.. if we put it to 2., C_m is no longer
 !!$ pos definite.. but with 1.99999, which is in fact nearly 2. it is ok
 !!$ happens not all the time but sometimes..
 !!$ the digit can vary up to 7 digits behind the dot. With 8 digits it becomes
@@ -196,20 +196,20 @@ CONTAINS
 
     SELECT CASE (c2)
     CASE (1)
-       mcova = varianz * EXP(-r2) !from GSlib
+       mcova = varianz * DEXP(-r2) !from GSlib
     CASE (2)
-       IF ( r < 1. ) THEN
-          mcova = varianz * (1. - r * (1.5 - .5*r2) ) !from GSlib
+       IF ( ABS(r) < 1d0 ) THEN
+          mcova = varianz * (1d0 - r * (1.5d0 - .5d0 * r2) ) !from GSlib
        ELSE
-          mcova = 0.
+          mcova = 0d0
        END IF
     CASE (3)
-       mcova = varianz*r**omec !from GSlib
-       mcova = EXP(-mcova) ! own interpretation
+       mcova = varianz * r**omec !from GSlib
+       mcova = DEXP(-mcova) ! own interpretation
     CASE (4)
-       mcova = EXP(-tfac*mvario(lagx,lagy,varianz)) ! this is from a lemma
+       mcova = DEXP(-tfac*mvario(lagx,lagy,varianz)) ! this is from a lemma
     CASE DEFAULT
-       mcova = varianz * EXP(-r) !from GSlib
+       mcova = varianz * DEXP(-r) !from GSlib
     END SELECT
 
   END FUNCTION mcova

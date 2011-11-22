@@ -243,9 +243,9 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 99 fetxt = 'rall -> Gitter nx'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) nx
-  fetxt = 'rall -> Gitter nz'
+  fetxt = 'rall -> (lamfix) Gitter nz'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) nz
+  READ (fpcfg,*,end=1001,err=999) lamfix
   fetxt = 'rall -> Anisotropie /x'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) alfx
@@ -344,8 +344,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 100 BACKSPACE (fpcfg)
 
 
-101 IF (lsto) PRINT*,'Stochastische Regularisierung'
-
+101 IF (lsto) THEN
+     PRINT*,'Stochastische Regularisierung'
+!     eps = eps*1d-2
+  END IF
   IF (ltri > 4 .AND. ltri < 15) THEN
      fetxt = 'rall -> beta value'
      CALL read_comments(fpcfg)
@@ -369,7 +371,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lnse = ( stabw0 < 0 )     ! couple error and noise model
   IF ( lnse ) THEN
-     stabw0 = -stabw0
+     stabw0 = -stabw0 ! reset standard deviation to positive val
      IF (lnse2) print*,'overriding seperate noise model'
      lnse2 = .FALSE.        ! overrides the lnse2 switch
 !!!$     copy error model into noise model
@@ -412,6 +414,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      PRINT*,'No Data noise!!'
   END IF
 
+  nz = INT(lamfix)
+
   IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
 !!!$     Ggf. Fehlermeldungen
@@ -447,7 +451,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      goto 999
   else if (.not.ldc.and.lfphai.and.&
     ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR. &
-    ((stabp0 == 0d0).and.(stabpA2 == 0d0)))) then
+    ((stabp0 == 0d0).and.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) then
      fetxt = ' '
      errnr = 105
      goto 999
@@ -489,6 +493,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   lvario = BTEST (mswitch,9) ! +512 calculate variogram
 
   lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
+
+  lverb_dat = BTEST (mswitch,11) ! +2048 writing out full resolution, covariance and cm0
 
   IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
 
@@ -542,8 +548,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         goto 999
      END IF
   END IF
-  lvario = lvario.OR. &       ! if already set or
-       (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
+!!$  lvario = lvario.OR. &       ! if already set or
+!!$       (itmax == 0).AND.(lstart.OR.lprior) ! analyse any prior
 
   IF (lvario) CALL set_vario (nx,alfx,alfz,esp_mit,esp_med) ! nx is than
   !     the variogram and covariance function type, see variomodel.f90

@@ -244,6 +244,22 @@ subroutine rdati(kanal,datei)
            WRITE(ifp1,'(G14.4)')bet
            ! write out full noisy data as measured voltages..
            WRITE (ifp3,*)strnr(i),vnr(i),bet,pha
+
+           IF (bet < 0.0) THEN
+
+              fetxt = '-- check noise parameters (Magnitude < 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
+           IF (pha > 0.0) THEN
+
+              fetxt = '-- check noise parameters (Phase > 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
+
         END IF
 
      end if
@@ -272,7 +288,7 @@ subroutine rdati(kanal,datei)
      end if
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-     wmatdr(i) = 1d0/(stabw**2.)
+     wmatdr(i) = 1d0/(stabw**2.)  !=C_d^{-1} !!!!
      wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN

@@ -85,11 +85,16 @@ subroutine rwaven()
   end if
 
 !!!$     Wellenzahlen bestimmen
+!!!$ AK Diss p. 163
   lanz   = 4
 !!!$     ak        ganz   = int(real(6d0*dlog10(amax)))
+!!!$ Number of abcissas for Gauss-Legende-Integration (AK Diss p. 163)
   ganz   = int(real(6d0*dlog10(amax/amin)))
+!!!$ Need at least 2 abcissas
   ganz   = max0(ganz,2)
+!!!$ Overall k number
   kwnanz = ganz+lanz
+!!!$ k_0, AK Diss p. 163
   kwn0   = 1d0/(2d0*amin)
 
   ALLOCATE (kwn(kwnanz),kwnwi(kwnanz),stat=errnr)
@@ -99,15 +104,31 @@ subroutine rwaven()
      RETURN
   END IF
 
+!!!$ REMEMBER: We only compute the k values and the weighting factors
+!!!$ here. No actual integration is done here as we still need to caluclate 
+!!!$ the potentials for the k-values.
+
 !!!$     Gauss-Integeration
+!!!$ Variable substitution in order to overcome the singularity at zero
+!!!$ k' = (k / k_0)^{1/2}
+!!!$ Integration range changes from (0, k_0) to (0, 1)
   call gauleg(0d0,1d0,kwn(1),kwnwi(1),ganz)
 
+!!!$ See Ak-Diss(2000), p. 161
+!!!$ weighting factor also needs substitution: w_n = 2 k_0 k'_n w'_n / pi
+!!!$ The pi vanishes when evaluating the whole integral -> no need to use it
+!!!$ anywhere.
+!!!$ k_n = k_0 k'_n^2
   do i=1,ganz
      kwnwi(i) = 2d0*kwn0*kwnwi(i)*kwn(i)
      kwn(i)   = kwn0*kwn(i)*kwn(i)
   end do
 
 !!!$     Laguerre-Integration
+!!!$ Compute abcissas and weights for the numerical integration
+!!!$ of the upper integral (see AK Diss, p. 161ff.)
+!!!$ the alpha = 0d0 value removes the exp function in the
+!!!$ Gauss-Laguere formula (Numerical recipies, p. 144, 1992)
   call gaulag(kwn(ganz+1),kwnwi(ganz+1),lanz,0d0)
 
   do i=ganz+1,ganz+lanz

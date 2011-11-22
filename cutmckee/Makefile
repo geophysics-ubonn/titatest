@@ -18,6 +18,8 @@ FLIBMPI         = -L/usr/lib/lam/lib -llammpio -llamf77mpi -lmpi -llam -lutil -l
 FLIBMPI         = 
 FLIBLINBLAS     = -llapack -lblas
 FLIBLINBLAS     = 
+F90             = ifort
+FFLAG90         = -O3 -fast -parallel
 FLIB            = -lm
 FLIBF77         = -lm
 
@@ -28,7 +30,10 @@ PROG	        = CutMcK
 # target
 PR1		= ctm
 # machine name
+BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
+PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+
 # default targets
 all:		$(PR1) install
 
@@ -72,4 +77,4 @@ clean:
 		$(PROG)
 
 install:	$(PROG)
-		$(CP) $(PROG) $(WPATH)/$(PROG)_$(MACHINE)
+		$(CP) $(PROG) $(WPATH)/$(PROG)_$(PREFIX)

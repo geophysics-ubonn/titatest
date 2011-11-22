@@ -1,3 +1,7 @@
+!!!$ Gauss-Laguerre "Integration": Computation of abcissas
+!!!$ and weights for the numerical integration of the k-integral
+!!!$ for the back-transformation to the y-space. From
+!!!$ Numerical Recipies, 1992, p. 146
 SUBROUTINE gaulag(x,w,n,alf)
   IMPLICIT none
   INTEGER (KIND = 4) ::n,MAXIT
