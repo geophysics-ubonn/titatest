@@ -499,9 +499,10 @@ CONTAINS
           RETURN
        END IF
 
-!!$    !$OMP PARALLEL DEFAULT (none) SHARED (cov_m,ata_reg,work)
+       !$OMP WORKSHARE
        work = MATMUL(cov_m,ata_reg)
-!!$    !$OMP END PARALLEL
+       !$OMP END WORKSHARE
+
        DO i=1,manz
           IF (ABS(work(i,i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&
                ,i,work(i,i)
@@ -580,7 +581,9 @@ CONTAINS
 !!!$    get time
     CALL TIC(c1)
 
+    !$OMP WORKSHARE
     ata_reg = MATMUL(cov_m,ata) ! that's it...
+    !$OMP END WORKSHARE
 
     csz = 'MATMUL time'
     CALL TOC(c1,csz)
@@ -663,9 +666,11 @@ CONTAINS
 
 !!!$    get time
     CALL TIC(c1)
-
-    ata = MATMUL (ata_reg,cov_m)
     
+    !$OMP WORKSHARE
+    ata = MATMUL (ata_reg,cov_m)
+    !$OMP END WORKSHARE
+
     csz = 'MATMUL time'
     CALL TOC(c1,csz)
 

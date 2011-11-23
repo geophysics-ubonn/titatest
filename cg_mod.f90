@@ -342,25 +342,15 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
 
+    !$OMP WORKSHARE
     bvecdc = MATMUL(smatm,pvecdc)
-    DO i = 1, manz
-       bvecdc(i) = bvecdc(i) * cgfac(i)
-    END DO
-!    bvecdc = bvecdc * cgfac
+    !$OMP END WORKSHARE
 
-    RETURN
-!!$
-!!$    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum,bvecdc) &
-!!$    !$OMP SHARED (manz,pvecdc,cgfac,smatm)
-!!$    !$OMP DO
-    do j = 1 , manz
-       dum = 0d0
-       DO i = 1 , manz
-          dum = dum + pvecdc(i) * smatm(i,j) * cgfac(i)
-       END DO
-       bvecdc(j) = dum
-    end do
-!!$    !$OMP END PARALLEL
+!!$    DO i = 1, manz
+!!$       bvecdc(i) = bvecdc(i) * cgfac(i)
+!!$    END DO
+    bvecdc = bvecdc * cgfac
+
   end subroutine bpdcsto
 
   SUBROUTINE bbdc
@@ -652,22 +642,11 @@ CONTAINS
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
 
+    !$OMP WORKSHARE
     bvec = MATMUL(DCMPLX(smatm),pvec)
+    !$OMP END WORKSHARE
+
     bvec = bvec * DCMPLX(cgfac)
-
-    RETURN
-
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum,bvec) &
-    !$OMP SHARED (manz,pvec,cgfac,smatm)
-    !$OMP DO
-    DO j=1, manz
-       cdum = DCMPLX(0d0)
-       DO i = 1, manz
-          cdum = cdum + pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
-       END DO
-       bvec(j) = cdum
-    END DO
-    !$OMP END PARALLEL
 
   end subroutine bpsto
 

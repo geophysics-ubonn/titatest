@@ -256,7 +256,9 @@ CONTAINS
  
     IF (.NOT. lprior) THEN
 
+       !$OMP WORKSHARE
        parh = MATMUL(par,DCMPLX(smatm))
+       !$OMP END WORKSHARE
 
        IF (lip) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par))
@@ -266,7 +268,9 @@ CONTAINS
 
     ELSE
 
+       !$OMP WORKSHARE
        parh = MATMUL((par - m0),DCMPLX(smatm))
+       !$OMP END WORKSHARE
 
        IF (lip) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par - m0))

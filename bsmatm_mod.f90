@@ -406,7 +406,7 @@ CONTAINS
 
        DO k=1,smaxs           !!!$jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1
+          ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2 + &
                (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2) !!!$edge
@@ -417,17 +417,17 @@ CONTAINS
              sp2(2) = espy(nachbar(i,k))
 !!!$    Geometrischer Teil...
 
-             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.)
+             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.) ! distance of the mid points
 
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Winkel
+             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !angle to horizon
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.)
+             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.) ! projected effective contribution due to anisotropic regu
              
-             dum = edglen / dist * alfgeo
+             dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
              
              smatm(i,k) = -dum ! set off diagonal of R
              
-             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal
+             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal 
 
           END IF
 
@@ -816,11 +816,6 @@ CONTAINS
 
              smatm(j,i) = smatm(i,j) ! lower triangle
 
-!!$             IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
-!!$                WRITE (ifp,*)i,j
-!!$                WRITE (ifp,*)j,i
-!!$             END IF
-
           END DO
        END DO
        !$OMP END PARALLEL
@@ -868,15 +863,7 @@ CONTAINS
                   'Filling upper C_m',REAL( i * (100./manz)),'%'
              DO j = 1, i - 1
 
-!!$!                IF (lverb) WRITE (*,'(A,t45,F6.2,A)',ADVANCE='no')&
-!!$!                     ACHAR(13)//'Filling lower/',REAL( i * (100./manz)),'%'
-
                 smatm(i,j) = smatm(j,i)
-
-!!$!                IF (smatm(i,j)>epsi.AND.lverb_dat) THEN
-!!$!                   WRITE (ifp,*)i,j
-!!$!                   WRITE (ifp,*)j,i
-!!$!                END IF
 
              END DO
           END DO
@@ -885,7 +872,11 @@ CONTAINS
        END IF
 
        IF (lverb) THEN
+
+          !$OMP WORKSHARE
           proof = MATMUL(smatm,myold)
+          !$OMP END WORKSHARE
+
           DEALLOCATE (myold)
           DO i=1,manz
              IF (ABS(proof(i,i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&

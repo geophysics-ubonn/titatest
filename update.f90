@@ -106,9 +106,17 @@ subroutine update()
 
      ELSE IF (ltri == 15) THEN
         IF (.NOT. lprior) THEN
+
+          !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),par)
+           !$OMP END WORKSHARE
+
         ELSE
+
+           !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),( par - m0 ) )
+           !$OMP END WORKSHARE
+
         END IF
      END IF
 !!!$     triang<
