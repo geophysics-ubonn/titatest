@@ -166,7 +166,7 @@ bsendc.o:	ompmod.o tic_toc.o
 
 bmcm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
 		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
-		pathmod.o
+		pathmod.o ompmod.o
 
 bnachbar.o:	alloci.o modelmod.o elemmod.o errmod.o konvmod.o
 

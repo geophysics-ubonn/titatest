@@ -26,7 +26,7 @@ MODULE bmcm_mod
   USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
-  USE ompmod
+  USE ompmod, ONLY : CHUNK_0
 
   IMPLICIT none
 
@@ -203,7 +203,7 @@ CONTAINS
        !$OMP END PARALLEL
 
     ELSE
-       print*,'NON DC'
+
        !$OMP PARALLEL DEFAULT (none) &
        !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
        !$OMP PRIVATE (i,j,k)
@@ -259,7 +259,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
     INTEGER                        :: kanal ! io number
 !!!$   Hilfsvariablen 
-    INTEGER                        :: i,j,k
+    INTEGER                        :: i,j,k,ik
     REAL,DIMENSION(:),ALLOCATABLE  :: dig
     REAL                           :: dig_min,dig_max
     INTEGER                                      :: c1
@@ -278,39 +278,33 @@ CONTAINS
 
     IF (ltri == 0) THEN
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nx) &
-       !$OMP PRIVATE (i,j)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+       ata_reg = ata
 
        DO j=1,manz
+
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
-          DO i=1,j            ! lower triangle
 
-             IF (i == j) THEN
-                ata_reg(i,j) = ata(i,j) + lam * smatm(i,1)
+          ata_reg(j,j) =  ata(j,j) + lam * smatm(i,1) ! main diagonal
 
-                IF (i+1 < manz) ata_reg(i+1,j) = ata(i+1,j) + &
-                     lam * smatm(i+1,2) ! nebendiagonale in x richtung
-                IF (i+nx < manz) ata_reg(i+nx,j) = ata(i+nx,j) + &
-                     lam * smatm(i+nx,3) ! nebendiagonale in z richtung
-             ELSE
-                ata_reg(i,j) = ata(i,j) ! only aTa
-             END IF
-
-             ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
-
-          END DO
+          IF (i+1 < manz) THEN
+             ata_reg(i+1,j) = ata(i+1,j) + lam * smatm(i+1,2) ! nebendiagonale in x richtung
+             ata_reg(j,i+1) = ata_reg(i+1,j) ! lower triangle
+          END IF
+          IF (i+nx < manz) THEN
+             ata_reg(i+nx,j) = ata(i+nx,j) + lam * smatm(i+nx,3) ! nebendiagonale in z richtung
+             ata_reg(j,i+nx) = ata_reg(i+nx,j) ! lower triangle
+          END IF
 
           dig(j) = ata_reg(j,j)
+          
        END DO
        
-       !$OMP END PARALLEL
+!!$       !$OMP END PARALLEL
 
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
-       ata_reg= ata
+       ata_reg = ata
 
        DO i=1,manz
           dig (i) = ata(i,i) + lam * smatm(i,1)
@@ -319,44 +313,30 @@ CONTAINS
 
     ELSE IF (ltri == 1.OR.ltri == 2.OR.(ltri > 4 .AND. ltri < 15)) THEN
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (dig,ata,ata_reg,smatm,manz,lam,nachbar,smaxs) &
-       !$OMP PRIVATE (i,j)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+       ata_reg = ata ! just copy and fill the other information afterwards
 
        DO j=1,manz
 
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
+          
+          ata_reg(j,j) = ata(j,j) + lam * smatm(j,smaxs+1) ! main diagonal
 
-          DO i=1,j
+          DO k=1,nachbar(j,smaxs+1) ! off diagonal
+             
+             ik = nachbar(j,k) 
 
-             IF (i==j) THEN   ! sparse C_m
+             IF (ik == 0) CYCLE ! check if there actually is a neighbor
 
-                ata_reg(i,j) = ata(i,j) + lam * smatm(i,smaxs+1)
-
-                DO k=1,nachbar(i,smaxs+1)
-
-                   IF (nachbar(i,k) /= 0) ata_reg(nachbar(i,k),j) = &
-                        ata(nachbar(i,k),j) + lam * smatm(i,k)
-
-                END DO
-
-             ELSE
-
-                ata_reg(i,j) = ata(i,j)
-
-             END IF
-
-             ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
+             ata_reg(ik,j) = ata(ik,j) + lam * smatm(j,k) ! upper triangle
+ 
+             ata_reg(j,ik) = ata_reg(ik,j) ! lower triangle
 
           END DO
 
           dig(j) = ata_reg(j,j)
 
        END DO
-       
-       !$OMP END PARALLEL
 
     ELSE IF (ltri == 15) THEN
 
