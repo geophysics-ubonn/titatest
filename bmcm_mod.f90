@@ -14,8 +14,7 @@ MODULE bmcm_mod
 
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm,nachbar,&
-       ata,ata_reg,cov_m
+  USE alloci , ONLY : sens,sensdc,smatm,nachbar,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs,espx,espy
   USE invmod , ONLY : lip,wmatd,wdfak
@@ -389,6 +388,8 @@ CONTAINS
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
     REAL(KIND(0D0))                            :: dig_min,dig_max
+    REAL (KIND(0D0))                           :: x,df_dx,dx_dg,dx_dh,std_p
+    COMPLEX(KIND(0D0))                         :: cdum
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
 !!!$....................................................................
@@ -428,10 +429,10 @@ CONTAINS
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (cov_m,manz,lverb) &
-       !$OMP PRIVATE (i,j)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (cov_m,manz,lverb) &
+!!$       !$OMP PRIVATE (i,j)
+!!$       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 
        DO i= 1 , manz
 
@@ -446,7 +447,7 @@ CONTAINS
 
        END DO
 
-       !$OMP END PARALLEL
+!!$       !$OMP END PARALLEL
 
        csz = 'Inversion time'
        CALL TOC(c1,csz)
@@ -501,10 +502,29 @@ CONTAINS
     errnr = 1
     OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
-
+!!!$ caculate phase error::
+!!!$ f(x) =  arctan(x)
+!!!$ x = g / h
+!!!$ f'(x) = 1 / (1+x**2)
+!!!$ \partial x / \partial g = 1 / h
+!!!$ \partial x / \partial h = - g / h**2
+!!!$ \partial f / \partial g = \partial f / \partial x * \partial x / \partial g
+!!!$ \partial f / \partial h = \partial f / \partial x * \partial x / \partial h
+!!!$ -> std(\phi) = \sqrt( ((\frac{\partial f}{\partial g})**2 +
+!!!$              = (\frac{\partial f}{\partial h})**2) * \Delta g**2)
+!!!$ s(\phi)= \frac{s(\sigma')}{1+\frac{\sigma''}{\sigma'}}
+!!!$          \sqrt{\left(\frac{\sigma''}{\sigma'^2}\right)^2
+!!!$                +\left(\frac{1}{\sigma'}\right)^2 }
     WRITE (kanal,*)manz,lam
     DO i=1,manz
-       WRITE (kanal,*)dig(i),SQRT(dig(i))*1d2
+       cdum = DCMPLX(1d0) / sigma(i)
+       x = DIMAG(cdum) / DBLE(cdum)
+       df_dx = 1D0 / (1D0 + x**2D0)
+       dx_dg = 1D0 / DBLE(cdum) 
+       dx_dh = - DIMAG(cdum) / DBLE(cdum)**2D0
+       std_p = DSQRT(dx_dg**2D0 + dx_dh**2D0) * SQRT(dig(i)) * df_dx 
+       WRITE (kanal,*)SQRT(dig(i))*1d2,std_p*1d2
+       IF (std_p > 1d2) PRINT*,i,std_p,x,dx_dg,dx_dh,df_dx
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -561,9 +581,9 @@ CONTAINS
 !!!$    get time
     CALL TIC(c1)
 
-    !$OMP WORKSHARE
+!    !$OMP WORKSHARE
     ata_reg = MATMUL(cov_m,ata) ! that's it...
-    !$OMP END WORKSHARE
+!    !$OMP END WORKSHARE
 
     csz = 'MATMUL time'
     CALL TOC(c1,csz)
@@ -579,7 +599,7 @@ CONTAINS
 
     WRITE (kanal,*)manz,lam
     DO i=1,manz
-       WRITE (kanal,*)dig(i),LOG10(dig(i))-LOG10(dig_max)
+       WRITE (kanal,*)abs(dig(i)),LOG10(abs(dig(i)))-LOG10(dig_max)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -593,7 +613,7 @@ CONTAINS
        open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
        errnr = 4
        DO i = 1, manz
-          WRITE (kanal,*)espx(i),espy(i),(ata_reg(i,j),j=i,manz)
+          WRITE (kanal,*)espx(i),espy(i),(abs(ata_reg(i,j)),j=i,manz)
        END DO
        
        CLOSE (kanal)
@@ -632,6 +652,8 @@ CONTAINS
     INTEGER                                      :: i
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
+    REAL (KIND(0D0))                             :: x,df_dx,dx_dg,dx_dh,std_p
+    COMPLEX(KIND(0D0))                           :: cdum 
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -647,9 +669,9 @@ CONTAINS
 !!!$    get time
     CALL TIC(c1)
     
-    !$OMP WORKSHARE
+!    !$OMP WORKSHARE
     ata = MATMUL (ata_reg,cov_m)
-    !$OMP END WORKSHARE
+!    !$OMP END WORKSHARE
 
     csz = 'MATMUL time'
     CALL TOC(c1,csz)
@@ -664,8 +686,27 @@ CONTAINS
     dig_max = MAXVAL(dig)
 
     WRITE (kanal,*)manz,lam
+!!!$ caculate phase error::
+!!!$ f(x) =  arctan(x)
+!!!$ x = g / h
+!!!$ f'(x) = 1 / (1+x**2)
+!!!$ \partial x / \partial g = 1 / h
+!!!$ \partial x / \partial h = - g / h**2
+!!!$ \partial f / \partial g = \partial f / \partial x * \partial x / \partial g
+!!!$ \partial f / \partial h = \partial f / \partial x * \partial x / \partial h
+!!!$ -> std(\phi) = \sqrt( ((\frac{\partial f}{\partial g})**2 +
+!!!$              = (\frac{\partial f}{\partial h})**2) * \Delta g**2)
+!!!$ s(\phi)= \frac{s(\sigma')}{1+\frac{\sigma''}{\sigma'}}
+!!!$          \sqrt{\left(\frac{\sigma''}{\sigma'^2}\right)^2
+!!!$                +\left(\frac{1}{\sigma'}\right)^2 }
     DO i=1,manz
-       WRITE (kanal,*)dig(i),SQRT(dig(i))*1d2
+       cdum = DCMPLX(1d0) / sigma(i)
+       x = DIMAG(cdum) / DBLE(cdum)
+       df_dx = 1D0 / (1D0 + x**2D0)
+       dx_dg = 1D0 / DBLE(cdum) 
+       dx_dh = - DIMAG(cdum) / DBLE(cdum)**2D0
+       std_p = DSQRT(dx_dg**2D0 + dx_dh**2D0) * SQRT(dig(i)) * df_dx 
+       WRITE (kanal,*)SQRT(dig(i))*1d2,std_p*1d2
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
