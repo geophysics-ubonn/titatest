@@ -734,7 +734,6 @@ PROGRAM inv
              ' : Updating'
 
 !!!$ Modell parameter mit aktuellen Leitfaehigkeiten belegen
-
         CALL bpar
         if (errnr.ne.0) goto 999
 

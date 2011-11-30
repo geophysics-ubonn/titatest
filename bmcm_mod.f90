@@ -17,7 +17,7 @@ MODULE bmcm_mod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs,espx,espy
-  USE invmod , ONLY : lip,wmatd,wdfak
+  USE invmod , ONLY : lip,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,lverb_dat
   USE modelmod , ONLY : manz
@@ -72,6 +72,9 @@ CONTAINS
     END IF
 
     WRITE (fprun,*)'Taking lam=',lam
+
+!!!$ Leitfaehigkeiten mit Modell belegen
+    CALL bsigma
 
     WRITE(*,'(a)')ACHAR(13)//&
          'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
@@ -388,8 +391,8 @@ CONTAINS
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
     REAL(KIND(0D0))                            :: dig_min,dig_max
-    REAL (KIND(0D0))                           :: x,df_dx,dx_dg,dx_dh,std_p
-    COMPLEX(KIND(0D0))                         :: cdum
+    REAL (KIND(0D0))                           :: dre,dim
+    REAL(KIND(0D0))                            :: dum
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
 !!!$....................................................................
@@ -502,29 +505,12 @@ CONTAINS
     errnr = 1
     OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
-!!!$ caculate phase error::
-!!!$ f(x) =  arctan(x)
-!!!$ x = g / h
-!!!$ f'(x) = 1 / (1+x**2)
-!!!$ \partial x / \partial g = 1 / h
-!!!$ \partial x / \partial h = - g / h**2
-!!!$ \partial f / \partial g = \partial f / \partial x * \partial x / \partial g
-!!!$ \partial f / \partial h = \partial f / \partial x * \partial x / \partial h
-!!!$ -> std(\phi) = \sqrt( ((\frac{\partial f}{\partial g})**2 +
-!!!$              = (\frac{\partial f}{\partial h})**2) * \Delta g**2)
-!!!$ s(\phi)= \frac{s(\sigma')}{1+\frac{\sigma''}{\sigma'}}
-!!!$          \sqrt{\left(\frac{\sigma''}{\sigma'^2}\right)^2
-!!!$                +\left(\frac{1}{\sigma'}\right)^2 }
     WRITE (kanal,*)manz,lam
     DO i=1,manz
-       cdum = DCMPLX(1d0) / sigma(i)
-       x = DIMAG(cdum) / DBLE(cdum)
-       df_dx = 1D0 / (1D0 + x**2D0)
-       dx_dg = 1D0 / DBLE(cdum) 
-       dx_dh = - DIMAG(cdum) / DBLE(cdum)**2D0
-       std_p = DSQRT(dx_dg**2D0 + dx_dh**2D0) * SQRT(dig(i)) * df_dx 
-       WRITE (kanal,*)SQRT(dig(i))*1d2,std_p*1d2
-       IF (std_p > 1d2) PRINT*,i,std_p,x,dx_dg,dx_dh,df_dx
+       dum = SQRT(dig(i)) * EXP(ABS(par(i)))
+       dre = dum * (COS(AIMAG(par(i))) + SIN(AIMAG(par(i))))
+       dim = dum * (SIN(AIMAG(par(i))) - COS(AIMAG(par(i))))
+       WRITE (kanal,*)SQRT(dig(i))*1e2,dre*1e2,dim*1e2
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min

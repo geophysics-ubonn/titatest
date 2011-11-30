@@ -237,6 +237,13 @@ subroutine rdati(kanal,datei)
               pha = pha + rnd_p(i) * eps_p ! add noise
 
               WRITE(ifp2,'(G14.4)')pha
+           IF (pha > 0.0) THEN
+
+              fetxt = '-- check noise parameters (Phase > 0)'
+              errnr = 57
+              GOTO 1000
+
+           END IF
            END IF
 
            bet = bet + rnd_r(i) * eps_r ! add noise
@@ -248,13 +255,6 @@ subroutine rdati(kanal,datei)
            IF (bet < 0.0) THEN
 
               fetxt = '-- check noise parameters (Magnitude < 0)'
-              errnr = 57
-              GOTO 1000
-
-           END IF
-           IF (pha > 0.0) THEN
-
-              fetxt = '-- check noise parameters (Phase > 0)'
               errnr = 57
               GOTO 1000
 
