@@ -54,6 +54,7 @@ CONTAINS
     REAL (KIND(0D0)),INTENT(IN)    :: lamalt ! lambda of the last iteration
 !!! for tic_toc
     INTEGER (KIND = 4 )            :: c1
+    INTEGER (KIND = 4)             :: i
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
     CALL TIC(c1)
@@ -72,9 +73,6 @@ CONTAINS
     END IF
 
     WRITE (fprun,*)'Taking lam=',lam
-
-!!!$ Leitfaehigkeiten mit Modell belegen
-    CALL bsigma
 
     WRITE(*,'(a)')ACHAR(13)//&
          'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
@@ -109,6 +107,8 @@ CONTAINS
        RETURN
     END IF
     cov_m = 0D0
+
+    CALL bpar
     
     fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
     CALL bmcm(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
@@ -391,8 +391,9 @@ CONTAINS
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
     REAL(KIND(0D0))                            :: dig_min,dig_max
-    REAL (KIND(0D0))                           :: dre,dim
+    REAL (KIND(0D0))                           :: dre,dim,dre2,dim2
     REAL(KIND(0D0))                            :: dum
+    COMPLEX(KIND(0D0))                         :: dsi
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
 !!!$....................................................................
@@ -502,15 +503,53 @@ CONTAINS
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
+!!$In order to find subsequent error expressions for our displayed model parameters, we identify the standard deviation as first order finite difference
+!!$\begin{equation}
+!!$\Delta:=\sqrt{diag\left\lbrace \MAT{C}_{m^*}^m\left( \lambda \right) \right\rbrace}
+!!$\end{equation}
+!!$and equate the model parameter within it's error bars:
+!!$\begin{equation}
+!!$m^*=m(1\pm\Delta)= (\ln{|\sigma|}+i\phi)(1+\Delta)
+!!$\end{equation}
+!!$From Equation \ref{eq:err_m} we see, that our real-valued covariance matrix error quantities are the same for real and imaginary part of the parameters:
+!!$\begin{equation}
+!!$\Delta m=\Delta \ln{|\rho|}+i\Delta \phi =\Delta \ln{|\sigma|}+i\Delta \phi\;. \label{eq:d_logm}
+!!$\end{equation}
+!!$If we now like to equate the errors for real and imaginary part of our complex conductivities, we have to reconsider their definitions.
+!!$\begin{align}
+!!$\sigma'&=|\sigma|\cos{\phi}\\
+!!$\sigma'&=|\sigma|\sin{\phi}\;,
+!!$\end{align}
+!!$and build the total differential for the real part:
+!!$\begin{align}
+!!$\MMF{d} \sigma'&=\frac{\partial \sigma'}{\partial |\sigma|}\MMF{d}|\sigma| + \frac{\partial \sigma'}{\partial\phi}\MMF{d}\phi \\
+!!$&=\frac{\partial \sigma'}{\partial |\sigma|}\frac{\partial |\sigma|}{\partial \ln{|\sigma|}}\MMF{d}\ln{|\sigma|} + 
+!!$|\sigma|\sin{\phi}\MMF{d}\phi \\
+!!$&= \cos{\phi}|\sigma|\MMF{d}\ln{|\sigma|}+\sin{\phi}|\sigma|\MMF{d}\phi\;.
+!!$\end{align}
+!!$\begin{equation}
+!!$\Delta \sigma'=\Delta |\sigma|\left(\cos{\phi}+\sin{\phi}\right)
+!!$\end{equation}
+!!$For the imaginary part we find
+!!$\begin{align}
+!!$\MMF{d} \sigma''&=\frac{\partial \sigma''}{\partial |\sigma|}\MMF{d}|\sigma| + \frac{\partial \sigma''}{\partial\phi}\MMF{d}\phi \\
+!!$%&=\frac{\partial \sigma''}{\partial |\sigma|}|\sigma|\Delta\ln{|\sigma|} - |\sigma|\cos{\phi}\Delta\phi \\
+!!$&= \sin{\phi}|\sigma|\Delta\ln{|\sigma|}-\cos{\phi}|\sigma|\Delta\phi \\
+!!$&=\Delta |\sigma|\left(\sin{\phi}-\cos{\phi}\right)\;.
+!!$\end{align}
+
     errnr = 1
     OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
     WRITE (kanal,*)manz,lam
     DO i=1,manz
-       dum = SQRT(dig(i)) * EXP(ABS(par(i)))
-       dre = dum * (COS(AIMAG(par(i))) + SIN(AIMAG(par(i))))
-       dim = dum * (SIN(AIMAG(par(i))) - COS(AIMAG(par(i))))
-       WRITE (kanal,*)SQRT(dig(i))*1e2,dre*1e2,dim*1e2
+
+       dsi = sigma(i) * SQRT(dig(i))
+
+       dre = DBLE(sigma(i)) * SQRT(dig(i))
+       dim = AIMAG(sigma(i)) * SQRT(dig(i))
+
+       WRITE (kanal,*)SQRT(dig(i))*1e2,dre,dim !ABS(REAL(dsi)),ABS(AIMAG(dsi)),dre,dim
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -638,8 +677,7 @@ CONTAINS
     INTEGER                                      :: i
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
-    REAL (KIND(0D0))                             :: x,df_dx,dx_dg,dx_dh,std_p
-    COMPLEX(KIND(0D0))                           :: cdum 
+    COMPLEX(KIND(0D0))                           :: dsig 
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -672,27 +710,9 @@ CONTAINS
     dig_max = MAXVAL(dig)
 
     WRITE (kanal,*)manz,lam
-!!!$ caculate phase error::
-!!!$ f(x) =  arctan(x)
-!!!$ x = g / h
-!!!$ f'(x) = 1 / (1+x**2)
-!!!$ \partial x / \partial g = 1 / h
-!!!$ \partial x / \partial h = - g / h**2
-!!!$ \partial f / \partial g = \partial f / \partial x * \partial x / \partial g
-!!!$ \partial f / \partial h = \partial f / \partial x * \partial x / \partial h
-!!!$ -> std(\phi) = \sqrt( ((\frac{\partial f}{\partial g})**2 +
-!!!$              = (\frac{\partial f}{\partial h})**2) * \Delta g**2)
-!!!$ s(\phi)= \frac{s(\sigma')}{1+\frac{\sigma''}{\sigma'}}
-!!!$          \sqrt{\left(\frac{\sigma''}{\sigma'^2}\right)^2
-!!!$                +\left(\frac{1}{\sigma'}\right)^2 }
     DO i=1,manz
-       cdum = DCMPLX(1d0) / sigma(i)
-       x = DIMAG(cdum) / DBLE(cdum)
-       df_dx = 1D0 / (1D0 + x**2D0)
-       dx_dg = 1D0 / DBLE(cdum) 
-       dx_dh = - DIMAG(cdum) / DBLE(cdum)**2D0
-       std_p = DSQRT(dx_dg**2D0 + dx_dh**2D0) * SQRT(dig(i)) * df_dx 
-       WRITE (kanal,*)SQRT(dig(i))*1d2,std_p*1d2
+       dsig = sigma(i) * SQRT(dig(i))
+       WRITE (kanal,*)SQRT(dig(i))*1d2, REAL(dsig), AIMAG(dsig)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min

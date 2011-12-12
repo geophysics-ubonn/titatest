@@ -814,7 +814,6 @@ PROGRAM inv
      close(fpcjg)
      close(fpeps)
 
-
 !!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
      if (lsens) then
         CALL BBSENS(kanal,dsens)
