@@ -41,7 +41,7 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
   count = 0
 
   DO j = 1, n
-     !$OMP ATOMIC
+
      count = count + 1
      
      IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
@@ -64,49 +64,5 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
         a(i,j) = a(i,j) / p(j)
      END DO
   END DO
-
-!!$  !$OMP PARALLEL DEFAULT (none) &
-!!$  !$OMP PRIVATE (j,s,k) &
-!!$  !$OMP SHARED (a,p,n,ierr,i)
-!!$  !$OMP DO
-
-!!$  DO i = 1 , n
-!!$     
-!!$     !$OMP ATOMIC
-!!$     count = count + 1
-!!$     
-!!$     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-!!$          ACHAR(13)//'Factorization',REAL( count * (100./n)),'%'
-!!$     
-!!$     DO j = i , n
-!!$        
-!!$        s = a(i,j)
-!!$        
-!!$        DO k = i-1 , 1 ,-1
-!!$           
-!!$           s = s - a(i,k) * a(j,k) ! line sum
-!!$           
-!!$        END DO
-!!$        
-!!$        IF (i == j) THEN
-!!$           
-!!$           IF (s <= 0) THEN
-!!$              PRINT*,'CHOLD:: - not positive definite', s
-!!$              ierr = -i
-!!$              STOP
-!!$           END IF
-!!$
-!!$           p(i) = DSQRT(s) ! main diagonal
-!!$
-!!$        ELSE
-!!$
-!!$           a(j,i) = s / p(i) ! scale value
-!!$
-!!$        END IF
-!!$        
-!!$     END DO
-!!$  END DO
-!!$     !$OMP END PARALLEL
-
 
 END SUBROUTINE chold

@@ -43,7 +43,7 @@ PROGRAM inv
   IMPLICIT none
 
   CHARACTER(256)         :: ftext
-  INTEGER                :: c1,i,count
+  INTEGER                :: c1,i,count,mythreads,maxthreads
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
@@ -80,6 +80,7 @@ PROGRAM inv
 !!!$   Allgemeine Parameter setzen
   DO WHILE ( lagain ) ! this loop exits after all files are processed
 
+
      errnr2 = 0
 !!!$   Benoetigte Variablen einlesen
      call rall(kanal,delem,delectr,dstrom,drandb,&
@@ -89,7 +90,32 @@ PROGRAM inv
 !!!$   diff+>
      if (errnr.ne.0) goto 999
 
-
+     NTHREADS = 1
+!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
+     maxthreads = OMP_GET_MAX_THREADS()
+     IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
+        mythreads = kwnanz
+        PRINT*,'Rescheduling..'
+        IF ( mythreads <= maxthreads ) THEN ! best case,
+!!!$ the number of processors is greater or equal the assumed
+!!!$ workload
+           PRINT*,'perfect match'
+        ELSE 
+!!!$ is smaller than the minimum workload.. now we have to devide a bit..
+           PRINT*,'less nodes than wavenumbers'
+           DO i = 1, INT(kwnanz/2)
+              mythreads = INT(kwnanz / i) + 1
+              IF (mythreads < maxthreads) EXIT
+           END DO
+        END IF
+        NTHREADS = mythreads
+     END IF
+     CALL OMP_SET_NUM_THREADS ( NTHREADS )
+     ! recheck ..
+     i = OMP_GET_MAX_THREADS()
+     WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
+!!!$
+     
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !!!$   zur Berechnung der gemischten Randbedingung bestimmen
      call precal()
@@ -178,6 +204,7 @@ PROGRAM inv
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
+     IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
      lsetup = .true.; lsetip = .false.; lip    = .false.
      llam   = .false.; ldlami = .true.; lstep  = .false.
@@ -696,6 +723,7 @@ PROGRAM inv
 !!!$   Step-length speichern
               stpalt = step
            end if
+           itr = itr + 1
         end if
 !!!$   Kontrollausgaben
         write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
@@ -706,7 +734,6 @@ PROGRAM inv
              ' : Updating'
 
 !!!$ Modell parameter mit aktuellen Leitfaehigkeiten belegen
-
         CALL bpar
         if (errnr.ne.0) goto 999
 
@@ -718,6 +745,10 @@ PROGRAM inv
         CALL bsigma
         if (errnr.ne.0) goto 999
 
+        IF (lverb) THEN
+           call wout_up(kanal,it,itr)
+           if (errnr.ne.0) goto 999
+        END IF
 !!!$   Roughness bestimmen
         CALL brough
 
@@ -782,7 +813,6 @@ PROGRAM inv
      close(fpinv)
      close(fpcjg)
      close(fpeps)
-
 
 !!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
      if (lsens) then

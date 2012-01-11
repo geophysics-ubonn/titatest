@@ -77,6 +77,7 @@ SUBROUTINE bnachbar
         END DO              ! inner loop j=1,elanz
 
      END DO
+
   END DO                    ! outer loop i=1,elanz
   !$OMP END PARALLEL
 

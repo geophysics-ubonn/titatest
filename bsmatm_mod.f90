@@ -18,7 +18,7 @@ MODULE bsmatm_mod
   USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz
   USE invmod , ONLY : lip,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt
@@ -406,7 +406,7 @@ CONTAINS
 
        DO k=1,smaxs           !!!$jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1
+          ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2 + &
                (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2) !!!$edge
@@ -417,17 +417,17 @@ CONTAINS
              sp2(2) = espy(nachbar(i,k))
 !!!$    Geometrischer Teil...
 
-             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.)
+             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.) ! distance of the mid points
 
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Winkel
+             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !angle to horizon
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.)
+             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.) ! projected effective contribution due to anisotropic regu
              
-             dum = edglen / dist * alfgeo
+             dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
              
              smatm(i,k) = -dum ! set off diagonal of R
              
-             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal
+             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal 
 
           END IF
 
@@ -449,6 +449,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
     REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
+    INTEGER :: j
 !!!$.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
@@ -462,13 +463,17 @@ CONTAINS
 
     IF (ltri==3) THEN
 
-       smatm = 1.0 ! Levenberg Damping
+       smatm = 1d0 ! Levenberg Damping
 
     ELSE
 
        CALL bcsens (csensmax,csensavg)
 
-       smatm(:,1) = csens
+       DO j = 1,manz
+
+          smatm(j,1) = csensmax/csens(j)
+
+       END DO
 
     END IF
 
@@ -715,6 +720,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    Hilfsmatrix
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
+    REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: myold,proof
 !!!$    Korrelation lengths, variance (var) and nugget
     REAL(KIND(0D0))      :: hx,hy,var,nugget
     REAL                 :: epsi
@@ -733,8 +739,8 @@ CONTAINS
     errnr = 1
     CALL get_unit(ifp)
 
-    var = 1.
-    nugget = 0.001
+    var = 1d0
+    nugget = 1d-4
 
     fsmat = ramd(1:lnramd)//slash(1:1)//'inv.smatmi'
 
@@ -746,17 +752,30 @@ CONTAINS
 
     WRITE (*,'(A,1X,F6.2,1X,A)')ACHAR(13)//'Speicher fuer model '//&
          'covariance: ',REAL ((manz**2*8.)/(1024.**3)),'GB'
-    
+
     IF (.NOT.ALLOCATED (smatm))ALLOCATE (smatm(manz,manz),STAT=errnr)
     IF (errnr/=0) THEN
        WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmsto'
        errnr = 97
        RETURN
     END IF
-
+    IF (.NOT.ALLOCATED (proof).AND.lverb) THEN
+       ALLOCATE (proof(manz,manz),STAT=errnr)
+       IF (errnr/=0) THEN
+          WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmsto'
+          errnr = 97
+          RETURN
+       END IF
+       ALLOCATE (myold(manz,manz),STAT=errnr)
+       IF (errnr/=0) THEN
+          WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmsto'
+          errnr = 97
+          RETURN
+       END IF
+    END IF
 !!!$    Belege die Matrix
 
-    smatm = 0.0
+    smatm = 0d0
 
     INQUIRE(FILE=fsmat,EXIST=ex) !!!$already an inverse c_m ?
 
@@ -776,17 +795,18 @@ CONTAINS
 
     ELSE
 
-       IF (lverb) OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
-            ACCESS='sequential',FORM='formatted')
-       
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (smatm,manz,epsi,lverb,ifp,espx,espy,var) &
+       !$OMP PRIVATE (i,j,hx,hy)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO i = 1 , manz
-          WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
+          IF (lverb) WRITE (*,'(a,t25,F6.2,A,t70,a)',ADVANCE='no')ACHAR(13)//&
                'cov/',REAL(i*(100./manz)),'%',''
 
           smatm(i,i) = var ! nugget (=variance) effect on the main
 !!!$ R(h) = C_0 \delta(h)  = 
 !!!$ \begin{case} C_0 & \mbox{if}\;h = 0 \\ 0 & else \end{case}
-          
+
           DO j = i+1 , manz   !!!$fills upper triangle
 
              hx = (espx(i) - espx(j)) !main point differences
@@ -796,17 +816,21 @@ CONTAINS
 
              smatm(j,i) = smatm(i,j) ! lower triangle
 
-             IF (smatm(i,j)>epsi.AND.lverb) THEN
-                WRITE (ifp,*)i,j
-                WRITE (ifp,*)j,i
-             END IF
-             
           END DO
        END DO
-       IF (lverb) CLOSE (ifp)
+       !$OMP END PARALLEL
 
-       IF (lverb) OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
-            ACCESS='sequential',FORM='formatted')
+       IF (lverb_dat) THEN
+          OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+               ACCESS='sequential',FORM='formatted')
+          DO i = 1,manz
+             WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
+          END DO
+          CLOSE (ifp)
+       END IF
+
+       IF (lverb) myold = smatm
+
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
@@ -820,7 +844,7 @@ CONTAINS
        ELSE                   !!!$default..
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
           ALLOCATE (work(manz))
-          CALL CHOLD(smatm,work,manz,errnr)
+          CALL CHOLD(smatm,work,manz,errnr,lverb)
           IF (errnr/=0) THEN
              fetxt='CHOLD smatm :: matrix not pos definite..'
              PRINT*,'Zeile(',abs(errnr),')'
@@ -828,28 +852,38 @@ CONTAINS
              RETURN
           END IF
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
-          CALL LINVD(smatm,work,manz)
+          CALL LINVD(smatm,work,manz,lverb)
           DEALLOCATE (work)
           !$OMP PARALLEL DEFAULT (none) &
-          !$OMP SHARED (smatm,manz,epsi,lverb,ifp) &
+          !$OMP SHARED (smatm,manz,epsi,lverb) &
           !$OMP PRIVATE (i,j)
           !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
           DO i= 1, manz
-!             WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
-!                  'Filling upper C_m',REAL( i * (100./manz)),'%'
-             DO j = 1, i
+             IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')ACHAR(13)//&
+                  'Filling upper C_m',REAL( i * (100./manz)),'%'
+             DO j = 1, i - 1
+
                 smatm(i,j) = smatm(j,i)
-                
-                IF (smatm(i,j)>epsi.AND.lverb) THEN
-                   WRITE (ifp,*)i,j
-                   WRITE (ifp,*)j,i
-                END IF
 
              END DO
           END DO
           !$OMP END PARALLEL
+          IF (lverb_dat) CLOSE (ifp)
        END IF
-       IF (lverb) CLOSE (ifp)
+
+       IF (lverb) THEN
+
+          !$OMP WORKSHARE
+          proof = MATMUL(smatm,myold)
+          !$OMP END WORKSHARE
+
+          DEALLOCATE (myold)
+          DO i=1,manz
+             IF (ABS(proof(i,i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&
+                  ,i,proof(i,i)
+          END DO
+
+       END IF
 
        IF (errnr == 0) THEN
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'got inverse'
@@ -870,8 +904,21 @@ CONTAINS
 
        END IF
 
+!!!!$ verbose output of inverse smatm data
+       IF (lverb_dat) THEN
+          OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
+               ACCESS='sequential',FORM='formatted')
+          DO i = 1,manz
+             WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
+          END DO
+          CLOSE (ifp)
+       END IF
+
 
     END IF
+    IF (ALLOCATED(proof)) DEALLOCATE (proof)
+
+    STOP
 
   END SUBROUTINE bsmatmsto
 

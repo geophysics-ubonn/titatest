@@ -1,8 +1,9 @@
 MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!$ This MODULE should deliver the interface for the Conjugate Gradient!  
-!!!$ Method routines which are utilized to solve the normal equations   !
+!> This MODULE should deliver the interface for the Conjugate Gradient  
+!! Method routines which are utilized to solve the normal equations   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 !!!$ Copyright by Andreas Kemna 2010
 !!!$
 !!!$ Edited by Roland Martin               30-Jul-2010
@@ -23,31 +24,28 @@ MODULE cg_mod
 
   IMPLICIT none
 
-  INTEGER,PARAMETER,PRIVATE :: ntd=2 ! number of threads
-!!!$ we restrict ther thread numbers here to avoid atomization 
-!!!$ of the problem since we are dealing with pure matrix vector product of types..
+!> number of threads.
+!! NOTE that we restrict the total thread numbers here to avoid atomization 
+!! of the problem since we are dealing with pure matrix vector product
+  INTEGER,PARAMETER,PRIVATE :: ntd=2 
 
+!> controls whather we have REAL or COMPLEX case
   PUBLIC :: cjg
-!!!$ controls whather we have REAL or COMPLEX case
-  
-
-!!!$ DC subroutines
+!> Subroutine calculates model update (DC)
+!! with preconditioned conjugate gradient method
   PRIVATE :: cjggdc
-!!!$ Subroutine calculates model update 
-!!!$ with preconditioned conjugate gradient method
-
+!!  sub calculates A * p (skaliert)
   PRIVATE :: bapdc
-!!!$  sub calculates A * p (skaliert)
-  PRIVATE :: bpdc
-!!!$  subroutine calculates b = B * p (RHS) smooth regularization
-  PRIVATE :: bpdctri
-!!! same but for unstructured grids
-  PRIVATE :: bpdclma
-!!!$ for Levenberg and Levenberg-Marquardt damping
-  PRIVATE :: bpdcsto
-!!$ for stochastical regularization
+!! calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
   PRIVATE :: bbdc
-!!!$ calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
+!! calculates b = B * p (RHS) smooth regularization
+  PRIVATE :: bpdc
+!! calculates b = B * p (RHS) same but for unstructured grids
+  PRIVATE :: bpdctri
+!! calculates b = B * p (RHS) for Levenberg and Levenberg-Marquardt damping
+  PRIVATE :: bpdclma
+!!$ calculates b = B * p (RHS) for stochastical regularization
+  PRIVATE :: bpdcsto
 
 
 !!$ IP subroutines
@@ -71,7 +69,8 @@ MODULE cg_mod
 
 
 CONTAINS
-
+!> cjg flow control subroutine is called from outside
+!! and checks for the different cases (DC,IP,FPI)
   SUBROUTINE cjg
     if (ldc.or.lip) then
        CALL con_cjgmod (2,fetxt,errnr)
@@ -88,7 +87,7 @@ CONTAINS
     end if
 
   END SUBROUTINE cjg
-  
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                          DC_PART                               !!!!
@@ -117,9 +116,9 @@ CONTAINS
        bvecdc = dble(bvec)
     end if
 
-    dpar = DCMPLX(0.)
+    dpar = DCMPLX(0D0)
     rvecdc = bvecdc
-    pvecdc = 0.
+    pvecdc = 0D0
 
     fetxt = 'CG iteration'
 
@@ -182,8 +181,8 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-!    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
-    
+    !    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
+
     RETURN
 
   end subroutine cjggdc
@@ -203,13 +202,15 @@ CONTAINS
 
 !!!$....................................................................
 
+    
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
+
+    apdc = 0D0
+
     !$OMP DO
 !!!$    A * p  berechnen (skaliert)
     do i=1,nanz
-       apdc(i) = 0d0
-
        if (ldc) then
           do j=1,manz
              apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
@@ -340,21 +341,16 @@ CONTAINS
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,dum) &
-    !$OMP SHARED (manz,bvecdc,pvecdc,cgfac,smatm)
-    !$OMP DO
-    do j = 1 , manz
-       bvecdc(j) = 0.
-       DO i = j , manz
-          dum = pvecdc(i) * smatm(i,j) * cgfac(i)
-          IF (i == j) THEN
-             bvecdc(j) = bvecdc(j) + dum
-          ELSE
-             bvecdc(j) = bvecdc(j) + 2D0 * dum
-          END IF
-       END DO
-    end do
-    !$OMP END PARALLEL
+
+    !$OMP WORKSHARE
+    bvecdc = MATMUL(smatm,pvecdc)
+    !$OMP END WORKSHARE
+
+!!$    DO i = 1, manz
+!!$       bvecdc(i) = bvecdc(i) * cgfac(i)
+!!$    END DO
+    bvecdc = bvecdc * cgfac
+
   end subroutine bpdcsto
 
   SUBROUTINE bbdc
@@ -412,7 +408,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-!    COMPLEX(KIND(0D0)) :: beta
+!!$!!    COMPLEX(KIND(0D0)) :: beta
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
@@ -476,7 +472,7 @@ CONTAINS
        END DO
 
        alpha = dr/dr1
-       
+
        dpar = dpar + DCMPLX(alpha) * pvec
        rvec = rvec - DCMPLX(alpha) * bvec
 
@@ -492,7 +488,7 @@ CONTAINS
 !!!$    Anzahl an CG-steps speichern
 10  cgres(1) = real(ncg)
 
-    
+
   end subroutine cjggra
 
   SUBROUTINE bap
@@ -518,7 +514,7 @@ CONTAINS
     !$OMP DO
     do i=1,nanz
        ap(i) = dcmplx(0d0)
-       
+
        do j=1,manz
           ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        end do
@@ -645,21 +641,12 @@ CONTAINS
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (i,cdum) &
-    !$OMP SHARED (manz,bvec,pvec,cgfac,smatm)
-    !$OMP DO
-    DO j=1, manz
-       bvec(j) = 0.
-       DO i = j, manz
-          cdum = pvec(i) * DCMPLX(smatm(i,j)) * DCMPLX(cgfac(j))
-          IF (i == j) THEN
-             bvec(j) = bvec(j) + cdum
-          ELSE
-             bvec(j) = bvec(j) + 2D0 * cdum
-          END IF
-       END DO
-    END DO
-    !$OMP END PARALLEL
+
+    !$OMP WORKSHARE
+    bvec = MATMUL(DCMPLX(smatm),pvec)
+    !$OMP END WORKSHARE
+
+    bvec = bvec * DCMPLX(cgfac)
 
   end subroutine bpsto
 

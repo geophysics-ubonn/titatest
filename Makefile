@@ -8,19 +8,38 @@ CP		= cp -f
 MV		= mv -f
 WPATH 		= ~/bin
 
+############################################################################
+# 			gfortran compiler flags 			   #
+# make sure to comment all other compiler flags down below in order to use # 
+# gfortran								   #
+############################################################################
 F90		= gfortran
 FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
-		-fimplicit-none -fno-signed-zeros -ffinite-math-only
+		-fimplicit-none -fno-signed-zeros -ffinite-math-only -fopenmp
 #FFLAG90         = -pg
 
+############################################################################
+# 			ifort compiler flags 				   #
+# make sure to comment all other compiler flags from above in order to use # 
+# ifort									   #
+############################################################################
 #F90		= ifort
-#FFLAG90		= -O3 -fast -openmp #-parallel
+#FFLAG90		= -O3 -fast -parallel
+## Only un-comment for debug purpose
 #FFLAG90         = -C -g -debug all -check all -implicitnone \
 		-warn unused -fp-stack-check -heap-arrays -ftrapuv \
 		-check pointers -check bounds -openmp
 
+CRT		= CRTomo
+
+CRM		= CRMod
+
+CRT		= CRTomo
+
+CRM		= CRMod
 # das hier chek obs ein bin im home gibt
 C1		= cbn
 # invokes get_git_version.sh
@@ -39,6 +58,8 @@ PR5		= minimal_omp
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+DOC		= doxygen
+
 ################################################################
 # default
 all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
@@ -68,7 +89,7 @@ f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  refsig.o relectr.o relem.o rrandb.o rsigma.o \
 		  rtrafo.o rwaven.o scalab.o scaldc.o sort.o \
 		  update.o vredc.o vre.o wdatm.o \
-		  wkpot.o wout.o wpot.o wsens.o \
+		  wkpot.o wout.o wout_up.o wpot.o wsens.o \
 		  gauss_dble.o gauss_cmplx.o get_unit.o \
 		  make_noise.o tic_toc.o variomodel.o bvariogram.o \
 		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o \
@@ -145,7 +166,7 @@ bsendc.o:	ompmod.o tic_toc.o
 
 bmcm_mod.o:	tic_toc.o alloci.o femmod.o elemmod.o invmod.o \
 		errmod.o konvmod.o modelmod.o datmod.o sigmamod.o \
-		pathmod.o
+		pathmod.o ompmod.o
 
 bnachbar.o:	alloci.o modelmod.o elemmod.o errmod.o konvmod.o
 
@@ -198,14 +219,15 @@ ggv:
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRTomo \
+		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
+		$(CP) $(CRT) $(WPATH)/$(CRT)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o CRMod \
+		$(F90) $(FFLAG90) -o $(CRM) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -216,9 +238,13 @@ minimal_prec:	$(C1) $(f90mini)
 minimal_omp:	$(C1) minimal_omp.f90 
 		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
 
-install:	$(crt) $(crm)				
-		$(CP) CRTomo $(WPATH)/CRTomo_$(PREFIX)
-		$(CP) CRMod $(WPATH)/CRMod_$(PREFIX)
+dox:            
+		./make_doxygen.sh $(CRT)
+		$(DOC) doxy.inp
+
+install:	$(crt) $(crm) dox
+		$(CP) CRTomo $(WPATH)/CRTomo
+		$(CP) CRMod $(WPATH)/CRMod
 		cd ./cutmckee ; make install
 
 clean:		

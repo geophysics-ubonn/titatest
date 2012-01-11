@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git checkout dev
-git merge testing
-git checkout omp
-git merge testing
 git checkout testing
+git merge dev
+git checkout omp
+git merge dev
+git checkout dev

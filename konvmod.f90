@@ -129,6 +129,8 @@ MODULE konvmod
   LOGICAL,PUBLIC  :: lvario
 !!!$ Verbose output switch
   LOGICAL,PUBLIC  :: lverb
+!!!$ Verbose output of full resoultion, cm0, cm0_inv, full covariance, etc..
+  LOGICAL,PUBLIC  :: lverb_dat
 !!!$ lsytop = .NOT.BTEST (mswitch,8)  disables sy top check of 
 !!$ no flow boundary electrodes for enhanced beta calculation (bsytop). 
 !!$  This is useful for including topographical effects and should be used

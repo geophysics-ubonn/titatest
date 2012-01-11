@@ -35,6 +35,10 @@ subroutine rtrafo()
 
   if (ldc) then
 
+     !$OMP PARALLEL DEFAULT (none) &
+     !$OMP PRIVATE (summdc,l,j,k) &
+     !$OMP SHARED (eanz,sanz,kwnanz,kwnwi,kpotdc,hpotdc,pi)
+     !$OMP DO COLLAPSE (2) PRIVATE (l,j,k,summdc)
      do l=1,eanz
         do j=1,sanz
            summdc = 0d0
@@ -44,12 +48,20 @@ subroutine rtrafo()
            end do
 
            hpotdc(j,l) = summdc / pi
-           IF (summdc < EPSILON(0D0)) print*,'rtrafo::',l,j
+           IF (summdc < EPSILON(0D0)) THEN
+              print*,'rtrafo::',l,j
+              STOP
+           END IF
         end do
      end do
+     !$OMP END PARALLEL
 
   else
 
+     !$OMP PARALLEL DEFAULT (none) &
+     !$OMP PRIVATE(summe,l,j,k) &
+     !$OMP SHARED (eanz,sanz,kwnanz,kwnwi,kpot,hpot,pi)
+     !$OMP DO COLLAPSE (2) PRIVATE (l,j,k,summe)
      do l=1,eanz
         do j=1,sanz
            summe = dcmplx(0d0)
@@ -61,8 +73,8 @@ subroutine rtrafo()
            hpot(j,l) = summe / dcmplx(pi)
         end do
      end do
+     !$OMP END PARALLEL
 
   end if
 
-  return
 end subroutine rtrafo
