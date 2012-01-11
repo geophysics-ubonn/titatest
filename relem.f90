@@ -33,7 +33,7 @@ subroutine relem(kanal,datei)
 
 !!!$     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
-
+  LOGICAL            ::    my_check  
 !!!$.....................................................................
 
 !!!$     'datei' oeffnen
@@ -82,7 +82,12 @@ subroutine relem(kanal,datei)
      else
         elanz  = elanz  + nelanz(i)
      end if
+     my_check = my_check .OR. (typ(i) == 11)
   end do
+
+!!!$ if all no flow boundaries, we do not have to search for a 
+!!!$ average sy top...
+  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
   ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
