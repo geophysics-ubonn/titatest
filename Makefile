@@ -41,7 +41,7 @@ CRT		= CRTomo
 
 CRM		= CRMod
 # das hier chek obs ein bin im home gibt
-C1		= cbn
+C1		= 
 # invokes get_git_version.sh
 C2		= ggv
 # macht CRTomo
@@ -55,8 +55,9 @@ PR4		= minimal_prec
 # Minimalbeispiel OMP directives
 PR5		= minimal_omp
 
-BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
-MACHINE		= $(shell uname -n)
+BRANCH		= $$(git branch|awk '/\*/{print $$2}')
+MACHINE		= $$(uname -n)
+OS		= $$(uname -o)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
 DOC		= doxygen
 

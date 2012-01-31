@@ -66,9 +66,14 @@ subroutine rdati(kanal,datei)
   errnr = 3
 
 !!!$     Anzahl der Messwerte lesen
-  read(kanal,*,end=1001,err=1000) nanz
+!!!$ also check if we may use individual errors or not
+  read(kanal,*,end=1001,err=11) nanz,lindiv
+  IF (lindiv) PRINT*,'+ Individual data error!'
+  GOTO 12
+11 PRINT*,'+ Taking error model'
+  BACKSPACE(kanal)
 !!!$c check if data file format is CRTOmo konform..
-  read(kanal,*,end=1001,err=1000) elec1
+12 read(kanal,*,end=1001,err=1000) elec1
   BACKSPACE(kanal)
 
   elec3=elec1-10000 ! are we still positive?

@@ -898,10 +898,16 @@ PROGRAM inv
 !!!$   'crtomo.cfg' schliessen
   close (fpcfg)
 
+!!!$ crtomo.pid löschen
   fetxt = 'crtomo.pid'
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='old',err=999)
   CLOSE (fprun,STATUS='delete')
 
+!!!$ finished-string an inv.ctr anhängen
+  fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+  OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
+  WRITE (fpinv,'(a)')'***finished***'
+  CLOSE(fpinv)
   stop '0'
 
 !!!$.....................................................................

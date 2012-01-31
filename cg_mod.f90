@@ -346,9 +346,6 @@ CONTAINS
     bvecdc = MATMUL(smatm,pvecdc)
     !$OMP END WORKSHARE
 
-!!$    DO i = 1, manz
-!!$       bvecdc(i) = bvecdc(i) * cgfac(i)
-!!$    END DO
     bvecdc = bvecdc * cgfac
 
   end subroutine bpdcsto
@@ -647,7 +644,6 @@ CONTAINS
     !$OMP END WORKSHARE
 
     bvec = bvec * DCMPLX(cgfac)
-
   end subroutine bpsto
 
   SUBROUTINE bb
