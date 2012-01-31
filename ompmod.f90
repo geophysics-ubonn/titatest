@@ -4,7 +4,12 @@ MODULE ompmod
 
   INTEGER,PUBLIC :: TID ! Thread ID
   INTEGER,PUBLIC :: NTHREADS ! Total number of threads
-  INTEGER,PUBLIC :: CHUNK ! chunk pieces for static scheduling of do loops, a.k.
+  INTEGER,PUBLIC,PARAMETER :: CHUNK_0=256
+  INTEGER,PUBLIC,PARAMETER :: CHUNK_1=2*CHUNK_0
+  INTEGER,PUBLIC,PARAMETER :: CHUNK_2=2*CHUNK_1
+  INTEGER,PUBLIC,PARAMETER :: CHUNK_3=2*CHUNK_2
+
+  ! chunk pieces for guided scheduling of do loops
   
 !!$  !$OMP PARALLEL SHARED(a,b,CHUNK) PRIVATE (i)
 !!$  a = 1.

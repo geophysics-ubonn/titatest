@@ -1,4 +1,4 @@
-SUBROUTINE chold(a,p,n,ierr)
+SUBROUTINE chold(a,p,n,ierr,lverb)
 !!$c-----------------------------------------------------------------
 !!$c
 !!$c                      Cholesky Decomposition
@@ -25,51 +25,44 @@ SUBROUTINE chold(a,p,n,ierr)
 !!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
 !!$c------------------------------------------------------------
+  USE ompmod
+
   IMPLICIT none
 
-  INTEGER,INTENT (IN)               :: n
-  REAL (KIND(0D0)), DIMENSION (n,n) :: a
-  REAL (KIND(0D0)), DIMENSION (n)   :: p
-  REAL (KIND(0D0))                  :: s
-  INTEGER, INTENT (OUT)             :: ierr
-  INTEGER                           :: i,k,j
+  INTEGER,INTENT (IN)                             :: n
+  REAL (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  REAL (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
+  LOGICAL,INTENT(IN)                              :: lverb
+  INTEGER, INTENT (OUT)                           :: ierr
+  REAL (KIND(0D0))                                :: s
+  INTEGER                                         :: i,k,j,count
 
   ierr = 0
+  count = 0
 
-  DO i = 1 , n
+  DO j = 1, n
 
-     WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
-          ACHAR(13)//'/ ',REAL( i * (100./n)),'%'
-
-     DO j = i , n
-
-        s = a(i,j)
-
-        DO k = i-1 , 1 ,-1
-
-           s = s - a(i,k) * a(j,k) ! line sum
-
+     count = count + 1
+     
+     IF (lverb) WRITE (*,'(A,t25,F6.2,A)',ADVANCE='no')&
+          ACHAR(13)//'Factorization',REAL( count * (100./n)),'%'
+     DO k = 1, j - 1
+        DO i = j, n
+           a(i,j) = a(i,j) - a(i,k) * a(j,k)
         END DO
+     END DO
 
-        IF (i == j) THEN
-
-           IF (s <= 0) THEN
-              PRINT*,'CHOLD:: - not positive definite', s
-              ierr = -i
-              RETURN
-           END IF
-
-           p(i) = DSQRT(s) ! main diagonal
-
-        ELSE
-
-           a(j,i) = s / p(i) ! scale value
-
-        END IF
-
+     IF (a(j,j) <= 0) THEN
+        PRINT*,'CHOLD:: - not positive definite', a(j,j)
+        ierr = -i
+        STOP
+     END IF
+     
+     p(j) = DSQRT(a(j,j))
+     a(j,j) = p(j)
+     DO i = j + 1, n
+        a(i,j) = a(i,j) / p(j)
      END DO
   END DO
-
-  ierr = 0
 
 END SUBROUTINE chold
