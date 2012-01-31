@@ -97,7 +97,7 @@ CONTAINS
     ata_reg = 0D0
     
     fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
-    CALL bata_reg(kanal) !ata_dc + C_m^-1(lam) -> ata_reg_dc
+    CALL bata_reg(kanal) !ata + C_m^-1(lam) -> ata_reg_dc
     if (errnr.ne.0) RETURN
     
     ALLOCATE (cov_m(manz,manz))

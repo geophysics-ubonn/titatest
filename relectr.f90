@@ -58,7 +58,7 @@ subroutine relectr(kanal,datei)
 !!!$     Knotennummern der Elektroden einlesen
   do i=1,eanz
      read(kanal,*,end=1001,err=1000) enr(i)
-     WRITE (ifp,*)i,sx(snr(enr(i))),sy(snr(enr(i)))
+     WRITE (ifp,*)sx(snr(enr(i))),sy(snr(enr(i)))
 !!!$     Ggf. Fehlermeldung
      if (enr(i).gt.sanz) then
         fetxt = ' '
