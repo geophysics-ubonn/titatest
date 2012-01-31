@@ -400,3 +400,828 @@
          625  : increase standard deviation *   1.2167509      0.20316281441027317        1.8040918410237350     
          648  : increase standard deviation *   1.5123209      0.87094590464656196        2.7870403063408049     
          649  : increase standard deviation *   1.6393155      0.24111218691561800        3.2747669738841689     
+         650  : increase standard deviation *   1.3465176      0.22556017871774175        2.2094255057137411     
+         683  : increase standard deviation *   1.1503093      0.42494229536329770        1.6124439204576759     
+         686  : increase standard deviation *   1.4995223      0.52329350811991682        2.7400670983844662     
+         721  : increase standard deviation *   1.1764582      0.33499257548943873        1.6865855306128004     
+         722  : increase standard deviation *   1.4113436      0.57132683135683660        2.4272852254208641     
+         724  : increase standard deviation *   1.1155999      0.84823200406403398        1.5166040728569814     
+         725  : increase standard deviation *   2.2750418       1.2104570626481730        6.3071638037984759     
+         734  : increase standard deviation *   2.0839276      0.93440717018218078        5.2920096611391862     
+         743  : increase standard deviation *   1.3182923      0.45224185475515138        2.1177695461164228     
+         757  : increase standard deviation *   1.1676741      8.18008874144626336E-002   1.6614932192765031     
+         799  : increase standard deviation *   1.2766036      0.14171327787906335        1.9859458940606374     
+         800  : increase standard deviation *   1.6616360      0.21111973781848664        3.3645511222925322     
+         808  : increase standard deviation *   1.4795858      7.61547047572844610E-002   2.6676916258595740     
+         811  : increase standard deviation *   1.3238925      0.17563362190855314        2.1358007638160657     
+         812  : increase standard deviation *   1.8666184      0.29715764925574106        4.2458671689013121     
+         813  : increase standard deviation *   1.9248356      0.17996822826618389        4.5148425451410379     
+         854  : increase standard deviation *   1.2886568      0.41513532584893842        2.0236244396669201     
+         855  : increase standard deviation *   1.3098723      0.25565400618976791        2.0908037071636825     
+         872  : increase standard deviation *   1.4899850       2.0704677517032954        2.7053229906088179     
+         881  : increase standard deviation *   1.3330146      0.33666892130955112        2.1653351208697682     
+         882  : increase standard deviation *   1.3398496      0.49050204232350253        2.1875974127335458     
+         883  : increase standard deviation *   1.2082056      0.26427349299402109        1.7788405720704672     
+         887  : increase standard deviation *   1.5258751       1.1368594971545729        2.8372220759438767     
+         900  : increase standard deviation *   1.7577224      0.72285112586164135        3.7649210218995663     
+         901  : increase standard deviation *   1.8312806      0.73808255545364687        4.0866281415354564     
+         902  : increase standard deviation *   1.4051682      0.47342772294430058        2.4060904826222886     
+         903  : increase standard deviation *   1.9629824      0.32892046661222418        4.6955679971579851     
+         923  : increase standard deviation *   2.5861483       2.0191433825806135        8.1500850259500712     
+         924  : increase standard deviation *   1.1291904      0.72384272731831911        1.5537808373271540     
+         927  : increase standard deviation *   1.7893814       1.2746577648978534        3.9017654963381170     
+         928  : increase standard deviation *   1.1676155      0.76968946729038501        1.6613267688856439     
+         931  : increase standard deviation *   1.4432998       2.5645307059706930        2.5384486961738122     
+         945  : increase standard deviation *   2.0779638       1.8842127317566368        5.2617632502746643     
+         946  : increase standard deviation *   1.7061749       2.3733228239344113        3.5473368081509560     
+         949  : increase standard deviation *   1.3288102       4.8084355992455299        2.1516977492549754     
+         956  : increase standard deviation *   1.1339982      0.31440230822188170        1.5670398507626386     
+         957  : increase standard deviation *   1.4249150       1.0666719657383252        2.4741911923678348     
+         961  : increase standard deviation *   1.7139715      0.72413876279695499        3.5798310121184889     
+         962  : increase standard deviation *   1.4372563       1.0698548736087641        2.5172349948409525     
+         975  : increase standard deviation *   1.5648376      0.65194573805006018        2.9839657971819022     
+         976  : increase standard deviation *   1.9859114       1.3768773425377174        4.8059034088399208     
+         977  : increase standard deviation *   1.6101695       1.4626510108116684        3.1593557932004881     
+         981  : increase standard deviation *   1.2103059      0.29150137083619115        1.7850306629784207     
+         984  : increase standard deviation *   1.1369504      0.42804148652034213        1.5752094317339227     
+         988  : increase standard deviation *   1.5084507       1.1253388220262865        2.7727941039180450     
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Calculating 1st regularization parameterlam_0   0.19E+04
+  Iteration            1 ,            1  : Updating
+ Iteration   1,   1 : Calculating Potentials
+  Iteration            1 ,            2  : Updating
+ Iteration   1,   2 : Calculating Potentials
+  Iteration            1 ,            3  : Updating
+ Iteration   1,   3 : Calculating Potentials
+  Iteration            1 ,            4  : Updating
+ Iteration   1,   4 : Calculating Potentials
+  Iteration            1 ,            5  : Updating
+ Iteration   1,   5 : Calculating Potentials
+  Iteration            1 ,            6  : Updating
+ Iteration   1,   6 : Calculating Potentials
+  Iteration            1 ,            7  : Updating
+ Iteration   1,   7 : Calculating Potentials
+  Iteration            1 ,            8  : Updating
+ Iteration   1,   8 : Calculating Potentials
+  Iteration            1 ,            9  : Updating
+ Iteration   1,   9 : Calculating Potentials
+  Iteration            1 ,           10  : Updating
+ Iteration   1,  10 : Calculating Potentials
+  Iteration            1 ,           11  : Updating
+ Iteration   1,  11 : Calculating Potentials
+  Iteration            1 ,           12  : Updating
+ Iteration   1,  12 : Calculating Potentials
+  Iteration            1 ,           13  : Updating
+ Iteration   1,  13 : Calculating Potentials
+  Iteration            1 ,           14  : Updating
+ Iteration   1,  14 : Calculating Potentials
+  Iteration            1 ,           15  : Updating
+ Iteration   1,  15 : Calculating Potentials
+  Iteration            1 ,           16  : Updating
+ Iteration   1,  16 : Calculating Potentials
+  Iteration            1 ,           17  : Updating
+ Iteration   1,  17 : Calculating Potentials
+  Iteration            1 ,           18  : Updating
+ Iteration   1,  18 : Calculating Potentials
+  Iteration            1 ,           19  : Updating
+ Iteration   1,  19 : Calculating Potentials
+  Iteration            1 ,           20  : Updating
+ Iteration   1,  20 : Calculating Potentials
+  Iteration            1 ,           21  : Updating
+ Iteration   1,  21 : Calculating Potentials
+  Iteration            1 ,           22  : Updating
+ Iteration   1,  22 : Calculating Potentials
+  Iteration            1 ,           23  : Updating
+ Iteration   1,  23 : Calculating Potentials
+  Iteration            1 ,           24  : Updating
+ Iteration   1,  24 : Calculating Potentials
+  Iteration            1 ,           25  : Updating
+ Iteration   1,  25 : Calculating Potentials
+  Iteration            1 ,           26  : Updating
+ Iteration   1,  26 : Calculating Potentials
+  Iteration            1 ,           27  : Updating
+ Iteration   1,  27 : Calculating Potentials
+  Iteration            1 ,           28  : Updating
+ Iteration   1,  28 : Calculating Potentials
+  Iteration            1 ,           29  : Updating
+ Iteration   1,  29 : Calculating Potentials
+  Iteration            1 ,           30  : Updating
+ Iteration   1,  30 : Calculating Potentials
+  Iteration            1 ,           31  : Updating
+ Iteration   1,  31 : Calculating Potentials
+  Iteration            1 ,           31  : Updating
+ Iteration   1,  31 : Calculating Potentials
+  85 : excluded
+ 100 : excluded
+ 101 : excluded
+ 107 : excluded
+ 112 : excluded
+ 113 : excluded
+ 132 : excluded
+ 133 : excluded
+ 148 : excluded
+ 161 : excluded
+ 169 : excluded
+ 183 : excluded
+ 262 : excluded
+ 273 : excluded
+ 289 : excluded
+ 290 : excluded
+ 295 : excluded
+ 296 : excluded
+ 305 : excluded
+ 316 : excluded
+ 330 : excluded
+ 331 : excluded
+ 332 : excluded
+ 333 : excluded
+ 335 : excluded
+ 336 : excluded
+ 343 : excluded
+ 344 : excluded
+ 345 : excluded
+ 346 : excluded
+ 348 : excluded
+ 360 : excluded
+ 361 : excluded
+ 375 : excluded
+ 376 : excluded
+ 377 : excluded
+ 378 : excluded
+ 380 : excluded
+ 382 : excluded
+ 389 : excluded
+ 390 : excluded
+ 391 : excluded
+ 393 : excluded
+ 407 : excluded
+ 422 : excluded
+ 425 : excluded
+ 435 : excluded
+ 439 : excluded
+ 444 : excluded
+ 445 : excluded
+ 446 : excluded
+ 449 : excluded
+ 450 : excluded
+ 453 : excluded
+ 454 : excluded
+ 458 : excluded
+ 459 : excluded
+ 460 : excluded
+ 461 : excluded
+ 463 : excluded
+ 464 : excluded
+ 467 : excluded
+ 495 : excluded
+ 504 : excluded
+ 516 : excluded
+ 517 : excluded
+ 534 : excluded
+ 535 : excluded
+ 542 : excluded
+ 543 : excluded
+ 555 : excluded
+ 556 : excluded
+ 557 : excluded
+ 574 : excluded
+ 595 : excluded
+ 596 : excluded
+ 597 : excluded
+ 605 : excluded
+ 617 : excluded
+ 634 : excluded
+ 674 : excluded
+ 680 : excluded
+ 714 : excluded
+ 735 : excluded
+ 736 : excluded
+ 737 : excluded
+ 738 : excluded
+ 739 : excluded
+ 741 : excluded
+ 742 : excluded
+ 745 : excluded
+ 746 : excluded
+ 747 : excluded
+ 749 : excluded
+ 750 : excluded
+ 751 : excluded
+ 752 : excluded
+ 753 : excluded
+ 756 : excluded
+ 757 : excluded
+ 760 : excluded
+ 761 : excluded
+ 762 : excluded
+ 763 : excluded
+ 764 : excluded
+ 765 : excluded
+ 766 : excluded
+ 767 : excluded
+ 770 : excluded
+ 771 : excluded
+ 772 : excluded
+ 775 : excluded
+ 776 : excluded
+ 777 : excluded
+ 779 : excluded
+ 780 : excluded
+ 784 : excluded
+ 785 : excluded
+ 786 : excluded
+ 788 : excluded
+ 789 : excluded
+ 790 : excluded
+ 791 : excluded
+ 792 : excluded
+ 793 : excluded
+ 795 : excluded
+ 796 : excluded
+ 799 : excluded
+ 800 : excluded
+ 802 : excluded
+ 803 : excluded
+ 804 : excluded
+ 806 : excluded
+ 808 : excluded
+ 809 : excluded
+ 811 : excluded
+ 812 : excluded
+ 813 : excluded
+ 814 : excluded
+ 820 : excluded
+ 823 : excluded
+ 824 : excluded
+ 829 : excluded
+ 833 : excluded
+ 841 : excluded
+ 842 : excluded
+ 843 : excluded
+ 855 : excluded
+ 866 : excluded
+ 870 : excluded
+ 884 : excluded
+ 899 : excluded
+ 905 : excluded
+ 921 : excluded
+ 936 : excluded
+ 983 : excluded
+ Iteration   2,   0 : Calculating Sensitivities
+  Iteration            2 ,            0  : Updating
+ Iteration   2,   0 : Calculating Potentials
+  Iteration            2 ,            1  : Updating
+ Iteration   2,   1 : Calculating Potentials
+  Iteration            2 ,            2  : Updating
+ Iteration   2,   2 : Calculating Potentials
+  Iteration            2 ,            3  : Updating
+ Iteration   2,   3 : Calculating Potentials
+  Iteration            2 ,            4  : Updating
+ Iteration   2,   4 : Calculating Potentials
+  Iteration            2 ,            5  : Updating
+ Iteration   2,   5 : Calculating Potentials
+  Iteration            2 ,            6  : Updating
+ Iteration   2,   6 : Calculating Potentials
+  Iteration            2 ,            7  : Updating
+ Iteration   2,   7 : Calculating Potentials
+  Iteration            2 ,            8  : Updating
+ Iteration   2,   8 : Calculating Potentials
+  Iteration            2 ,            9  : Updating
+ Iteration   2,   9 : Calculating Potentials
+  Iteration            2 ,           10  : Updating
+ Iteration   2,  10 : Calculating Potentials
+  Iteration            2 ,           11  : Updating
+ Iteration   2,  11 : Calculating Potentials
+  Iteration            2 ,           12  : Updating
+ Iteration   2,  12 : Calculating Potentials
+  Iteration            2 ,           13  : Updating
+ Iteration   2,  13 : Calculating Potentials
+  Iteration            2 ,           14  : Updating
+ Iteration   2,  14 : Calculating Potentials
+  Iteration            2 ,           15  : Updating
+ Iteration   2,  15 : Calculating Potentials
+  Iteration            2 ,           16  : Updating
+ Iteration   2,  16 : Calculating Potentials
+  Iteration            2 ,           17  : Updating
+ Iteration   2,  17 : Calculating Potentials
+  Iteration            2 ,           18  : Updating
+ Iteration   2,  18 : Calculating Potentials
+  Iteration            2 ,           19  : Updating
+ Iteration   2,  19 : Calculating Potentials
+  Iteration            2 ,           20  : Updating
+ Iteration   2,  20 : Calculating Potentials
+  Iteration            2 ,           21  : Updating
+ Iteration   2,  21 : Calculating Potentials
+  Iteration            2 ,           22  : Updating
+ Iteration   2,  22 : Calculating Potentials
+  Iteration            2 ,           23  : Updating
+ Iteration   2,  23 : Calculating Potentials
+  Iteration            2 ,           24  : Updating
+ Iteration   2,  24 : Calculating Potentials
+  Iteration            2 ,           25  : Updating
+ Iteration   2,  25 : Calculating Potentials
+  Iteration            2 ,           26  : Updating
+ Iteration   2,  26 : Calculating Potentials
+  Iteration            2 ,           27  : Updating
+ Iteration   2,  27 : Calculating Potentials
+  Iteration            2 ,           28  : Updating
+ Iteration   2,  28 : Calculating Potentials
+  Iteration            2 ,           29  : Updating
+ Iteration   2,  29 : Calculating Potentials
+  Iteration            2 ,           30  : Updating
+ Iteration   2,  30 : Calculating Potentials
+  Iteration            2 ,           31  : Updating
+ Iteration   2,  31 : Calculating Potentials
+  Iteration            2 ,           31  : Updating
+ Iteration   2,  31 : Calculating Potentials
+  85 : excluded
+ 100 : excluded
+ 101 : excluded
+ 107 : excluded
+ 112 : excluded
+ 113 : excluded
+ 132 : excluded
+ 133 : excluded
+ 148 : excluded
+ 161 : excluded
+ 169 : excluded
+ 183 : excluded
+ 262 : excluded
+ 273 : excluded
+ 289 : excluded
+ 290 : excluded
+ 295 : excluded
+ 296 : excluded
+ 305 : excluded
+ 316 : excluded
+ 330 : excluded
+ 331 : excluded
+ 332 : excluded
+ 333 : excluded
+ 335 : excluded
+ 336 : excluded
+ 343 : excluded
+ 344 : excluded
+ 345 : excluded
+ 346 : excluded
+ 348 : excluded
+ 360 : excluded
+ 361 : excluded
+ 375 : excluded
+ 376 : excluded
+ 377 : excluded
+ 378 : excluded
+ 380 : excluded
+ 382 : excluded
+ 389 : excluded
+ 390 : excluded
+ 391 : excluded
+ 393 : excluded
+ 407 : excluded
+ 422 : excluded
+ 425 : excluded
+ 435 : excluded
+ 439 : excluded
+ 444 : excluded
+ 445 : excluded
+ 446 : excluded
+ 449 : excluded
+ 450 : excluded
+ 453 : excluded
+ 454 : excluded
+ 458 : excluded
+ 459 : excluded
+ 460 : excluded
+ 461 : excluded
+ 463 : excluded
+ 464 : excluded
+ 467 : excluded
+ 495 : excluded
+ 504 : excluded
+ 516 : excluded
+ 517 : excluded
+ 534 : excluded
+ 535 : excluded
+ 542 : excluded
+ 543 : excluded
+ 555 : excluded
+ 556 : excluded
+ 557 : excluded
+ 574 : excluded
+ 595 : excluded
+ 596 : excluded
+ 597 : excluded
+ 605 : excluded
+ 617 : excluded
+ 634 : excluded
+ 674 : excluded
+ 680 : excluded
+ 714 : excluded
+ 735 : excluded
+ 736 : excluded
+ 737 : excluded
+ 738 : excluded
+ 739 : excluded
+ 741 : excluded
+ 742 : excluded
+ 745 : excluded
+ 746 : excluded
+ 747 : excluded
+ 749 : excluded
+ 750 : excluded
+ 751 : excluded
+ 752 : excluded
+ 753 : excluded
+ 756 : excluded
+ 757 : excluded
+ 760 : excluded
+ 761 : excluded
+ 762 : excluded
+ 763 : excluded
+ 764 : excluded
+ 765 : excluded
+ 766 : excluded
+ 767 : excluded
+ 770 : excluded
+ 771 : excluded
+ 772 : excluded
+ 775 : excluded
+ 776 : excluded
+ 777 : excluded
+ 779 : excluded
+ 780 : excluded
+ 784 : excluded
+ 785 : excluded
+ 786 : excluded
+ 788 : excluded
+ 789 : excluded
+ 790 : excluded
+ 791 : excluded
+ 792 : excluded
+ 793 : excluded
+ 795 : excluded
+ 796 : excluded
+ 799 : excluded
+ 800 : excluded
+ 802 : excluded
+ 803 : excluded
+ 804 : excluded
+ 806 : excluded
+ 808 : excluded
+ 809 : excluded
+ 811 : excluded
+ 812 : excluded
+ 813 : excluded
+ 814 : excluded
+ 820 : excluded
+ 823 : excluded
+ 824 : excluded
+ 829 : excluded
+ 833 : excluded
+ 841 : excluded
+ 842 : excluded
+ 843 : excluded
+ 855 : excluded
+ 866 : excluded
+ 870 : excluded
+ 884 : excluded
+ 899 : excluded
+ 905 : excluded
+ 921 : excluded
+ 936 : excluded
+ 983 : excluded
+ Final phase improvement
+ Iteration   3,   0 : Calculating Sensitivities
+ Iteration   3,   1 : Calculating 1st regularization parameterlam_0   0.19E+04
+  Iteration            3 ,            1  : Updating
+ Iteration   3,   1 : Calculating Potentials
+  Iteration            3 ,            2  : Updating
+ Iteration   3,   2 : Calculating Potentials
+  Iteration            3 ,            3  : Updating
+ Iteration   3,   3 : Calculating Potentials
+  85 : excluded
+ 100 : excluded
+ 101 : excluded
+ 107 : excluded
+ 112 : excluded
+ 113 : excluded
+ 132 : excluded
+ 133 : excluded
+ 148 : excluded
+ 161 : excluded
+ 169 : excluded
+ 183 : excluded
+ 262 : excluded
+ 273 : excluded
+ 289 : excluded
+ 290 : excluded
+ 295 : excluded
+ 296 : excluded
+ 305 : excluded
+ 316 : excluded
+ 330 : excluded
+ 331 : excluded
+ 332 : excluded
+ 333 : excluded
+ 335 : excluded
+ 336 : excluded
+ 343 : excluded
+ 344 : excluded
+ 345 : excluded
+ 346 : excluded
+ 348 : excluded
+ 360 : excluded
+ 361 : excluded
+ 375 : excluded
+ 376 : excluded
+ 377 : excluded
+ 378 : excluded
+ 380 : excluded
+ 382 : excluded
+ 389 : excluded
+ 390 : excluded
+ 391 : excluded
+ 393 : excluded
+ 407 : excluded
+ 422 : excluded
+ 425 : excluded
+ 435 : excluded
+ 439 : excluded
+ 444 : excluded
+ 445 : excluded
+ 446 : excluded
+ 449 : excluded
+ 450 : excluded
+ 453 : excluded
+ 454 : excluded
+ 458 : excluded
+ 459 : excluded
+ 460 : excluded
+ 461 : excluded
+ 463 : excluded
+ 464 : excluded
+ 467 : excluded
+ 495 : excluded
+ 504 : excluded
+ 516 : excluded
+ 517 : excluded
+ 534 : excluded
+ 535 : excluded
+ 542 : excluded
+ 543 : excluded
+ 555 : excluded
+ 556 : excluded
+ 557 : excluded
+ 574 : excluded
+ 595 : excluded
+ 596 : excluded
+ 597 : excluded
+ 605 : excluded
+ 617 : excluded
+ 634 : excluded
+ 674 : excluded
+ 680 : excluded
+ 714 : excluded
+ 735 : excluded
+ 736 : excluded
+ 737 : excluded
+ 738 : excluded
+ 739 : excluded
+ 741 : excluded
+ 742 : excluded
+ 745 : excluded
+ 746 : excluded
+ 747 : excluded
+ 749 : excluded
+ 750 : excluded
+ 751 : excluded
+ 752 : excluded
+ 753 : excluded
+ 756 : excluded
+ 757 : excluded
+ 760 : excluded
+ 761 : excluded
+ 762 : excluded
+ 763 : excluded
+ 764 : excluded
+ 765 : excluded
+ 766 : excluded
+ 767 : excluded
+ 770 : excluded
+ 771 : excluded
+ 772 : excluded
+ 775 : excluded
+ 776 : excluded
+ 777 : excluded
+ 779 : excluded
+ 780 : excluded
+ 784 : excluded
+ 785 : excluded
+ 786 : excluded
+ 788 : excluded
+ 789 : excluded
+ 790 : excluded
+ 791 : excluded
+ 792 : excluded
+ 793 : excluded
+ 795 : excluded
+ 796 : excluded
+ 799 : excluded
+ 800 : excluded
+ 802 : excluded
+ 803 : excluded
+ 804 : excluded
+ 806 : excluded
+ 808 : excluded
+ 809 : excluded
+ 811 : excluded
+ 812 : excluded
+ 813 : excluded
+ 814 : excluded
+ 820 : excluded
+ 823 : excluded
+ 824 : excluded
+ 829 : excluded
+ 833 : excluded
+ 841 : excluded
+ 842 : excluded
+ 843 : excluded
+ 855 : excluded
+ 866 : excluded
+ 870 : excluded
+ 884 : excluded
+ 899 : excluded
+ 905 : excluded
+ 921 : excluded
+ 936 : excluded
+ 983 : excluded
+ Iteration   4,   0 : Calculating Sensitivities
+  Iteration            4 ,            0  : Updating
+ Iteration   4,   0 : Calculating Potentials
+  Iteration            4 ,            1  : Updating
+ Iteration   4,   1 : Calculating Potentials
+  Iteration            4 ,            2  : Updating
+ Iteration   4,   2 : Calculating Potentials
+  Iteration            4 ,            2  : Updating
+ Iteration   4,   2 : Calculating Potentials
+  85 : excluded
+ 100 : excluded
+ 101 : excluded
+ 107 : excluded
+ 112 : excluded
+ 113 : excluded
+ 132 : excluded
+ 133 : excluded
+ 148 : excluded
+ 161 : excluded
+ 169 : excluded
+ 183 : excluded
+ 262 : excluded
+ 273 : excluded
+ 289 : excluded
+ 290 : excluded
+ 295 : excluded
+ 296 : excluded
+ 305 : excluded
+ 316 : excluded
+ 330 : excluded
+ 331 : excluded
+ 332 : excluded
+ 333 : excluded
+ 335 : excluded
+ 336 : excluded
+ 343 : excluded
+ 344 : excluded
+ 345 : excluded
+ 346 : excluded
+ 348 : excluded
+ 360 : excluded
+ 361 : excluded
+ 375 : excluded
+ 376 : excluded
+ 377 : excluded
+ 378 : excluded
+ 380 : excluded
+ 382 : excluded
+ 389 : excluded
+ 390 : excluded
+ 391 : excluded
+ 393 : excluded
+ 407 : excluded
+ 422 : excluded
+ 425 : excluded
+ 435 : excluded
+ 439 : excluded
+ 444 : excluded
+ 445 : excluded
+ 446 : excluded
+ 449 : excluded
+ 450 : excluded
+ 453 : excluded
+ 454 : excluded
+ 458 : excluded
+ 459 : excluded
+ 460 : excluded
+ 461 : excluded
+ 463 : excluded
+ 464 : excluded
+ 467 : excluded
+ 495 : excluded
+ 504 : excluded
+ 516 : excluded
+ 517 : excluded
+ 534 : excluded
+ 535 : excluded
+ 542 : excluded
+ 543 : excluded
+ 555 : excluded
+ 556 : excluded
+ 557 : excluded
+ 574 : excluded
+ 595 : excluded
+ 596 : excluded
+ 597 : excluded
+ 605 : excluded
+ 617 : excluded
+ 634 : excluded
+ 674 : excluded
+ 680 : excluded
+ 714 : excluded
+ 735 : excluded
+ 736 : excluded
+ 737 : excluded
+ 738 : excluded
+ 739 : excluded
+ 741 : excluded
+ 742 : excluded
+ 745 : excluded
+ 746 : excluded
+ 747 : excluded
+ 749 : excluded
+ 750 : excluded
+ 751 : excluded
+ 752 : excluded
+ 753 : excluded
+ 756 : excluded
+ 757 : excluded
+ 760 : excluded
+ 761 : excluded
+ 762 : excluded
+ 763 : excluded
+ 764 : excluded
+ 765 : excluded
+ 766 : excluded
+ 767 : excluded
+ 770 : excluded
+ 771 : excluded
+ 772 : excluded
+ 775 : excluded
+ 776 : excluded
+ 777 : excluded
+ 779 : excluded
+ 780 : excluded
+ 784 : excluded
+ 785 : excluded
+ 786 : excluded
+ 788 : excluded
+ 789 : excluded
+ 790 : excluded
+ 791 : excluded
+ 792 : excluded
+ 793 : excluded
+ 795 : excluded
+ 796 : excluded
+ 799 : excluded
+ 800 : excluded
+ 802 : excluded
+ 803 : excluded
+ 804 : excluded
+ 806 : excluded
+ 808 : excluded
+ 809 : excluded
+ 811 : excluded
+ 812 : excluded
+ 813 : excluded
+ 814 : excluded
+ 820 : excluded
+ 823 : excluded
+ 824 : excluded
+ 829 : excluded
+ 833 : excluded
+ 841 : excluded
+ 842 : excluded
+ 843 : excluded
+ 855 : excluded
+ 866 : excluded
+ 870 : excluded
+ 884 : excluded
+ 899 : excluded
+ 905 : excluded
+ 921 : excluded
+ 936 : excluded
+ 983 : excluded
+ Iteration terminated: Min. rel. RMS decrease.
+ CPU time:  0d/  0h/ 17m/ 16s/ 318ms
+Calculating model uncertainty..
+ Taking lam=   1862.0000000000000     
+MCM_1 = (A^TC_d^-1A + C_m^-1)^-1
