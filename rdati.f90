@@ -294,12 +294,12 @@ subroutine rdati(kanal,datei)
      end if
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-     wmatdr(i) = 1d0/(stabw**2.)
+     wmatdr(i) = 1d0/(stabw**2d0)
      wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
-        IF (lelerr) wmatd(i)=1d0/(stabw**2.+stabwp**2.)
-        wmatdp(i)=1d0/(stabwp**2.)
+        IF (lelerr) wmatd(i)=1d0/(stabw**2d0+stabwp**2d0)
+        wmatdp(i)=1d0/(stabwp**2d0)
      END IF
      wdfak(i) = 1
 

@@ -45,6 +45,8 @@ subroutine kont2(lsetup)
 
 105 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
        i4,t105,f5.3)
+106 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
+       i4,t105,g9.3,t117,f5.3)
 
 !!!$     'inv.ctr' oeffnen
   DO i=1,ncdump-1
@@ -113,9 +115,17 @@ subroutine kont2(lsetup)
 !!!$     lambda search and steplength search
      else
         IF (lip) THEN
-           write(fpinv,105,err=1000)'PUP',itr,nrmsd,bdpar,lam,rough,ncg,step
+           if (lrobust) then
+              write(fpinv,106,err=1000)'PUP',itr,nrmsd,bdpar,lam,rough,ncg,l1rat,step
+           ELSE
+              write(fpinv,105,err=1000)'PUP',itr,nrmsd,bdpar,lam,rough,ncg,step
+           END if
         ELSE 
-           write(fpinv,105,err=1000)'UP',itr,nrmsd,bdpar,lam,rough,ncg,step
+           if (lrobust) then
+              write(fpinv,106,err=1000)'UP',itr,nrmsd,bdpar,lam,rough,ncg,l1rat,step
+           ELSE
+              write(fpinv,105,err=1000)'UP',itr,nrmsd,bdpar,lam,rough,ncg,step
+           END if
         END IF
      end if
   end if
