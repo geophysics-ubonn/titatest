@@ -31,8 +31,8 @@ subroutine blam0()
 !!!$.....................................................................
 
 !!!$     Start-Regularisierungsparameter bestimmen
-  IF (nz<0) THEN
-     IF (nz<-1) lammax = -REAL(nz)
+  IF (nz < 0.OR.lamfix /= 0d0) THEN
+     lammax = ABS(lamfix)
      IF (nz==-1) lammax = MAX(REAL(manz),REAL(nanz))
      WRITE (*,'(t5,a,F12.1)')'taking easy lam_0 ',lammax
      RETURN

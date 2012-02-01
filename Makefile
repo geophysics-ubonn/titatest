@@ -111,7 +111,7 @@ ECHO_T =
 EXEEXT = 
 F77 = gfortran
 FC = gfortran
-FCFLAGS = -g -O2
+FCFLAGS = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 FFLAGS = -g -O2
 INSTALL = /usr/bin/install -c
 INSTALL_DATA = ${INSTALL} -m 644
