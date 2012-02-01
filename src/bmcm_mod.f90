@@ -14,37 +14,26 @@ MODULE bmcm_mod
 
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm,nachbar,&
-       ata_dc,ata_reg_dc,cov_m_dc,ata,ata_reg,cov_m
+  USE alloci , ONLY : sens,sensdc,smatm,nachbar,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
-  USE elemmod, ONLY : smaxs
-  USE invmod , ONLY : lip,wmatd,wdfak
+  USE elemmod, ONLY : smaxs,espx,espy
+  USE invmod , ONLY : lip,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,lverb_dat
   USE modelmod , ONLY : manz
   USE datmod , ONLY : nanz
   USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
+  USE ompmod, ONLY : CHUNK_0
 
   IMPLICIT none
 
   PUBLIC :: buncert
 !!!$ this sub controls uncertainty caculation
 
-  PRIVATE :: bata_dc
-!!!$ A^TC_d^-1A  -> ata_dc
-  PRIVATE :: bata_reg_dc 
-!!!$ ata_dc + lam*C_m^-1 -> ata_reg_dc
-  PRIVATE :: bmcm_dc ! inversion is done by cholesky or gauss
-!!!$ ata_reg_dc^-1   -> cov_m_dc
-  PRIVATE :: bres_dc ! solution with MATMUL
-!!!$ cov_m_dc * ata_dc -> ata_reg_dc 
-  PRIVATE :: bmcm2_dc ! using MATMUL
-!!!$ ata_reg_dc * cov_m_dc -> ata_dc
-
   PRIVATE :: bata
-!!!$ A^TC_d^-1A  -> ata
+!!!$ A^HC_d^-1A  -> ata
   PRIVATE :: bata_reg
 !!!$ ata + lam*C_m^-1 -> ata_reg
   PRIVATE :: bmcm ! inversion
@@ -65,6 +54,7 @@ CONTAINS
     REAL (KIND(0D0)),INTENT(IN)    :: lamalt ! lambda of the last iteration
 !!! for tic_toc
     INTEGER (KIND = 4 )            :: c1
+    INTEGER (KIND = 4)             :: i
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
     CALL TIC(c1)
@@ -74,10 +64,12 @@ CONTAINS
     lam = lamalt
     WRITE (*,'(/a,G10.3,a/)')'take current lambda ?',lam,&
          ACHAR(9)//':'//ACHAR(9)
-    IF (BTEST(mswitch,5)) THEN 
+    IF (BTEST(mswitch,6)) THEN 
        READ (*,*)fetxt
        IF (fetxt/='')READ(fetxt,*)lam
-       WRITE (*,*)'Set lambda to ',lam
+       WRITE (*,*)'No, set lambda to ',lam
+    ELSE
+       WRITE (*,*)' Yes'
     END IF
 
     WRITE (fprun,*)'Taking lam=',lam
@@ -86,75 +78,42 @@ CONTAINS
          'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
     WRITE(fprun,'(a)')'MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
-    IF (ldc) THEN
-
-       ALLOCATE (ata_dc(manz,manz),STAT=errnr)
-       IF (errnr /= 0) THEN
-          errnr = 97
-          RETURN
-       END IF
-       ata_dc = 0D0
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
-       CALL bata_dc(kanal) ! A^TC_d^-1A -> ata_dc
-       if (errnr.ne.0) RETURN
-
-       ALLOCATE (ata_reg_dc(manz,manz),STAT=errnr)            
-       IF (errnr /= 0) THEN
-          errnr = 97
-          RETURN
-       END IF
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
-       CALL bata_reg_dc(kanal) !ata_dc + C_m^-1(lam) -> ata_reg_dc
-       if (errnr.ne.0) RETURN
-
-       ALLOCATE (cov_m_dc(manz,manz))
-       IF (errnr/=0) THEN
-          WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
-          errnr = 97
-          RETURN
-       END IF
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-       CALL bmcm_dc(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
-       if (errnr.ne.0) RETURN
-
-    ELSE
-
-       ALLOCATE (ata(manz,manz),STAT=errnr)
-       IF (errnr /= 0) THEN
-          errnr = 97
-          RETURN
-       END IF
-       ata = DCMPLX(0.)
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
-       CALL bata(kanal)    ! A^TC_d^-1A -> ata
-       if (errnr.ne.0) RETURN
-
-       ALLOCATE (ata_reg(manz,manz),STAT=errnr)
-       IF (errnr /= 0) THEN
-          errnr = 97
-          RETURN
-       END IF
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
-       CALL bata_reg(kanal) !A^TC_d^-1A + C_m^-1(lam) -> ata_reg
-       if (errnr.ne.0) RETURN
-
-       ALLOCATE (cov_m(manz,manz))
-       IF (errnr/=0) THEN
-          WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
-          errnr = 97
-          RETURN
-       END IF
-
-       fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
-       CALL bmcm(kanal,lgauss)    ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m
-       if (errnr.ne.0) RETURN
-
+    ALLOCATE (ata(manz,manz),STAT=errnr)
+    IF (errnr /= 0) THEN
+       errnr = 97
+       RETURN
     END IF
+    ata = 0D0
+    
+    fetxt = ramd(1:lnramd)//slash(1:1)//'ata.diag'
+    CALL bata(kanal) ! A^TC_d^-1A -> ata
+    if (errnr.ne.0) RETURN
+    
+    ALLOCATE (ata_reg(manz,manz),STAT=errnr)
+    IF (errnr /= 0) THEN
+       errnr = 97
+       RETURN
+    END IF
+    ata_reg = 0D0
+    
+    fetxt = ramd(1:lnramd)//slash(1:1)//'ata_reg.diag'
+    CALL bata_reg(kanal) !ata + C_m^-1(lam) -> ata_reg_dc
+    if (errnr.ne.0) RETURN
+    
+    ALLOCATE (cov_m(manz,manz))
+    IF (errnr/=0) THEN
+       WRITE (*,'(/a/)')'Allocation problem MCM_1 in bmcmdc'
+       errnr = 97
+       RETURN
+    END IF
+    cov_m = 0D0
+
+    CALL bpar
+    
+    fetxt = ramd(1:lnramd)//slash(1:1)//'cov1_m.diag'
+    CALL bmcm(kanal,lgauss) ! (A^TC_d^-1A + C_m^-1)^-1   -> cov_m_dc
+    if (errnr.ne.0) RETURN
+    
 
     IF (lres) THEN
 
@@ -164,13 +123,8 @@ CONTAINS
             '(A^TC_d^-1A + C_m^-1)^-1A^TC_d^-1A'
        WRITE(fprun,'(a)')'RES = (A^TC_d^-1A + C_m^-1)^-1A^TC_d^-1A'
 
-       IF (ldc) THEN
-          CALL bres_dc(kanal)
-          if (errnr.ne.0) RETURN
-       ELSE
-          CALL bres(kanal)
-          if (errnr.ne.0) RETURN
-       END IF
+       CALL bres(kanal)
+       if (errnr.ne.0) RETURN
 
        IF (lcov2) THEN
 
@@ -181,13 +135,8 @@ CONTAINS
           WRITE(fprun,'(a)')'MCM_2 = (A^TC_d^-1A + C_m^-1)'//&
                '^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1'
 
-          IF (ldc) THEN
-             CALL bmcm2_dc(kanal)
-             if (errnr.ne.0) RETURN
-          ELSE
-             CALL bmcm2(kanal)
-             if (errnr.ne.0) RETURN
-          END IF
+          CALL bmcm2(kanal)
+          if (errnr.ne.0) RETURN
 
        END IF              ! lcov2
     END IF                 ! lres
@@ -195,25 +144,22 @@ CONTAINS
 !!! $ may be we ant to write out not only main diagonals before freeing
 
     IF (ALLOCATED (ata)) DEALLOCATE (ata)
-    IF (ALLOCATED (ata_dc)) DEALLOCATE (ata_dc)
     IF (ALLOCATED (ata_reg)) DEALLOCATE (ata_reg)
-    IF (ALLOCATED (ata_reg_dc)) DEALLOCATE (ata_reg_dc)
     IF (ALLOCATED (cov_m)) DEALLOCATE (cov_m)
-    IF (ALLOCATED (cov_m_dc)) DEALLOCATE (cov_m_dc)
     
     fetxt = 'uncertainty calculation time'
     CALL TOC(c1,fetxt)
 
   END SUBROUTINE buncert
 
-  SUBROUTINE bata_dc(kanal)
+  SUBROUTINE bata(kanal)
 !!!$    
-!!!$    Unterprogramm berechnet ATC_d^-1A
+!!!$    Unterprogramm berechnet A^HC_d^-1A
 !!!$
 !!!$    Copyright Andreas Kemna 2009
 !!!$    Created by  Roland Martin                            02-Nov-2009
 !!!$    
-!!!$    Last changed      RM                                   20-Feb-2010
+!!!$    Last changed      RM                                   20-Feb-2011
 !!!$
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
@@ -222,6 +168,8 @@ CONTAINS
     INTEGER                       :: i,j,k
     REAL,DIMENSION(:),ALLOCATABLE :: dig
     REAL                          :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$....................................................................
 
 !!!$  A^TC_d^-1A
@@ -232,26 +180,61 @@ CONTAINS
 
     ALLOCATE(dig(manz))
 
-    ata_dc= 0.
-    DO k=1,manz
-       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
-       DO j=k,manz ! fills upper triangle (k,j)
-          DO i=1,nanz
-             ata_dc(k,j) = ata_dc(k,j) + sensdc(i,k) * & 
-                  sensdc(i,j) * wmatd(i) * DBLE(wdfak(i))
+    ata = 0d0
+
+    CALL TIC(c1)
+
+    IF (ldc) THEN
+
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
+       !$OMP PRIVATE (i,j,k)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+       DO k=1,manz
+          !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+          !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
+          DO j=k,manz ! fills upper triangle (k,j)
+             DO i=1,nanz
+                ata(k,j) = ata(k,j) + sensdc(i,k) * & 
+                     sensdc(i,j) * wmatd(i) * DBLE(wdfak(i))
+             END DO
+             ata(j,k) = ata(k,j) ! fills lower triangle (k,j)
           END DO
-          ata_dc(j,k) = ata_dc(k,j) ! fills lower triangle (k,j)
+          dig(k) = ata(k,k)
        END DO
-       dig(k) = REAL(ata_dc(k,k))
-    END DO
+       !$OMP END PARALLEL
+
+    ELSE
+
+       !$OMP PARALLEL DEFAULT (none) &
+       !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
+       !$OMP PRIVATE (i,j,k)
+       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+       DO k=1,manz
+          !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
+          !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
+          DO j=k,manz ! fills upper triangle (k,j)
+             DO i=1,nanz
+                ata(k,j) = ata(k,j) + DCONJG(sens(i,k)) * &
+                     sens(i,j) * wmatd(i) * DBLE(wdfak(i))
+             END DO
+             ata(j,k) = ata(k,j) ! fills lower triangle (k,j)
+          END DO
+          dig(k) = ata(k,k)
+       END DO
+       !$OMP END PARALLEL
+    END IF
+
+    csz = 'ATA time'
+    CALL TOC(c1,csz)
+
 !!!$    get min/max
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 !!!$    write out 
     WRITE (kanal,*)manz
     DO i=1,manz
-       WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
+       WRITE (kanal,*)dig(i),LOG10(dig(i))-LOG10(dig_max)
     END DO
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
@@ -262,11 +245,11 @@ CONTAINS
     errnr = 0
 999 RETURN
 
-  END SUBROUTINE bata_dc
+  END SUBROUTINE bata
 
-  SUBROUTINE bata_reg_dc(kanal)
+  SUBROUTINE bata_reg(kanal)
 !!!$    
-!!!$    Unterprogramm berechnet ATC_d^-1A+lam*C_m
+!!!$    Unterprogramm berechnet A^HC_d^-1A+lam*C_m
 !!!$    Fuer beliebige Triangulierung
 !!!$    
 !!!$    Copyright Andreas Kemna
@@ -278,9 +261,11 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
     INTEGER                        :: kanal ! io number
 !!!$   Hilfsvariablen 
-    INTEGER                        :: i,j,k
+    INTEGER                        :: i,j,k,ik
     REAL,DIMENSION(:),ALLOCATABLE  :: dig
     REAL                           :: dig_min,dig_max
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 
 !!!$  A^TC_d^-1A+lamC_m
@@ -291,87 +276,89 @@ CONTAINS
 
     ALLOCATE(dig(manz))
 
+    CALL TIC (c1)
+
     IF (ltri == 0) THEN
+
+       ata_reg = ata
+
        DO j=1,manz
+
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
-          DO i=1,j            ! lower triangle
 
-             IF (i == j) THEN
-                ata_reg_dc(i,j) = ata_dc(i,j) + lam * smatm(i,1)
+          ata_reg(j,j) =  ata(j,j) + lam * smatm(i,1) ! main diagonal
 
-                IF (i+1 < manz) ata_reg_dc(i+1,j) = ata_dc(i+1,j) + &
-                     lam * smatm(i+1,2) ! nebendiagonale in x richtung
-                IF (i+nx < manz) ata_reg_dc(i+nx,j) = ata_dc(i+nx,j) + &
-                     lam * smatm(i+nx,3) ! nebendiagonale in z richtung
-             ELSE
-                ata_reg_dc(i,j) = ata_dc(i,j) ! only aTa
-             END IF
+          IF (i+1 < manz) THEN
+             ata_reg(i+1,j) = ata(i+1,j) + lam * smatm(i+1,2) ! nebendiagonale in x richtung
+             ata_reg(j,i+1) = ata_reg(i+1,j) ! lower triangle
+          END IF
+          IF (i+nx < manz) THEN
+             ata_reg(i+nx,j) = ata(i+nx,j) + lam * smatm(i+nx,3) ! nebendiagonale in z richtung
+             ata_reg(j,i+nx) = ata_reg(i+nx,j) ! lower triangle
+          END IF
 
-             ata_reg_dc(j,i) = ata_reg_dc(i,j) ! upper triangle 
-
-          END DO
-
-          dig(j) = REAL(ata_reg_dc(j,j))
+          dig(j) = ata_reg(j,j)
+          
        END DO
+       
+!!$       !$OMP END PARALLEL
 
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
-       ata_reg_dc= ata_dc
+       ata_reg = ata
 
        DO i=1,manz
-          dig (i) = ata_dc(i,i) + lam * smatm(i,1)
-          ata_reg_dc(i,i) = dig(i)
+          dig (i) = ata(i,i) + lam * smatm(i,1)
+          ata_reg(i,i) = dig(i)
        END DO
 
     ELSE IF (ltri == 1.OR.ltri == 2.OR.(ltri > 4 .AND. ltri < 15)) THEN
 
+       ata_reg = ata ! just copy and fill the other information afterwards
+
        DO j=1,manz
 
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
+          
+          ata_reg(j,j) = ata(j,j) + lam * smatm(j,smaxs+1) ! main diagonal
 
-          DO i=1,manz
+          DO k=1,nachbar(j,smaxs+1) ! off diagonal
+             
+             ik = nachbar(j,k) 
 
-             IF (i==j) THEN   ! sparse C_m
+             IF (ik == 0) CYCLE ! check if there actually is a neighbor
 
-                ata_reg_dc(i,j) = ata_dc(i,j) + lam * smatm(i,smaxs+1)
-
-                DO k=1,nachbar(i,smaxs+1)
-
-                   IF (nachbar(i,k) /= 0) ata_reg_dc(nachbar(i,k),j) = &
-                        ata_dc(nachbar(i,k),j) + lam * smatm(i,k)
-
-                END DO
-
-             ELSE
-
-                ata_reg_dc(i,j) = ata_dc(i,j)
-
-             END IF
+             ata_reg(ik,j) = ata(ik,j) + lam * smatm(j,k) ! upper triangle
+ 
+             ata_reg(j,ik) = ata_reg(ik,j) ! lower triangle
 
           END DO
 
-          dig(j) = REAL(ata_reg_dc(j,j))
+          dig(j) = ata_reg(j,j)
 
        END DO
 
     ELSE IF (ltri == 15) THEN
 
-       ata_reg_dc= ata_dc+ smatm ! for full C_m..w
+       ata_reg= ata + lam * smatm ! for full C_m..w
 
        DO j=1,manz
-          dig(j) = REAL(ata_reg_dc(j,j))
+          dig(j) = ata_reg(j,j)
        END DO
 
     END IF
 
+    csz = 'ATA+RTR time'
+    CALL TOC(c1,csz)
+
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
-       WRITE (kanal,*)LOG10(dig(i)),dig(i)
+       WRITE (kanal,*)dig(i),LOG10(dig(i))
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -384,9 +371,9 @@ CONTAINS
     errnr = 0
 999 RETURN
 
-  END SUBROUTINE bata_reg_dc
+  END SUBROUTINE bata_reg
 
-  SUBROUTINE bmcm_dc(kanal,ols)
+  SUBROUTINE bmcm(kanal,ols)
 !!!$    
 !!!$    Unterprogramm berechnet (einfache) Modell Kovarianz Matrix
 !!!$    (A^TC_d^-1A + C_m^-1)^-1
@@ -404,6 +391,9 @@ CONTAINS
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
     REAL(KIND(0D0))                            :: dig_min,dig_max
+    REAL (KIND(0D0))                           :: dre,dim,dre2,dim2
+    REAL(KIND(0D0))                            :: dum
+    COMPLEX(KIND(0D0))                         :: dsi
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
 !!!$....................................................................
@@ -412,82 +402,154 @@ CONTAINS
 
     errnr = 1
 
-    ALLOCATE (work(manz,manz),STAT=errnr)
-    IF (errnr/=0) THEN
-       fetxt = 'Allocation problem WORK in bmcm'
-       errnr = 97
-       RETURN
-    END IF
-    ALLOCATE (dig(manz),dig2(manz)) !prepare to write out main diagonal
+    ALLOCATE (dig(manz)) !dig is a working array and contains main diagonal
+
 
 !!!$    get time
     CALL TIC(c1)
 
-    cov_m_dc= ata_reg_dc
+    cov_m = ata_reg
 
     IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN !default
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
 
-       CALL CHOLD(cov_m_dc,dig,manz,errnr)
+       CALL CHOLD(cov_m,dig,manz,errnr,lverb)
        IF (errnr /= 0) THEN
           fetxt='CHOLD mcm :: matrix not pos definite..'
           PRINT*,'Zeile(',abs(errnr),')'
           errnr = 108
           RETURN
        END IF
+
+       csz = 'Factorization time'
+       CALL TOC(c1,csz)
+
+
+       CALL TIC(c1)
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
 
-       CALL LINVD(cov_m_dc,dig,manz)
+       CALL LINVD(cov_m,dig,manz,lverb)
 
        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
 
+!!$       !$OMP PARALLEL DEFAULT (none) &
+!!$       !$OMP SHARED (cov_m,manz,lverb) &
+!!$       !$OMP PRIVATE (i,j)
+!!$       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+
        DO i= 1 , manz
 
-          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)&
-               //ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
+          IF (lverb) WRITE (*,'(A,t45,F6.2,A)',ADVANCE='no')&
+               ACHAR(13)//'Filling lower/',REAL( i * (100./manz)),'%'
 
           DO j = 1 , i - 1
 
-             cov_m_dc(i,j) = cov_m_dc(j,i)
+             cov_m(i,j) = cov_m(j,i)
 
           END DO
+
        END DO
+
+!!$       !$OMP END PARALLEL
+
+       csz = 'Inversion time'
+       CALL TOC(c1,csz)
+
 
     ELSE
        WRITE (*,'(a)',ADVANCE='no')'Inverting Matrix (Gauss elemination)'
 
-       CALL gauss_dble(cov_m_dc,manz,errnr)
+       CALL gauss_dble(cov_m,manz,errnr)
 
        IF (errnr /= 0) THEN
           fetxt = 'error matrix inverse not found'
-          PRINT*,'Zeile::',cov_m_dc(abs(errnr),:)
-          PRINT*,'Spalte::',cov_m_dc(:,abs(errnr))
+          PRINT*,'Zeile::',cov_m(abs(errnr),:)
+          PRINT*,'Spalte::',cov_m(:,abs(errnr))
           errnr = 108
           RETURN
        END IF
+
+       csz = 'Inversion time'
+       CALL TOC(c1,csz)
+
     END IF
 
-    csz = 'solution time'
-    CALL TOC(c1,csz)
+    IF (lverb) THEN
 
-    work = MATMUL(cov_m_dc,ata_reg_dc)
+       ALLOCATE (work(manz,manz),STAT=errnr)
+       IF (errnr/=0) THEN
+          fetxt = 'Allocation problem WORK in bmcm'
+          errnr = 97
+          RETURN
+       END IF
+
+       !$OMP WORKSHARE
+       work = MATMUL(cov_m,ata_reg)
+       !$OMP END WORKSHARE
+
+       DO i=1,manz
+          IF (ABS(work(i,i) - 1d0) > 0.1) PRINT*,'bad approximation at parameter'&
+               ,i,work(i,i)
+       END DO
+       DEALLOCATE (work)
+
+    END IF
 
     DO i=1,manz
-       dig(i) = cov_m_dc(i,i)
-       dig2(i) = work(i,i)
+       dig(i) = cov_m(i,i)
     END DO
 
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
+!!$In order to find subsequent error expressions for our displayed model parameters, we identify the standard deviation as first order finite difference
+!!$\begin{equation}
+!!$\Delta:=\sqrt{diag\left\lbrace \MAT{C}_{m^*}^m\left( \lambda \right) \right\rbrace}
+!!$\end{equation}
+!!$and equate the model parameter within it's error bars:
+!!$\begin{equation}
+!!$m^*=m(1\pm\Delta)= (\ln{|\sigma|}+i\phi)(1+\Delta)
+!!$\end{equation}
+!!$From Equation \ref{eq:err_m} we see, that our real-valued covariance matrix error quantities are the same for real and imaginary part of the parameters:
+!!$\begin{equation}
+!!$\Delta m=\Delta \ln{|\rho|}+i\Delta \phi =\Delta \ln{|\sigma|}+i\Delta \phi\;. \label{eq:d_logm}
+!!$\end{equation}
+!!$If we now like to equate the errors for real and imaginary part of our complex conductivities, we have to reconsider their definitions.
+!!$\begin{align}
+!!$\sigma'&=|\sigma|\cos{\phi}\\
+!!$\sigma'&=|\sigma|\sin{\phi}\;,
+!!$\end{align}
+!!$and build the total differential for the real part:
+!!$\begin{align}
+!!$\MMF{d} \sigma'&=\frac{\partial \sigma'}{\partial |\sigma|}\MMF{d}|\sigma| + \frac{\partial \sigma'}{\partial\phi}\MMF{d}\phi \\
+!!$&=\frac{\partial \sigma'}{\partial |\sigma|}\frac{\partial |\sigma|}{\partial \ln{|\sigma|}}\MMF{d}\ln{|\sigma|} + 
+!!$|\sigma|\sin{\phi}\MMF{d}\phi \\
+!!$&= \cos{\phi}|\sigma|\MMF{d}\ln{|\sigma|}+\sin{\phi}|\sigma|\MMF{d}\phi\;.
+!!$\end{align}
+!!$\begin{equation}
+!!$\Delta \sigma'=\Delta |\sigma|\left(\cos{\phi}+\sin{\phi}\right)
+!!$\end{equation}
+!!$For the imaginary part we find
+!!$\begin{align}
+!!$\MMF{d} \sigma''&=\frac{\partial \sigma''}{\partial |\sigma|}\MMF{d}|\sigma| + \frac{\partial \sigma''}{\partial\phi}\MMF{d}\phi \\
+!!$%&=\frac{\partial \sigma''}{\partial |\sigma|}|\sigma|\Delta\ln{|\sigma|} - |\sigma|\cos{\phi}\Delta\phi \\
+!!$&= \sin{\phi}|\sigma|\Delta\ln{|\sigma|}-\cos{\phi}|\sigma|\Delta\phi \\
+!!$&=\Delta |\sigma|\left(\sin{\phi}-\cos{\phi}\right)\;.
+!!$\end{align}
+
     errnr = 1
     OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
-
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(dig(i))),dig2(i)
+
+       dsi = sigma(i) * SQRT(dig(i))
+
+       dre = DBLE(sigma(i)) * SQRT(dig(i))
+       dim = AIMAG(sigma(i)) * SQRT(dig(i))
+
+       WRITE (kanal,*)SQRT(dig(i))*1e2,dre,dim !ABS(REAL(dsi)),ABS(AIMAG(dsi)),dre,dim
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -495,19 +557,31 @@ CONTAINS
 
     CLOSE(kanal)
 
-    DEALLOCATE (dig,dig2,work)
+    IF (lverb_dat) THEN
+
+       errnr = 1
+       open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+       errnr = 4
+       DO i = 1, manz
+          WRITE (kanal,*)espx(i),espy(i),(cov_m(i,j),j=i,manz)
+       END DO
+       
+       CLOSE (kanal)
+    END IF
+
+    DEALLOCATE (dig)
 
     errnr = 0
 999 RETURN
 
-  END SUBROUTINE bmcm_dc
+  END SUBROUTINE bmcm
 
-  SUBROUTINE bres_dc(kanal)
+  SUBROUTINE bres(kanal)
 !!!$    
 !!!$    Unterprogramm berechnet Aufloesungsmatrix
 !!!$    Fuer beliebige Triangulierung
-!!!$    RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
-!!!$    wobei (A^TC_d^-1A + C_m^-1) bereits invertiert wurde (cov_m_dc)
+!!!$    RES = (A^HC_d^-1A + C_m^-1)^-1 A^HC_d^-1A
+!!!$    wobei (A^HC_d^-1A + C_m^-1) bereits invertiert wurde (cov_m)
 !!!$
 !!!$    Copyright Andreas Kemna 2009
 !!!$
@@ -517,9 +591,11 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
-    INTEGER                                      :: i,kanal
+    INTEGER                                      :: i,j,kanal
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-    REAL(KIND(0D0))                              :: dig_min,dig_max
+    REAL(KIND(0D0))                              :: dig_min,dig_max,dum
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 
 !!!$  cal!!!$RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
@@ -527,21 +603,28 @@ CONTAINS
     errnr = 1
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
+!!!$    get time
+    CALL TIC(c1)
 
-    ata_reg_dc= MATMUL(cov_m_dc,ata_dc) ! that's it...
+!    !$OMP WORKSHARE
+    ata_reg = MATMUL(cov_m,ata) ! that's it...
+!    !$OMP END WORKSHARE
+
+    csz = 'MATMUL time'
+    CALL TOC(c1,csz)
 
     ALLOCATE (dig(manz)) !prepare to write out main diagonal
 
     DO i=1,manz
-       dig(i) = ata_reg_dc(i,i)
+       dig(i) = ata_reg(i,i)
     END DO
 
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
-       WRITE (kanal,*)ABS(dig(i)),LOG10(dig(i))
+       WRITE (kanal,*)abs(dig(i)),LOG10(abs(dig(i)))-LOG10(dig_max)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -549,26 +632,29 @@ CONTAINS
 
     CLOSE(kanal)
 
-    errnr = 1
-    open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
-    errnr = 4
-    DO i=1,27,1
-       WRITE (kanal,*)ata_reg_dc(i,1:100:3)
-    END DO
+    IF (lverb_dat) THEN
 
-    CLOSE (kanal)
+       errnr = 1
+       open(kanal,file=TRIM(fetxt)//'_full',status='replace',err=999)
+       errnr = 4
+       DO i = 1, manz
+          WRITE (kanal,*)espx(i),espy(i),(abs(ata_reg(i,j)),j=i,manz)
+       END DO
+       
+       CLOSE (kanal)
+    END IF
 
     DEALLOCATE (dig)
 
     errnr = 0
 999 RETURN
 
-  END SUBROUTINE bres_dc
+  END SUBROUTINE bres
 
-  SUBROUTINE bmcm2_dc(kanal)
+  SUBROUTINE bmcm2(kanal)
 !!!$    
 !!!$    Unterprogramm berechnet Modellkovarianz nach Fehlerfortpflanzung
-!!!$    MCM = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1
+!!!$    MCM = (A^HC_d^-1A + C_m^-1)^-1 A^HC_d^-1A (A^HC_d^-1A + C_m^-1)^-1
 !!!$    Fuer beliebige Triangulierung
 !!!$!!!$    Copyright Andreas Kemna/Roland Martin 2009
 !!!$    erstellt von Roland Martin                               02-Nov-2009
@@ -591,6 +677,9 @@ CONTAINS
     INTEGER                                      :: i
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
     REAL(KIND(0D0))                              :: dig_min,dig_max
+    COMPLEX(KIND(0D0))                           :: dsig 
+    INTEGER                                      :: c1
+    CHARACTER(80)                                :: csz
 !!!$.....................................................................
 !!!$   vorher wurde schon 
 !!!$   ata_reg_dc= (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A berechnet
@@ -601,442 +690,15 @@ CONTAINS
     open(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
 
-    ata_dc = MATMUL (ata_reg_dc,cov_m_dc)
-
-    ALLOCATE (dig(manz))
-
-    DO i=1,manz
-       dig(i) = ata_dc(i,i)
-    END DO
-
-    dig_min = MINVAL(dig) 
-    dig_max = MAXVAL(dig)
-
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(ABS(dig(i)))),dig(i)
-    END DO
-
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
-
-    CLOSE(kanal)
-
-    DEALLOCATE (dig)
-
-    errnr = 0
-
-999 RETURN
-
-  END SUBROUTINE bmcm2_dc
-  SUBROUTINE bata(kanal)
-!!!$    
-!!!$    Unterprogramm berechnet ATA=A^T C_d^{-1} A (complex)
-!!!$    
-!!!$    Copyright Andreas Kemna 2009
-!!!$    Created by  Roland Martin                            02-Nov-2009
-!!!$    
-!!!$    Last changed      RM                                   20-Feb-2010
-!!!$    !!!$.........................................................................
-
-    USE alloci
-    USE datmod
-    USE invmod
-    USE modelmod
-    USE errmod
-
-    IMPLICIT none
-
-!!!$.....................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-!!!$   Hilfsvariablen 
-    INTEGER                       :: kanal
-    INTEGER                       :: i,j,k
-    REAL,DIMENSION(:),ALLOCATABLE :: dig
-    REAL                          :: dig_min,dig_max
-!!!$.....................................................................
-
-!!!$  A^TC_d^-1A
-
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
-    errnr = 4
-
-    ALLOCATE(dig(manz))
-
-    DO k=1,manz
-       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
-       DO j=k,manz ! fills upper triangle (k,j) 
-          DO i=1,nanz
-             ata(k,j) = ata(k,j) + DCONJG(sens(i,k)) * &
-                  sens(i,j) * wmatd(i) * DBLE(wdfak(i))
-          END DO
-          ata(j,k) = ata(k,j) ! fills lower triangle (j,k) 
-       END DO
-       dig(k) = REAL(ata(k,k))
-    END DO
-
-!!!$    write out 
-    dig_min = MINVAL(dig)
-    dig_max = MAXVAL(dig)
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(dig(i)/dig_max),dig(i)
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-    DEALLOCATE (dig)
-
-    errnr = 0
-999 RETURN
-
-  END SUBROUTINE bata
-
-  SUBROUTINE bata_reg(kanal)
-!!!$    
-!!!$    Unterprogramm berechnet ATC_d^-1A+lam*C_m
-!!!$    Fuer beliebige Triangulierung
-!!!$    
-!!!$    Copyright Andreas Kemna
-!!!$    Created by  Roland Martin                            02-Nov-2009
-!!!$    
-!!!$    Last changed      RM                                   20-Feb-2010
-!!!$    
-    !!!$.........................................................................
-
-    USE alloci
-    USE invmod
-    USE modelmod
-    USE elemmod
-    USE errmod
-    USE konvmod
-
-    IMPLICIT none
-
-!!!$.....................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-    INTEGER                       :: kanal ! io number
-!!!$   Hilfsvariablen 
-    INTEGER                       :: i,j,k
-    REAL,DIMENSION(:),ALLOCATABLE :: dig
-    REAL                          :: dig_min,dig_max
-!!!$.....................................................................
-
-!!!$  A^TC_d^-1A+lamC_m
-
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
-    errnr = 4
-
-    ALLOCATE(dig(manz))
-
-    IF (ltri == 0) THEN
-       DO j=1,manz
-          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-               'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
-          DO i=1,j ! lower triangle
-
-             IF (i == j) THEN
-                ata_reg(i,j) = ata(i,j) + DCMPLX(lam * smatm(i,1))
-
-                IF (i+1 < manz) ata_reg(i+1,j) = ata(i+1,j) + &
-                     DCMPLX(lam * smatm(i+1,2)) ! nebendiagonale in x richtung
-                IF (i+nx < manz) ata_reg(i+nx,j) = ata(i+nx,j) + &
-                     DCMPLX(lam * smatm(i+nx,3)) ! nebendiagonale in z richtung
-             ELSE
-                ata_reg(i,j) = ata(i,j) ! only aTa
-             END IF
-
-             ata_reg(j,i) = ata_reg(i,j) ! upper triangle 
-
-          END DO
-          dig(j) = REAL(ata_reg(j,j))
-       END DO
-
-    ELSE IF (ltri == 3.OR.ltri == 4) THEN
-       ata_reg = ata
-       DO i=1,manz
-          ata_reg(i,i) = ata(i,i) + DCMPLX(lam * smatm(i,1))
-          dig(i) = REAL(ata_reg(i,i))
-       END DO
-
-    ELSE IF (ltri == 1.OR.ltri == 2.OR.(ltri > 4 .AND. ltri < 15)) THEN
-
-       DO j=1,manz
-
-          write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-               'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
-
-          DO i=1,manz
-
-             IF (i==j) THEN   ! sparse C_m
-
-                ata_reg(i,j) = ata(i,j) + lam * smatm(i,smaxs+1)
-
-                DO k=1,nachbar(i,smaxs+1)
-                   IF (nachbar(i,k) /= 0) ata_reg(nachbar(i,k),j) = &
-                        ata(nachbar(i,k),j) + DCMPLX(lam * smatm(i,k))
-                END DO
-
-             ELSE
-
-                ata_reg(i,j) = ata(i,j)
-
-             END IF
-
-          END DO
-
-          dig(j) = REAL(ata_reg(j,j))
-
-       END DO
-
-    ELSE IF (ltri == 15) THEN
-
-       ata_reg = ata + DCMPLX(lam) * DCMPLX(smatm) ! for full C_m..
-
-       DO j=1,manz
-          dig(j) = REAL(ata_reg(j,j))
-       END DO
-
-    END IF
-
-!!!$    write out real and imaginary part
-    dig_min = MINVAL(dig)
-    dig_max = MAXVAL(dig)
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(dig(i)),dig(i)
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-    DEALLOCATE (dig)
-
-    errnr = 0
-999 RETURN
-
-  END SUBROUTINE bata_reg
-
-  SUBROUTINE bmcm(kanal,ols)
-!!!$    
-!!!$    Unterprogramm berechnet (einfache) Modell Kovarianz Matrix
-!!!$    MCM = (A^TC_d^-1A + C_m^-1)^-1
-!!!$    Fuer beliebige Triangulierung
-!!!$    
-!!!$    Copyright Andreas Kemna
-!!!$    Created by  Roland Martin                      02-Nov-2009
-!!!$    
-!!!$    Last changed      RM                             30-Mar-2010
-!!!$    
-!!!$....................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-!!!$   Hilfsvariablen 
-    INTEGER                                     :: i,kanal,j,c1
-    COMPLEX(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
-    COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig,dig2
-    REAL(KIND(0D0))                             :: dig_min,dig_max,p
-    LOGICAL,INTENT(IN),OPTIONAL                 :: ols 
-    CHARACTER(80)                               :: csz
-!!!$....................................................................
-!!!$  invert A^TC_d^-1A + C_m^-1
-    errnr = 1
-
-    ALLOCATE (work(manz,manz),STAT=errnr)
-    IF (errnr/=0) THEN
-       WRITE (*,'(/a/)')'Allocation problem WORK in bmcm'
-       errnr = 97
-       RETURN
-    END IF
-    ALLOCATE (dig(manz),dig2(manz)) ! help 
-
 !!!$    get time
     CALL TIC(c1)
-
-    cov_m = ata_reg
-
-    IF (.NOT.PRESENT(ols).OR..NOT.ols) THEN
-       WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
-
-       CALL CHOLZ(cov_m,dig,manz,errnr)
-       IF (errnr /= 0) THEN
-          PRINT*,'Zeile::',cov_m(abs(errnr),:)
-          PRINT*,'Spalte::',cov_m(:,abs(errnr))
-          errnr = 108
-          RETURN
-       END IF
-       WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Inverting...'
-       CALL LINVZ(cov_m,dig,manz)
-
-       WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Filling lower Cov...'
-
-       DO i= 1 , manz
-
-          WRITE (*,'(A,1X,F6.2,A)',ADVANCE='no')ACHAR(13)//ACHAR(9)&
-               //ACHAR(9)//ACHAR(9)//'/ ',REAL( i * (100./manz)),'%'
-
-          DO j = 1 , i - 1
-
-             cov_m(i,j) = cov_m(j,i)
-
-          END DO
-       END DO
-    ELSE
-       WRITE (*,'(a)',ADVANCE='no')'Inverting Matrix (Gauss elemination)'
-       CALL gauss_cmplx(cov_m,manz,errnr)
-
-       IF (errnr /= 0) THEN
-          PRINT*,'Zeile::',cov_m(abs(errnr),:)
-          PRINT*,'Spalte::',cov_m(:,abs(errnr))
-          errnr = 108
-          RETURN
-       END IF
-
-    END IF
-
-    csz = 'solution time'
-    CALL TOC(c1,csz)
-
-    work = MATMUL(cov_m,ata_reg)
-
-    DO i=1,manz
-       dig(i) = cov_m(i,i)
-       dig2(i) = work(i,i)
-    END DO
-
-!!!$    write out real and imaginary part
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DBLE(dig))
-    dig_max = MAXVAL(DBLE(dig))
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig2(i))
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DIMAG(dig))
-    dig_max = MAXVAL(DIMAG(dig))
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       p = DBLE(1d3*DATAN2(DIMAG(dig(i)),DBLE(dig(i))))
-       WRITE (kanal,*)DIMAG(dig(i)),p
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-
-    DEALLOCATE (dig)
-    IF (ALLOCATED(work)) DEALLOCATE (dig2,work)
-
-    errnr = 0
-999 RETURN
-  END SUBROUTINE bmcm
-
-  SUBROUTINE bres(kanal)
-!!!$    
-!!!$    Unterprogramm berechnet Aufloesungsmatrix
-!!!$    Fuer beliebige Triangulierung und Complex
-!!!$    RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
-!!!$    wobei (A^TC_d^-1A + C_m^-1) bereits invertiert wurde (cov_m)
-!!!$    
-!!!$    Copyright Andreas Kemna 2009
-!!!$    Created by  Roland Martin                      02-Nov-2009
-!!!$    
-!!!$    Last changed      RM                             30-Mar-2010
-!!!$    
-!!!$....................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-!!!$   Hilfsvariablen 
-    INTEGER                                     :: i,kanal
-    COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig
-    REAL(KIND(0D0))                             :: dig_min,dig_max
-!!!$   switch solv ordinary linear system or not^^
-!!!$....................................................................
-
-!!!$  calculate  RES = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A
-
-    ata_reg = MATMUL(cov_m,ata)
-
-    ALLOCATE (dig(manz))
-
-    DO i=1,manz
-       dig(i) = ata_reg(i,i)
-    END DO
-
-!!!$    write out real and imaginary part
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DBLE(dig))
-    dig_max = MAXVAL(DBLE(dig))
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(DBLE(dig(i))),DBLE(dig(i))
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DIMAG(dig))
-    dig_max = MAXVAL(DIMAG(dig))
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(DIMAG(dig(i))),DIMAG(dig(i))
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
-    CLOSE(kanal)
-
-    DEALLOCATE (dig)
-
-    errnr = 0
-
-999 RETURN
-
-  END SUBROUTINE bres
-
-  SUBROUTINE bmcm2(kanal)
-!!!$    
-!!!$    Unterprogramm berechnet Modellkovarianz nach 
-!!!$    Fehlerfortpflanzung (Gubbins 2004)
-!!!$    MCM = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A * 
-!!!$          (A^TC_d^-1A + C_m^-1)^-1
-!!!$    Fuer beliebige Triangulierung und Complex
-!!!$
-!!!$    Copyright Andreas Kemna 2009
-!!!$
-!!!$    Created by Roland Martin                      02-Nov-2009
-!!!$    
-!!!$    Last changed      RM                             30-Mar-2010
-!!!$    
-!!!$....................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-!!!$   Hilfsvariablen 
-    INTEGER                                     :: kanal
-    INTEGER                                     :: i
-    COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: dig
-    COMPLEX(KIND(0D0))                          :: dum
-    REAL(KIND(0D0))                             :: dig_min,dig_max,p
-!!!$....................................................................
-!!!$   vorher wurde schon 
-!!!$   ata_reg = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A berechnet
-!!!$   cov_m = (A^TC_d^-1A + C_m^-1)^-1
-
+    
+!    !$OMP WORKSHARE
     ata = MATMUL (ata_reg,cov_m)
+!    !$OMP END WORKSHARE
+
+    csz = 'MATMUL time'
+    CALL TOC(c1,csz)
 
     ALLOCATE (dig(manz))
 
@@ -1044,41 +706,25 @@ CONTAINS
        dig(i) = ata(i,i)
     END DO
 
-!!!$    write out real and imaginary part
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DBLE(dig))
-    dig_max = MAXVAL(DBLE(dig))
-    WRITE (kanal,*)manz
-    DO i=1,manz
-       WRITE (kanal,*)LOG10(SQRT(DBLE(dig(i)))),DBLE(dig(i))
-    END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Re):',dig_max,'/',dig_min
-    CLOSE(kanal)
+    dig_min = MINVAL(dig) 
+    dig_max = MAXVAL(dig)
 
-    errnr = 1
-    OPEN(kanal,file=TRIM(fetxt)//'_im',status='replace',err=999)
-    errnr = 4
-    dig_min = MINVAL(DIMAG(dig))
-    dig_max = MAXVAL(DIMAG(dig))
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,lam
     DO i=1,manz
-       dum = dcmplx(1d0)/sigma(i)
-       p = DBLE(1d3*datan2(dimag(dum),dble(dum)))
-       WRITE (kanal,*)DIMAG(dig(i))*p,DIMAG(dig(i))
+       dsig = sigma(i) * SQRT(dig(i))
+       WRITE (kanal,*)SQRT(dig(i))*1d2, REAL(dsig), AIMAG(dsig)
     END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
-    WRITE (*,*)'Max/Min(Im):',dig_max,'/',dig_min
-    CLOSE(kanal)
 
+    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+    WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+
+    CLOSE(kanal)
 
     DEALLOCATE (dig)
 
     errnr = 0
+
 999 RETURN
 
   END SUBROUTINE bmcm2
-
 END MODULE bmcm_mod

@@ -66,9 +66,14 @@ subroutine rdati(kanal,datei)
   errnr = 3
 
 !!!$     Anzahl der Messwerte lesen
-  read(kanal,*,end=1001,err=1000) nanz
+!!!$ also check if we may use individual errors or not
+  read(kanal,*,end=1001,err=11) nanz,lindiv
+  IF (lindiv) PRINT*,'+ Individual data error!'
+  GOTO 12
+11 PRINT*,'+ Taking error model'
+  BACKSPACE(kanal)
 !!!$c check if data file format is CRTOmo konform..
-  read(kanal,*,end=1001,err=1000) elec1
+12 read(kanal,*,end=1001,err=1000) elec1
   BACKSPACE(kanal)
 
   elec3=elec1-10000 ! are we still positive?
@@ -289,12 +294,12 @@ subroutine rdati(kanal,datei)
      end if
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
-     wmatdr(i) = 1d0/(stabw**2.)
+     wmatdr(i) = 1d0/(stabw**2d0)
      wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
-        IF (lelerr) wmatd(i)=1d0/(stabw**2.+stabwp**2.)
-        wmatdp(i)=1d0/(stabwp**2.)
+        IF (lelerr) wmatd(i)=1d0/(stabw**2d0+stabwp**2d0)
+        wmatdp(i)=1d0/(stabwp**2d0)
      END IF
      wdfak(i) = 1
 

@@ -1,0 +1,402 @@
+ Iteration   0,   0 : Calculating Potentials
+  85 : change polarity
+ 100 : change polarity
+ 101 : change polarity
+ 107 : change polarity
+ 112 : change polarity
+ 113 : change polarity
+ 132 : change polarity
+ 133 : change polarity
+ 148 : change polarity
+ 161 : change polarity
+ 169 : change polarity
+ 183 : change polarity
+ 262 : change polarity
+ 273 : change polarity
+ 289 : change polarity
+ 290 : change polarity
+ 295 : change polarity
+ 296 : change polarity
+ 305 : change polarity
+ 316 : change polarity
+ 330 : change polarity
+ 331 : change polarity
+ 332 : change polarity
+ 333 : change polarity
+ 335 : change polarity
+ 336 : change polarity
+ 343 : change polarity
+ 344 : change polarity
+ 345 : change polarity
+ 346 : change polarity
+ 348 : change polarity
+ 360 : change polarity
+ 361 : change polarity
+ 375 : change polarity
+ 376 : change polarity
+ 377 : change polarity
+ 378 : change polarity
+ 380 : change polarity
+ 382 : change polarity
+ 389 : change polarity
+ 390 : change polarity
+ 391 : change polarity
+ 393 : change polarity
+ 407 : change polarity
+ 422 : change polarity
+ 425 : change polarity
+ 435 : change polarity
+ 439 : change polarity
+ 444 : change polarity
+ 445 : change polarity
+ 446 : change polarity
+ 449 : change polarity
+ 450 : change polarity
+ 453 : change polarity
+ 454 : change polarity
+ 458 : change polarity
+ 459 : change polarity
+ 460 : change polarity
+ 461 : change polarity
+ 463 : change polarity
+ 464 : change polarity
+ 467 : change polarity
+ 495 : change polarity
+ 504 : change polarity
+ 516 : change polarity
+ 517 : change polarity
+ 534 : change polarity
+ 535 : change polarity
+ 542 : change polarity
+ 543 : change polarity
+ 555 : change polarity
+ 556 : change polarity
+ 557 : change polarity
+ 574 : change polarity
+ 595 : change polarity
+ 596 : change polarity
+ 597 : change polarity
+ 605 : change polarity
+ 617 : change polarity
+ 634 : change polarity
+ 674 : change polarity
+ 680 : change polarity
+ 714 : change polarity
+ 735 : change polarity
+ 736 : change polarity
+ 737 : change polarity
+ 738 : change polarity
+ 739 : change polarity
+ 741 : change polarity
+ 742 : change polarity
+ 745 : change polarity
+ 746 : change polarity
+ 747 : change polarity
+ 749 : change polarity
+ 750 : change polarity
+ 751 : change polarity
+ 752 : change polarity
+ 753 : change polarity
+ 756 : change polarity
+ 757 : change polarity
+ 760 : change polarity
+ 761 : change polarity
+ 762 : change polarity
+ 763 : change polarity
+ 764 : change polarity
+ 765 : change polarity
+ 766 : change polarity
+ 767 : change polarity
+ 770 : change polarity
+ 771 : change polarity
+ 772 : change polarity
+ 775 : change polarity
+ 776 : change polarity
+ 777 : change polarity
+ 779 : change polarity
+ 780 : change polarity
+ 784 : change polarity
+ 785 : change polarity
+ 786 : change polarity
+ 788 : change polarity
+ 789 : change polarity
+ 790 : change polarity
+ 791 : change polarity
+ 792 : change polarity
+ 793 : change polarity
+ 795 : change polarity
+ 796 : change polarity
+ 799 : change polarity
+ 800 : change polarity
+ 802 : change polarity
+ 803 : change polarity
+ 804 : change polarity
+ 806 : change polarity
+ 808 : change polarity
+ 809 : change polarity
+ 811 : change polarity
+ 812 : change polarity
+ 813 : change polarity
+ 814 : change polarity
+ 820 : change polarity
+ 823 : change polarity
+ 824 : change polarity
+ 829 : change polarity
+ 833 : change polarity
+ 841 : change polarity
+ 842 : change polarity
+ 843 : change polarity
+ 855 : change polarity
+ 866 : change polarity
+ 870 : change polarity
+ 884 : change polarity
+ 899 : change polarity
+ 905 : change polarity
+ 921 : change polarity
+ 936 : change polarity
+ 983 : change polarity
+  85 : excluded
+ 100 : excluded
+ 101 : excluded
+ 107 : excluded
+ 112 : excluded
+ 113 : excluded
+ 132 : excluded
+ 133 : excluded
+ 148 : excluded
+ 161 : excluded
+ 169 : excluded
+ 183 : excluded
+ 262 : excluded
+ 273 : excluded
+ 289 : excluded
+ 290 : excluded
+ 295 : excluded
+ 296 : excluded
+ 305 : excluded
+ 316 : excluded
+ 330 : excluded
+ 331 : excluded
+ 332 : excluded
+ 333 : excluded
+ 335 : excluded
+ 336 : excluded
+ 343 : excluded
+ 344 : excluded
+ 345 : excluded
+ 346 : excluded
+ 348 : excluded
+ 360 : excluded
+ 361 : excluded
+ 375 : excluded
+ 376 : excluded
+ 377 : excluded
+ 378 : excluded
+ 380 : excluded
+ 382 : excluded
+ 389 : excluded
+ 390 : excluded
+ 391 : excluded
+ 393 : excluded
+ 407 : excluded
+ 422 : excluded
+ 425 : excluded
+ 435 : excluded
+ 439 : excluded
+ 444 : excluded
+ 445 : excluded
+ 446 : excluded
+ 449 : excluded
+ 450 : excluded
+ 453 : excluded
+ 454 : excluded
+ 458 : excluded
+ 459 : excluded
+ 460 : excluded
+ 461 : excluded
+ 463 : excluded
+ 464 : excluded
+ 467 : excluded
+ 495 : excluded
+ 504 : excluded
+ 516 : excluded
+ 517 : excluded
+ 534 : excluded
+ 535 : excluded
+ 542 : excluded
+ 543 : excluded
+ 555 : excluded
+ 556 : excluded
+ 557 : excluded
+ 574 : excluded
+ 595 : excluded
+ 596 : excluded
+ 597 : excluded
+ 605 : excluded
+ 617 : excluded
+ 634 : excluded
+ 674 : excluded
+ 680 : excluded
+ 714 : excluded
+ 735 : excluded
+ 736 : excluded
+ 737 : excluded
+ 738 : excluded
+ 739 : excluded
+ 741 : excluded
+ 742 : excluded
+ 745 : excluded
+ 746 : excluded
+ 747 : excluded
+ 749 : excluded
+ 750 : excluded
+ 751 : excluded
+ 752 : excluded
+ 753 : excluded
+ 756 : excluded
+ 757 : excluded
+ 760 : excluded
+ 761 : excluded
+ 762 : excluded
+ 763 : excluded
+ 764 : excluded
+ 765 : excluded
+ 766 : excluded
+ 767 : excluded
+ 770 : excluded
+ 771 : excluded
+ 772 : excluded
+ 775 : excluded
+ 776 : excluded
+ 777 : excluded
+ 779 : excluded
+ 780 : excluded
+ 784 : excluded
+ 785 : excluded
+ 786 : excluded
+ 788 : excluded
+ 789 : excluded
+ 790 : excluded
+ 791 : excluded
+ 792 : excluded
+ 793 : excluded
+ 795 : excluded
+ 796 : excluded
+ 799 : excluded
+ 800 : excluded
+ 802 : excluded
+ 803 : excluded
+ 804 : excluded
+ 806 : excluded
+ 808 : excluded
+ 809 : excluded
+ 811 : excluded
+ 812 : excluded
+ 813 : excluded
+ 814 : excluded
+ 820 : excluded
+ 823 : excluded
+ 824 : excluded
+ 829 : excluded
+ 833 : excluded
+ 841 : excluded
+ 842 : excluded
+ 843 : excluded
+ 855 : excluded
+ 866 : excluded
+ 870 : excluded
+ 884 : excluded
+ 899 : excluded
+ 905 : excluded
+ 921 : excluded
+ 936 : excluded
+ 983 : excluded
+          12  : increase standard deviation *   1.4156660      0.42171458347279273        2.4421758395047184     
+          13  : increase standard deviation *   1.5732559      0.93990077103166425        3.0161580851381413     
+          32  : increase standard deviation *   1.9099205      0.61716672614385881        4.4451444964555158     
+          33  : increase standard deviation *   1.2706990       11.396472399423057        1.9676177112203255     
+          35  : increase standard deviation *   1.6937401      0.78423749385409847        3.4958187199814823     
+          36  : increase standard deviation *   1.6867919       1.1141497980509329        3.4671957614266087     
+          39  : increase standard deviation *   1.6253780      0.75815457938293129        3.2193194257691338     
+          51  : increase standard deviation *   1.4524802      0.37515955578767846        2.5708443635953788     
+          52  : increase standard deviation *   1.4130625      0.53944682006486488        2.4332011575283885     
+          65  : increase standard deviation *   1.6577290      0.65428970254471386        3.3487476044914342     
+          66  : increase standard deviation *   1.4474205      0.69025045592988798        2.5529642633963183     
+          67  : increase standard deviation *   1.3373616      0.94355712177516682        2.1794804861648207     
+          73  : increase standard deviation *   1.6501099      0.62702842870728137        3.3180357875282032     
+          74  : increase standard deviation *   1.4874808      0.68104271695315699        2.6962368906781675     
+          76  : increase standard deviation *   1.5964382      0.51829551442030175        3.1057000504406762     
+         109  : increase standard deviation *   1.1180362      0.62330706397844970        1.5232355327460005     
+         125  : increase standard deviation *   1.7545031      0.76547892196789324        3.7511432638833209     
+         126  : increase standard deviation *   1.5170586      0.64118675523501467        2.8045298382936146     
+         129  : increase standard deviation *   1.4070923      0.58358621682459766        2.4126844684599367     
+         130  : increase standard deviation *   1.8570030      0.59658047525889002        4.2022366728392253     
+         133  : increase standard deviation *   1.2544494      0.14875903674204138        1.9176158901333287     
+         134  : increase standard deviation *   1.2770109      0.26793210154731067        1.9872137472888323     
+         148  : increase standard deviation *   1.8680904      0.26622249832845846        4.2525664618052090     
+         155  : increase standard deviation *   2.7269018      0.16706682697458855        9.0613795514872226     
+         161  : increase standard deviation *   1.3905370      0.18467246813572014        2.3562449099324234     
+         162  : increase standard deviation *   1.1229309      0.12458952076158482        1.5366018378905892     
+         166  : increase standard deviation *   1.3135321       1.2303190435481364        2.1025033233977322     
+         167  : increase standard deviation *   1.7750089       3.2552641073224047        3.8393386303984451     
+         168  : increase standard deviation *   1.7950097       1.6351343795823510        3.9263495639376775     
+         185  : increase standard deviation *   1.2230136       2.0934244414821586        1.8227114227181236     
+         194  : increase standard deviation *   1.2094755      0.48326462559072186        1.7825819732512069     
+         195  : increase standard deviation *   1.6116198      0.35668965868481789        3.1650497017985892     
+         196  : increase standard deviation *   1.1825092      0.16100557291864706        1.7039797094604789     
+         197  : increase standard deviation *   1.2906588      0.36086809367174272        2.0299169175208420     
+         198  : increase standard deviation *   1.5183063      0.49257030955821496        2.8091444966204246     
+         209  : increase standard deviation *   1.5894936      0.41657590536099243        3.0787392925382977     
+         210  : increase standard deviation *   1.9656453      0.52804331401527460        4.7083162698871286     
+         212  : increase standard deviation *   1.4801848      0.41883890812037344        2.6698520097211675     
+         213  : increase standard deviation *   1.1221290      0.43927714726184680        1.5344079600088927     
+         218  : increase standard deviation *   1.0977207      0.15417797592407892        1.4683819959229958     
+         219  : increase standard deviation *   1.3239846      0.72059024152551587        2.1360981271969521     
+         220  : increase standard deviation *   1.8491925      0.75692115975459973        4.1669622317141624     
+         221  : increase standard deviation *   1.6504003      0.69539808028484751        3.3192038510143549     
+         224  : increase standard deviation *   3.7444198       4.4725608932506411        17.085371247430896     
+         225  : increase standard deviation *   2.1260273      0.86124365689894389        5.5079883668695517     
+         226  : increase standard deviation *   1.4954164      0.86230553438656643        2.7250820773151565     
+         227  : increase standard deviation *   1.2645284      0.54722747761633028        1.9485543514007324     
+         264  : increase standard deviation *   1.3366663      0.61242479251608650        2.1772150117207403     
+         270  : increase standard deviation *   1.1479527      0.14234339294884155        1.6058436392046846     
+         271  : increase standard deviation *   1.3383335      0.16929472274589666        2.1826497434020182     
+         273  : increase standard deviation *   1.3860334      6.04076595137729502E-002   2.3410069502683282     
+         275  : increase standard deviation *   1.2028559      9.31677728055373550E-002   1.7631227786110317     
+         276  : increase standard deviation *   1.3501910      0.18932180548254501        2.2214971888004245     
+         277  : increase standard deviation *   1.2219388      0.19901181177630251        1.8195093971397349     
+         289  : increase standard deviation *   1.2439948      8.92610574052736527E-002   1.8857861666452556     
+         291  : increase standard deviation *   1.1143947      6.88742225533806873E-002   1.5133289980188724     
+         292  : increase standard deviation *   1.0985166      0.12721657818867310        1.4705120901087123     
+         310  : increase standard deviation *   1.2153616      0.52887939017693564        1.7999744437672782     
+         311  : increase standard deviation *   1.5873396      0.44084067725548653        3.0704004708096364     
+         312  : increase standard deviation *   1.8424457      0.54755816934373980        4.1366114170877504     
+         314  : increase standard deviation *   1.9667202      0.61232522974495274        4.7134672893964149     
+         315  : increase standard deviation *   2.1604626      0.42106897985186936        5.6878595989963401     
+         316  : increase standard deviation *   1.7455778      8.63224266533171303E-002   3.7130751549524352     
+         317  : increase standard deviation *   1.9198953      0.26281946253234151        4.4916963839753743     
+         318  : increase standard deviation *   1.2223458      0.15984859947141880        1.8207215947946294     
+         319  : increase standard deviation *   1.4259720      0.69681927096563090        2.4778633071426626     
+         398  : increase standard deviation *   1.9812253       1.5641863407945655        4.7832498453577275     
+         401  : increase standard deviation *   1.8860043       10.785830209299940        4.3345170645766400     
+         402  : increase standard deviation *   2.1083410       3.6795178391108760        5.4167278585073610     
+         403  : increase standard deviation *   3.5962424       4.9881678112425618        15.759892395248247     
+         404  : increase standard deviation *   1.7098583       3.1095815220899432        3.5626697970059515     
+         405  : increase standard deviation *   1.2127846       1.1776213443395791        1.7923496430208634     
+         407  : increase standard deviation *   1.5622004      0.21232538559873573        2.9739171295264013     
+         468  : increase standard deviation *   1.4985780      8.77041661322995880E-002   2.7366170917939985     
+         497  : increase standard deviation *   1.4134737      0.21070285324980526        2.4346180946660283     
+         498  : increase standard deviation *   2.1088564      0.30430215720012743        5.4193774866692896     
+         567  : increase standard deviation *   2.0540659      0.69667116474146773        5.1414314195037445     
+         568  : increase standard deviation *   1.2216121      0.42509505699393041        1.8185364304791012     
+         569  : increase standard deviation *   1.1281478      0.54892768948991644        1.5509128134251402     
+         575  : increase standard deviation *   2.0822833      0.46305636073245315        5.2836612318118936     
+         576  : increase standard deviation *   1.5699278      0.35448918804065022        3.0034103586566494     
+         578  : increase standard deviation *   1.1411828      0.32278854593912037        1.5869590067645514     
+         587  : increase standard deviation *   1.5738771      0.40964234974539376        3.0185400291676370     
+         588  : increase standard deviation *   1.2593858      0.28202856933621107        1.9327378191015547     
+         591  : increase standard deviation *   1.5492249      0.42697739183912975        2.9247198308443347     
+         592  : increase standard deviation *   1.5718759      0.28753805872819477        3.0108690115567471     
+         625  : increase standard deviation *   1.2167509      0.20316281441027351        1.8040918410237350     
+         648  : increase standard deviation *   1.5123209      0.87094590464656407        2.7870403063408036     
+         649  : increase standard deviation *   1.6393155      0.24111218691561812        3.2747669738841707     
