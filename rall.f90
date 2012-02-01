@@ -116,8 +116,10 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Slash
 
   IF (INDEX ( version(5), 'Msys') == 0) THEN
+	  print*,'MS-OS'
      slash = '/'
   ELSE
+	  print*,'Linux-OS'
      slash = '\'
   END IF
 
