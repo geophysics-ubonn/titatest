@@ -53,7 +53,7 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
      END DO
 
      IF (a(j,j) <= 0) THEN
-        PRINT*,'CHOLD:: - not positive definite', a(j,j)
+        PRINT*,'CHOLD:: - not positive definite', j,a(j,j)
         ierr = -i
         STOP
      END IF
