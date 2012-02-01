@@ -93,7 +93,6 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 !!!$     ak        write(fpinv,'(l1,t18,a33)',err=999) lpol,
 !!!$     ak     1           '! automatic polarity adjustment ?'
   write(fpinv,10,err=999) lfphai,'! final phase improvement ?'
-  !     ak        write(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
   write(fpinv,11,err=999) stabw0,'! rel. resistance error level (%)'// &
        '  (parameter A1 in err(R) = A1*abs(R) + A2)'
   write(fpinv,11,err=999) stabm0,'! min. abs. resistance error (ohm)'// &
@@ -197,6 +196,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE(fpinv,100,err=999)'Verbose?',lverb
   WRITE(fpinv,100,err=999)'Error Ellipses?',lelerr
   WRITE(fpinv,100,err=999)'Restart FPI with homogenous phase?',lffhom
+  WRITE(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
 
   write(fpinv,'(/a)',err=999) '***FIXED***'
 
