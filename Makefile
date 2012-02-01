@@ -243,9 +243,9 @@ dox:
 		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
-install:	$(crt) $(crm) dox
-		$(CP) CRTomo $(WPATH)/CRTomo
-		$(CP) CRMod $(WPATH)/CRMod
+install:	$(CRT)_$(PREFIX) $(CRM)_$(PREFIX) 
+		$(CP) $(CRT)_$(PREFIX) $(WPATH)
+		$(CP) $(CRM)_$(PREFIX) $(WPATH)
 		cd ./cutmckee ; make install
 
 clean:		
