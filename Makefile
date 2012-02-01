@@ -52,7 +52,7 @@ OS		= $(shell uname -o)
 PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
 DOC		= doxygen
 
-WPATH 		= $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\MinGW\bin"}else{print "~/bin"}}')
+WPATH 		= $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')
 
 
 
