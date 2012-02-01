@@ -74,5 +74,5 @@ clean:
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
 		$(PROG)_$(PREFIX)
 
-install:	$(PROG)
+install:	$(PROG)_$(PREFIX)
 		$(CP) $(PROG)_$(PREFIX) $(WPATH)

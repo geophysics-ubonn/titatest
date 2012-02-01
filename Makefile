@@ -200,7 +200,7 @@ minimalbeispiel.o:	tic_toc.o
 LALIB:		./libla/%.f	
 		make -C libla
 
-install:	$(crt) $(crm)
+install:	$(CRM)_$(PREFIX) $(CRM)_$(PREFIX)
 		$(CP) $(CRT)_$(PREFIX) $(WPATH)
 		$(CP) $(CRM)_$(PREFIX) $(WPATH)
 		cd ./cutmckee ; make install
