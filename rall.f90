@@ -115,7 +115,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     FIXED PARAMETER
 !!!$     Slash
 
-  IF (INDEX ( version(5), 'MS') == 0) THEN
+  IF (INDEX ( version(5), 'Msys') == 0) THEN
      slash = '/'
   ELSE
      slash = '\'
