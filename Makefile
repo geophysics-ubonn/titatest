@@ -221,12 +221,12 @@ cbn:
 ggv:		
 		./get_git_version.sh $(F90)
 
-crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
+crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) ggv
 		$(F90) $(FFLAG90) -o $(CRT)_$(PREFIX) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(CP) $(CRT)_$(PREFIX) $(WPATH)
 
-crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
+crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) ggv
 		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
 
