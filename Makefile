@@ -6,7 +6,6 @@
 RM		= rm -f
 CP		= cp -f
 MV		= mv -f
-WPATH 		= ~/bin
 
 ############################################################################
 # 			gfortran compiler flags 			   #
@@ -55,11 +54,15 @@ PR4		= minimal_prec
 # Minimalbeispiel OMP directives
 PR5		= minimal_omp
 
-BRANCH		= $$(git branch|awk '/\*/{print $$2}')
-MACHINE		= $$(uname -n)
-OS		= $$(uname -o)
-PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
+MACHINE		= $(shell uname -n)
+OS		= $(shell uname -o)
+PREFIX		= $(BRANCH)
 DOC		= doxygen
+
+WPATH 		= $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')
+
+
 
 ################################################################
 # default
@@ -203,32 +206,29 @@ inv.o:		$(f90crt) $(f90crtsub) $(ggvo)
 minimalbeispiel.o:	tic_toc.o
 
 ###############################################################
-.SILENT:	cbn
+#.SILENT:	cbn
 ###################################
 LALIB:		./libla/%.f	
 		make -C libla
 
 cbn:		
-		echo "Pruefe ~/bin"
-		if [ -d ~/bin ]; then \
+		echo "Pruefe $(WPATH)"
+		if [ -d $(WPATH) ]; then \
 			echo "ok"; \
 		else \
 			echo "Du hast kein bin in deinem home.--"; \
-			mkdir ~/bin; \
 		fi
 ggv:		
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRT) \
+		$(F90) $(FFLAG90) -o $(CRT)_$(PREFIX) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
-		$(CP) $(CRT) $(WPATH)/$(CRT)
+		$(CP) $(CRT)_$(PREFIX) $(WPATH)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRM) \
+		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -249,5 +249,5 @@ install:	$(crt) $(crm) dox
 		cd ./cutmckee ; make install
 
 clean:		
-		$(RM) CRTomo CRMod *~ *.mod *.o my_git_version.h
+		$(RM) $(CRT)_$(PREFIX) $(CRM)_$(PREFIX) *~ *.mod *.o my_git_version.h
 		cd ./cutmckee ; make clean
