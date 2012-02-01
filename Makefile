@@ -49,7 +49,7 @@ PR4		= minimal
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 OS		= $(shell uname -o)
-PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+PREFIX		= $(BRANCH)
 DOC		= doxygen
 
 WPATH 		= $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')

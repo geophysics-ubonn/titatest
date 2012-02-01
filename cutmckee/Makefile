@@ -6,7 +6,7 @@
 RM		= rm -f
 CP		= cp -f
 MV		= mv -f
-WPATH 		= ~/bin
+WPATH           = $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')
 
 F90		= gfortran
 F77		= gfortran
@@ -30,7 +30,7 @@ PR1		= ctm
 # machine name
 BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
-PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+PREFIX		= $(BRANCH)
 
 # default targets
 all:		$(PR1) install
@@ -66,13 +66,13 @@ cbn:
 		fi
 
 ctm:		$(OBJF90) $(OBJ) $(OBJERR)
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG)_$(PREFIX) \
 		$(OBJ) $(OBJF90) $(OBJERR) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)
 
 clean:		
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
-		$(PROG)
+		$(PROG)_$(PREFIX)
 
 install:	$(PROG)
-		$(CP) $(PROG) $(WPATH)/$(PROG)_$(PREFIX)
+		$(CP) $(PROG)_$(PREFIX) $(WPATH)
