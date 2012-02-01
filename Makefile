@@ -179,7 +179,7 @@ get_git_ver.o:	my_git_version.h
 
 kont1.o:	variomodel.o get_git_ver.o
 
-rall.o:		make_noise.o variomodel.o
+rall.o:		make_noise.o variomodel.o get_git_ver.o
 
 rsigma.o:       make_noise.o
 
