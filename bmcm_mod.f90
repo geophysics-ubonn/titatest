@@ -302,8 +302,6 @@ CONTAINS
           
        END DO
        
-!!$       !$OMP END PARALLEL
-
     ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
        ata_reg = ata
