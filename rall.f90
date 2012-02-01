@@ -26,7 +26,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   USE errmod
   USE konvmod
   USE pathmod
-
+  USE get_ver, only:version
   IMPLICIT none
 
 
@@ -114,8 +114,14 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$######values..
 !!!$     FIXED PARAMETER
 !!!$     Slash
-  slash = '/'
-!  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
+
+  IF (INDEX ( version(5), 'MS') == 0) THEN
+     slash = '/'
+  ELSE
+     slash = '\'
+  END IF
+
+  !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
 !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
   l1min = 1d0
 !!!$     ak        l1min = 1.2d0
@@ -176,23 +182,23 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) ramd
 !!$! checks if dir exists and if not, create it
-!#if defined (__INTEL_COMPILER)
+  !#if defined (__INTEL_COMPILER)
 !!$! check for the intel compiler..
-!#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-!#else   
+  !#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+  !#else   
 !!$! other compilers go here
 !!$! here we may put #elif defined (__GFORTRAN__) as well
-!#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
-!#endif
-! ifort uses DIRECTORY for folders, so this is to be used than..
-! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+  !#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
+  !#endif
+  ! ifort uses DIRECTORY for folders, so this is to be used than..
+  ! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
 
 !!$! workaround for compability issues with ifort..
   fetxt = TRIM(ramd)//slash//'tmp.check'
   crtf = .FALSE.
 !!$ test if you can open a file in the directory..
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',ERR=97)
-  !!$ if you can, the directory exits and you can remove it safely
+!!$ if you can, the directory exits and you can remove it safely
   CLOSE(fprun,STATUS='delete')
 !!$ set this switch to circumvent mkdir
   PRINT*,'writing inversion results into '//TRIM(ramd)
@@ -346,7 +352,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
 101 IF (lsto) THEN
      PRINT*,'Stochastische Regularisierung'
-!     eps = eps*1d-2
+     !     eps = eps*1d-2
   END IF
   IF (ltri > 4 .AND. ltri < 15) THEN
      fetxt = 'rall -> beta value'
@@ -450,8 +456,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      errnr = 104
      goto 999
   else if (.not.ldc.and.lfphai.and.&
-    ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR. &
-    ((stabp0 == 0d0).and.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) then
+       ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR. &
+       ((stabp0 == 0d0).and.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) then
      fetxt = ' '
      errnr = 105
      goto 999

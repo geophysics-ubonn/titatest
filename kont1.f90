@@ -52,10 +52,11 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE (fpinv,'(a)')'## Complex Resistivity Tomography (CRTomo)'
   WRITE (fpinv,'(a)')'##'
   WRITE (fpinv,'(a)')'## Git-Branch '//TRIM(version(1))
-  WRITE (fpinv,'(a)')'## Git-ID '//TRIM(version(2))
-  WRITE (fpinv,'(a)')'## Compiler '//TRIM(version(4))
+  WRITE (fpinv,'(a)')'## Git-ID     '//TRIM(version(2))
+  WRITE (fpinv,'(a)')'## Compiler   '//TRIM(version(4))
+  WRITE (fpinv,'(a)')'## OS         '//TRIM(version(5))
   WRITE (fpinv,'(a)')'##'
-  WRITE (fpinv,'(a)')'## Created '//TRIM(version(3))
+  WRITE (fpinv,'(a)')'## Created  '//TRIM(version(3))
   WRITE (fpinv,'(a)')'##'
   WRITE (fpinv,'(a)')''
 

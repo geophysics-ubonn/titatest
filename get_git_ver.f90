@@ -2,7 +2,7 @@ MODULE get_ver
 
   IMPLICIT none
 
-  CHARACTER (256),PUBLIC  ::   version(4)
+  CHARACTER (256),PUBLIC  ::   version(5)
 
   PUBLIC :: get_git_ver
   
@@ -16,11 +16,13 @@ CONTAINS
   version(2)=TRIM(ADJUSTL(my_git_version(2)))
   version(3)=TRIM(ADJUSTL(my_git_version(3)))
   version(4)=TRIM(ADJUSTL(my_git_version(4)))
+  version(5)=TRIM(ADJUSTL(my_git_version(5)))
   
   PRINT*,'Git-Branch  ',TRIM(version(1))
   PRINT*,'Commit-ID   ',TRIM(version(2))
   PRINT*,'Created     ',TRIM(version(3))
   PRINT*,'Compiler    ',TRIM(version(4))
+  PRINT*,'OS          ',TRIM(version(5))
   
 END SUBROUTINE get_git_ver
 END MODULE get_ver
