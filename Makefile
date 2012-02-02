@@ -69,7 +69,6 @@ else
 	FFLAG90		+= -fopenmp
 endif
 
-
 ################################################################
 # default
 all:		$(C1) $(C2) $(PR1) $(PR2) $(PR3) $(PR4) install
