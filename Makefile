@@ -13,7 +13,7 @@ MV		= mv -f
 # gfortran								   #
 ############################################################################
 F90		= gfortran
-FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 ## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
@@ -60,8 +60,14 @@ OS		= $(shell uname -o)
 PREFIX		= $(BRANCH)
 DOC		= doxygen
 
-WPATH 		= $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')
-
+# query for OS dependant flags
+ifeq	($(OS), Msys)
+	WPATH 		= "C:\\MinGW\\bin"
+else
+	WPATH		= $${HOME}/bin
+	PREFIX		= $(BRANCH)_$(MACHINE)
+	FFLAG90		+= -fopenmp
+endif
 
 
 ################################################################
