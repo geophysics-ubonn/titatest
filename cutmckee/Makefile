@@ -6,7 +6,6 @@
 RM		= rm -f
 CP		= cp -f
 MV		= mv -f
-WPATH           = $(shell uname -o|awk '{if($$1 == "Msys"){print "C:\\MinGW\\bin"}else{print "~/bin"}}')
 
 F90		= gfortran
 F77		= gfortran
@@ -32,6 +31,14 @@ BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
 MACHINE		= $(shell uname -n)
 PREFIX		= $(BRANCH)
 
+# query for OS dependant flags
+ifeq    ($(OS), Msys)
+	WPATH           = "C:\\MinGW\\bin"
+else
+	WPATH           = $${HOME}/bin
+	PREFIX          = $(BRANCH)_$(MACHINE)
+endif
+					
 # default targets
 all:		$(PR1) install
 

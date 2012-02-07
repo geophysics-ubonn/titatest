@@ -2,7 +2,7 @@
 
 
 n_lines=`wc -l error.txt|awk '{printf("%d\n",$1/3)}'`
-echo "counted $n_lines error messages"
+echo "counted $n_lines CR exceptions"
 #n_lines=1
 let i=0
 let n=$n_lines
