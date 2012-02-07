@@ -418,8 +418,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      CALL write_noisemodel(iseed,nstabw0,nstabm0,&
           nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
      IF (errnr /= 0) GOTO 999
-  ELSE
-     PRINT*,'No Data noise!!'
   END IF
 
   nz = INT(lamfix)
