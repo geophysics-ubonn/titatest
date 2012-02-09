@@ -6,7 +6,6 @@
 RM		= rm -f
 CP		= cp -f
 MV		= mv -f
-WPATH 		= ~/bin
 
 ############################################################################
 # 			gfortran compiler flags 			   #
@@ -55,11 +54,19 @@ PR4		= minimal_prec
 # Minimalbeispiel OMP directives
 PR5		= minimal_omp
 
-BRANCH		= $$(git branch|awk '/\*/{print $$2}')
-MACHINE		= $$(uname -n)
-OS		= $$(uname -o)
-PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
+BRANCH		= $(shell git branch|awk '/\*/{print $$2}')
+MACHINE		= $(shell uname -n)
+OS		= $(shell uname -o)
+PREFIX		= $(BRANCH)
 DOC		= doxygen
+
+# query for OS dependant flags
+ifeq    ($(OS), Msys)
+	WPATH           = "C:\\MinGW\\bin"
+else
+	WPATH           = $${HOME}/bin
+	PREFIX          = $(BRANCH)_$(MACHINE)
+endif
 
 ################################################################
 # default
@@ -203,32 +210,34 @@ inv.o:		$(f90crt) $(f90crtsub) $(ggvo)
 minimalbeispiel.o:	tic_toc.o
 
 ###############################################################
-.SILENT:	cbn
+#.SILENT:	cbn
 ###################################
 LALIB:		./libla/%.f	
 		make -C libla
 
+install:	$(CRM)_$(PREFIX) $(CRM)_$(PREFIX)
+		$(CP) $(CRT)_$(PREFIX) $(WPATH)
+		$(CP) $(CRM)_$(PREFIX) $(WPATH)
+		cd ./cutmckee ; make install
+
 cbn:		
-		echo "Pruefe ~/bin"
-		if [ -d ~/bin ]; then \
+		echo "Pruefe $(WPATH)"
+		if [ -d $(WPATH) ]; then \
 			echo "ok"; \
 		else \
 			echo "Du hast kein bin in deinem home.--"; \
-			mkdir ~/bin; \
 		fi
 ggv:		
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRT) \
+		$(F90) $(FFLAG90) -o $(CRT)_$(PREFIX) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
-		$(CP) $(CRT) $(WPATH)/$(CRT)
+		$(CP) $(CRT)_$(PREFIX) $(WPATH)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRM) \
+		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
@@ -243,11 +252,6 @@ dox:
 		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
-install:	$(crt) $(crm) dox
-		$(CP) CRTomo $(WPATH)/CRTomo
-		$(CP) CRMod $(WPATH)/CRMod
-		cd ./cutmckee ; make install
-
 clean:		
-		$(RM) CRTomo CRMod *~ *.mod *.o my_git_version.h
+		$(RM) $(CRT)_$(PREFIX) $(CRM)_$(PREFIX) *~ *.mod *.o my_git_version.h
 		cd ./cutmckee ; make clean
