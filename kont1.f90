@@ -66,10 +66,10 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
      write(fpinv,'(a)',err=999) '***FILES***'
   END IF
 
-  write(fpinv,'(a)',err=999) TRIM(delem)
-  write(fpinv,'(a)',err=999) TRIM(delectr)
-  write(fpinv,'(a)',err=999) TRIM(dstrom)
-  write(fpinv,'(a)',err=999) TRIM(ramd)
+  write(fpinv,'(a)',err=999) TRIM(delem)//' # FEM grid'
+  write(fpinv,'(a)',err=999) TRIM(delectr)//' # Electrodes'
+  write(fpinv,'(a)',err=999) TRIM(dstrom)//' # Measurements'
+  write(fpinv,'(a)',err=999) TRIM(ramd)//' # Inversion results'
 !!!$     diff+<
   write(fpinv,10,err=999) ldiff.OR.lprior,&
        '! difference inversion or (m - m_{prior})'
