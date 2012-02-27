@@ -38,7 +38,7 @@ ifeq    ($(OS), Msys)
 	WPATH           = "C:\\MinGW\\bin"
 else
 	WPATH           = $${HOME}/bin
-	PREFIX          = $(BRANCH)_$(MACHINE)
+	PREFIX          = $(BRANCH)_$(MACHINE)_$(F90)
 endif
 					
 # default targets
