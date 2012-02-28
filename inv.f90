@@ -184,9 +184,6 @@ PROGRAM inv
      lfstep = .false.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
      
-     WRITE (*,'(//a,t100/)')ACHAR(13)//&
-          'WRITING STARTING MODEL'
-     CALL wout(kanal,dsigma,dvolt)
 !!!$   Kontrolldateien oeffnen
      errnr = 1
 
@@ -410,6 +407,10 @@ PROGRAM inv
 !!!$   tst        end if
 
 !!!$.............................
+
+     WRITE (*,'(/a,t100/)')ACHAR(13)//&
+          'WRITING STARTING MODEL'
+     CALL wout(kanal,dsigma,dvolt)
 
 !!!$   Kontrollvariablen ausgeben
         call kont2(lsetup.OR.lsetip)
