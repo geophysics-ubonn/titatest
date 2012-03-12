@@ -40,7 +40,7 @@ PROGRAM inv
   USE get_ver
 !!!$   USE portlib
 
-  IMPLICIT none
+  IMPLICIT NONE
 
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i,count,mythreads,maxthreads
@@ -69,11 +69,11 @@ PROGRAM inv
   WRITE (fprun,*)pid
   CLOSE (fprun)
   WRITE(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
-  
+
   CALL get_git_ver
 
   fetxt = 'crtomo.cfg'
-  open(fpcfg,file=TRIM(fetxt),status='old',err=999)
+  OPEN(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
   lagain=.TRUE. ! is set afterwards by user input file to false
 
@@ -83,12 +83,12 @@ PROGRAM inv
 
      errnr2 = 0
 !!!$   Benoetigte Variablen einlesen
-     call rall(kanal,delem,delectr,dstrom,drandb,&
+     CALL rall(kanal,delem,delectr,dstrom,drandb,&
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 !!!$   diff+<
 !!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
 !!!$   diff+>
-     if (errnr.ne.0) goto 999
+     IF (errnr.NE.0) GOTO 999
 
      NTHREADS = 1
 !!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
@@ -118,33 +118,33 @@ PROGRAM inv
      
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !!!$   zur Berechnung der gemischten Randbedingung bestimmen
-     call precal()
+     CALL precal()
 
-     if (errnr.ne.0) goto 999
+     IF (errnr.NE.0) GOTO 999
 
-     if (.not.lbeta) then
-        lsr = .false.
+     IF (.NOT.lbeta) THEN
+        lsr = .FALSE.
 
 !!!$   Ggf. Fehlermeldungen
-        if (.not.lsink) then
+        IF (.NOT.lsink) THEN
            fetxt = 'no mixed boundary specify sink node'
            errnr = 102
-        end if
+        END IF
 !!!$ RM this is handeled in rall..
 !!$        if (swrtr.eq.0.and..not.lrandb2) then
 !!$           fetxt = ' '
 !!$           errnr = 103
 !!$        end if
 
-        if (errnr.ne.0) goto 999
-     else
+        IF (errnr.NE.0) GOTO 999
+     ELSE
 
 !!!$   Ggf. Fehlermeldungen
-        if (swrtr.eq.0) then
+        IF (swrtr.EQ.0) THEN
            fetxt = ' '
            errnr = 106
-        end if
-     end if
+        END IF
+     END IF
 
 
 !!!$   getting dynamic memory 
@@ -176,19 +176,19 @@ PROGRAM inv
      fetxt = 'allocation problem fak'
      ALLOCATE (fak(sanz),STAT=errnr) ! fak for modeling
      IF (errnr /= 0) GOTO 999
-     if (ldc) then
+     IF (ldc) THEN
         fetxt = 'allocation problem sensdc'
         ALLOCATE (sensdc(nanz,manz),STAT=errnr)
         IF (errnr /= 0) GOTO 999
         fetxt = 'allocation problem kpotdc'
         ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=errnr)
-     else
+     ELSE
         fetxt = 'allocation problem sens'
         ALLOCATE (sens(nanz,manz),STAT=errnr)
         IF (errnr /= 0) GOTO 999
         fetxt = 'allocation problem kpot'
         ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=errnr)
-     end if
+     END IF
      IF (errnr /= 0) GOTO 999
 
 
@@ -198,57 +198,54 @@ PROGRAM inv
 
 
 !!!$ set starting model 
-     call bsigm0(kanal,dstart)
-     if (errnr.ne.0) goto 999
+     CALL bsigm0(kanal,dstart)
+     IF (errnr.NE.0) GOTO 999
 
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
      IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
-     lsetup = .true.; lsetip = .false.; lip    = .false.
-     llam   = .false.; ldlami = .true.; lstep  = .false.
-     lfstep = .false.; l_bsmat = .TRUE.
+     lsetup = .TRUE.; lsetip = .FALSE.; lip    = .FALSE.
+     llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
+     lfstep = .FALSE.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
-     
-     WRITE (*,'(//a,t100/)')ACHAR(13)//&
-          'WRITING STARTING MODEL'
-     CALL wout(kanal,dsigma,dvolt)
+
 !!!$   Kontrolldateien oeffnen
      errnr = 1
 
      fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-     open(fpinv,file=TRIM(fetxt),status='replace',err=999)
-     close(fpinv)
+     OPEN(fpinv,file=TRIM(fetxt),status='replace',err=999)
+     CLOSE(fpinv)
      fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-     open(fprun,file=TRIM(fetxt),status='replace',err=999)
+     OPEN(fprun,file=TRIM(fetxt),status='replace',err=999)
 !!!$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
      fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-     open(fpcjg,file=TRIM(fetxt),status='replace',err=999)
-     close(fpcjg)
+     OPEN(fpcjg,file=TRIM(fetxt),status='replace',err=999)
+     CLOSE(fpcjg)
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
-     open(fpeps,file=TRIM(fetxt),status='replace',err=999)
+     OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
      IF (ldc) THEN
         WRITE (fpeps,'(a)')'1/eps_r      datum'
-        WRITE (fpeps,'(G12.3,2x,G14.5)')(sqrt(wmatdr(i)),&
+        WRITE (fpeps,'(G12.3,2x,G14.5)')(SQRT(wmatdr(i)),&
              REAL(dat(i)),i=1,nanz)
      ELSE
         WRITE (fpeps,'(t7,a,t15,a,t25,a,t40,a)')'1/eps','1/eps_r',&
              '1/eps_p','datum (Re,Im)'
         WRITE (fpeps,'(3F10.1,2x,2G15.7)')&
-             (sqrt(wmatd(i)),sqrt(wmatdr(i)),sqrt(wmatdp(i)),REAL(dat(i)),&
+             (SQRT(wmatd(i)),SQRT(wmatdr(i)),SQRT(wmatdp(i)),REAL(dat(i)),&
              AIMAG(dat(i)),i=1,nanz)
      END IF
-     close(fpeps)
+     CLOSE(fpeps)
      errnr = 4
 
 !!!$   Kontrolldateien initialisieren
 !!!$   diff-        call kont1(delem,delectr,dstrom,drandb)
 !!!$   diff+<
-     call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
+     CALL kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 !!!$   diff+>
-     if (errnr.ne.0) goto 999
+     IF (errnr.NE.0) GOTO 999
 
 !!$     !$OMP PARALLEL
 !!$     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
@@ -264,14 +261,14 @@ PROGRAM inv
      DO WHILE (.NOT.converged) ! optimization loop
 
 !!!$   Control output
-        write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')ACHAR(13)//&
+        WRITE(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')ACHAR(13)//&
              ' Iteration ',it,', ',itr,' : Calculating Potentials',''
-        write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
+        WRITE(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 
 !!!$   MODELLING
         count = 0
-        if (ldc) then
+        IF (ldc) THEN
            fetxt = 'allocation problem adc'
            ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
@@ -288,58 +285,58 @@ PROGRAM inv
 !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count)           
 !$OMP DO 
 !!!$   DC CASE
-           do k=1,kwnanz
+           DO k=1,kwnanz
               !$OMP ATOMIC
               count = count + 1
               fetxt = 'DC-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
                    ACHAR(13)//TRIM(fetxt),count,''
-              do l=1,eanz
-                 if (lsr.or.lbeta.or.l.eq.1) then
+              DO l=1,eanz
+                 IF (lsr.OR.lbeta.OR.l.EQ.1) THEN
 !!!$   Evtl calculation of analytical potentials
-                    if (lsr) call potana(l,k,pota)
+                    IF (lsr) CALL potana(l,k,pota)
 
 !!!$   COMPilation of the linear system
                     fetxt = 'kompadc'
-                    call kompadc(l,k,adc,bdc)
+                    CALL kompadc(l,k,adc,bdc)
 !                    if (errnr.ne.0) goto 999
 
 !!!$   Evtl take Dirichlet boundary values into account
-                    if (lrandb) call randdc(adc,bdc)
-                    if (lrandb2) call randb2(adc,bdc)
+                    IF (lrandb) CALL randdc(adc,bdc)
+                    IF (lrandb2) CALL randb2(adc,bdc)
 
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
-                    call scaldc(adc,bdc,fak)
+                    CALL scaldc(adc,bdc,fak)
 !                    if (errnr.ne.0) goto 999
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
-                    call choldc(adc)
+                    CALL choldc(adc)
 !                    if (errnr.ne.0) goto 999
 
-                 else
+                 ELSE
                     fetxt = 'kompbdc'
 !!!$   Modification of the current vector (Right Hand Side)
-                    call kompbdc(l,bdc,fak)
-                 end if
+                    CALL kompbdc(l,bdc,fak)
+                 END IF
 
 !!!$   Solve linear system
                  fetxt = 'vredc'
-                 call vredc(adc,bdc,pot)
+                 CALL vredc(adc,bdc,pot)
 !!!$   Scale back the potentials, save them and 
 !!!$   eventually add the analytical response
-                 do j=1,sanz
-                    kpotdc(j,l,k) = dble(pot(j)) * fak(j)
-                    if (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
-                         dble(pota(j))
-                    if (swrtr.eq.0) hpotdc(j,l) = kpotdc(j,l,k)
-                 end do
-              end do
-           end do
+                 DO j=1,sanz
+                    kpotdc(j,l,k) = DBLE(pot(j)) * fak(j)
+                    IF (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
+                         DBLE(pota(j))
+                    IF (swrtr.EQ.0) hpotdc(j,l) = kpotdc(j,l,k)
+                 END DO
+              END DO
+           END DO
 !$OMP END DO
 !$OMP END PARALLEL
 
-        else
+        ELSE
 
            fetxt = 'allocation problem a'
            ALLOCATE (a((mb+1)*sanz),STAT=errnr)
@@ -356,93 +353,94 @@ PROGRAM inv
 !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
            !$OMP DO
 !!!$   COMPLEX CASE
-           do k=1,kwnanz
+           DO k=1,kwnanz
               !$OMP ATOMIC
               count = count + 1
               fetxt = 'IP-Calculation wavenumber'
               IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
                    ACHAR(13)//TRIM(fetxt),count,''
-              do l=1,eanz
-                 if (lsr.or.lbeta.or.l.eq.1) then
+              DO l=1,eanz
+                 IF (lsr.OR.lbeta.OR.l.EQ.1) THEN
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-                    if (lsr) call potana(l,k,pota)
+                    IF (lsr) CALL potana(l,k,pota)
 
 !!!$   KOMPilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
-                    call kompab(l,k,a,b)
+                    CALL kompab(l,k,a,b)
 !                    if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
-                    if (lrandb) call randb(a,b)
-                    if (lrandb2) call randbdc2(a,b)
+                    IF (lrandb) CALL randb(a,b)
+                    IF (lrandb2) CALL randbdc2(a,b)
 
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'
-                    call scalab(a,b,fak)
+                    CALL scalab(a,b,fak)
 !                    if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
                     fetxt = 'chol'
-                    call chol(a)
+                    CALL chol(a)
 !                    if (errnr.ne.0) goto 999
-                 else
+                 ELSE
 
 !!!$   Stromvektor modifizieren
                     fetxt = 'kompb'
-                    call kompb(l,b,fak)
+                    CALL kompb(l,b,fak)
 
-                 end if
+                 END IF
 
 !!!$   Gleichungssystem loesen
                  fetxt = 'vre'
-                 call vre(a,b,pot)
+                 CALL vre(a,b,pot)
 
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
-                 do j=1,sanz
+                 DO j=1,sanz
                     kpot(j,l,k) = pot(j) * dcmplx(fak(j))
-                    if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
-                    if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
-                 end do
-              end do
-           end do
+                    IF (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+                    IF (swrtr.EQ.0) hpot(j,l) = kpot(j,l,k)
+                 END DO
+              END DO
+           END DO
 !$OMP END DO
 !$OMP END PARALLEL
 
-        end if
+        END IF
 
 !!!$   Ggf. Ruecktransformation der Potentialwerte
-        if (swrtr.eq.1) call rtrafo()
-!!!$   Spannungswerte berechnen
-        call bvolti()
-        if (errnr.ne.0) goto 999
-!!$  free some memory..
-        if (ldc) then
-           DEALLOCATE(adc,hpotdc,bdc)
-        else
-           DEALLOCATE(a,hpot,b)
-        end if
+        IF (swrtr.EQ.1) CALL rtrafo()
 
-        if (lsetup.OR.lsetip) then
+!!!$   Spannungswerte berechnen
+        CALL bvolti()
+        IF (errnr.NE.0) GOTO 999
+!!$  free some memory..
+        IF (ldc) THEN
+           DEALLOCATE(adc,hpotdc,bdc)
+        ELSE
+           DEALLOCATE(a,hpot,b)
+        END IF
+
+        IF (lsetup.OR.lsetip) THEN
 !!!$   Ggf. background auf ratio-Daten "multiplizieren"
-           if (lratio) then
-              do j=1,nanz
+           IF (lratio) THEN
+              DO j=1,nanz
                  dat(j) = dat(j) + sigmaa(j)
-              end do
-           end if
+              END DO
+           END IF
 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup.OR.lsetip)
-        end if
+           CALL chkpol(lsetup.OR.lsetip)
+        END IF
 
 !!!$   Daten-RMS berechnen
-        call dmisft(lsetup.OR.lsetip)
+        CALL dmisft(lsetup.OR.lsetip)
 !        print*,nrmsd,betrms,pharms,lrobust,l1rat
-        if (errnr.ne.0) goto 999
+        IF (errnr.NE.0) GOTO 999
         WRITE (*,'(a,F8.3)',ADVANCE='no')'actual fit',nrmsd
 !!!$   'nrmsd=0' ausschliessen
-        if (nrmsd.lt.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
+        IF (nrmsd.LT.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
 !!!$   tst
 !!!$   tst        if (lfphai) then
@@ -451,29 +449,33 @@ PROGRAM inv
 !!!$   tst        end if
 
 !!!$.............................
-
+        IF (it == 0) THEN
+           WRITE (*,'(/a,t100/)')ACHAR(13)//&
+                'WRITING STARTING MODEL'
+           CALL wout(kanal,dsigma,dvolt)
+        END IF
 !!!$   Kontrollvariablen ausgeben
-        call kont2(lsetup.OR.lsetip)
-        if (errnr.ne.0) goto 999
+        CALL kont2(lsetup.OR.lsetip)
+        IF (errnr.NE.0) GOTO 999
 
 !!!$   ABBRUCHBEDINGUNGEN
-        if (llam.and..not.lstep) then
+        IF (llam.AND..NOT.lstep) THEN
            lamalt = lam 
 !!!$   Polaritaeten checken
-           call chkpol(lsetup.OR.lsetip)
+           CALL chkpol(lsetup.OR.lsetip)
 
 !!!$   Wiederholt minimale step-length ?
-           if (stpalt.eq.0d0) errnr2=92
+           IF (stpalt.EQ.0d0) errnr2=92
 
 !!!$   Keine Verbesserung des Daten-RMS ?
-           if (dabs(1d0-rmsalt/nrmsd).le.mqrms) errnr2=81
+           IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) errnr2=81
 
 !!!$   Minimaler Daten-RMS erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
-           if (dabs(1d0-nrmsd/nrmsdm).le.mqrms.and.ldlamf) errnr2=80
+           IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) errnr2=80
 
 !!!$   Maximale Anzahl an Iterationen ?
-           if (it.ge.itmax) errnr2=79
+           IF (it.GE.itmax) errnr2=79
 
 !!!$   Minimal stepsize erreicht ?
            IF (bdpar < bdmin) THEN
@@ -482,48 +484,48 @@ PROGRAM inv
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
-           if (errnr2.ne.0) then
-              if (lfphai.and.errnr2.ne.79) then
+           IF (errnr2.NE.0) THEN
+              IF (lfphai.AND.errnr2.NE.79) THEN
                  errnr2 = 0
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
-                 call wout(kanal,dsigma,dvolt)
-                 if (errnr.ne.0) goto 999
+                 CALL wout(kanal,dsigma,dvolt)
+                 IF (errnr.NE.0) GOTO 999
 
 !!!$   Kontrollausgaben
-                 write(*,'(/a/)')&
+                 WRITE(*,'(/a/)')&
                       '**** Final phase improvement ****'
 
-                 write(fprun,'(a24)',err=999)&
+                 WRITE(fprun,'(a24)',err=999)&
                       ' Final phase improvement'
 
                  fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-                 open(fpinv,file=TRIM(fetxt),status='old',&
+                 OPEN(fpinv,file=TRIM(fetxt),status='old',&
                       POSITION='append',err=999)
-                 write(fpinv,'(/a/)',err=999)&
+                 WRITE(fpinv,'(/a/)',err=999)&
                       '------------------------------------------------'//&
                       '------------------------------------------------'//&
                       '-----------------'
-                 close(fpinv)
+                 CLOSE(fpinv)
 
 !!!$   Wichtungsfeld umspeichern
                  wmatd = wmatdp
 
-                 lip    = .true.
-                 lsetip = .true. ! 
-                 lfphai = .false.
-                 llam   = .false.
-                 ldlami = .true.
-                 lfstep = .true.
+                 lip    = .TRUE.
+                 lsetip = .TRUE. ! 
+                 lfphai = .FALSE.
+                 llam   = .FALSE.
+                 ldlami = .TRUE.
+                 lfstep = .TRUE.
                  step   = 1d0
 
 !!!$   ak
                  fetxt = 'cp -f inv.lastmod inv.lastmod_rho'
                  CALL SYSTEM (TRIM(fetxt))
                  IF (lffhom) THEN
-                    write(*,*)&
+                    WRITE(*,*)&
                          ' ******* Restarting phase model ********'
-                    write(fprun,*)&
+                    WRITE(fprun,*)&
                          ' ******* Restarting phase model ********'
                     fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
                     OPEN (fpinv,file=TRIM(fetxt),status='old',err=999,&
@@ -531,38 +533,38 @@ PROGRAM inv
                     WRITE (fpinv,*)&
                          ' ******* Resetting phase model ********'
                     CLOSE (fpinv)
-                    do j=1,elanz
+                    DO j=1,elanz
                        sigma(j) = dcmplx(&
                             dcos(pha0/1d3)*cdabs(sigma(j)) ,&
                             -dsin(pha0/1d3)*cdabs(sigma(j)) )
-                    end do
+                    END DO
                     lsetup = .TRUE. ! ensure proper misfit and kont2 output
                     CYCLE       ! neues calc
-                    
+
                  END IF
 !!!$   ak
 
 !!!$   Daten-RMS berechnen
-                 call dmisft(lsetip)
-                 if (errnr.ne.0) goto 999
+                 CALL dmisft(lsetip)
+                 IF (errnr.NE.0) GOTO 999
 
 !!!$   Kontrollvariablen ausgeben
-                 call kont2(lsetip)
-                 if (errnr.ne.0) goto 999
-              else
+                 CALL kont2(lsetip)
+                 IF (errnr.NE.0) GOTO 999
+              ELSE
                  EXIT
-              end if
-           else
+              END IF
+           ELSE
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
 !!$              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
 !!$                   'WRITING MODEL ITERATE',it,''
-              call wout(kanal,dsigma,dvolt)
-              if (errnr.ne.0) goto 999
-           end if
-        end if
+              CALL wout(kanal,dsigma,dvolt)
+              IF (errnr.NE.0) GOTO 999
+           END IF
+        END IF
 
-        if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
+        IF ((llam.AND..NOT.lstep).OR.lsetup.OR.lsetip) THEN
 
 !!!$   Iterationsindex hochzaehlen
            it = it+1
@@ -572,7 +574,7 @@ PROGRAM inv
            rmsreg = 0d0
            dlam   = 1d0
            dlalt  = 1d0
-           ldlamf = .false.
+           ldlamf = .FALSE.
 
 !!!$   Daten-RMS speichern
            rmsalt = nrmsd
@@ -588,24 +590,24 @@ PROGRAM inv
            IF (lrobust) wmatd2 = wmatd
 
 !!!$   Kontrollausgaben
-           write (*,'(a,i3,a,i3,a,t63,a,t78,F8.3,t100,a)',ADVANCE='no') &
+           WRITE (*,'(a,i3,a,i3,a,t63,a,t78,F8.3,t100,a)',ADVANCE='no') &
                 ACHAR(13)//' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities','fit',nrmsd,''
 
-           write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
+           WRITE(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
 
 !!!$   SENSITIVITAETEN berechnen
-           if (ldc) then
-              call bsendc()
-           else
-              call bsensi()
-           end if
+           IF (ldc) THEN
+              CALL bsendc()
+           ELSE
+              CALL bsensi()
+           END IF
 
 !!!$   evtl   Rauhigkeitsmatrix belegen
            IF (l_bsmat) CALL bsmatm(it,l_bsmat) 
 
-        else
+        ELSE
 !!!$   Felder zuruecksetzen
            sigma = sigma2
 
@@ -613,44 +615,44 @@ PROGRAM inv
 
            IF (lrobust) wmatd = wmatd2
 
-        end if
+        END IF
         IF (itmax == 0) THEN ! only precalcs..
            errnr2 = 109
-           print*,'Only precalcs'
+           PRINT*,'Only precalcs'
            EXIT
         END IF
 
 !!!$   REGULARISIERUNG / STEP-LENGTH einstellen
-        if (.not.lstep) then
-           if (llam) then
+        IF (.NOT.lstep) THEN
+           IF (llam) THEN
 
 !!!$   "Regularisierungsschleife" initialisieren und step-length zuruecksetzen
-              llam = .false.
+              llam = .FALSE.
               step = 1d0
-           else
+           ELSE
 
 !!!$   Regularisierungsindex hochzaehlen
               itr = itr+1
-              if (((((nrmsd.lt.rmsreg.and.itr.le.nlam).or. &
-                   (dlam.gt.1d0.and.itr.le.nlam)).and.&
-                   (.not.ldlamf.or.dlalt.le.1d0).and.&
-                   dabs(1d0-rmsreg/nrmsdm).gt.mqrms).or.&
-                   (rmsreg.eq.0d0)).AND.&
-                   (bdpar >= bdmin)) then
+              IF (((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
+                   (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
+                   (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
+                   dabs(1d0-rmsreg/nrmsdm).GT.mqrms).OR.&
+                   (rmsreg.EQ.0d0)).AND.&
+                   (bdpar >= bdmin)) THEN
 !!!$   Regularisierungsparameter bestimmen
-                 if (lsetup.or.lsetip) then
+                 IF (lsetup.OR.lsetip) THEN
 
 !!!$   Kontrollausgabe
                     IF (llamf) THEN
                        lam = lamfix
                     ELSE
-                       write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
+                       WRITE(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
                             ACHAR(13)//' Iteration ',it,', ',itr,&
                             ' : Calculating 1st regularization parameter',''
-                       write(fprun,'(a,i3,a,i3,a)',ADVANCE='no')&
+                       WRITE(fprun,'(a,i3,a,i3,a)',ADVANCE='no')&
                             ' Iteration ',it,', ',itr,&
                             ' : Calculating 1st regularization parameter'
-                       call blam0()
+                       CALL blam0()
                        WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0:: ',lammax
                        WRITE (fprun,'(a,G10.2)')'lam_0 ',lammax
                        lam = lammax
@@ -658,102 +660,102 @@ PROGRAM inv
 !!!$   ak Model EGS2003, ERT2003                        lam = lammax
 !!!$   ak                        lam = 1d4
                     END IF
-                 else
+                 ELSE
                     IF (llamf) THEN
                        lam = lamfix
                     ELSE
                        dlalt = dlam
-                       if (ldlami) then
-                          ldlami = .false.
+                       IF (ldlami) THEN
+                          ldlami = .FALSE.
                           alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),&
                                dlog(1d0+mqrms))
                           dlam   = fstart
-                       else
+                       ELSE
                           alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
                           dlam = dlog(fstop)*&
-                               sign(1d0,dlog(nrmsd/nrmsdm))+&
+                               SIGN(1d0,dlog(nrmsd/nrmsdm))+&
                                dlog(fstart/fstop)*&
                                dlog(nrmsd/nrmsdm)/alam
                           dlam = dexp(dlam)
-                       end if
+                       END IF
                        lam = lam*dlam
-                       if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.
+                       IF (dlalt.GT.1d0.AND.dlam.LT.1d0) ldlamf=.TRUE.
 !!!$   tst                        if (dlam.gt.1d0) lfstep=.true.
 !!!$   ak Model EGS2003
-                       if (dlam.gt.1d0) lrobust=.false.
+                       IF (dlam.GT.1d0) lrobust=.FALSE.
                     END IF
-                 end if
-              else
+                 END IF
+              ELSE
 
 !!!$   Regularisierungsparameter zuruecksetzen und step-length verkleinern
-                 llam = .true.
+                 llam = .TRUE.
                  IF (llamf) THEN
                     lam = lamfix
                  ELSE
                     lam  = lam/dlam
                  END IF
-                 if (lfstep) then
-                    lfstep = .false.
-                 else
-                    lstep = .true.
+                 IF (lfstep) THEN
+                    lfstep = .FALSE.
+                 ELSE
+                    lstep = .TRUE.
                     step  = 5d-1
-                 end if
-              end if
+                 END IF
+              END IF
 
 !!!$   Ggf. Daten-RMS speichern
-              if (lsetup.or.lsetip) then
-                 lsetup = .false.
-                 lsetip = .false.
-              else
-                 if (.not.lstep) rmsreg=nrmsd
-              end if
-           end if
-        else
-           lstep = .false.
+              IF (lsetup.OR.lsetip) THEN
+                 lsetup = .FALSE.
+                 lsetip = .FALSE.
+              ELSE
+                 IF (.NOT.lstep) rmsreg=nrmsd
+              END IF
+           END IF
+        ELSE
+           lstep = .FALSE.
 
 !!!$   Parabolische Interpolation zur Bestimmung der optimalen step-length
-           call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
+           CALL parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
 
-           if (step.eq.stpmin.and.stpalt.eq.stpmin)then
+           IF (step.EQ.stpmin.AND.stpalt.EQ.stpmin)THEN
 
 !!!$   Nach naechstem Modelling abbrechen
               stpalt = 0d0
-           else
+           ELSE
 
 !!!$   Step-length speichern
               stpalt = step
-           end if
+           END IF
            itr = itr + 1
-        end if
+        END IF
 !!!$   Kontrollausgaben
-        write(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
+        WRITE(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
              ACHAR(13)//' Iteration ',it,', ',itr,&
              ' : Updating',''
 
-        write(fprun,*)' Iteration ',it,', ',itr,&
+        WRITE(fprun,*)' Iteration ',it,', ',itr,&
              ' : Updating'
 
 !!!$ Modell parameter mit aktuellen Leitfaehigkeiten belegen
         CALL bpar
-        if (errnr.ne.0) goto 999
+        IF (errnr.NE.0) GOTO 999
 
 !!!$   UPDATE anbringen
-        call update
-        if (errnr.ne.0) goto 999
+        CALL update
+        IF (errnr.NE.0) GOTO 999
 
 !!!$ Leitfaehigkeiten mit verbessertem Modell belegen
         CALL bsigma
-        if (errnr.ne.0) goto 999
+        IF (errnr.NE.0) GOTO 999
 
         IF (lverb) THEN
-           call wout_up(kanal,it,itr)
-           if (errnr.ne.0) goto 999
+           CALL wout_up(kanal,it,itr)
+           IF (errnr.NE.0) GOTO 999
         END IF
 !!!$   Roughness bestimmen
         CALL brough
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-        if (lsr) call refsig()
+        IF (lsr) CALL refsig()
 !!!$   Neues Modelling
      END DO ! DO WHILE (.not. converged)
 
@@ -762,63 +764,63 @@ PROGRAM inv
 !!!$   OUTPUT
      WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
           'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
-     call wout(kanal,dsigma,dvolt)
-     if (errnr.ne.0) goto 999
+     CALL wout(kanal,dsigma,dvolt)
+     IF (errnr.NE.0) GOTO 999
 
 !!!$   Kontrollausgaben
 
-     if (errnr2.eq.92) then
+     IF (errnr2.EQ.92) THEN
 
-        write(*,'(a22,a31)') ' Iteration terminated:',&
+        WRITE(*,'(a22,a31)') ' Iteration terminated:',&
              ' Min. step-length for 2nd time.'
 
-        write(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
+        WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
              ' Min. step-length for 2nd time.'
-     else if (errnr2.eq.80) then
-        write(*,'(a22,a10)') ' Iteration terminated:', &
+     ELSE IF (errnr2.EQ.80) THEN
+        WRITE(*,'(a22,a10)') ' Iteration terminated:', &
              ' Min. RMS.'
 
-        write(fprun,'(a22,a10)',err=999) ' Iteration terminated:',&
+        WRITE(fprun,'(a22,a10)',err=999) ' Iteration terminated:',&
              ' Min. RMS.'
-     else if (errnr2.eq.81) then
-        write(*,'(a22,a24)') ' Iteration terminated:',&
+     ELSE IF (errnr2.EQ.81) THEN
+        WRITE(*,'(a22,a24)') ' Iteration terminated:',&
              ' Min. rel. RMS decrease.'
 
-        write(fprun,'(a22,a24)',err=999) ' Iteration terminated:',&
+        WRITE(fprun,'(a22,a24)',err=999) ' Iteration terminated:',&
              ' Min. rel. RMS decrease.'
-     else if (errnr2.eq.79) then
-        write(*,'(a22,a19)') ' Iteration terminated:',&
+     ELSE IF (errnr2.EQ.79) THEN
+        WRITE(*,'(a22,a19)') ' Iteration terminated:',&
              ' Max. # iterations.'
 
-        write(fprun,'(a22,a19)',err=999) ' Iteration terminated:',&
+        WRITE(fprun,'(a22,a19)',err=999) ' Iteration terminated:',&
              ' Max. # iterations.'
 
-     else if (errnr2.eq.109) then
-        write(*,'(a)') ' Iteration terminated:'//&
+     ELSE IF (errnr2.EQ.109) THEN
+        WRITE(*,'(a)') ' Iteration terminated:'//&
              ' Min. model changes reached'
 
-        write(fprun,'(a)',err=999) ' Iteration terminated:'//&
+        WRITE(fprun,'(a)',err=999) ' Iteration terminated:'//&
              ' Min. model changes reached'
 
-     end if
+     END IF
 
 !!!$   Run-time abfragen und ausgeben
      fetxt = ' CPU time: '
      CALL toc(c1,fetxt)
 !!$     PRINT*,''
 !!$     PRINT*,''
-     write(fprun,'(a)',err=999)TRIM(fetxt)
+     WRITE(fprun,'(a)',err=999)TRIM(fetxt)
 
 !!!$   Kontrolldateien schliessen
-     close(fpinv)
-     close(fpcjg)
-     close(fpeps)
+     CLOSE(fpinv)
+     CLOSE(fpcjg)
+     CLOSE(fpeps)
 
 !!!$   Ggf. Summe der Sensitivitaeten aller Messungen ausgeben
-     if (lsens) then
+     IF (lsens) THEN
         CALL BBSENS(kanal,dsens)
-        if (errnr.ne.0) goto 999
-     end if
+        IF (errnr.NE.0) GOTO 999
+     END IF
 
      IF (lvario) CALL bvariogram ! calculate experimental variogram
 
@@ -828,14 +830,14 @@ PROGRAM inv
      IF (errnr /= 0) GOTO 999
 
 !!!$   'sens' und 'pot' freigeben
-     if (ldc) then
+     IF (ldc) THEN
         fetxt = 'allocation sensdc'
         DEALLOCATE (sensdc)
         fetxt = 'allocation koptdc'
         DEALLOCATE (kpotdc)
-     else
+     ELSE
         DEALLOCATE(sens,kpot)
-     end if
+     END IF
 
      fetxt = 'allocation smatm'
      IF (ALLOCATED (smatm)) DEALLOCATE (smatm)
@@ -890,13 +892,13 @@ PROGRAM inv
      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
-     close(fprun)
+     CLOSE(fprun)
 
 !!!$   Ggf. weiteren Datensatz invertieren
   END DO
 
 !!!$   'crtomo.cfg' schliessen
-  close (fpcfg)
+  CLOSE (fpcfg)
 
 !!!$ crtomo.pid löschen
   fetxt = 'crtomo.pid'
@@ -908,19 +910,19 @@ PROGRAM inv
   OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
   WRITE (fpinv,'(a)')'***finished***'
   CLOSE(fpinv)
-  stop '0'
+  STOP '0'
 
 !!!$.....................................................................
 
 !!!$   Fehlermeldung
-999 open(fperr,file='error.dat',status='replace')
+999 OPEN(fperr,file='error.dat',status='replace')
   errflag = 2
   CALL get_error(ftext,errnr,errflag,fetxt)
-  write(fperr,*) 'CRTomo PID ',pid,' exited abnormally'
-  write(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
-  write(fperr,*)ftext
-  close(fperr)
+  WRITE(fperr,*) 'CRTomo PID ',pid,' exited abnormally'
+  WRITE(fperr,'(a80,i3,i1)') fetxt,errnr,errflag
+  WRITE(fperr,*)ftext
+  CLOSE(fperr)
 
   STOP '-1'
 
-end program inv
+END PROGRAM inv

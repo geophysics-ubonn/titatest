@@ -2,8 +2,8 @@
 *.mod
 CRMod*
 CRTomo*
-minimal*
-mini_*
+CutMcK*
+minimal_*
 forfiles
 *.h
 cutmckee/crerror.h
@@ -22,3 +22,6 @@ cutmckee/crerror.h
 doxy.inp
 html
 latex
+inv.lastmod*
+inv.el*
+*/inv/*
