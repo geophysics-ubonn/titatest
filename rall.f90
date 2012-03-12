@@ -490,7 +490,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
-  lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
+  lsytop = BTEST (mswitch,8) ! +256 disables sy top check of 
   !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
   !     This is useful for including topographical effects and should be used
 
