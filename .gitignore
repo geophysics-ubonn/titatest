@@ -3,7 +3,7 @@
 CRMod*
 CRTomo*
 CutMcK*
-mini_*
+minimal_*
 forfiles
 *.h
 cutmckee/crerror.h
