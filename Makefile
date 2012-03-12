@@ -13,7 +13,7 @@ MV		= mv -f
 # gfortran								   #
 ############################################################################
 F90		= gfortran
-FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 ## Only un-comment for debug purpose
 #FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 #FFLAG90         = -g -fbounds-check -Wuninitialized -O -ftrapv \
@@ -66,6 +66,7 @@ ifeq    ($(OS), Msys)
 else
 	WPATH           = $${HOME}/bin
 	PREFIX          = $(BRANCH)_$(MACHINE)_$(F90)
+	FFLAG90		+= -fopenmp
 endif
 
 ################################################################
