@@ -78,6 +78,12 @@ subroutine rdati(kanal,datei)
 
   elec3=elec1-10000 ! are we still positive?
   crtf=(elec3 > 0) ! crtomo konform?
+  IF (crtf) THEN
+     PRINT*,'+ CRTomo conform data format'
+  ELSE
+     PRINT*,'+ NO CRTomo conform data format'
+     print*,elec1,elec3
+  END IF
 
   ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
        kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),&
