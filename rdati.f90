@@ -40,7 +40,7 @@ subroutine rdati(kanal,datei)
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
 !!!$     Betrag und Phase (in mrad) der Daten
-  REAL(KIND(0D0))     ::     bet,pha
+  REAL(KIND(0D0))     ::     bet,pha,new_bet,new_pha
 
 !!!$     Standardabweichung eines logarithmierten (!) Datums
   REAL(KIND(0D0))      ::     stabw
@@ -236,6 +236,9 @@ subroutine rdati(kanal,datei)
 
            WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')rnd_r(i),eps_r,bet
 
+! initialize
+           new_pha = pha; new_bet = bet
+
            IF (.NOT. ldc) THEN
 
               eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*dabs(pha) &
@@ -245,39 +248,36 @@ subroutine rdati(kanal,datei)
               
               WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
 
-              pha = pha + rnd_p(i) * eps_p ! add noise
+              new_pha = pha + rnd_p(i) * eps_p ! add noise
 
-              WRITE(ifp2,'(G14.4)')pha
-           IF (pha > 0.0) THEN
+              WRITE(ifp2,'(G14.4)')new_pha
+              IF (SIGN(pha,new_pha) /= SIGN(pha,pha)) THEN
+                 
+                 fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
+                 errnr = 57
+                 GOTO 1000
+                 
+              END IF
+           END IF
+           
+           new_bet = bet + rnd_r(i) * eps_r ! add noise
 
-              fetxt = '-- check noise parameters (Phase > 0)'
+           WRITE(ifp1,'(G14.4)')new_bet
+
+
+           IF (SIGN(bet,new_bet) /= SIGN(bet,bet)) THEN
+
+              fetxt = '-- check noise parameters in crt.noisemod (Magnitude < 0)'
               errnr = 57
               GOTO 1000
 
            END IF
-           END IF
 
-           bet = bet + rnd_r(i) * eps_r ! add noise
+! assign the noised values
+           bet = new_bet;pha = new_pha
 
-           WRITE(ifp1,'(G14.4)')bet
            ! write out full noisy data as measured voltages..
            WRITE (ifp3,*)strnr(i),vnr(i),bet,pha
-
-           IF (bet < 0.0) THEN
-
-              fetxt = '-- check noise parameters (Magnitude < 0)'
-              errnr = 57
-              GOTO 1000
-
-           END IF
-
-           IF (pha > 0.0 .AND. .NOT.ldc) THEN
-
-              fetxt = '-- check noise parameters (Phase > 0)'
-              errnr = 57
-              GOTO 1000
-
-           END IF
 
         END IF
 
