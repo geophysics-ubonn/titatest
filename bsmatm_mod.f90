@@ -156,7 +156,7 @@ CONTAINS
     REAL(KIND(0D0)) :: csensavg !mean coverage value
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-    csens=0. ! csens was already allocated (low dimensional) in bsmatm 
+    csens=0d0 ! csens was already allocated (low dimensional) in bsmatm 
 
     !$OMP PARALLEL DEFAULT (none) &
     !$OMP SHARED (csens,wmatd,sens,sensdc,wdfak,lip,ldc,manz,nanz) &
@@ -507,21 +507,20 @@ CONTAINS
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
     REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
     REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
 !!!$.....................................................................
 
     errnr = 4
-    
+
     CALL bcsens(csensmax,csensavg)
 
     IF (csensmax > 1d-12) THEN
        csens = csens / csensmax
     END IF
 
-    WRITE(*,*) 'dum csensavg',dum,csensavg
+    PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
 
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),&
-         STAT=errnr)
+    errnr = 0
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
 
     IF (errnr/=0) THEN
        fetxt = 'Allocation problem WORK in bmcm'
@@ -529,6 +528,8 @@ CONTAINS
        errnr = 97
        RETURN
     END IF
+
+    errnr = 4
 
     smatm = 0d0               ! initialize smatm
 
