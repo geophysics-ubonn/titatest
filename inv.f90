@@ -68,7 +68,8 @@ PROGRAM inv
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (fprun,*)pid
   CLOSE (fprun)
-  WRITE(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+  maxthreads = OMP_GET_MAX_THREADS()
+  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
   CALL get_git_ver
 
@@ -80,7 +81,6 @@ PROGRAM inv
 !!!$   Allgemeine Parameter setzen
   DO WHILE ( lagain ) ! this loop exits after all files are processed
 
-
      errnr2 = 0
 !!!$   Benoetigte Variablen einlesen
      CALL rall(kanal,delem,delectr,dstrom,drandb,&
@@ -90,9 +90,8 @@ PROGRAM inv
 !!!$   diff+>
      IF (errnr.NE.0) GOTO 999
 
-     NTHREADS = 1
+     NTHREADS = maxthreads
 !!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
-     maxthreads = OMP_GET_MAX_THREADS()
      IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
         mythreads = kwnanz
         PRINT*,'Rescheduling..'
@@ -599,9 +598,9 @@ PROGRAM inv
 
 !!!$   SENSITIVITAETEN berechnen
            IF (ldc) THEN
-              CALL bsendc()
+              CALL bsendc((it==0))
            ELSE
-              CALL bsensi()
+              CALL bsensi((it==0))
            END IF
 
 !!!$   evtl   Rauhigkeitsmatrix belegen

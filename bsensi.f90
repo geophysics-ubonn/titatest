@@ -1,4 +1,4 @@
-subroutine bsensi()
+subroutine bsensi(tictoc)
 
 !!!$     Unterprogramm zur Berechnung der Sensitivitaeten.
 
@@ -23,7 +23,7 @@ subroutine bsensi()
   IMPLICIT none
 
 !!!$.....................................................................
-
+  LOGICAL :: tictoc
 !!!$     PROGRAMMINTERNE PARAMETER:
   INTEGER,PARAMETER :: ntd=2
 !!!$     Aktuelle Elementnummer
@@ -66,7 +66,7 @@ subroutine bsensi()
      RETURN
   END IF
 
-  CALL tic(c1)
+  IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
   sens = 0.
   count = 0
@@ -164,7 +164,7 @@ subroutine bsensi()
   end do
   !$OMP END PARALLEL
   fetxt = 'bsensi::'
-  CALL toc(c1,fetxt)
+  IF (tictoc) CALL toc(c1,fetxt)
 
   DEALLOCATE (hsens)
 

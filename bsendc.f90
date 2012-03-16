@@ -1,4 +1,4 @@
-subroutine bsendc()
+subroutine bsendc(tictoc)
 
 !!!$     Unterprogramm zur Berechnung der Sensitivitaeten.
 
@@ -23,6 +23,8 @@ subroutine bsendc()
   IMPLICIT none
 
 !!!$.....................................................................
+
+  LOGICAL  :: tictoc ! measure calculation time
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
@@ -67,7 +69,7 @@ subroutine bsendc()
      RETURN
   END IF
 
-  CALL tic (c1)
+  IF (tictoc) CALL tic (c1)
 
 !!!$     Sensitivitaetenfeld auf Null setzen
   sensdc = 0D0
@@ -171,8 +173,9 @@ subroutine bsendc()
      end do ! ityp=1,typanz
   end do ! i=1,nanz
   !$OMP END PARALLEL
+
   fetxt = 'bsendc::'
-  CALL toc(c1,fetxt)
+  IF (tictoc) CALL toc(c1,fetxt)
 
   DEALLOCATE (hsens)
   
