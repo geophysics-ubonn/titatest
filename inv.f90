@@ -93,7 +93,7 @@ PROGRAM inv
      NTHREADS = maxthreads
 !!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
      IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
-        mythreads = kwnanz
+        mythreads = MAX(kwnanz,2)
         PRINT*,'Rescheduling..'
         IF ( mythreads <= maxthreads ) THEN ! best case,
 !!!$ the number of processors is greater or equal the assumed
