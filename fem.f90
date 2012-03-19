@@ -142,8 +142,12 @@ program fem
 101 lana = BTEST(mswitch,0)
   wkfak = BTEST(mswitch,1)
   lsr = BTEST(mswitch,2)
+  lverb = BTEST(mswitch,5)
 
-
+  IF (lana) PRINT*,'ANALYTICAL SOLUTION'
+  IF (wkfak) PRINT*,'WITH K-FAKTOR'
+  IF (lana) PRINT*,'WITH SINGULARITY REMOVAL'
+  IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
 !!!$   Alles einlesen
   call relem(kanal,delem)
@@ -288,7 +292,7 @@ program fem
      end do
   end do
   !$OMP END PARALLEL
-  print*,''
+  print*,'done, now processing'
 !!!$   Ggf. Ruecktransformation der Potentialwerte
   if (swrtr.eq.1) call rtrafo()
 
