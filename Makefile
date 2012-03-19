@@ -234,6 +234,7 @@ crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) ggv
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) ggv
 		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
+		$(CP) $(CRM)_$(PREFIX) $(WPATH)
 
 ctm:		
 		cd ./cutmckee ; make
