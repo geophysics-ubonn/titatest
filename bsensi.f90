@@ -1,4 +1,4 @@
-subroutine bsensi(tictoc)
+SUBROUTINE bsensi(tictoc)
 
 !!!$     Unterprogramm zur Berechnung der Sensitivitaeten.
 
@@ -20,7 +20,7 @@ subroutine bsensi(tictoc)
   USE ompmod
   USE tic_toc
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 !!!$.....................................................................
   LOGICAL :: tictoc
@@ -43,7 +43,7 @@ subroutine bsensi(tictoc)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  ::     i,j,k,count
+  INTEGER (KIND = 4)  ::     i,j,k,icount
 
 !!!$     Hilfsfeld
   COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
@@ -68,55 +68,60 @@ subroutine bsensi(tictoc)
 
   IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
-  sens = 0.
-  count = 0
-  !$OMP PARALLEL DEFAULT (SHARED) &
+  sens = DCMPLX(0d0)
+
+  icount = 0
+  !$OMP PARALLEL DEFAULT (none) &
   !$OMP FIRSTPRIVATE (hsens) &
-  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,ntyp,jnel,nkel,nzp,nnp,imax,dum)
+  !$OMP SHARED (icount,strnr,vnr,typanz,typ,selanz,kwnanz,lverb,sigma,&
+  !$OMP nrel,kpot,elbg,strom,kwnwi,pi,mnr,nanz,swrtr,nelanz,volt,sens) &
+  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,imin,imn,&
+  !$OMP ntyp,jnel,nkel,nzp,nnp,imax,dum)
   !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 !!!$     Messwert hochzaehlen
-  do i=1,nanz
+  DO i=1,nanz
      iel = 0
-     !$OMP ATOMIC
-     count = count + 1
 
-     IF (lverb) write(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
-          'Sensitivity/ ',REAL( count * (100./nanz)),'%'
+     !$OMP ATOMIC
+     icount = icount + 1
+
+     IF (lverb) WRITE(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
+          'Sensitivity/ ',REAL(icount)/REAL(nanz) * 100.,'%'
 
 !!!$     Stromelektroden bestimmen
-     elec1 = mod(strnr(i),10000)
+     elec1 = MOD(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
 !!!$     Messelektroden bestimmen
-     elec3 = mod(vnr(i),10000)
+     elec3 = MOD(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     do j=1,4
+     DO j=1,4
         sup(j) = dcmplx(0d0)
-     end do
+     END DO
 
-     do ityp=1,typanz
+     DO ityp=1,typanz
         ntyp = typ(ityp)
         nkel = selanz(ityp)
 
 !!!$     Ggf. zu neuem Messwert springen
-        if (ntyp.gt.10) CYCLE
+        IF (ntyp.GT.10) CYCLE
 
-        do jnel=1,nelanz(ityp)
+        DO jnel=1,nelanz(ityp)
 
 !!!$     Elementnummer hochzaehlen
            iel = iel + 1
 
 !!!$     SENSITIVITAETEN BERECHNEN
-           do k=1,kwnanz
+           DO k=1,kwnanz
               hsens(k) = dcmplx(0d0)
 
 !!!$     Knoten des aktuellen Elements hochzaehlen
-              do mi=1,nkel
+              DO mi=1,nkel
                  nzp = nrel(iel,mi)
 
-                 do mj=1,nkel
+                 DO mj=1,nkel
                     nnp  = nrel(iel,mj)
                     imax = max0(mi,mj)
                     imin = min0(mi,mj)
@@ -126,10 +131,10 @@ subroutine bsensi(tictoc)
 !!!$     superponieren
 !!!$     (beachte: 'volt = pot(elec4) - pot(elec3)' ,
 !!!$     '+I' bei 'elec2', '-I' bei 'elec1' )
-                    if (elec1.gt.0) sup(1) = kpot(nnp,elec1,k)
-                    if (elec2.gt.0) sup(2) = kpot(nnp,elec2,k)
-                    if (elec3.gt.0) sup(3) = kpot(nzp,elec3,k)
-                    if (elec4.gt.0) sup(4) = kpot(nzp,elec4,k)
+                    IF (elec1.GT.0) sup(1) = kpot(nnp,elec1,k)
+                    IF (elec2.GT.0) sup(2) = kpot(nnp,elec2,k)
+                    IF (elec3.GT.0) sup(3) = kpot(nzp,elec3,k)
+                    IF (elec4.GT.0) sup(4) = kpot(nzp,elec4,k)
 
 !!!$     ACHTUNG: Bei grossen Quellabstaenden UNDERFLOW moeglich, da einzelnen
 !!!$     Potentiale sehr klein (vor allem bei grossen Wellenzahlen)!
@@ -138,34 +143,34 @@ subroutine bsensi(tictoc)
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
                     hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k))* dum
 
-                 end do
-              end do
-           end do
+                 END DO
+              END DO
+           END DO
 !!!$     GGF. RUECKTRANSFORMATION
-           if (swrtr.eq.0) then
+           IF (swrtr.EQ.0) THEN
 
               dum = hsens(1)
 
-           else
+           ELSE
 
               dum = dcmplx(0d0)
 
-              do k=1,kwnanz
+              DO k=1,kwnanz
                  dum = dum + hsens(k)*dcmplx(kwnwi(k))
-              end do
+              END DO
 
               dum = dum / dcmplx(pi)
 
-           end if
+           END IF
 !!!$     hier koennte auch eine mittelung passieren
            sens(i,mnr(iel)) = sens(i,mnr(iel)) + dum * sigma(iel)/volt(i)
-        end do
-     end do
-  end do
+        END DO
+     END DO
+  END DO
   !$OMP END PARALLEL
   fetxt = 'bsensi::'
   IF (tictoc) CALL toc(c1,fetxt)
 
   DEALLOCATE (hsens)
 
-end subroutine bsensi
+END SUBROUTINE bsensi

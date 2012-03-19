@@ -65,7 +65,7 @@ program fem
   INTEGER :: count
 
   character       *256    ftext
-  INTEGER :: getpid,pid
+  INTEGER :: getpid,pid,maxthreads,mythreads
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -76,6 +76,9 @@ program fem
   OPEN (kanal,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (kanal,*)pid
   CLOSE (kanal)
+
+  maxthreads = OMP_GET_MAX_THREADS()
+  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
   CALL get_git_ver
 
@@ -146,7 +149,12 @@ program fem
 
   IF (lana) PRINT*,'ANALYTICAL SOLUTION'
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
-  IF (lana) PRINT*,'WITH SINGULARITY REMOVAL'
+  IF (lsr) THEN
+     PRINT*,'WITH SINGULARITY REMOVAL'
+     lana = .FALSE. ! analytical is indeed controlled by lsr and not lana..
+  END IF
+  lsr = lana
+
   IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
 !!!$   Alles einlesen
@@ -176,13 +184,31 @@ program fem
      if (errnr.ne.0) goto 999
   end if
   print*,''
-  IF (wkfak) PRINT*,'Modelling with K-Faktor!'
-  IF (lana) PRINT*,'Analytical solution only'
-  IF (lsr) THEN
-     PRINT*,'Singularity removal'
-     lana = .false.
+  NTHREADS = maxthreads
+!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
+  IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
+     mythreads = MAX(kwnanz,2)
+     mythreads = kwnanz
+     PRINT*,'Rescheduling..'
+     IF ( mythreads <= maxthreads ) THEN ! best case,
+!!!$ the number of processors is greater or equal the assumed
+!!!$ workload
+        PRINT*,'perfect match'
+     ELSE 
+!!!$ is smaller than the minimum workload.. now we have to devide a bit..
+        PRINT*,'less nodes than wavenumbers'
+        DO k = 1, INT(kwnanz/2)
+           mythreads = INT(kwnanz / k) + 1
+           IF (mythreads < maxthreads) EXIT
+        END DO
+     END IF
+     NTHREADS = mythreads
   END IF
-  lsr = lana
+  CALL OMP_SET_NUM_THREADS ( NTHREADS )
+  ! recheck ..
+  k = OMP_GET_MAX_THREADS()
+  WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",k,'(',maxthreads,')'
+  print*
 !!!$   Startmodell belegen
   ALLOCATE (sigma(elanz),stat=errnr)
   IF (errnr /= 0) THEN
@@ -255,7 +281,7 @@ program fem
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
-!           if (errnr.ne.0) goto 999
+           !           if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
            if (lrandb) call randb(a,b)
@@ -263,11 +289,11 @@ program fem
 
 !!!$   Gleichungssystem skalieren
            call scalab(a,b,fak)
-!           if (errnr.ne.0) goto 999
+           !           if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
            call chol(a)
-!           if (errnr.ne.0) goto 999
+           !           if (errnr.ne.0) goto 999
         else
 
 !!!$   Stromvektor modifizieren

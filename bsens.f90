@@ -81,7 +81,7 @@ subroutine bsens()
   do i=1,nanz
      iel = 0
      
-     !OMP ATOMIC
+     !OMP CRITICAL
      icount = icount + 1
 
 !!!$     Kontrollausgabe
@@ -97,7 +97,7 @@ subroutine bsens()
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     sup = 0.
+     sup = DCMPLX(0d0)
 
      do ityp=1,typanz
         ntyp = typ(ityp)
