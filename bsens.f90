@@ -16,6 +16,7 @@ subroutine bsens()
   USE wavenmod
   USE errmod
   USE konvmod , ONLY : lverb
+  USE ompmod
   IMPLICIT none
 
 !!!$.....................................................................
@@ -51,6 +52,9 @@ subroutine bsens()
 !!!$     Pi
   REAL (KIND(0D0))    ::  pi
 
+!!!$ OMP zaehler
+  INTEGER (KIND = 4) ::  icount
+
 !!!$.....................................................................
 
   pi = dacos(-1d0)
@@ -62,17 +66,27 @@ subroutine bsens()
      RETURN
   END IF
 !!!$     Sensitivitaetenfeld auf Null setzen
-  sens = 0.
+  sens = 0d0
+  icount = 0
 
-  !$OMP PARALLEL DEFAULT(SHARED) FIRSTPRIVATE(hsens)
-  !$OMP DO SCHEDULE(STATIC)
+  !$OMP PARALLEL DEFAULT(none) &
+  !$OMP FIRSTPRIVATE(hsens) &
+  !$OMP SHARED (icount,strnr,vnr,typanz,typ,selanz,kwnanz,lverb,&
+  !$OMP nrel,kpot,elbg,strom,kwnwi,pi,mnr,nanz,swrtr,nelanz,sens) &
+  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,imin,imn,&
+  !$OMP ntyp,jnel,nkel,nzp,nnp,imax,dum)
+  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+
 !!!$     Messwert hochzaehlen
   do i=1,nanz
      iel = 0
+     
+     !OMP ATOMIC
+     icount = icount + 1
 
 !!!$     Kontrollausgabe
-     IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-          'Sensitivity/ ',REAL( i * (100./nanz)),'%'
+     IF (lverb) write(*,'(a,t70,F10.2,A)',advance='no')ACHAR(13)//&
+          'Sensitivity/ ',REAL(icount)/REAL(nanz) * 100. ,' %'
 
 !!!$     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
