@@ -29,7 +29,6 @@ subroutine randbdc2(my_a,my_b)
 !!!$     Hilfsvariablen
   INTEGER(KIND = 4)   ::     m1
   REAL(KIND(0D0))     ::     rwertdc
-  COMPLEX(KIND(0D0))  ::     rwert
 
 !!!$     Indexvariablen
   INTEGER(KIND = 4)   ::     ir,i,j,k,idk,ia,ki,ji

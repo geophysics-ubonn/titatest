@@ -302,7 +302,7 @@ PROGRAM inv
 
 !!!$   Evtl take Dirichlet boundary values into account
                     IF (lrandb) CALL randdc(adc,bdc)
-                    IF (lrandb2) CALL randb2(adc,bdc)
+                    IF (lrandb2) CALL randbdc2(adc,bdc)
 
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
@@ -371,7 +371,7 @@ PROGRAM inv
 
 !!!$   Ggf. Randbedingung beruecksichtigen
                     IF (lrandb) CALL randb(a,b)
-                    IF (lrandb2) CALL randbdc2(a,b)
+                    IF (lrandb2) CALL randb2(a,b)
 
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'
