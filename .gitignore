@@ -2,12 +2,13 @@
 *.mod
 CRMod*
 CRTomo*
+CutMcK*
 mini_*
 minimal_*
 minimal
 forfiles
 my_git_version.h
-cutmckee/crerror.h
+crerror.h
 *.mod
 *#
 .#*
@@ -23,3 +24,6 @@ cutmckee/crerror.h
 doxy.inp
 html
 latex
+inv.lastmod*
+inv.el*
+*/inv/*

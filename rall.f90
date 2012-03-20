@@ -416,8 +416,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      CALL write_noisemodel(iseed,nstabw0,nstabm0,&
           nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
      IF (errnr /= 0) GOTO 999
-  ELSE
-     PRINT*,'No Data noise!!'
   END IF
 
   nz = INT(lamfix)
@@ -492,7 +490,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
-  lsytop = .NOT.BTEST (mswitch,8) ! +256 disables sy top check of 
+  lsytop = BTEST (mswitch,8) ! +256 disables sy top check of 
   !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
   !     This is useful for including topographical effects and should be used
 
