@@ -45,7 +45,7 @@ subroutine dmisft(lsetup)
   fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
   OPEN(fprun,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
   errnr = 4
-11 FORMAT (G12.3,2x,F10.6,2x,I3,2X,2G15.7)
+11 FORMAT (G12.3,2x,F10.6,2x,I3,2X,2('('2(1X,G15.7)')'))
   if ((llam.and..not.lstep).or.lsetup) then
      IF (lip) THEN
         write(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
@@ -53,7 +53,7 @@ subroutine dmisft(lsetup)
         write(fpeps,'(/a,t7,I4)',err=1000)'IT#',it
      END IF
      write(fpeps,'(t8,a,t18,a,t27,a,t35,a,t50,a)',err=1000)&
-          'eps','psi','pol','Re(f(m))','Im(f(m))'
+          'eps','psi','pol','Re( d, f(m) )','Im( d, f(m) )'
   end if
 
 !!!$     RMS-WERTE BERECHNEN
@@ -97,7 +97,7 @@ subroutine dmisft(lsetup)
 !!!$     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
      if ((llam.and..not.lstep).or.lsetup) &
           write(fpeps,11,err=1000) real(1d0/dsqrt(wmatd(i))),&
-          real(psi(i)),wdlok(i),REAL(csig),AIMAG(csig)
+          real(psi(i)),wdlok(i),REAL(csig),REAL(cdat),AIMAG(cdat),AIMAG(csig)
 
      idum   = idum   + wdlok(i)
      nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
