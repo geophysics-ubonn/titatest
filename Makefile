@@ -204,9 +204,9 @@ minimalbeispiel.o:	tic_toc.o
 LALIB:		./libla/%.f	
 		make -C libla
 
-install:	$(CRM)_$(PREFIX) $(CRM)_$(PREFIX)
-		$(CP) $(CRT)_$(PREFIX) $(WPATH)
-		$(CP) $(CRM)_$(PREFIX) $(WPATH)
+install:	$(CRT) $(CRM)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX) 
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX) 
 		cd ./cutmckee ; make install
 
 cbn:		
@@ -220,13 +220,14 @@ ggv:
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRT)_$(PREFIX) \
+		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) $(CRT)_$(PREFIX) $(WPATH)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX) 
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
+		$(F90) $(FFLAG90) -o $(CRM) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX) 
 
 ctm:		
 		cd ./cutmckee ; make
@@ -239,5 +240,5 @@ minimal:	$(C1) $(f90mini)
 
 
 clean:		
-		$(RM) $(CRT)_$(PREFIX) $(CRM)_$(PREFIX) *~ *.mod *.o my_git_version.h
+		$(RM) $(CRT) $(CRM) *~ *.mod *.o my_git_version.h
 		cd ./cutmckee ; make clean
