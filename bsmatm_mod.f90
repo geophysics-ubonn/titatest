@@ -388,12 +388,8 @@ CONTAINS
     REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
 !!!$.....................................................................
 
-    CALL alloc_modelmod(1,fetxt,errnr,smaxs+1) ! allocate smatm
-    IF (errnr/=0) THEN
-       WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmtri'
-       errnr = 97
-       RETURN
-    END IF
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
+    smatm = 0d0               !!!$initialize smatm
 
     IF (elanz/=manz)PRINT*,'elanz/=manzSMATMTRI may be wrong'
 
@@ -448,12 +444,9 @@ CONTAINS
     REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
 !!!$.....................................................................
-    CALL alloc_modelmod(1,fetxt,errnr,1) ! allocate smatm
-    IF (errnr/=0) THEN
-       WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmlma'
-       errnr = 97
-       RETURN
-    END IF
+
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,1))
+    smatm = 0d0               !!!$initialize smatm
 
     IF (ltri==3) THEN
 
@@ -497,17 +490,10 @@ CONTAINS
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
     REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
     REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: csens 
 !!!$.....................................................................
 
-    CALL alloc_modelmod(1,fetxt,errnr,smaxs+1)
-    IF (errnr/=0) THEN
-       WRITE (*,'(/a/)')TRIM(fetxt)
-       errnr = 97
-       RETURN
-    END IF
-
-    errnr = 4
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
+    smatm = 0d0               !!!$initialize smatm
 
     CALL bcsens(csensmax,csensavg)
 
@@ -525,7 +511,7 @@ CONTAINS
 
        DO k=1,smaxs           ! jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1
+          ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
                (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
@@ -534,14 +520,17 @@ CONTAINS
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
 
 !!!$schwerpunkt des nachbar elements
-             sp2(1) = espx(nachbar(i,k))
+             sp2(1) = espx(nachbar(i,k))!!!$ center point of element
              sp2(2) = espy(nachbar(i,k))
 
-!!!$    Geometrischer Teil...
+!!!$    Geometrical part...
+             ! distance of the mid points
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 !!$! including anisotropy!
+!angle to horizon
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
 !!!$ geometrical contribution... (as smooth regularization..)
+! projected effective contribution due to anisotropic regu
              alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
 
 !!!$ Model value gradient (\nabla m)
@@ -566,6 +555,7 @@ CONTAINS
              IF (ltri == 5) THEN !!!$reines MGS
 
                 dum = sqmgrad + betamgs**2d0
+! proportional contribution of integrated cell
                 dum = alfgeo * edglen / dist / dum
 
              ELSE IF (ltri == 6) THEN !!!$sensitivitaetswichtung 1 von RM
@@ -650,7 +640,6 @@ CONTAINS
     REAL(KIND(0D0)) :: alftv  !TV Glaettung
 !!!$.....................................................................
 
-    
     IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
     smatm = 0d0               !!!$initialize smatm
 
