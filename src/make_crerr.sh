@@ -8,6 +8,8 @@ let i=0
 let n=$n_lines
 outp='crerror.h'
 
+echo $(pwd)
+
 echo "CHARACTER(256) :: fetxt($n_lines)" > $outp
 echo '' >> $outp
 while [ $i -ne $n ];do

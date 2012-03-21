@@ -73,13 +73,13 @@ cbn:
 		fi
 
 ctm:		$(OBJF90) $(OBJ) $(OBJERR)
-		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG)_$(PREFIX) \
+		$(F90) $(FFLAG90) $(FFLAGMPI) -o $(PROG) \
 		$(OBJ) $(OBJF90) $(OBJERR) \
 		$(FLIBLINBLAS) $(FLIBMPI) $(FLIB)
 
 clean:		
 		$(RM) *.o *~ *.vo V* mod.* *.mod *.flc *.d \
-		$(PROG)_$(PREFIX)
+		$(PROG)
 
-install:	$(PROG)_$(PREFIX)
-		$(CP) $(PROG)_$(PREFIX) $(WPATH)
+install:	$(PROG)
+		$(CP) $(PROG) $(WPATH)/$(PROG)_$(PREFIX)

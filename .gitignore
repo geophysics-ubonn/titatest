@@ -6,7 +6,7 @@ CutMcK*
 minimal_*
 forfiles
 *.h
-cutmckee/crerror.h
+Makefile
 *.mod
 *#
 .#*
