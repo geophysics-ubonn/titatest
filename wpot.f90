@@ -1,4 +1,4 @@
-subroutine wpot(kanal,datei,np)
+subroutine wpot(datei,np,mypot)
 
 !!!$     Unterprogramm zum Schreiben der Potentialwerte.
 
@@ -46,10 +46,13 @@ subroutine wpot(kanal,datei,np)
 
 !!!$     (Back-) Slash
   CHARACTER (1)   ::     slash
+  COMPLEX (KIND(0D0)), DIMENSION(sanz)  :: mypot
 
 !!!$     tst        real            * 8     dum_re,dum_im,dum_mag,dum_pha
 
 !!!$.....................................................................
+
+  CALL get_unit(kanal)
 
 !!!$     Slash
   slash = '/'
@@ -79,9 +82,9 @@ subroutine wpot(kanal,datei,np)
 !!!$     Numerierung)
   do i=1,sanz
      write(kanal,*,err=1000)real(sx(snr(i))),real(sy(snr(i))),&
-          real(dble(pot(i))),real(dimag(pot(i)))
-!!!$     ak     1                real(cdabs(pot(i))),
-!!!$     ak     1                real(1d3*datan2(dimag(pot(i)),dble(pot(i))))
+          real(dble(mypot(i))),real(dimag(mypot(i)))
+!!!$     ak     1                real(cdabs(mypot(i))),
+!!!$     ak     1                real(1d3*datan2(dimag(mypot(i)),dble(mypot(i))))
   end do
 
 !!!$     'datei' schliessen

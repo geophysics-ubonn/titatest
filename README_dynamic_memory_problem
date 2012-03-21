@@ -6,3 +6,5 @@ two methods:
 
 this should avoid memory segemtation, which may cause instable run time behaviour within 
 gfortran compiled binaries.- :(
+
+RM, 2010

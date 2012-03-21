@@ -43,10 +43,10 @@ subroutine bpot(kanal,datei)
 
   icount = 0
 
-!!$  !$OMP PARALLEL DEFAULT(none) &
-!!$  !$OMP SHARED (nanz,sanz,hpot,strom,strnr,pot,kanal,datei,errnr,icount) &
-!!$  !$OMP PRIVATE(elec1,elec2)
-!!$  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+  !$OMP PARALLEL DEFAULT(none) &
+  !$OMP SHARED (nanz,sanz,hpot,strom,strnr,datei,errnr,icount) &
+  !$OMP PRIVATE(elec1,elec2,pot)
+  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
   do i=1,nanz
 
      !$OMP ATOMIC
@@ -71,10 +71,10 @@ subroutine bpot(kanal,datei)
      end do
 
 !!!$     Potentialwerte ausgeben
-     call wpot(kanal,datei,i)
+     call wpot(datei,i,pot)
   end do
-!!$  !$OMP END DO
-!!$  !$OMP END PARALLEL
+  !$OMP END DO
+  !$OMP END PARALLEL
 
   IF (errnr /= 0) THEN
      PRINT*,'something went wrong during potential output'

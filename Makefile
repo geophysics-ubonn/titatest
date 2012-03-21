@@ -227,19 +227,19 @@ ggv:
 		./get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) ggv
-		$(F90) $(FFLAG90) -o $(CRT)_$(PREFIX) \
+		$(F90) $(FFLAG90) -o $(CRT) \
 		$(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
-		$(CP) $(CRT)_$(PREFIX) $(WPATH)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
 
 crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) ggv
-		$(F90) $(FFLAG90) -o $(CRM)_$(PREFIX) \
+		$(F90) $(FFLAG90) -o $(CRM) \
 		$(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) $(ggvo)
-		$(CP) $(CRM)_$(PREFIX) $(WPATH)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
 		cd ./cutmckee ; make
 
-minimal_prec:	$(C1) $(f90mini)
+minimal_prec:	$(C1) $(f90mini) tic_toc.o
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
 
 minimal_omp:	$(C1) minimal_omp.f90 
@@ -249,9 +249,9 @@ dox:
 		./make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
-install:	$(CRT)_$(PREFIX) $(CRM)_$(PREFIX) 
-		$(CP) $(CRT)_$(PREFIX) $(WPATH)
-		$(CP) $(CRM)_$(PREFIX) $(WPATH)
+install:	$(CRT) $(CRM)
+		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
+		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 		cd ./cutmckee ; make install
 
 clean:		
