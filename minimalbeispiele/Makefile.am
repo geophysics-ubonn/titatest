@@ -7,25 +7,25 @@ P2		= minimal_omp
 
 bin_PROGRAMS	= $(P1) $(P2)
 
-FFLAG90         = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
+AM_FC_FLAGS = -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions
 
-FFLAG90         = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
+AM_DBG_FLAGS  = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
 		-fdump-fortran-original  -fdump-fortran-optimized \
 		-ffpe-trap=list  -fdump-core -fbacktrace -fdump-parse-tree \
 		-fimplicit-none -fno-signed-zeros -ffinite-math-only -fopenmp
 
-LDFLAGS		= -lm # link math lib
+AM_LD_FLAGS = -lm # link math lib
 
-P1_SRC		= $(P1).f90
-P2_SRC		= $(P2).f90
+P1_SRC		= tic_toc.f90 minimal-prec.f90
+P2_SRC		= minimal-omp.f90
 
 minimal_prec_SOURCES	=	$(P1_SRC)
-minimal_prec_FCFLAGS	=	$(FFLAG90)
-minimal_prec_LDFLAGS	=	$(LDFLAGS)
+minimal_prec_FCFLAGS	=	$(AM_FC_FLAGS)
+minimal_prec_LDFLAGS	=	$(AM_LD_FLAGS)
 
 minimal_omp_SOURCES	=	$(P2_SRC)
-minimal_omp_FCFLAGS	=	$(FFLAG90)
-minimal_omp_LDFLAGS	=	$(LDFLAGS)
+minimal_omp_FCFLAGS	=	$(AM_FC_FLAGS) -fopenmp
+minimal_omp_LDFLAGS	=	$(AM_LD_FLAGS)
 
 
 clean-local:	

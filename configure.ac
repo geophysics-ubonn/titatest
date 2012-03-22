@@ -6,24 +6,25 @@ AC_CONFIG_SRCDIR([src/inv.f90])
 AC_CONFIG_AUX_DIR([config])
 
 mySCRIPTS=scripts
+myCompiler=gfortran
 # den autotools mitteilen, das Fortran benutzt wird. Mit folgenden Aufrufen werden die
 # entsprechenden Variablen initialisiert 
-AC_PROG_FC([gfortran])
-AC_PROG_F77([gfortran])
+AC_PROG_FC([$myCompiler])
+AC_PROG_F77([$myCompiler])
 AC_PROG_CXX
-AC_PREFIX([$HOME])
+AC_PREFIX
 
 # Automake soll aufgerufen werden (nicht nur autoconf)
 AM_INIT_AUTOMAKE
 
 # CRTomo and CRMod error generation
-AC_CONFIG_COMMANDS_PRE([cd src; ./../$mySCRIPTS/make_crerr.sh; cd ..;])
+AC_CONFIG_COMMANDS_PRE([cd src; ./../$mySCRIPTS/make_crerr.sh ; cd ..;])
 
 # CRTomo git version generation
-AC_CONFIG_COMMANDS_PRE([cd src; ./../$mySCRIPTS/get_git_version.sh $AC_PROG_FC; cd ..;])
+AC_CONFIG_COMMANDS_PRE([cd src; ./../$mySCRIPTS/get_git_version.sh $myCompiler ; cd ..;])
 
 # CutMcK error generation
-AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../$mySCRIPTS/make_crerr.sh; cd ..;])
+AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../$mySCRIPTS/make_crerr.sh ; cd ..;])
 
 
 # old (development) Makefile should be moved to a save place

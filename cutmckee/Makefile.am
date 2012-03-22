@@ -11,10 +11,6 @@ CutMcK_FFLAGS =  -O3 -march=native -ftree-vectorize -fexpensive-optimizations -f
 CutMcK_FCFLAGS = $(CutMcK_FFLAGS)
 CutMcK_LDFLAGS = -lm # -llapack -lblas
 
-# die Includedatei crerr.h muss neu generiert werden, wenn error.txt sich ändert
-#get_error.f90:	error.txt
-#		./../make_crerr.sh; 
-
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
 clean-local:
 		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
