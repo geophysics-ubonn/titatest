@@ -6,9 +6,7 @@ CutMcK*
 minimal_*
 forfiles
 *.h
-Makefile
-Makefile.in
-Makefile.BACKUP*
+Makefile*
 *.mod
 *#
 .#*

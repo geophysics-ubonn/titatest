@@ -14,8 +14,8 @@ AM_DBG_FLAGS = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
 AM_LD_FLAGS =	-lm
 
 
-bin_PROGRAMS =	CRTomo_testing \
-		CRMod_testing
+bin_PROGRAMS =	CRTomo_myBranchName \
+		CRMod_myBranchName
 
 main_mods = 	alloci.f90 \
 		datmod.f90 \
@@ -81,23 +81,22 @@ crm_subs = 	bpot.f90 bsens.f90 bvolt.f90 \
 		wdatm.f90 wpot.f90 wsens.f90
 
 
-CRTomo_testing_SOURCES 	= $(main_mods) $(main_subs) \
+CRTomo_myBranchName_SOURCES 	= $(main_mods) $(main_subs) \
 			$(crt_mods) $(crt_subs) $(crt_main)
-CRTomo_testing_FFLAGS 	= $(AM_FC_FLAGS)
-CRTomo_testing_FCFLAGS 	= $(AM_FC_FLAGS)
-CRTomo_testing_LDFLAGS 	= $(AM_LD_FLAGS)
+CRTomo_myBranchName_FFLAGS 	= $(AM_FC_FLAGS)
+CRTomo_myBranchName_FCFLAGS 	= $(AM_FC_FLAGS)
+CRTomo_myBranchName_LDFLAGS 	= $(AM_LD_FLAGS)
 
-CRMod_testing_SOURCES 	= $(main_mods) $(main_subs) \
+CRMod_myBranchName_SOURCES 	= $(main_mods) $(main_subs) \
 			$(crm_subs) $(crm_main) 
-CRMod_testing_FFLAGS  	= $(AM_FC_FLAGS)
-CRMod_testing_FCFLAGS 	= $(AM_FC_FLAGS)
-CRMod_testing_LDFLAGS 	= $(AM_LD_FLAGS)
+CRMod_myBranchName_FFLAGS  	= $(AM_FC_FLAGS)
+CRMod_myBranchName_FCFLAGS 	= $(AM_FC_FLAGS)
+CRMod_myBranchName_LDFLAGS 	= $(AM_LD_FLAGS)
 
 
 # clean-rule to erase fortran modules
 clean-local:	
 		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
 
-EXTRA_DIST = 	error.txt \
-		my_git_version.h
+EXTRA_DIST = 	error.txt   # file with error text messages
 

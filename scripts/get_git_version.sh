@@ -11,3 +11,4 @@ echo 'my_git_version(2) = "'$commit'"' >> my_git_version.h
 echo 'my_git_version(3) = "'$mydate'"' >> my_git_version.h
 echo 'my_git_version(4) = "'$compiler'"' >> my_git_version.h
 echo 'my_git_version(5) = "'$myos'"' >> my_git_version.h
+
