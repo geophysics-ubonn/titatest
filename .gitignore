@@ -5,7 +5,8 @@ CRTomo_*
 CutMcK_*
 minimal_*
 forfiles
-Makefile.am
+src/Makefile.am
+cutmckee/Makefile.am
 Makefile.in
 Makefile
 *.h
