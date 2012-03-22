@@ -23,6 +23,6 @@ Makefile
 doxy.inp
 html
 latex
-inv.lastmod*
+inv.last*
 inv.el*
 */inv/*

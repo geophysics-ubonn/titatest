@@ -362,7 +362,7 @@ c     Fehlerdatei loeschen
  3    FORMAT(I2,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s')
       WRITE (*,3)ta,st,mi,se
 
-      STOP
+      RETURN
 
 c:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
