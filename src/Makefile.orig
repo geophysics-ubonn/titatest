@@ -97,6 +97,7 @@ CRMod_myBranchName_LDFLAGS 	= $(AM_LD_FLAGS)
 # clean-rule to erase fortran modules
 clean-local:	
 		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
+		rm Makefile.am
 
 EXTRA_DIST = 	error.txt   # file with error text messages
 

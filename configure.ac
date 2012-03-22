@@ -11,8 +11,7 @@ myCompiler=gfortran
 # entsprechenden Variablen initialisiert 
 AC_PROG_FC([$myCompiler])
 AC_PROG_F77([$myCompiler])
-AC_PROG_CXX
-AC_PREFIX
+AC_PREFIX_DEFAULT($HOME)
 
 # Automake soll aufgerufen werden (nicht nur autoconf)
 AM_INIT_AUTOMAKE
