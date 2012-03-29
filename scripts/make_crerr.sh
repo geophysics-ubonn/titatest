@@ -37,15 +37,18 @@ rm tmp tmp2
 
 branch=$( git branch | awk '/\*/{print $2}' )
 
+arch=$( uname -n )
+
+prefix=$branch'_'$arch
 cur=$(pwd)
-echo "setting the Branchname $branch in $cur/Makefile.am"
+echo "setting PREFIX $prefix in $cur/Makefile.am"
 
 myorig=./Makefile.orig
 
 mybuff=$(grep myBranchName $myorig|wc -l)
 
 if [ -e $myorig ] && [ ! $mybuff -eq 0 ] ;then
-	sed "s/myBranchName/$branch/g" $myorig > Makefile.am
+	sed "s/myBranchName/$prefix/g" $myorig > Makefile.am
 else
     if [ ! -e $myorig ];then
 	echo "no $myorig???"
