@@ -171,18 +171,23 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 98 fetxt = 'rall -> grid file'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) delem
+  CALL clear_string (delem)
 
   fetxt = 'rall -> electrode file'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) delectr
+  CALL clear_string (delectr)
 
   fetxt = 'rall -> meaurement file'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) dstrom
+  CALL clear_string (dstrom)
 
   fetxt = 'rall -> directory for inversion results'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) ramd
+  CALL clear_string (ramd)
+
 !!$! checks if dir exists and if not, create it
   !#if defined (__INTEL_COMPILER)
 !!$! check for the intel compiler..
@@ -215,15 +220,15 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   fetxt = 'rall -> Diff. measurements'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) dd0
+  READ (fpcfg,'(a)',end=1001,err=999) dd0
 
   fetxt = 'rall -> Diff. model (prior)'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) dm0
+  READ (fpcfg,'(a)',end=1001,err=999) dm0
 
   fetxt = 'rall -> Diff. model response of prior'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) dfm0
+  READ (fpcfg,'(a)',end=1001,err=999) dfm0
 
   IF (dm0 /= '') THEN
      INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?

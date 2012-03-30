@@ -75,7 +75,8 @@ SUBROUTINE read_comments (unit)
   READ ( unit , '(a)' , ERR = 11 , END = 10 , IOSTAT = ios ) buff
   
 !  PRINT * , TRIM( buff), ios
-  
+  buff = ADJUSTL(buff) ! remove leading spaces
+
   IF ( buff (1:1) /= '#' .OR. buff == '' .OR. ios /= 0 ) THEN
 ! The case ios /= 0 was the solution to buffer underrun errors
 ! This lead to curious line readings..

@@ -19,4 +19,27 @@ MODULE pathmod
   CHARACTER(6),PUBLIC,PARAMETER :: mkdir='mkdir '
   CHARACTER(6),PUBLIC,PARAMETER :: rmdir='rm -R '
 
+  PUBLIC :: clear_string
+
+CONTAINS
+
+  SUBROUTINE clear_string (string)
+!!!$ PURPOSE
+!!!$ extract the first "part" of a string until the first blank and
+!!!!$ remove the rest
+
+    CHARACTER (*) :: string
+
+    INTEGER ( KIND = 4 ) :: iblank,itab
+    
+    string = ADJUSTL(string)
+
+    iblank = INDEX(string,' ')
+
+    IF (iblank ==  1) RETURN
+
+    IF (iblank /= 0) string = string(:iblank - 1)
+
+   END SUBROUTINE clear_string
+
 END MODULE pathmod
