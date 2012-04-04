@@ -71,7 +71,7 @@ subroutine precal()
   IF (lsytop) THEN
      CALL bsytop
   ELSE
-     sytop = 0.
+     sytop = 0d0
   END IF
 
   do i=1,typanz
