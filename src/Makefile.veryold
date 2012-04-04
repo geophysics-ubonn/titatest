@@ -6,6 +6,7 @@
 RM		= rm -f
 CP		= cp -f
 MV		= mv -f
+MYSCRIPTS	= ../scripts
 
 ############################################################################
 # 			gfortran compiler flags 			   #
@@ -36,11 +37,6 @@ CRT		= CRTomo
 
 CRM		= CRMod
 
-CRT		= CRTomo
-
-CRM		= CRMod
-# das hier chek obs ein bin im home gibt
-C1		= 
 # invokes get_git_version.sh
 C2		= ggv
 # macht CRTomo
@@ -157,8 +153,9 @@ $(ggvo):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
 
 $(ferr):	error.txt get_error.f90
-		./make_crerr.sh
+		$(MYSCRIPTS)/make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
+
 $(f90mini):	%.o : %.f90		
 		$(F90) $(FFLAG90) -c $<
 
@@ -211,20 +208,8 @@ inv.o:		$(f90crt) $(f90crtsub) $(ggvo)
 minimalbeispiel.o:	tic_toc.o
 
 ###############################################################
-#.SILENT:	cbn
-###################################
-LALIB:		./libla/%.f	
-		make -C libla
-
-cbn:		
-		echo "Pruefe $(WPATH)"
-		if [ -d $(WPATH) ]; then \
-			echo "ok"; \
-		else \
-			echo "Du hast kein bin in deinem home.--"; \
-		fi
 ggv:		
-		./get_git_version.sh $(F90)
+		$(MYSCRIPTS)/get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) ggv
 		$(F90) $(FFLAG90) -o $(CRT) \
@@ -237,23 +222,23 @@ crm:		$(C1) $(C2) $(f90crm) $(f90crmsub) $(forcrm) $(fcrm) $(ferr) ggv
 		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
 
 ctm:		
-		cd ./cutmckee ; make
+		cd ../cutmckee ; make
 
-minimal_prec:	$(C1) $(f90mini) tic_toc.o
-		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
+minimal_prec:	
+		cd ../minimalbeispiel; make
 
-minimal_omp:	$(C1) minimal_omp.f90 
-		gfortran -fopenmp minimal_omp.f90 -o $(PR5) 
+minimal_omp:	
+		cd ../minimalbeispiel; make
 
 dox:            
-		./make_doxygen.sh $(CRT)
+		$(MYSCRIPTS)/make_doxygen.sh $(CRT)
 		$(DOC) doxy.inp
 
 install:	$(CRT) $(CRM)
 		$(CP) $(CRT) $(WPATH)/$(CRT)_$(PREFIX)
 		$(CP) $(CRM) $(WPATH)/$(CRM)_$(PREFIX)
-		cd ./cutmckee ; make install
+		cd ../cutmckee ; make install
 
 clean:		
 		$(RM) $(CRT)_$(PREFIX) $(CRM)_$(PREFIX) *~ *.mod *.o my_git_version.h
-		cd ./cutmckee ; make clean
+		cd ../cutmckee ; make clean
