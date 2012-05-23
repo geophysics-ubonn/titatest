@@ -225,10 +225,10 @@ ctm:
 		cd ../cutmckee ; make
 
 minimal_prec:	
-		cd ../minimalbeispiel; make
+		cd ../minimalbeispiele; make
 
 minimal_omp:	
-		cd ../minimalbeispiel; make
+		cd ../minimalbeispiele; make
 
 dox:            
 		$(MYSCRIPTS)/make_doxygen.sh $(CRT)

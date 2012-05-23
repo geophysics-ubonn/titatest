@@ -1,4 +1,4 @@
-subroutine dmisft(lsetup)
+SUBROUTINE dmisft(lsetup)
 
 !!!$     Unterprogramm zum Bestimmen des Misfits der Daten.
 
@@ -13,7 +13,7 @@ subroutine dmisft(lsetup)
   USE konvmod
   USE pathmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -45,16 +45,19 @@ subroutine dmisft(lsetup)
   fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
   OPEN(fprun,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
   errnr = 4
-11 FORMAT (G12.3,2x,F10.6,2x,I3,2X,2('('2(1X,G15.7)')'))
-  if ((llam.and..not.lstep).or.lsetup) then
+
+11 FORMAT (I6,G12.3,1x,F10.6,2x,I3,2X,4(1X,G15.7))
+
+  IF ((llam.AND..NOT.lstep).OR.lsetup) THEN
      IF (lip) THEN
-        write(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
+        WRITE(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
      ELSE
-        write(fpeps,'(/a,t7,I4)',err=1000)'IT#',it
+        WRITE(fpeps,'(/a,t7,I4)',err=1000)'IT#',it
      END IF
-     write(fpeps,'(t8,a,t18,a,t27,a,t35,a,t50,a)',err=1000)&
-          'eps','psi','pol','Re( d, f(m) )','Im( d, f(m) )'
-  end if
+     WRITE(fpeps,'(a)',err=1000)'Datum'//ACHAR(9)//'eps'//ACHAR(9)//&
+          'psi'//ACHAR(9)//'pol'//ACHAR(9)//'Re(d)'//ACHAR(9)//'Re(f(m))'&
+          //ACHAR(9)//'Im(d)'//ACHAR(9)//'Im(f(m))'
+  END IF
 
 !!!$     RMS-WERTE BERECHNEN
   nrmsd  = 0d0
@@ -69,11 +72,11 @@ subroutine dmisft(lsetup)
      RETURN
   END IF
 
-  do i=1,nanz
+  DO i=1,nanz
      wdlok(i) = 1
 
 !!!$     Phasen lokal korrigieren
-     call chkpo2(dat(i),sigmaa(i),cdat,csig,wdlok(i),lpol)
+     CALL chkpo2(dat(i),sigmaa(i),cdat,csig,wdlok(i),lpol)
 
 !!!$     ak Ggf. Daten mit Phase betraglich groesser 200 mrad nicht beruecksichtigen
 !!!$     ak (Standardabweichung auf 1d4 hochsetzen)
@@ -81,50 +84,50 @@ subroutine dmisft(lsetup)
 
 !!!$     diff-            cdum = cdat - csig
 !!!$     diff+<
-     if (.not.ldiff) then
+     IF (.NOT.ldiff) THEN
         cdum = cdat - csig
-     else
+     ELSE
         cdum = cdat - csig - (d0(i) - fm0(i))
-     end if
+     END IF
 !!!$     diff+>
 
-     if (lip) then
+     IF (lip) THEN
         psi(i) = dsqrt(wmatd(i))*dabs(dimag(cdum))
-     else
+     ELSE
         psi(i) = dsqrt(wmatd(i))*cdabs(cdum)
-     end if
+     END IF
 
 !!!$     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
-     if ((llam.and..not.lstep).or.lsetup) &
-          write(fpeps,11,err=1000) real(1d0/dsqrt(wmatd(i))),&
-          real(psi(i)),wdlok(i),REAL(csig),REAL(cdat),AIMAG(cdat),AIMAG(csig)
+     IF ((llam.AND..NOT.lstep).OR.lsetup) WRITE(fpeps,11,err=1000) &
+          i, REAL(1d0/dsqrt(wmatd(i))),REAL(psi(i)),wdlok(i),&
+          REAL(csig),REAL(cdat),AIMAG(cdat),AIMAG(csig)
 
      idum   = idum   + wdlok(i)
-     nrmsd  = nrmsd  + psi(i)*psi(i)*dble(wdlok(i))
+     nrmsd  = nrmsd  + psi(i)*psi(i)*DBLE(wdlok(i))
 
-     betrms = betrms + wmatdr(i)*dble(wdlok(i)) * &
-          dble(cdum)*dble(cdum)
+     betrms = betrms + wmatdr(i)*DBLE(wdlok(i)) * &
+          DBLE(cdum)*DBLE(cdum)
 
-     pharms = pharms + wmatdp(i)*dble(wdlok(i)) * &
+     pharms = pharms + wmatdp(i)*DBLE(wdlok(i)) * &
           dimag(cdum)*dimag(cdum)
 
-  end do
+  END DO
 
 !!!$     Ggf. Fehlermeldung
-  if (idum.eq.0) then
+  IF (idum.EQ.0) THEN
      fetxt = ' '
      errnr = 99
-     goto 1000
-  end if
+     GOTO 1000
+  END IF
 
   npol   = nanz-idum
   rmssum = nrmsd
-  nrmsd  = dsqrt(nrmsd /dble(idum))
-  betrms = dsqrt(betrms/dble(idum))
-  pharms = dsqrt(pharms/dble(idum))
+  nrmsd  = dsqrt(nrmsd /DBLE(idum))
+  betrms = dsqrt(betrms/DBLE(idum))
+  pharms = dsqrt(pharms/DBLE(idum))
 
 !!!$     Ggf. ROBUST INVERSION (nach Doug' LaBrecque)
-  if (lrobust) then
+  IF (lrobust) THEN
 
      !     get memory for wdlok
      ALLOCATE (eps2(nanz),stat=errnr)
@@ -137,67 +140,67 @@ subroutine dmisft(lsetup)
      norm  = 0d0
      norm2 = 0d0
 
-     do i=1,nanz
-        dum     = 1d0/sqrt(wmatd(i))
-        eps2(i) = dum*sqrt(psi(i))
+     DO i=1,nanz
+        dum     = 1d0/SQRT(wmatd(i))
+        eps2(i) = dum*SQRT(psi(i))
         norm    = norm  + psi(i)*(wdlok(i))
         norm2   = norm2 + psi(i)*(wdlok(i))*dum/eps2(i)
-     end do
+     END DO
 
 !!!$     'estimated weights' normieren
-     do i=1,nanz
+     DO i=1,nanz
         eps2(i) = eps2(i) * norm2/norm
-     end do
+     END DO
 
 !!!$     Kleinere Standardabweichung ausschliessen und neue 1-Norm berechnen
      norm2 = 0d0
 
-     do i=1,nanz
-        dum     = 1d0/sqrt(wmatd(i))
-        eps2(i) = max(dum,eps2(i))
+     DO i=1,nanz
+        dum     = 1d0/SQRT(wmatd(i))
+        eps2(i) = MAX(dum,eps2(i))
         norm2   = norm2 + (psi(i))*(wdlok(i))*dum/eps2(i)
-     end do
+     END DO
 
      l1rat = norm/norm2
 
 !!!$     Ggf. neue Wichtungsfaktoren belegen
-     if (l1rat.gt.l1min) then
-        do i=1,nanz
+     IF (l1rat.GT.l1min) THEN
+        DO i=1,nanz
            dum = 1./(eps2(i) * eps2(i))
 
 !!!$     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
-           if (dum.lt.0.83d0*wmatd(i).and. &
-                ((llam.and..not.lstep).or.lsetup)) then
+           IF (dum.LT.0.83d0*wmatd(i).AND. &
+                ((llam.AND..NOT.lstep).OR.lsetup)) THEN
 
-              write(fprun,*)i,&
+              WRITE(fprun,*)i,&
                    ' : increase standard deviation *', &
-                   real(eps2(i)*sqrt(wmatd(i))),dum,psi(i)
-           end if
+                   REAL(eps2(i)*SQRT(wmatd(i))),dum,psi(i)
+           END IF
 
            wmatd(i) = dum
-        end do
-     end if
+        END DO
+     END IF
      IF (ALLOCATED(eps2)) DEALLOCATE (eps2)
-  end if
+  END IF
 
   IF (ALLOCATED(wdlok)) DEALLOCATE (wdlok,psi)
 
   errnr = 0
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
-1000 close(fpeps)
-  close(fprun)
-  return
+1000 CLOSE(fpeps)
+  CLOSE(fprun)
+  RETURN
 
-end subroutine dmisft
+END SUBROUTINE dmisft
 
 
 !!!$*********************************************************************
 
-subroutine chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
+SUBROUTINE chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
 
 !!!$.....................................................................
 
@@ -232,56 +235,56 @@ subroutine chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
 
 !!!$     Logarithmierte Betraege in den Realteilen,
 !!!$     Phasen (in rad) in den Imaginaerteilen
-  redat = dble(dati)
+  redat = DBLE(dati)
   imdat = dimag(dati)
-  resig = dble(sigi)
+  resig = DBLE(sigi)
   imsig = dimag(sigi)
 
 !!!$     Phasenbereich checken
-  if (imdat.gt.pi/2d0) then
+  IF (imdat.GT.pi/2d0) THEN
      idat = -1
-  else if (imdat.le.-pi/2d0) then
+  ELSE IF (imdat.LE.-pi/2d0) THEN
      idat = 1
-  else
+  ELSE
      idat = 0
-  end if
+  END IF
 
-  if (imsig.gt.pi/2d0) then
+  IF (imsig.GT.pi/2d0) THEN
      isig = -1
-  else if (imsig.le.-pi/2d0) then
+  ELSE IF (imsig.LE.-pi/2d0) THEN
      isig = 1
-  else
+  ELSE
      isig = 0
-  end if
+  END IF
 
-  if (idat.eq.0.and.isig.ne.0) then
+  IF (idat.EQ.0.AND.isig.NE.0) THEN
 
 !!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
-     imsig = imsig + dble(isig)*pi
-     if (.not.ldum) imdat=imdat-dsign(pi,imdat)
+     imsig = imsig + DBLE(isig)*pi
+     IF (.NOT.ldum) imdat=imdat-dsign(pi,imdat)
 
      wdlok = 0
 
-  else if (idat.ne.0.and.isig.eq.0) then
+  ELSE IF (idat.NE.0.AND.isig.EQ.0) THEN
 
 !!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur
-     if (ldum) imdat=imdat+dble(idat)*pi
+     IF (ldum) imdat=imdat+DBLE(idat)*pi
 
      wdlok = 0
 
-  else if (idat.ne.0.and.isig.ne.0) then
+  ELSE IF (idat.NE.0.AND.isig.NE.0) THEN
 
 !!!$     Polaritaetswechsel
-     imsig = imsig + dble(isig)*pi
-     imdat = imdat + dble(idat)*pi
+     imsig = imsig + DBLE(isig)*pi
+     imdat = imdat + DBLE(idat)*pi
 
-  end if
+  END IF
 
 !!!$     'cdat' und 'csig' speichern
   cdat = dcmplx(redat,imdat)
   csig = dcmplx(resig,imsig)
 
-  return
-end subroutine chkpo2
+  RETURN
+END SUBROUTINE chkpo2
