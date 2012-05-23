@@ -117,6 +117,10 @@ c     'delectr' einlesen
       ALLOCATE (graph(grmax,sanz),perm(sanz),grad(sanz),neu(sanz),
      1     neuin(sanz),level(sanz),start(sanz),num(sanz),stat=errnr)
       
+      IF (errnr /= 0) THEN
+         PRINT*,'error allocating fields',errnr
+         RETURN
+      END IF
 
 c     Aufbau des Graphen aufgrund der Knotennummern der Elemente
       grad=0;graph=0
