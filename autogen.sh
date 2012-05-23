@@ -23,3 +23,8 @@ autoreconf
 automake --add-missing
 # Jetzt sollten alle Dateien vorhanden sein, und das configure-Skript kann erstellt werden
 autoreconf
+# now invoke configure
+./configure
+# 
+# Wenn möglich, werden Standarddateien kopiert
+automake --add-missing

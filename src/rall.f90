@@ -115,7 +115,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     FIXED PARAMETER
 !!!$     Slash
 
-  IF (INDEX ( version(5), 'Msys') == 0) THEN
+  IF (INDEX ( version(5), 'Msys') /= 0) THEN
 	  print*,'MS-OS'
      slash = '/'
   ELSE
@@ -123,7 +123,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      slash = '\'
   END IF
 
-  !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
+  !  CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
 !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
   l1min = 1d0
 !!!$     ak        l1min = 1.2d0
