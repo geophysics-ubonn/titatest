@@ -760,6 +760,10 @@ PROGRAM inv
 
 !!!$.................................................
 
+!!!$ RESET FPI status variable to proceed with full COMPLEX calculus
+     lip = .FALSE.
+!!!$
+
 !!!$   OUTPUT
      WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
           'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
