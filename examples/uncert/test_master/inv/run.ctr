@@ -1,0 +1,9 @@
+ Iteration   0,   0 : Calculating Potentials
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration terminated: Min. model changes reached
+ CPU time:  0d/  0h/  0m/  2s/ 146ms
+Calculating model uncertainty..
+ Taking lam=   100.00000000000000     
+MCM_1 = (A^TC_d^-1A + C_m^-1)^-1
+RES = (A^TC_d^-1A + C_m^-1)^-1A^TC_d^-1A
+MCM_2 = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1
