@@ -77,7 +77,7 @@ PROGRAM semi_variogram
 !  PRINT*,'grid::',grid
 !  PRINT*,'para::',para
   
-  lag_unit = MINVAL(ABS(grid))
+  lag_unit = MINVAL(ABS(grid)) / 10d0
 
   nlag = ANINT(MAXVAL(ABS(grid)) / lag_unit) / 2
 
