@@ -243,6 +243,6 @@ clean:
 		$(RM) $(CRT)_$(PREFIX) $(CRM)_$(PREFIX) *~ *.mod *.o my_git_version.h
 		cd ../cutmckee ; make clean
 
-vario:		semi-variogram.f90
-		$(F90) -O semi-variogram.f90 -o semi-variogram
+vario:		semi-variogram.f90 get_unit.o
+		$(F90) -O get_unit.o semi-variogram.f90 -o semi-variogram
 		$(CP) semi-variogram $(WPATH)/semi-variogram_$(MACHINE)_$(F90)
