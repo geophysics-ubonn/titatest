@@ -4,8 +4,10 @@ PROGRAM semi_variogram
 
   !!$c     smallest variogram distance and tolerance
   REAL(KIND(0D0)) :: lag_unit,lag_tol
+  !!$c     sill value
+  REAL(KIND(0D0)) :: sill
 !!$c     number of equidistant lags (nlag) = INT(grid_max / grid_min)
-  INTEGER :: rown1,rown2
+  INTEGER :: nrows,rown1,rown2
 !!$c Row number of the data from data file
   INTEGER :: my_trafo
 !!$c should we transform data or not? 0 = lin, 1 = ln, 2 = log10
@@ -25,8 +27,10 @@ PROGRAM semi_variogram
   REAL(KIND(0D0)) :: h
 !!$c     th = tail - head
   REAL(KIND(0D0)) :: th
-!!!$
+!!!$ grid and parameer variable storage
   REAL(KIND(0d0)),DIMENSION(:),ALLOCATABLE :: grid,para
+!!!$ input storage
+  REAL(KIND(0d0)),DIMENSION(:,:),ALLOCATABLE :: inp_buff
   REAL (KIND(0D0)) :: PI
 
 
@@ -59,15 +63,14 @@ PROGRAM semi_variogram
      OPEN (ifp1,FILE=TRIM(input_filename),STATUS='replace')
      WRITE (ifp1,'(a)')'# filename of input data'
      WRITE (ifp1,'(a)')'field.dat'
-     WRITE (ifp1,'(a)')'# row number 1, row number 2'
-     WRITE (ifp1,'(a)')'1  2'
-     WRITE (ifp1,'(a)')'# lag_min, number of lags'
+     WRITE (ifp1,'(a)')'# numbe rof rows, row of variable 1, row of variable  2'
+     WRITE (ifp1,'(a)')'2 1  2'
+     WRITE (ifp1,'(a)')'# sill, number of lags'
      WRITE (ifp1,'(a)')'# if number of lags = 0, we use'
-     WRITE (ifp1,'(a)')'# lag_unit = MINVAL(ABS(grid)) / PI'
-     WRITE (ifp1,'(a)')'# nlag = ANINT(MAXVAL(ABS(grid)) '//&
-          ' / lag_unit) / 2'
-     WRITE (ifp1,'(a)')'0.2 0'
-     WRITE (ifp1,'(a)')'# lag(i) = i * 0.2, i=0,21'
+     WRITE (ifp1,'(a)')'# nlag = ANINT(MAXVAL(ABS(grid))/'//&
+          'MINVAL(ABS(grid)))'
+     WRITE (ifp1,'(a)')'0.3 0'
+     WRITE (ifp1,'(a)')'# lag(i) = i * MINVAL(ABS(grid))*2d0, i=0,21'
      WRITE (ifp1,'(a)')'# data trafo: 0=lin, 1=ln, 2=log10'
      WRITE (ifp1,'(a)')'0'
      STOP 
@@ -79,7 +82,7 @@ PROGRAM semi_variogram
   CALL READ_COMMENTS(ifp1)
   READ (ifp1,*,ERR=999,END=1000)data_filename
   CALL READ_COMMENTS(ifp1)
-  READ (ifp1,*,ERR=999,END=1000)rown1,rown2
+  READ (ifp1,*,ERR=999,END=1000)nrows,rown1,rown2
   CALL READ_COMMENTS(ifp1)
   READ (ifp1,*,ERR=999,END=1000)lag_unit,nlag
   CALL READ_COMMENTS(ifp1)
@@ -113,13 +116,17 @@ PROGRAM semi_variogram
      PRINT*,'there are ',nlines,' data points'
   END IF
 
-  ALLOCATE (grid(nlines),para(nlines))
+  ALLOCATE (grid(nlines),para(nlines),inp_buff(nlines,nrows))
   
   REWIND(ifp1)
 
-  READ (ifp1,*)(grid(i),para(i),i=1,nlines)
+  READ (ifp1,*)(inp_buff(i,:),i=1,nlines)
   
   CLOSE (ifp1)
+
+  grid = inp_buff(:,rown1)
+  para = inp_buff(:,rown2)
+
 
   SELECT CASE (my_trafo)
 
@@ -137,19 +144,22 @@ PROGRAM semi_variogram
 !  PRINT*,'grid::',grid
 !  PRINT*,'para::',para
 
+
   IF (nlag == 0) THEN
-     PRINT*,'Using self definitions for lag_unit'
-     lag_unit = MINVAL(ABS(grid)) / PI
-     
-     nlag = ANINT(MAXVAL(ABS(grid)) / lag_unit) / 2
+     IF (nlines > 1) THEN
+        lag_unit = grid(1) - grid(2)
+     ELSE
+        lag_unit = grid(1)
+     END IF
+     nlag = ANINT(MAXVAL(ABS(grid)) / lag_unit) - 1
+     PRINT*,'Using self definitions for nlags:',nlag
   END IF
+
   lag_tol = lag_unit / 2d0
 
 !!$ get some memory and initialize
   ALLOCATE (lag(nlag),ngam(nlag),gam(nlag))
   ngam = 0; gam = 0d0
-
-
 
 !!!$ define lag vector
   DO k = 1, nlag
@@ -171,22 +181,34 @@ PROGRAM semi_variogram
 
      par_vari = par_vari + (tail - par_mean)**2d0
 
+     IF (ABS(tail) > 1e20) CYCLE
+
      DO j = 1, nlines
 
         IF (i == j) CYCLE
 
         head = para(j)
 
+        IF (ABS(head) > 1e20) CYCLE 
+
         h = ABS(grid(i) - grid(j))
 
-        th = (tail - head)**2d0
+        th = head - tail
+
+        IF (th < EPSILON(th)) CYCLE
 
         DO k = 1, nlag
 
+!!$           gam(k) = gam(k) + th * th
+!!$
+!!$           ngam(k) = ngam(k) + 1
            IF ( ABS( lag(k) - h ) < lag_tol ) THEN
-              PRINT*,REAL(lag(k)),REAL(h),i,j
               ngam(k) = ngam(k) + 1
-              gam(k) = gam(k) + th
+              gam(k) = gam(k) * DBLE(ngam(k) - 1) ! multiply with previous value which was the devisor
+              gam(k) = gam(k) + th * th ! add correctly
+              gam(k) = gam(k) / DBLE(ngam(k)) ! devide all throug hactual collect -> mean value
+!!$              PRINT*,REAL(h),k,ngam(k),REAL(gam(k)),REAL(th*th),&
+!!$                   REAL(gam(k) * DBLE(ngam(k) ))
            END IF
            
 
@@ -199,7 +221,7 @@ PROGRAM semi_variogram
   ic_nlag = 0
   DO k = 1,nlag
      IF (ngam(k) > 0) THEN
-        gam(k) = gam(k) / ngam(k) / 2d0
+!        gam(k) = gam(k) / ngam(k) / 2d0
         ic_nlag = ic_nlag + 1
      END IF
   END DO
@@ -228,8 +250,8 @@ PROGRAM semi_variogram
   WRITE (ifp1,'(a)')'set pointsize 1.2'
   WRITE (ifp1,'(a)')'set key bot right Left samplen .3'
   WRITE (ifp1,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
-  WRITE (ifp1,'(a,2(F10.2,a))')'set xrange [',MINVAL(ABS(grid)),':',&
-       MAXVAL(ABS(grid))/2d0,']'
+!!$  WRITE (ifp1,'(a,2(F10.2,a))')'set xrange [',MINVAL(ABS(grid)),':',&
+!!$       MAXVAL(ABS(grid))/2d0,']'
   WRITE (ifp1,'(a)')"set ylab offset 2,0 'sv(h)=1/2N(h)"//&
        " {/Symbol S}_i(Z(m_i)-Z(m_i+h))^2, {/Symbol g}(h) /[SI]'"
   WRITE (ifp1,*)'p"'//TRIM(output_filename)//'"'// &
