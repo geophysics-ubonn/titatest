@@ -45,8 +45,6 @@ PROGRAM semi_variogram
 
   PI = ACOS(-1d0)
 
-  print*,pi
-
 
 1 FORMAT(3(G10.3,3X),I10)
 2 FORMAT(a,I10,a,F10.3)
@@ -140,7 +138,7 @@ PROGRAM semi_variogram
 
   END SELECT
 
-  grid = ABS(grid)
+  grid = grid
 !  PRINT*,'grid::',grid
 !  PRINT*,'para::',para
 
@@ -204,9 +202,9 @@ PROGRAM semi_variogram
 !!$           ngam(k) = ngam(k) + 1
            IF ( ABS( lag(k) - h ) < lag_tol ) THEN
               ngam(k) = ngam(k) + 1
-              gam(k) = gam(k) * DBLE(ngam(k) - 1) ! multiply with previous value which was the devisor
-              gam(k) = gam(k) + th * th ! add correctly
-              gam(k) = gam(k) / DBLE(ngam(k)) ! devide all throug hactual collect -> mean value
+!              gam(k) = gam(k) * DBLE(ngam(k) - 1) ! multiply with previous value which was the devisor
+              gam(k) = gam(k) + DBLE(th * th) ! add correctly
+!              gam(k) = gam(k) / DBLE(ngam(k)) ! devide all throug hactual collect -> mean value
 !!$              PRINT*,REAL(h),k,ngam(k),REAL(gam(k)),REAL(th*th),&
 !!$                   REAL(gam(k) * DBLE(ngam(k) ))
            END IF
@@ -221,7 +219,7 @@ PROGRAM semi_variogram
   ic_nlag = 0
   DO k = 1,nlag
      IF (ngam(k) > 0) THEN
-!        gam(k) = gam(k) / ngam(k) / 2d0
+        gam(k) = gam(k) / DBLE(ngam(k)) / 2d0
         ic_nlag = ic_nlag + 1
      END IF
   END DO
@@ -240,6 +238,10 @@ PROGRAM semi_variogram
 !     IF (ngam(k) > 0) WRITE (ifp1,1)lag(k),gam(k),ngam(k)
      WRITE (ifp1,*)REAL(lag(k)),REAL(gam(k)),ngam(k)
   END DO
+  CLOSE (ifp1)
+
+  OPEN (ifp1,FILE='semi-variogram.dat',STATUS='replace')
+  WRITE (ifp1,'(2(F10.5,1x),I5)')(REAL(lag(k)),REAL(gam(k)),ngam(k),k=1,nlag)
   CLOSE (ifp1)
 
   OPEN (ifp1,FILE='semi-variogram.gnu',STATUS='replace')
