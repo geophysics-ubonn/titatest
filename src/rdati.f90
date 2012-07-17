@@ -258,7 +258,7 @@ subroutine rdati(kanal,datei)
 
            END IF
 
-           IF (pha > 0.0) THEN
+           IF (pha > 0.0 .AND. .NOT.ldc) THEN
 
               fetxt = '-- check noise parameters (Phase > 0)'
               errnr = 57
