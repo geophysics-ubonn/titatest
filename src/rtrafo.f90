@@ -48,10 +48,10 @@ subroutine rtrafo()
            end do
 
            hpotdc(j,l) = summdc / pi
-           IF (summdc < EPSILON(0D0)) THEN
-              print*,'rtrafo::',l,j
-              STOP
-           END IF
+!!$           IF (summdc < EPSILON(0D0)) THEN
+!!$              print*,'rtrafo::',l,j
+!!$              STOP
+!!$           END IF
         end do
      end do
      !$OMP END PARALLEL

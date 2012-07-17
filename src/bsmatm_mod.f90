@@ -64,6 +64,21 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     errnr = 2
 
+!!!$ pre query if smatm is  ever to be recalculated again..
+
+    IF (ltri > 4 .AND. ltri < 10) THEN
+       
+       IF (betamgs < 0d0) THEN
+          PRINT*
+          PRINT*,'Fixing Regularization matrix'
+          PRINT*
+          betamgs = ABS(betamgs)
+          l_bsmat = .FALSE.
+       ELSE
+          l_bsmat = .TRUE.
+       END IF
+    END IF
+
 !!!$    get time
     CALL TIC(c1)
 
@@ -138,8 +153,6 @@ CONTAINS
     END IF
     
     IF (ALLOCATED(csens)) DEALLOCATE (csens)
-
-    l_bsmat = (ltri > 4 .AND. ltri < 10) 
 
     fetxt = 'C_m^ calculation time'
     CALL TOC(c1,fetxt)

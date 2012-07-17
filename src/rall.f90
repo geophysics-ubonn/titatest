@@ -115,12 +115,15 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     FIXED PARAMETER
 !!!$     Slash
 
+!!!$ BETA MGS
+  betamgs = 1d0
+
   IF (INDEX ( version(5), 'Msys') /= 0) THEN
 	  print*,'MS-OS'
-     slash = '/'
+     slash = '\'
   ELSE
 	  print*,'Linux-OS'
-     slash = '\'
+     slash = '/'
   END IF
 
   !  CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 

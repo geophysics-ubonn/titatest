@@ -604,7 +604,7 @@ PROGRAM inv
            END IF
 
 !!!$   evtl   Rauhigkeitsmatrix belegen
-           IF (l_bsmat) CALL bsmatm(it,l_bsmat) 
+           IF (l_bsmat) CALL bsmatm(it,l_bsmat)
 
         ELSE
 !!!$   Felder zuruecksetzen
