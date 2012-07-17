@@ -368,8 +368,10 @@ PROGRAM inv
         END IF
 
 !!!$   Ggf. Ruecktransformation der Potentialwerte
-        IF (swrtr.EQ.1) CALL rtrafo()
-
+        IF (swrtr.EQ.1) THEN
+           CALL rtrafo(errnr)
+           IF (errnr.NE.0) GOTO 999
+        END IF
 !!!$   Spannungswerte berechnen
         CALL bvolti()
         IF (errnr.NE.0) GOTO 999
