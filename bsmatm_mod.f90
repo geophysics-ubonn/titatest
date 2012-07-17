@@ -536,8 +536,8 @@ CONTAINS
 !!!$ Model value gradient (\nabla m)
 
 !!! TODO
-!!$             mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
-!!$             sqmgrad = mgrad * mgrad
+             mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
+             sqmgrad = mgrad * mgrad
 !!!$ TODO
 !!!$    MGS Teil
 !!!$
