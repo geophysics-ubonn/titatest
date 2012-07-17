@@ -339,15 +339,26 @@ subroutine rdati(kanal,datei)
   end do
 !!!$     ak
   if (lindiv) then
-     read(kanal,*,end=1001,err=1000) stabw
-     if (stabw.le.0d0) then
-        fetxt = ' '
-        errnr = 88
-        goto 1000
-     end if
-     do i=1,nanz
-        wmatd(i) = wmatd(i)*stabw*stabw
-     end do
+     IF (ldc) THEN
+        read(kanal,*,end=1001,err=1000) stabw
+        if (stabw.le.0d0) then
+           fetxt = ' '
+           errnr = 88
+           goto 1000
+        end if
+        wmatd = wmatd * stabw * stabw
+        wmatdr = wmatdr * stabw * stabw
+     ELSE
+        read(kanal,*,end=1001,err=1000) stabw,stabwp
+        if (stabw.le.0d0.OR.stabwp <= 0d0) then
+           fetxt = ' '
+           errnr = 88
+           goto 1000
+        end if
+        wmatd = wmatd * stabw * stabw
+        wmatdr = wmatdr * stabw * stabw
+        wmatdp = wmatdp * stabwp * stabwp
+     END IF
   end if
 
 !!!$     'datei' schliessen
