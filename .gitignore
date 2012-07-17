@@ -2,6 +2,7 @@
 *.mod
 CRMod*
 CRTomo*
+CutMcK*
 mini_*
 minimal_*
 minimal
@@ -10,6 +11,7 @@ cutmckee/crerror.h
 cutmckee/Makefile.am
 man/Makefile.in
 src/Makefile.am
+my_git_version.h
 *.mod
 *#
 .#*
@@ -23,3 +25,9 @@ src/Makefile.am
 *.lot
 *.toc
 Makefile
+doxy.inp
+html
+latex
+inv.lastmod*
+inv.el*
+*/inv/*
