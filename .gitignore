@@ -7,6 +7,9 @@
 /minimal
 /forfiles
 /cutmckee/crerror.h
+/cutmckee/Makefile.am
+/man/Makefile.in
+/src/Makefile.am
 /*.mod
 /*#
 /.#*
