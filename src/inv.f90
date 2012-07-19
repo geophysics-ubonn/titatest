@@ -825,7 +825,10 @@ PROGRAM inv
         IF (errnr.NE.0) GOTO 999
      END IF
 
-     IF (lvario) CALL bvariogram ! calculate experimental variogram
+     IF (lvario) THEN
+        IF (lsens) CALL bvariogram_s ! calculate experimental variogram
+        CALL bvariogram
+     END IF
 
      IF (lcov1) CALL buncert (kanal,lamalt)
 

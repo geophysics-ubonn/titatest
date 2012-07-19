@@ -10,7 +10,7 @@ subroutine bbsens(kanal,datei)
 
 !!!$....................................................................
 
-  USE alloci , ONLY : sens,sensdc
+  USE alloci , ONLY : sens,sensdc, csens
   USE datmod , ONLY : nanz
   USE invmod , ONLY : lip,wmatd,wdfak
   USE modelmod , ONLY : manz
@@ -36,7 +36,7 @@ subroutine bbsens(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens
+!!$  REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens
   REAL (KIND(0D0))                          :: csensmax
   REAL (KIND(0D0))                          :: dum
 !!!$     Indexvariablen
@@ -87,7 +87,7 @@ subroutine bbsens(kanal,datei)
 !!!$     'datei' schliessen
   close(kanal)
   
-  DEALLOCATE (csens)
+!!$  DEALLOCATE (csens)
   
   errnr = 0
   return

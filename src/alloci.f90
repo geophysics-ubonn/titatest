@@ -11,6 +11,8 @@ MODULE alloci
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: hpot
 !!$Sensitivitaeten
   COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: sens
+!!$Coverage
+  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC   :: csens
 !!$DC-CASE
 !!$Gesamtsteifigkeitsmatrix
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: adc

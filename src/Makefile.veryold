@@ -98,6 +98,7 @@ f90crtsub	= bbsedc.o bbsens.o besp_elem.o \
 		  gauss_dble.o gauss_cmplx.o get_unit.o \
 		  make_noise.o tic_toc.o variomodel.o bvariogram.o \
 		  cg_mod.o bsmatm_mod.o bmcm_mod.o brough_mod.o \
+		  bvariogram_s.o
 
 fcrt		= inv.o
 
@@ -162,9 +163,11 @@ $(f90mini):	%.o : %.f90
 ################################################################
 # Dependencies
 
-besp_elem.o:	alloci.o elemmod.o
+besp_elem.o:	$(f90crt)
 
-bvariogram.o:	invmod.o
+bvariogram.o:	$(f90crt)
+
+bvariogram_s.o:	$(f90crt)
 
 bsensi.o:	ompmod.o tic_toc.o
 
