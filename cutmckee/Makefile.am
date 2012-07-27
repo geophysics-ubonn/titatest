@@ -1,0 +1,20 @@
+EXTRA_DIST = error.txt err.fin
+
+bin_PROGRAMS = CutMcK
+
+cOBJ		= relem.f welem.f relectr.f welectr.f
+cOBJF90		= elemmod.f90 electrmod.f90
+cOBJERR		= get_error.f90
+
+CutMcK_SOURCES = $(cOBJF90) $(cOBJ) $(cOBJERR) cutmck.f 
+CutMcK_FFLAGS =  -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
+CutMcK_FCFLAGS = $(CutMcK_FFLAGS)
+CutMcK_LDFLAGS = -lm # -llapack -lblas
+
+# die Includedatei crerr.h muss neu generiert werden, wenn error.txt sich ändert
+#get_error.f90:	error.txt
+#		./../make_crerr.sh; 
+
+# zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
+clean-local:
+		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
