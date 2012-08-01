@@ -61,6 +61,7 @@ crt_mods =	cjgmod.f90 \
 crt_subs = 	besp_elem.f90 blam0.f90 bnachbar.f90 bmcm_mod.f90 \
 		bpar.f90 brough_mod.f90 bsendc.f90 bsensi.f90 bsigm0.f90 \
 		bsigma.f90 bsmatm_mod.f90 bvariogram.f90 bvolti.f90 \
+		bvariogram_s.f90 \
 		cg_mod.f90 chold.f90 choldc.f90 cholz.f90 \
 		dmisft.f90 \
 		gauss_dble.f90 gauss_cmplx.f90 \
