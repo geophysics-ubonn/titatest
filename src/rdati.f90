@@ -36,29 +36,40 @@ subroutine rdati(kanal,datei)
 !!!$     Indexvariable
   INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
-!!!$     Counter
-  INTEGER (KIND = 4) ::     icount
+!!!$ << RM
+!!!$  USED ONLY IF NOISE IS ADDED!!
+!!!$ Magnitude and Phase of new data
+  REAL(KIND(0D0))     ::     new_bet,new_pha
+!!!$ Counting signum mismatches of magnitude and phases 
+!!!$    if noise is added
+  INTEGER (KIND = 4) ::     icount_pha,icount_mag
+!!!$ >> RM
 
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
 !!!$     Betrag und Phase (in mrad) der Daten
-  REAL(KIND(0D0))     ::     bet,pha,new_bet,new_pha
+  REAL(KIND(0D0))     ::     bet,pha
 
 !!!$     Standardabweichung eines logarithmierten (!) Datums
   REAL(KIND(0D0))      ::     stabw
-!!!$     Error of the resistance
-  REAL(KIND(0D0))     ::     eps_r
 !!!$     Standardabweichung der Phase
   REAL(KIND(0D0))     ::     stabwp,stabwb
+
+!!$ >> RM
+!!!$     Error of the resistance
+  REAL(KIND(0D0))     ::     eps_r
 !!!$     Error of the phase
   REAL(KIND(0D0))     ::     eps_p
-
+!!!$ << RM
 
 !!!$     Pi
   REAL(KIND(0D0))     ::     pi
+
+!!!$ >> RM
 !!!$ check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
+!!!$ << RM
 !!!$.....................................................................
   pi = dacos(-1d0)
 
@@ -102,7 +113,7 @@ subroutine rdati(kanal,datei)
 !!!$     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 !!!$     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
   IF ( lnse ) THEN
-     icount = 0
+     icount_mag = 0;icount_pha = 0
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
      CALL get_unit(ifp1)
      OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
@@ -258,24 +269,19 @@ subroutine rdati(kanal,datei)
 
               IF (SIGN(pha,new_pha) /= SIGN(pha,pha)) THEN
 
-                 icount = icount + 1 
-!!$                 fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
-!!$                 errnr = 57
-!!$                 GOTO 1000
+                 icount_pha = icount_pha + 1 
                  
               END IF
+
            END IF
            
            new_bet = bet + rnd_r(i) * eps_r ! add noise
 
            WRITE(ifp1,'(G14.4)')new_bet
 
-
            IF (SIGN(bet,new_bet) /= SIGN(bet,bet)) THEN
 
-              fetxt = '-- check noise parameters in crt.noisemod (Magnitude < 0)'
-              errnr = 57
-              GOTO 1000
+              icount_mag = icount_mag + 1
 
            END IF
 
@@ -370,7 +376,25 @@ subroutine rdati(kanal,datei)
 !!!$     'datei' schliessen
   close(kanal)
   IF ( lnse ) THEN
-     IF (icount > 0)PRINT*,'Counted ',icount,' different phase signs'
+
+     IF (icount_pha > 0)THEN
+        PRINT*
+        PRINT*,'-- Counted ',icount_pha,&
+             ' different phase signs'
+!!$        fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
+!!$        errnr = 57
+!!$        GOTO 1000
+        PRINT*
+     END IF
+     IF (icount_mag > 0) THEN
+        PRINT*
+        PRINT*,'-- Counted ',icount_mag,&
+             ' different resistance signs'
+!!$        fetxt = '-- check noise parameters in crt.noisemod (Magnitude < 0)'
+!!$        errnr = 57
+!!$        GOTO 1000
+        PRINT*
+     END IF
 
      CLOSE (ifp1)
      IF (.not.ldc) CLOSE (ifp2)
