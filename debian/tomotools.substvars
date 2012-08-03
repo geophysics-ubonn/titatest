@@ -1,0 +1,2 @@
+shlibs:Depends=libblas3gf | libblas.so.3gf | libatlas3gf-base, libc6 (>= 2.1), libgcc1 (>= 1:4.1.1), libgfortran3 (>= 4.3), liblapack3gf | liblapack.so.3gf | libatlas3gf-base
+misc:Depends=

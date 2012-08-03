@@ -27,7 +27,7 @@ MODULE bsmatm_mod
   USE variomodel 
   USE pathmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PRIVATE :: csens 
 
@@ -186,7 +186,7 @@ CONTAINS
 !!!$ wechselt automatisch wmatdp bei lip
           ELSE
              csens(j) = csens(j) + DCONJG(sens(i,j)) * &
-                  sens(i,j) * wmatd(i)*dble(wdfak(i)) 
+                  sens(i,j) * wmatd(i)*DBLE(wdfak(i)) 
           ENDIF
        END DO
     END DO
@@ -199,7 +199,7 @@ CONTAINS
 
   END SUBROUTINE bcsens
 
-  subroutine bsmatmreg
+  SUBROUTINE bsmatmreg
 
 !!!$     Unterprogramm belegt die Rauhigkeitsmatrix.
 !!!$
@@ -254,23 +254,23 @@ CONTAINS
 !!!$    Rauhigkeitsmatrix auf Null setzen
     smatm = 0d0
 
-    do i=1,nz
-       lup   = .true.
-       ldown = .true.
+    DO i=1,nz
+       lup   = .TRUE.
+       ldown = .TRUE.
 
-       do m=1,ndis_z
-          if (i  .eq.idis_z(m)) lup  =.false.
-          if (i+1.eq.idis_z(m)) ldown=.false.
-       end do
+       DO m=1,ndis_z
+          IF (i  .EQ.idis_z(m)) lup  =.FALSE.
+          IF (i+1.EQ.idis_z(m)) ldown=.FALSE.
+       END DO
 
-       do j=1,nx
-          lleft  = .true.
-          lright = .true.
+       DO j=1,nx
+          lleft  = .TRUE.
+          lright = .TRUE.
 
-          do m=1,ndis_x
-             if (j  .eq.idis_x(m)) lleft =.false.
-             if (j+1.eq.idis_x(m)) lright=.false.
-          end do
+          DO m=1,ndis_x
+             IF (j  .EQ.idis_x(m)) lleft =.FALSE.
+             IF (j+1.EQ.idis_x(m)) lright=.FALSE.
+          END DO
 
 !!!$    Beitrag von Wx^t*Wx zur Rauhigkeitsmatrix
           dzleft  = dabs( sy(snr(nrel(k(i,j),4))) &
@@ -279,49 +279,49 @@ CONTAINS
                -sy(snr(nrel(k(i,j),2))))
 
           xmean = 0d0
-          do l=1,4
+          DO l=1,4
              xmean = xmean + sx(snr(nrel(k(i,j),l)))
-          end do
+          END DO
           xmean = xmean/4d0
 
 
-          if (j.gt.1) then
-             if (lleft) then
+          IF (j.GT.1) THEN
+             IF (lleft) THEN
                 alfdis = 1d0
-             else
+             ELSE
 !!!$    ak
                 alfdis = 1d-3
-             end if
+             END IF
 
              xleft = 0d0
-             do l=1,4
+             DO l=1,4
                 xleft = xleft + sx(snr(nrel(k(i,j-1),l)))
-             end do
+             END DO
 
              xleft = xleft/4d0
 
              smatm(k(i,j),1) = alfdis*alfx * dzleft/dabs(xmean-xleft)
-          end if
+          END IF
 
-          if (j.lt.nx) then
-             if (lright) then
+          IF (j.LT.nx) THEN
+             IF (lright) THEN
                 alfdis = 1d0
-             else
+             ELSE
 !!!$    ak
                 alfdis = 1d-3
-             end if
+             END IF
 
              xright = 0d0
-             do l=1,4
+             DO l=1,4
                 xright = xright + sx(snr(nrel(k(i,j+1),l)))
-             end do
+             END DO
 
              xright = xright/4d0
              dum    = alfdis*alfx * dzright/dabs(xright-xmean)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
              smatm(k(i,j),2) = -dum
-          end if
+          END IF
 
 !!!$    Beitrag von Wz^t*Wz zur Rauhigkeitsmatrix
           dxup   = dabs( sx(snr(nrel(k(i,j),3))) &
@@ -330,51 +330,51 @@ CONTAINS
                -sx(snr(nrel(k(i,j),1))))
 
           zmean = 0d0
-          do l=1,4
+          DO l=1,4
              zmean = zmean + sy(snr(nrel(k(i,j),l)))
-          end do
+          END DO
           zmean = zmean/4d0
 
-          if (i.gt.1) then
-             if (lup) then
+          IF (i.GT.1) THEN
+             IF (lup) THEN
                 alfdis = 1d0
-             else
+             ELSE
                 alfdis = 0d0
-             end if
+             END IF
 
              zup = 0d0
-             do l=1,4
+             DO l=1,4
                 zup = zup + sy(snr(nrel(k(i-1,j),l)))
-             end do
+             END DO
 
              zup = zup/4d0
              dum = alfdis*alfz * dxup/dabs(zup-zmean)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
-          end if
+          END IF
 
-          if (i.lt.nz) then
-             if (ldown) then
+          IF (i.LT.nz) THEN
+             IF (ldown) THEN
                 alfdis = 1d0
-             else
+             ELSE
                 alfdis = 0d0
-             end if
+             END IF
 
              zdown = 0d0
-             do l=1,4
+             DO l=1,4
                 zdown = zdown + sy(snr(nrel(k(i+1,j),l)))
-             end do
+             END DO
 
              zdown = zdown/4d0
              dum   = alfdis*alfz * dxdown/dabs(zmean-zdown)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
              smatm(k(i,j),3) = -dum
-          end if
+          END IF
 
-       end do
-    end do
-  end subroutine bsmatmreg
+       END DO
+    END DO
+  END SUBROUTINE bsmatmreg
 
   SUBROUTINE bsmatmtri      !tri
 !!!$
@@ -421,26 +421,26 @@ CONTAINS
 
           ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
-          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2 + &
-               (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2) !!!$edge
+          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
+               (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2d0) !!!$edge
 
-          IF (nachbar(i,k)>0) THEN !nachbar existiert 
+          IF (nachbar(i,k)>0) THEN !nachbar an der Kante existiert 
 
-             sp2(1) = espx(nachbar(i,k)) !!!$schwerpunkt des nachbar elements
+             sp2(1) = espx(nachbar(i,k)) !!!$ center point of element
              sp2(2) = espy(nachbar(i,k))
-!!!$    Geometrischer Teil...
+!!!$    Geometrical part...
 
-             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.) ! distance of the mid points
+             dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !angle to horizon
+             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Angle
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.) ! projected effective contribution due to anisotropic regu
+             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
              
              dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
              
              smatm(i,k) = -dum ! set off diagonal of R
              
-             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal 
+             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal
 
           END IF
 
@@ -523,7 +523,7 @@ CONTAINS
 !!!$.....................................................................
 
     errnr = 4
-
+    
     CALL bcsens(csensmax,csensavg)
 
     IF (csensmax > 1d-12) THEN
@@ -532,8 +532,8 @@ CONTAINS
 
     PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
 
-    errnr = 0
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),&
+         STAT=errnr)
 
     IF (errnr/=0) THEN
        fetxt = 'Allocation problem WORK in bmcm'
@@ -541,8 +541,6 @@ CONTAINS
        errnr = 97
        RETURN
     END IF
-
-    errnr = 4
 
     smatm = 0d0               ! initialize smatm
 
@@ -553,29 +551,34 @@ CONTAINS
 
        DO k=1,smaxs           ! jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1
+          ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
-          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2 + &
-               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2) 
+          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
+               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
 !!$! edge of i,k and the next..
 
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
 
 !!!$schwerpunkt des nachbar elements
-             sp2(1) = espx(nachbar(i,k))
+             sp2(1) = espx(nachbar(i,k))!!!$ center point of element
              sp2(2) = espy(nachbar(i,k))
 
-!!!$    Geometrischer Teil...
-             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.)
+!!!$    Geometrical part...
+             ! distance of the mid points
+             dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 !!$! including anisotropy!
+!angle to horizon
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
 !!!$ geometrical contribution... (as smooth regularization..)
-             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.)
+! projected effective contribution due to anisotropic regu
+             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
 
 !!!$ Model value gradient (\nabla m)
+
+!!! TODO
              mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
              sqmgrad = mgrad * mgrad
-
+!!!$ TODO
 !!!$    MGS Teil
 !!!$
 !!!$    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
@@ -591,7 +594,8 @@ CONTAINS
 !!!$  of anisotropy
              IF (ltri == 5) THEN !!!$reines MGS
 
-                dum = sqmgrad + betamgs**2.
+                dum = sqmgrad + betamgs**2d0
+! proportional contribution of integrated cell
                 dum = alfgeo * edglen / dist / dum
 
              ELSE IF (ltri == 6) THEN !!!$sensitivitaetswichtung 1 von RM
@@ -599,9 +603,9 @@ CONTAINS
                 dum2 = 1d0 + DABS(DLOG10(csens(i))) + &
                      DABS(DLOG10(csens(nachbar(i,k))))
 !!!$    dum2 = f(i,k)^2
-                dum2 = dum2**2.
+                dum2 = dum2**2d0
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = sqmgrad + (betamgs / dum2)**2.
+                dum = sqmgrad + (betamgs / dum2)**2d0
 !!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
 !!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = alfgeo * edglen / dist / dum2 / dum
@@ -612,9 +616,9 @@ CONTAINS
                 dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
                      DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
 !!!$    dum2 = f(i,k)^2
-                dum2 = dum2**2.
+                dum2 = dum2**2d0
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = sqmgrad + (betamgs / dum2)**2.
+                dum = sqmgrad + (betamgs / dum2)**2d0
 !!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
 !!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = alfgeo * edglen / dist / dum2 / dum
@@ -626,7 +630,7 @@ CONTAINS
                 dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
                      DLOG10(csens(nachbar(i,k))) ) ))
                 
-                alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
+                alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                 dum =  edglen * alfgeo * alfmgs
 
              ELSE IF (ltri == 9) THEN
@@ -634,7 +638,7 @@ CONTAINS
                 dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
                      DLOG10(csens(nachbar(i,k))) ) / csensavg ))
 
-                alfmgs = 1d0 - dum**2. / (dum**2. + betamgs**2.)
+                alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                 dum =  edglen * alfgeo * alfmgs
 
              END IF
@@ -689,8 +693,8 @@ CONTAINS
 
           ik = MOD(k,smaxs) + 1
 
-          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2 + &
-               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2) !!!$edge
+          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
+               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) !!!$edge
 
 
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
@@ -699,16 +703,16 @@ CONTAINS
              sp2(2) = espy(nachbar(i,k))
 
 !!!$   Geometrischer Teil...
-             dist = SQRT((sp1(1) - sp2(1))**2. + (sp1(2) - sp2(2))**2.)
+             dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2. + (alfz*DSIN(ang))**2.)
+             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
 
              alftv = edglen / dist * alfgeo
 
 !!!$   Total variance
-             dum = SQRT(alftv**2. + betamgs**2.)
+             dum = SQRT(alftv**2d0 + betamgs**2d0)
 !!!$   nun glaettung belegen
 
              smatm(i,k) = -dum !!!$ off diagonal
@@ -739,9 +743,9 @@ CONTAINS
     REAL(KIND(0D0))      :: hx,hy,var,nugget
     REAL                 :: epsi
 !!!$    gibt es evtl schon eine inverse?
-    logical              :: ex
+    LOGICAL              :: ex
 !!!$    Hilfsvariablen
-    integer              :: i,j,ifp
+    INTEGER              :: i,j,ifp
 !!!$    smatm file name
     CHARACTER(124)        :: fsmat
 !!!$    clearscreen
@@ -851,7 +855,7 @@ CONTAINS
           CALL gauss_dble(smatm,manz,errnr)
           IF (errnr/=0) THEN
              fetxt='there was something wrong..'
-             PRINT*,'Zeile(',abs(errnr),')::',smatm(abs(errnr),:)
+             PRINT*,'Zeile(',ABS(errnr),')::',smatm(ABS(errnr),:)
              errnr = 108
              RETURN
           END IF
@@ -861,7 +865,7 @@ CONTAINS
           CALL CHOLD(smatm,work,manz,errnr,lverb)
           IF (errnr/=0) THEN
              fetxt='CHOLD smatm :: matrix not pos definite..'
-             PRINT*,'Zeile(',abs(errnr),')'
+             PRINT*,'Zeile(',ABS(errnr),')'
              errnr = 108
              RETURN
           END IF

@@ -1,0 +1,7 @@
+http://www.debian.org/doc/maint-guide/ch-first.en.html#s-namever
+
+- dh_make -e your.maintainer@address -s -f ../tomotools-0.1.tar.bz2
+- dann die Dateien im debian/ -Verzeichniz kontrollieren und vervolltständigen (control, changelog)
+- dann a) dpkg-buildpackage -rfakeroot (als user)
+  oder b) depbuild (bei eingerichtetem pbuilder)
+
