@@ -48,6 +48,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   LOGICAL ::     lsto
 !!!$     check whether the file format is crtomo konform or not..
   LOGICAL ::    crtf
+!!!$     check whether a file exists..
+  LOGICAL ::    exi
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
@@ -251,7 +253,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   READ (fpcfg,*,end=1001,err=999) nx
   fetxt = 'rall -> (lamfix) Gitter nz'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lamfix
+  READ (fpcfg,*,end=1001,err=999) nz
   fetxt = 'rall -> Anisotropie /x'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,end=1001,err=999) alfx
@@ -418,7 +420,38 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      IF (errnr /= 0) GOTO 999
   END IF
 
-  nz = INT(lamfix)
+
+!!$>> RM
+  fetxt = 'crt.lamnull'
+  INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
+  IF (exi) THEN
+!!!$ Overwriting lamfix with crt.lamnull content
+     PRINT*,'overwriting lamfix with content of ',TRIM(fetxt)
+     OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
+     READ(kanal,*,END=1001,ERR=999)lamnull_cri
+     PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
+     READ(kanal,*,END=30,ERR=30)lamnull_fpi
+     PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
+     GOTO 31
+30   lamnull_fpi = 0d0
+     IF (llamf) lamnull_fpi = lamfix ! in case of llamf we possibly 
+!!!$ do not want lam0 search at the beginning of FPI
+31   CLOSE(kanal)
+  ELSE IF (llamf) THEN
+     lamnull_cri = lamfix
+     lamnull_fpi = lamfix
+     PRINT*,'writing ',TRIM(fetxt)
+     OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',&
+          STATUS='replace')
+     WRITE (kanal,*)lamnull_cri
+     WRITE (kanal,*)lamnull_fpi
+     CLOSE (kanal)
+  ELSE
+     lamnull_cri = 0d0
+     lamnull_fpi = 0d0
+  END IF
+!!$<< RM
+
 
   IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
