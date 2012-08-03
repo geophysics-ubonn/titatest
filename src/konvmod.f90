@@ -11,6 +11,13 @@ MODULE konvmod
 !!!$Maximaler Regularisierungsparameter
   REAL(KIND(0D0)), PUBLIC ::     lammax
 
+!!$ >> RM
+!!$ Starting regularization parameter (CRI)
+  REAL(KIND(0D0)), PUBLIC ::     lamnull_cri
+!!$ Starting regularization parameter (FPI)
+  REAL(KIND(0D0)), PUBLIC ::     lamnull_fpi
+!!$ << RM
+
 !!!$Fester Regularisierungsparameter
   REAL(KIND(0D0)), PUBLIC ::     lamfix
 
