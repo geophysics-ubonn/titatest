@@ -1,4 +1,4 @@
-subroutine rdati(kanal,datei)
+SUBROUTINE rdati(kanal,datei)
 
 !!!$     Unterprogramm zum Einlesen der Elektrodenkennungen und der Daten
 !!!$     inkl. Standardabweichungen aus 'datei'.
@@ -8,7 +8,7 @@ subroutine rdati(kanal,datei)
 
 !!!$.....................................................................
   USE make_noise
-  USE alloci, only:rnd_r,rnd_p
+  USE alloci, ONLY:rnd_r,rnd_p
   USE femmod
   USE datmod
   USE invmod
@@ -16,7 +16,7 @@ subroutine rdati(kanal,datei)
   USE errmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -36,6 +36,15 @@ subroutine rdati(kanal,datei)
 !!!$     Indexvariable
   INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
+!!! >> RM
+!!!$  USED ONLY IF NOISE IS ADDED!!
+!!!$ Magnitude and Phase of new data
+  REAL(KIND(0D0))     ::     new_bet,new_pha
+!!!$ Counting signum mismatches of magnitude and phases 
+!!!$    if noise is added
+  INTEGER (KIND = 4) ::     icount_pha,icount_mag
+!!!$ << RM
+
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
@@ -50,8 +59,6 @@ subroutine rdati(kanal,datei)
   REAL(KIND(0D0))     ::     stabwp,stabwb
 !!!$     Error of the phase
   REAL(KIND(0D0))     ::     eps_p
-
-
 !!!$     Pi
   REAL(KIND(0D0))     ::     pi
 !!!$ check whether the file format is crtomo konform or not..
@@ -62,18 +69,18 @@ subroutine rdati(kanal,datei)
 !!!$     'datei' oeffnen
   fetxt = datei
   errnr = 1
-  open(kanal,file=TRIM(fetxt),status='old',err=999)
+  OPEN(kanal,file=TRIM(fetxt),status='old',err=999)
   errnr = 3
 
 !!!$     Anzahl der Messwerte lesen
 !!!$ also check if we may use individual errors or not
-  read(kanal,*,end=1001,err=11) nanz,lindiv
+  READ(kanal,*,END=1001,err=11) nanz,lindiv
   IF (lindiv) PRINT*,'+ Individual data error!'
   GOTO 12
 11 PRINT*,'+ Taking error model'
   BACKSPACE(kanal)
 !!!$c check if data file format is CRTOmo konform..
-12 read(kanal,*,end=1001,err=1000) elec1
+12 READ(kanal,*,END=1001,err=1000) elec1
   BACKSPACE(kanal)
 
   elec3=elec1-10000 ! are we still positive?
@@ -87,12 +94,13 @@ subroutine rdati(kanal,datei)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation data space'
      errnr = 94
-     goto 1000
+     GOTO 1000
   END IF
 
 !!!$     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 !!!$     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
-  IF ( lnse ) THEN
+  IF (lnse ) THEN
+     icount_mag = 0;icount_pha = 0
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
      CALL get_unit(ifp3)
      OPEN (ifp3,FILE='inv.mynoise_voltages',STATUS='replace')
@@ -123,60 +131,60 @@ subroutine rdati(kanal,datei)
   END IF
 
 
-  do i=1,nanz
+  DO i=1,nanz
      stabwp = 0.; stabwb = 0.
      IF (lverb) WRITE (*,'(A,t70,F6.2,A)',ADVANCE='no')ACHAR(13)//&
           'data set ',REAL( i * (100./nanz) ),'%'
-     if (lindiv) then
-        if (ldc) then
+     IF (lindiv) THEN
+        IF (ldc) THEN
            IF (crtf) THEN
-              read(kanal,*,end=1001,err=1000)strnr(i),vnr(i),bet,stabw
+              READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,stabw
            ELSE
-              read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4,bet,&
+              READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,bet,&
                    stabw
               strnr(i) = elec1*10000 + elec2
               vnr(i)   = elec3*10000 + elec4
            END IF
-        else
-           if (lfphai) then
+        ELSE
+           IF (lfphai) THEN
               IF (crtf) THEN
-                 read(kanal,*,end=1001,err=1000)strnr(i),vnr(i),bet,pha,&
+                 READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha,&
                       stabw,stabwp
               ELSE
-                 read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4,&
+                 READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,&
                       bet,pha,stabw,stabwp
                  strnr(i) = elec1*10000 + elec2
                  vnr(i)   = elec3*10000 + elec4
               END IF
 !!!$     Ggf. Fehlermeldung
-              if (stabwp.le.0d0) then
+              IF (stabwp.LE.0d0) THEN
                  fetxt = ' '
                  errnr = 88
-                 goto 1000
-              end if
+                 GOTO 1000
+              END IF
 
 !!!$     ak                        stabwp = stabp0 * stabwp
               stabwp = 1d-3*stabwp
-           else
+           ELSE
               IF (crtf) THEN
-                 read(kanal,*,end=1001,err=1000)strnr(i),vnr(i),bet,pha,&
+                 READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha,&
                       stabw
               ELSE
-                 read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4,&
+                 READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,&
                       bet,pha,stabw
                  strnr(i) = elec1*10000 + elec2
                  vnr(i)   = elec3*10000 + elec4
 
               END IF
-           end if
-        end if
+           END IF
+        END IF
 
 !!!$     Ggf. Fehlermeldung
-        if (stabw.le.0d0) then
+        IF (stabw.LE.0d0) THEN
            fetxt = ' '
            errnr = 88
-           goto 1000
-        end if
+           GOTO 1000
+        END IF
 
 !!!$     ak                stabw = stabw0 * stabw
 
@@ -190,37 +198,37 @@ subroutine rdati(kanal,datei)
 !!!$     ak                end if
 
 !!!$     ak                stabw = (stabw0 + stabm0/bet) * stabw
-     else
-        if (ldc) then
+     ELSE
+        IF (ldc) THEN
            IF (crtf) THEN
-              read(kanal,*,end=1001,err=1000)strnr(i),vnr(i),bet
+              READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet
            ELSE 
-              read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4,bet
+              READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,bet
               strnr(i) = elec1*10000 + elec2
               vnr(i)   = elec3*10000 + elec4
            END IF
-        else
+        ELSE
            IF (crtf) THEN
-              read(kanal,*,end=1001,err=1000)strnr(i),vnr(i),bet,pha
+              READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha
 
            ELSE
-              read(kanal,*,end=1001,err=1000)elec1,elec2,elec3,elec4,bet,pha
+              READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,bet,pha
               strnr(i) = elec1*10000 + elec2
               vnr(i)   = elec3*10000 + elec4
            END IF
 
-           if (.NOT. ldc) stabwp = ( stabpA1*bet**stabpB &
+           IF (.NOT. ldc) stabwp = ( stabpA1*bet**stabpB &
                 + 1d-2*stabpA2*dabs(pha) + stabp0 ) * 1d-3
-        end if
+        END IF
 
 !!!$     Ggf. Fehlermeldung
-        if (bet.le.0d0) then
+        IF (bet.LE.0d0) THEN
 !!!$     ak
 !!!$     ak                    write(*,*) i
            fetxt = ' '
            errnr = 94
-           goto 1000
-        end if
+           GOTO 1000
+        END IF
 
         stabw = 1d-2*stabw0 + stabm0/bet
 
@@ -229,6 +237,8 @@ subroutine rdati(kanal,datei)
            eps_r = 1d-2*nstabw0 * bet + nstabm0
 
            WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')rnd_r(i),eps_r,bet
+! initialize
+           new_pha = pha; new_bet = bet
 
            IF (.NOT. ldc) THEN
 
@@ -239,59 +249,58 @@ subroutine rdati(kanal,datei)
               
               WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
 
-              pha = pha + rnd_p(i) * eps_p ! add noise
+              new_pha = pha + rnd_p(i) * eps_p ! add noise
 
-              WRITE(ifp2,'(G14.4)')pha
-           END IF
+              WRITE(ifp2,'(G14.4)')new_pha
 
-           bet = bet + rnd_r(i) * eps_r ! add noise
-
-           WRITE(ifp1,'(G14.4)')bet
-           ! write out full noisy data as measured voltages..
-           WRITE (ifp3,*)strnr(i),vnr(i),bet,pha
-
-           IF (bet < 0.0) THEN
-
-              fetxt = '-- check noise parameters (Magnitude < 0)'
-              errnr = 57
-              GOTO 1000
+              IF (SIGN(pha,new_pha) /= SIGN(pha,pha)) THEN
+                 
+                 icount_pha = icount_pha + 1 
+                 
+              END IF
 
            END IF
 
-           IF (pha > 0.0 .AND. .NOT.ldc) THEN
+           new_bet = bet + rnd_r(i) * eps_r ! add noise
 
-              fetxt = '-- check noise parameters (Phase > 0)'
-              errnr = 57
-              GOTO 1000
+           WRITE(ifp1,'(G14.4)')new_bet
 
+           
+           IF (SIGN(bet,new_bet) /= SIGN(bet,bet)) THEN
+              
+              icount_mag = icount_mag + 1
+              
            END IF
+
+! assign the noised values
+           bet = new_bet;pha = new_pha
 
         END IF
 
-     end if
+     END IF
 
 !!!$     Ggf. Fehlermeldung
-     if (bet.le.0d0) then
+     IF (bet.LE.0d0) THEN
         fetxt = ' '
         errnr = 94
-        goto 1000
-     end if
+        GOTO 1000
+     END IF
 
-     if (ldc) then
+     IF (ldc) THEN
 
 !!!$     Phase intern auf Null setzen
         pha = 0d0
-     else
+     ELSE
 
 !!!$     Ggf. Fehlermeldung
-        if (dabs(pha).gt.1d3*pi) then
+        IF (dabs(pha).GT.1d3*pi) THEN
 !!!$     ak
 !!!$     ak                    write(*,*) i
            fetxt = ' '
            errnr = 95
-           goto 1000
-        end if
-     end if
+           GOTO 1000
+        END IF
+     END IF
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
      wmatdr(i) = 1d0/(stabw**2d0)
@@ -304,42 +313,62 @@ subroutine rdati(kanal,datei)
      wdfak(i) = 1
 
 !!!$     Stromelektroden bestimmen
-     elec1 = mod(strnr(i),10000)
+     elec1 = MOD(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
 !!!$     Messelektroden bestimmen
-     elec3 = mod(vnr(i),10000)
+     elec3 = MOD(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Ggf. Fehlermeldung
-     if (elec1.lt.0.or.elec1.gt.eanz.or. &
-          elec2.lt.0.or.elec2.gt.eanz.or. &
-          elec3.lt.0.or.elec3.gt.eanz.or. &
-          elec4.lt.0.or.elec4.gt.eanz) then
+     IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
+          elec2.LT.0.OR.elec2.GT.eanz.OR. &
+          elec3.LT.0.OR.elec3.GT.eanz.OR. &
+          elec4.LT.0.OR.elec4.GT.eanz) THEN
 !!!$     ak
         WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
         errnr = 46
-        goto 1000
-     end if
-  end do
+        GOTO 1000
+     END IF
+  END DO ! i=1,nanz
 !!!$     ak
-  if (lindiv) then
-     read(kanal,*,end=1001,err=1000) stabw
-     if (stabw.le.0d0) then
+  IF (lindiv) THEN
+     READ(kanal,*,END=1001,err=1000) stabw
+     IF (stabw.LE.0d0) THEN
         fetxt = ' '
         errnr = 88
-        goto 1000
-     end if
-     do i=1,nanz
+        GOTO 1000
+     END IF
+     DO i=1,nanz
         wmatd(i) = wmatd(i)*stabw*stabw
-     end do
-  end if
-
+     END DO
+  END IF
+  
 !!!$     'datei' schliessen
-  close(kanal)
+  CLOSE(kanal)
   IF ( lnse ) THEN
+
+     IF (icount_pha > 0)THEN
+        PRINT*
+        PRINT*,'-- Counted ',icount_pha,&
+             ' different phase signs'
+!!$        fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
+!!$        errnr = 57
+!!$        GOTO 1000
+        PRINT*
+     END IF
+     IF (icount_mag > 0) THEN
+        PRINT*
+        PRINT*,'-- Counted ',icount_mag,&
+             ' different resistance signs'
+!!$        fetxt = '-- check noise parameters in crt.noisemod (Magnitude < 0)'
+!!$        errnr = 57
+!!$        GOTO 1000
+        PRINT*
+     END IF
+
      CLOSE (ifp1)
-     IF (.not.ldc) CLOSE (ifp2)
+     IF (.NOT.ldc) CLOSE (ifp2)
      CLOSE (ifp3)
   END IF
   errnr = 0
@@ -347,19 +376,19 @@ subroutine rdati(kanal,datei)
   IF (ALLOCATED (rnd_p)) DEALLOCATE (rnd_p)
 
 
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
-1000 close(kanal)
-  return
+1000 CLOSE(kanal)
+  RETURN
 
-1001 close(kanal)
+1001 CLOSE(kanal)
   errnr = 2
-  return
+  RETURN
 
-end subroutine rdati
+END SUBROUTINE rdati
