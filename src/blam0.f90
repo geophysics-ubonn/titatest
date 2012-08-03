@@ -1,4 +1,4 @@
-subroutine blam0()
+SUBROUTINE blam0()
 
 !!!$     Unterprogramm zum Bestimmen des Start-Regularisierungsparameters.
 
@@ -14,7 +14,7 @@ subroutine blam0()
   USE modelmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -23,66 +23,88 @@ subroutine blam0()
 
 !!!$     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::  cdum
-  REAL (KIND(0D0))    ::   dum,lam_tmp
+  REAL (KIND(0D0))    ::  dum
 
 !!!$     Indexvariablen
-  INTEGER (KIND = 4)  ::  i,j,k,count
+  INTEGER (KIND = 4)  ::  i,j,k
 
 !!!$.....................................................................
 
 !!!$     Start-Regularisierungsparameter bestimmen
-  IF (nz < 0.OR.lamfix /= 0d0) THEN
-     lammax = ABS(lamfix)
-     IF (nz==-1) lammax = MAX(REAL(manz),REAL(nanz))
-     WRITE (*,'(t5,a,F12.1)')'taking easy lam_0 ',lammax
+
+!!!$ for fixed lambda set the values according to preset fixed lamfix
+  IF (( llamf .OR. (lamnull_cri > EPSILON(lamnull_cri)) ) .AND..NOT. &
+       lip ) THEN
+     IF (nz==-1) THEN ! this is a special switch, but only taken for 
+!!!!$ CRI/DC
+        lammax = MAX(REAL(manz),REAL(nanz))
+        WRITE (*,'(t5,a,F12.1)')'taking easy lam_0 ',lammax
+     ELSE
+        lammax = DBLE(lamnull_cri)
+        PRINT*,'-> presetting lam0 CRI',lammax
+     END IF
+     RETURN
+  ELSE IF ( llamf .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
+     lammax = DBLE(lamnull_fpi)
+     PRINT*,'-> presetting lam0 FPI',lammax
      RETURN
   END IF
-
+  
   lammax = 0d0
-  count = 0
-  !$OMP PARALLEL DEFAULT (none) &
-  !$OMP SHARED (manz,count,lverb,ldc,nanz,sensdc,wmatd,wdfak,lip,sens,lammax) &
-  !$OMP PRIVATE(i,k,dum,j,cdum)
-  !$OMP DO
-  do j=1,manz
 
-     !$OMP ATOMIC
-     count = count + 1
+  IF (ldc) THEN
+     DO j=1,manz
+        IF (lverb) WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+             'blam0/ ',REAL( j * (100./manz)),'%'
+        dum = 0d0
 
-     IF (lverb) write(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-          'blam0/ ',REAL( count * (100./manz)),'%'
-     dum = 0d0;cdum = DCMPLX(0D0)
-     if (ldc) then
-        do i=1,nanz
-           do k=1,manz
+        DO i=1,nanz
+           DO k=1,manz
               dum = dum + sensdc(i,j) * sensdc(i,k) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        end do
-     else if (lip) then
-        do i=1,nanz
-           do k=1,manz
-              dum = dum + dble(sens(i,j)) * dble(sens(i,k)) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        end do
-     else
-        do i=1,nanz
-           do k=1,manz
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        END DO
+
+        lammax = lammax + dabs(dum)
+     END DO
+
+  ELSE IF (lip) THEN
+
+     DO j=1,manz
+        IF (lverb) WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+             'blam0/ ',REAL( j * (100./manz)),'%'
+        dum = 0d0
+
+        DO i=1,nanz
+           DO k=1,manz
+              dum = dum + DBLE(sens(i,j)) * DBLE(sens(i,k)) * &
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        END DO
+
+        lammax = lammax + dabs(dum)
+     END DO
+
+  ELSE
+
+     DO j=1,manz
+        IF (lverb) WRITE(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
+             'blam0/ ',REAL( j * (100./manz)),'%'
+        cdum = dcmplx(0d0)
+
+        DO i=1,nanz
+           DO k=1,manz
               cdum = cdum + dconjg(sens(i,j)) * sens(i,k) * &
-                   dcmplx(wmatd(i)*dble(wdfak(i)))
-           end do
-        end do
-        dum = CDABS(cdum)
-     END if
-     
-     !$OMP ATOMIC
-     lammax = lammax + dabs(dum)
+                   dcmplx(wmatd(i)*DBLE(wdfak(i)))
+           END DO
+        END DO
 
-  end do
-  !$OMP END PARALLEL
+        lammax = lammax + cdabs(cdum)
+     END DO
 
-  lammax = lammax/dble(manz)
+  END IF
+
+  lammax = lammax/DBLE(manz)
 
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
@@ -104,4 +126,4 @@ subroutine blam0()
 !!!$     ak AAC
 !!!$     ak        lammax = lammax * 5d0
   RETURN
-end subroutine blam0
+END SUBROUTINE blam0

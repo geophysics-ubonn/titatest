@@ -225,16 +225,17 @@ PROGRAM inv
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
+!!!$  Write errors for all measurements to fpeps
      IF (ldc) THEN
         WRITE (fpeps,'(a)')'1/eps_r      datum'
         WRITE (fpeps,'(G12.3,2x,G14.5)')(SQRT(wmatdr(i)),&
              REAL(dat(i)),i=1,nanz)
      ELSE
-        WRITE (fpeps,'(t7,a,t15,a,t25,a,t40,a)')'1/eps','1/eps_r',&
-             '1/eps_p','datum (Re,Im)'
-        WRITE (fpeps,'(3F10.1,2x,2G15.7)')&
-             (SQRT(wmatd(i)),SQRT(wmatdr(i)),SQRT(wmatdp(i)),REAL(dat(i)),&
-             AIMAG(dat(i)),i=1,nanz)
+        WRITE (fpeps,'(t5,a,t14,a,t27,a,t38,a,t50,a,t62,a,t71,a,t87,a)')'1/eps_r','1/eps_p',&
+             '1/eps','eps_r','eps_p','eps','-log(|R|)', '-Phase (rad)'
+        WRITE (fpeps,'(3F10.1,2x,3G12.3,2G15.7)')&
+             (SQRT(wmatdr(i)),SQRT(wmatdp(i)),SQRT(wmatd(i)),1/SQRT(wmatdr(i)),&
+             1/SQRT(wmatdp(i)),1/SQRT(wmatd(i)),REAL(dat(i)),AIMAG(dat(i)),i=1,nanz)
      END IF
      CLOSE(fpeps)
      errnr = 4

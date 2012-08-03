@@ -77,6 +77,10 @@ CONTAINS
        ELSE
           l_bsmat = .TRUE.
        END IF
+    ELSE IF (ltri == 4) THEN ! for levenberg-marquardt JTJ scaling
+       l_bsmat = .TRUE.
+    ELSE
+       l_bsmat = .FALSE. ! calculate just once
     END IF
 
 !!!$    get time
