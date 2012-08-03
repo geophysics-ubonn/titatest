@@ -36,6 +36,9 @@ subroutine rdati(kanal,datei)
 !!!$     Indexvariable
   INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
+!!!$     Counter
+  INTEGER (KIND = 4) ::     icount
+
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
@@ -99,6 +102,7 @@ subroutine rdati(kanal,datei)
 !!!$     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
 !!!$     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
   IF ( lnse ) THEN
+     icount = 0
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
      CALL get_unit(ifp1)
      OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
@@ -251,11 +255,13 @@ subroutine rdati(kanal,datei)
               new_pha = pha + rnd_p(i) * eps_p ! add noise
 
               WRITE(ifp2,'(G14.4)')new_pha
+
               IF (SIGN(pha,new_pha) /= SIGN(pha,pha)) THEN
-                 
-                 fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
-                 errnr = 57
-                 GOTO 1000
+
+                 icount = icount + 1 
+!!$                 fetxt = '-- check noise parameters in crt.noisemod (Phase > 0)'
+!!$                 errnr = 57
+!!$                 GOTO 1000
                  
               END IF
            END IF
@@ -364,6 +370,8 @@ subroutine rdati(kanal,datei)
 !!!$     'datei' schliessen
   close(kanal)
   IF ( lnse ) THEN
+     IF (icount > 0)PRINT*,'Counted ',icount,' different phase signs'
+
      CLOSE (ifp1)
      IF (.not.ldc) CLOSE (ifp2)
      CLOSE (ifp3)
