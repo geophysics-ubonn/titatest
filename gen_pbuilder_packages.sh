@@ -54,7 +54,7 @@ cd ../../
 ## build for various distributions
 cd package
 
-for distri in squeeze # karmic lucid
+for distri in precise # karmic lucid
 do
 	echo "cleaning $distri build dir"
 	DIST=$distri pbuilder --clean --basetgz  "$pbuilder_target_loc"/$distri-base.tgz --buildresult  "$pbuilder_target_loc"/$distri/result
