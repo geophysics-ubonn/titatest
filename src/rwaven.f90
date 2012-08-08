@@ -92,6 +92,7 @@ subroutine rwaven()
   ganz   = int(real(6d0*dlog10(amax/amin)))
 !!!$ Need at least 2 abcissas
   ganz   = max0(ganz,2)
+  ganz   = min0(ganz,30 - lanz)
 !!!$ Overall k number
   kwnanz = ganz+lanz
 !!!$ k_0, AK Diss p. 163
@@ -135,6 +136,12 @@ subroutine rwaven()
      kwnwi(i) = kwn0*kwnwi(i)*dexp(kwn(i))
      kwn(i)   = kwn0*(kwn(i)+1d0)
   end do
+
+  PRINT*
+  DO i = 1, ganz + lanz
+     PRINT*,kwnwi(i),kwn(i)
+  END DO
+  PRINT*
 
   errnr = 0
   return

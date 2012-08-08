@@ -23,8 +23,8 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
-  REAL (KIND (0D0)),DIMENSION(*) ::     a_komp
-  REAL (KIND (0D0)),DIMENSION(*) ::     b_komp
+  REAL (KIND (0D0)),DIMENSION((mb + 1)*sanz) ::     a_komp
+  REAL (KIND (0D0)),DIMENSION(sanz) ::     b_komp
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -62,15 +62,15 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
   im = (mb+1)*sanz
 
-!!$  a_komp = 0D0
-!!$  b_komp = 0D0
-  do i=1,im
-     a_komp(i) = 0d0
-  end do
-
-  do i=1,sanz
-     b_komp(i) = 0d0
-  end do
+  a_komp = 0D0
+  b_komp = 0D0
+!!$  do i=1,im
+!!$     a_komp(i) = 0d0
+!!$  end do
+!!$
+!!$  do i=1,sanz
+!!$     b_komp(i) = 0d0
+!!$  end do
 
   iel = 0
 

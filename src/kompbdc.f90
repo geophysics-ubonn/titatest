@@ -17,8 +17,8 @@ subroutine kompbdc(nelec,b_komp,fak_komp)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
-  REAL (KIND(0D0)),DIMENSION (*) :: b_komp
-  REAL (KIND(0D0)),DIMENSION (*) :: fak_komp
+  REAL (KIND(0D0)),DIMENSION (sanz) :: b_komp
+  REAL (KIND(0D0)),DIMENSION (sanz) :: fak_komp
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
 
