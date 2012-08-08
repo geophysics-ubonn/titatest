@@ -130,8 +130,10 @@ subroutine bsigm0(kanal,dstart)
 !!!$  print*,sigma(i),m0(i),cdexp(m0(i))
 !!!$  END DO
 !!!$     Referenzleitfaehigkeit 'sigma0' bestimmen
-  call refsig()
 
+!!!$ >> RM This is now a must have for mixed boundaries
+  call refsig()
+!!!!$ << RM because the sigma0 is needed
   errnr = 0
   return
 

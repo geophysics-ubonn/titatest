@@ -74,6 +74,9 @@ SUBROUTINE bnachbar
               END IF
 
            END DO
+           IF (nachbar(i,smaxs + 1) < smaxs) THEN
+              PRINT*,'found border element',ik1,ik2
+           END IF
         END DO              ! inner loop j=1,elanz
 
      END DO

@@ -29,11 +29,18 @@ subroutine relem(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariablen
-  INTEGER (KIND =4)  ::    i,j,k
+  INTEGER (KIND =4)  ::    i,j,k,l,ic
 
 !!!$     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
   LOGICAL            ::    my_check  
+
+!!!$
+  INTEGER :: ik1,ik2,jk1,jk2
+
+!!!$ NEW rnr
+  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
+
 !!!$.....................................................................
 
 !!!$     'datei' oeffnen
@@ -76,6 +83,8 @@ subroutine relem(kanal,datei)
   relanz = 0
   elanz  = 0
 
+  my_check = .FALSE.
+
   do i=1,typanz
      if (typ(i).gt.10) then
         relanz = relanz + nelanz(i)
@@ -90,9 +99,10 @@ subroutine relem(kanal,datei)
 !!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
-  ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
+  ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),&
+       my_rnr(relanz),stat=errnr)
   IF (errnr /= 0) THEN
-     fetxt = 'Error memory allocation nrel failed'
+     fetxt = 'Error memory allocation nrel,rnr failed'
      errnr = 94
      GOTO 999
   END IF
@@ -127,22 +137,67 @@ subroutine relem(kanal,datei)
 
         END IF
 
-!!!$            IF (typ(i) > 10) THEN ! randele zeiger kann man auch so belegen
-!!!$               iflnr = iflnr + 1
-!!!$               IF (iflnr > relanz) THEN
-!!!$                  fetxt = 'relem:: iflnr > relanz!'
-!!!$                  errnr = 9
-!!!$                  goto 1000
-!!!$               END IF                  
-!!!$               rnr(iflnr) = nrel(idum+j,1)
-!!!$            END IF
      end do
      idum = idum + nelanz(i)
   end do
 
 !!!$     Zeiger auf Werte der Randelemente einlesen
   read(kanal,*,end=1001,err=1000) (rnr(i),i=1,relanz)
+!!!$
+!!!$ IF THIS IS NOT a pointer to the
+!!!$ REGULAR ELEMENT adjacent to the border line
+!!!$ THIS MAY CAUSE THE MIXED BOUNDARY TO BLOW UP
+!!!$ <<< RM
+  ic = 0
+  DO i=1,relanz
+     IF (rnr(i) > elanz.OR.rnr(i)<1) ic = ic + 1
+  END DO
+  IF (ic > 0) THEN
+!!!$ CHECK where the BORDER ELE begin in nrel
 
+     PRINT*,'--- Pointer of border elements are not right:'
+     WRITE(*,'(a)',ADVANCE='no')'    --> rearranging'
+     idum = 0;
+     DO i=1,typanz
+        IF (typ(i) <= 10) idum = idum + nelanz(i)
+     END DO
+
+     DO i=1,relanz
+!!!$ define the node points of the border-line
+        ik1 = nrel(elanz + i,1)
+        ik2 = nrel(elanz + i,2)
+!!!$ now search for the corresponding element
+!!!$ how to do so?
+!!!$ suppose we have a ordered input file, where the
+!!!$ big elements come first, than we might have something like
+        DO k = 1,elanz
+           jk1 = 0;jk2 = 0
+           DO  l = 1, selanz(1) ! TODO : fix this for multi FE
+              IF (nrel(k,l) == ik1) jk1 = 1
+              IF (nrel(k,l) == ik2) jk2 = 1
+           END DO
+           IF (jk1 == 1 .AND. jk2 == 1) THEN
+              IF (lverb) PRINT*,'found border to finite element',i,k
+              my_rnr(i) = k
+           END IF
+        END DO
+     END DO
+  END IF
+
+  ic = 0
+  DO i=1,relanz
+     IF (my_rnr(i) > elanz.OR.my_rnr(i) < 1) ic = ic + 1
+  END DO
+  
+  IF (ic > 0) THEN
+     PRINT*,'Kann nich sein'
+     fetxt = 'border to element context is wrong'
+     errnr = 111
+     RETURN
+  ELSE
+     PRINT*,'ok, copy my_rnr -> rnr'
+     rnr = my_rnr
+  END IF
 !!!$     'datei' schliessen
   close(kanal)
 

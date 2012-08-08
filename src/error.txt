@@ -328,3 +328,6 @@
 110 Mixed boundary condition not  
 110 yet implemented for 2D case
 110
+111 Mixed boundary condition  
+111 border to element connection
+111 failed (rnr)
