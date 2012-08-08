@@ -29,14 +29,14 @@ subroutine relem(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariablen
-  INTEGER (KIND =4)  ::    i,j,k,l,ic
+  INTEGER (KIND =4)  ::    i,j,k
 
 !!!$     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
   LOGICAL            ::    my_check  
 
-!!!$
-  INTEGER :: ik1,ik2,jk1,jk2
+!!!$ To check for border to element connection (rnr)
+  INTEGER            :: ik1,ik2,jk1,jk2,ic,l
 
 !!!$ NEW rnr
   INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
@@ -198,6 +198,9 @@ subroutine relem(kanal,datei)
      PRINT*,'ok, copy my_rnr -> rnr'
      rnr = my_rnr
   END IF
+
+  DEALLOCATE (my_rnr)
+
 !!!$     'datei' schliessen
   close(kanal)
 

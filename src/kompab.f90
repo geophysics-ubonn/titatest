@@ -108,7 +108,6 @@ subroutine kompab(nelec,ki,my_a,my_b)
                     dum2 = DCMPLX(0d0) ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
-                    idum = iel
                     dum2 = sigma(iel)
                  end if
 !!!$ BUG
@@ -118,7 +117,7 @@ subroutine kompab(nelec,ki,my_a,my_b)
                  my_a(im) = my_a(im) + dcmplx(dum) * dum2
 
                  if (lsr) then
-                    dum2   = dcmplx(dum) * (sigma(idum)-sigma0)
+                    dum2   = dcmplx(dum) * (dum2 - sigma0)
                     my_b(nzp) = my_b(nzp) + dum2 * pota(nnp)
                     if (nnp.ne.nzp) my_b(nnp) = my_b(nnp) + dum2 * pota(nzp)
                  end if
