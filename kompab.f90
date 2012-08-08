@@ -110,16 +110,21 @@ subroutine kompab(nelec,ki)
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
-                    idum = rnr(rel)
+                    dum2 = sigma(rnr(rel))
+                    dum2 = sigma0
+                    dum2 = DCMPLX(0d0) ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
-                    idum = iel
+                    dum2 = sigma(iel)
                  end if
+!!!$ BUG
+!!$ THE PROBLEM IS HERE, IF THERE ARE TOO FEW OUTER GRID CELLS
+!!!$ SIGMA IS NO MORE DENFINED!!!
 
-                 a(im) = a(im) + dcmplx(dum) * sigma(idum)
+                 a(im) = a(im) + dcmplx(dum) * dum2
 
                  if (lsr) then
-                    dum2   = dcmplx(dum) * (sigma(idum)-sigma0)
+                    dum2   = dcmplx(dum) * (dum2 - sigma0)
                     b(nzp) = b(nzp) + dum2 * pota(nnp)
                     if (nnp.ne.nzp) b(nnp) = b(nnp) + dum2 * pota(nzp)
                  end if

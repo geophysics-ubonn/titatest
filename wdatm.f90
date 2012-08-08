@@ -73,7 +73,7 @@ subroutine wdatm(kanal,datei)
 
 !!!$  write(kanal,*,err=1000)
 !!!$  1                  strnr(i),vnr(i),real(bet),real(1d3*pha)
-     write(kanal,100,err=1000)strnr(i),vnr(i),real(bet),real(1d3*pha)
+     write(kanal,*,err=1000)strnr(i),vnr(i),real(bet),real(1d3*pha)
 !!!$     1                  strnr(i),vnr(i),real(bet),real(1d3*pha),
 !!!$     1                  real(kfak(i))
   end do

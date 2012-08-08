@@ -101,16 +101,21 @@ subroutine kompadc(nelec,ki)
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
-                    idum = rnr(rel)
+                    dum2 = DBLE(sigma(rnr(rel)))
+                    dum2 = DBLE(sigma0)
+                    dum2 = 0d0 ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
-                    idum = iel
+                    dum2 = DBLE(sigma(iel))
                  end if
+!!!$ BUG
+!!$ THE PROBLEM IS HERE, IF THERE ARE TOO FEW OUTER GRID CELLS
+!!!$ SIGMA IS NO MORE DENFINED!!!
 
-                 adc(im) = adc(im) + dum * dble(sigma(idum))
+                 a(im) = a(im) + dum * dum2
 
                  if (lsr) then
-                    dum2     = dum * dble(sigma(idum)-sigma0)
+                    dum2   = dum * DBLE(dum2 - sigma0)
                     bdc(nzp) = bdc(nzp) + dum2 * dble(pota(nnp))
                     if (nnp.ne.nzp) bdc(nnp) = bdc(nnp) + dum2 * &
                          dble(pota(nzp))
