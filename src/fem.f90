@@ -151,9 +151,9 @@ program fem
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
   IF (lsr) THEN
      PRINT*,'WITH SINGULARITY REMOVAL'
-     lana = .FALSE. ! analytical is indeed controlled by lsr and not lana..
+     lana = .TRUE. ! analytical is indeed controlled by lsr and not lana..
   END IF
-  lsr = lana
+!  lsr = lana
 
   IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
@@ -301,11 +301,11 @@ program fem
         end if
 
 !!!$   Gleichungssystem loesen
-        IF (.NOT.lana) call vre(a,b,pot)
+        call vre(a,b,pot)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
         do j=1,sanz
-           IF (lana) THEN
+           IF (lana.AND..NOT.lsr) THEN
               kpot(j,l,k) = pota(j)
            ELSE
               kpot(j,l,k) = pot(j) * dcmplx(fak(j))

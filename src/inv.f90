@@ -282,15 +282,17 @@ PROGRAM inv
 !$OMP PARALLEL DEFAULT (none) &
 !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
 !$OMP PRIVATE (j,l) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count)           
+!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,&
+!$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)           
 !$OMP DO 
 !!!$   DC CASE
+
            DO k=1,kwnanz
               !$OMP ATOMIC
               count = count + 1
               fetxt = 'DC-Calculation wavenumber'
-              IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   ACHAR(13)//TRIM(fetxt),count,''
+!!$              IF (lverb) WRITE (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
+!!$                   ACHAR(13)//TRIM(fetxt),count,''
               DO l=1,eanz
                  IF (lsr.OR.lbeta.OR.l.EQ.1) THEN
 !!!$   Evtl calculation of analytical potentials
@@ -319,10 +321,11 @@ PROGRAM inv
 !!!$   Modification of the current vector (Right Hand Side)
                     CALL kompbdc(l,bdc,fak)
                  END IF
-
 !!!$   Solve linear system
                  fetxt = 'vredc'
+
                  CALL vredc(adc,bdc,pot)
+
 !!!$   Scale back the potentials, save them and 
 !!!$   eventually add the analytical response
                  DO j=1,sanz
@@ -332,6 +335,7 @@ PROGRAM inv
                     IF (swrtr.EQ.0) hpotdc(j,l) = kpotdc(j,l,k)
                  END DO
               END DO
+
            END DO
 !$OMP END DO
 !$OMP END PARALLEL
@@ -408,6 +412,7 @@ PROGRAM inv
 !$OMP END PARALLEL
 
         END IF
+
 
 !!!$   Ggf. Ruecktransformation der Potentialwerte
         IF (swrtr.EQ.1) THEN
@@ -610,6 +615,12 @@ PROGRAM inv
            IF (l_bsmat) CALL bsmatm(it,l_bsmat)
 
         ELSE
+
+           IF (lverb) THEN
+              CALL wout_up(kanal,it,itr,.FALSE.)
+              IF (errnr.NE.0) GOTO 999
+           END IF
+
 !!!$   Felder zuruecksetzen
            sigma = sigma2
 
@@ -750,7 +761,7 @@ PROGRAM inv
         IF (errnr.NE.0) GOTO 999
 
         IF (lverb) THEN
-           CALL wout_up(kanal,it,itr)
+           CALL wout_up(kanal,it,itr,.TRUE.)
            IF (errnr.NE.0) GOTO 999
         END IF
 !!!$   Roughness bestimmen
