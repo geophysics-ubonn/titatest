@@ -87,7 +87,7 @@ subroutine relem(kanal,datei)
 
 !!!$ if all no flow boundaries, we do not have to search for a 
 !!!$ average sy top...
-  lsytop = .NOT. my_check
+!!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
   ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)

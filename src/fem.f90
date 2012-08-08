@@ -151,9 +151,10 @@ program fem
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
   IF (lsr) THEN
      PRINT*,'WITH SINGULARITY REMOVAL'
-     lana = .FALSE. ! analytical is indeed controlled by lsr and not lana..
+     lana = .FALSE. ! analytical for singularity 
+! is indeed controlled by lsr and not lana..
+! lana is only true for analytical solution only
   END IF
-  lsr = lana
 
   IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
@@ -229,7 +230,7 @@ program fem
   end if
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-  if (lsr) call refsig()
+  if (lsr.OR.lana) call refsig()
 
   IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')&
        'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
@@ -258,9 +259,11 @@ program fem
   !$OMP PARALLEL DEFAULT (none) &
   !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
   !$OMP PRIVATE (j,l,k) &
-  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count,lana)
+  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,&
+  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma)
   !$OMP DO
 !!!$   POTENTIALWERTE BERECHNEN
+  print*,'sigma',sigma(INT(elanz/3))
   do k=1,kwnanz
 !!!$   Kontrollausgabe
      !$OMP ATOMIC
@@ -274,14 +277,14 @@ program fem
      end if
 
      do l=1,eanz
-        if (lsr.or.lbeta.or.l.eq.1) then
+        if (lbeta.or.l.eq.1).AND..NOT.lana) then
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-           if (lsr) call potana(l,k,pota)
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
            !           if (errnr.ne.0) goto 999
+                    print*,l,a(mb+1)
 
 !!!$   Ggf. Randbedingung beruecksichtigen
            if (lrandb) call randb(a,b)
@@ -294,18 +297,23 @@ program fem
 !!!$   Cholesky-Zerlegung der Matrix
            call chol(a)
            !           if (errnr.ne.0) goto 999
-        else
+        else if (.NOT. lana)
 
 !!!$   Stromvektor modifizieren
            call kompb(l,b,fak)
         end if
 
-!!!$   Gleichungssystem loesen
-        IF (.NOT.lana) call vre(a,b,pot)
+!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+
+        if (lsr.OR.lana) call potana(l,k,pota)
+!!!$   Gleichungssystem loesen only for 
+!!!$ non analytical
+        IF (.NOT. lana) call vre(a,b,pot)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
         do j=1,sanz
            IF (lana) THEN
+              print*,'analytical only!!'
               kpot(j,l,k) = pota(j)
            ELSE
               kpot(j,l,k) = pot(j) * dcmplx(fak(j))

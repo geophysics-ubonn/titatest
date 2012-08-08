@@ -25,8 +25,10 @@ SUBROUTINE blam0()
   COMPLEX (KIND(0D0)) ::  cdum
   REAL (KIND(0D0))    ::  dum
 
+  REAL (KIND(0D0)),ALLOCATABLE , DIMENSION(:) :: jtj
+
 !!!$     Indexvariablen
-  INTEGER (KIND = 4)  ::  i,j,k
+  INTEGER (KIND = 4)  ::  i,j,k,ic
 
 !!!$.....................................................................
 
@@ -49,13 +51,27 @@ SUBROUTINE blam0()
      PRINT*,'-> presetting lam0 FPI',lammax
      RETURN
   END IF
-  
-  lammax = 0d0
 
+
+  ALLOCATE (jtj(manz))
+
+  jtj = 0d0;ic = 0
+
+  
   IF (ldc) THEN
+
+     !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
+     !$OMP SHARED (manz,nanz,sensdc,wmatd,wdfak,jtj,lverb,ic)
+     !$OMP DO SCHEDULE (GUIDED)
+
      DO j=1,manz
-        IF (lverb) WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+        IF (lverb) THEN
+           !$OMP ATOMIC
+           ic = ic + 1
+           
+           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+                'blam0/ ',REAL( ic * (100./manz)),'%'
+        END IF
         dum = 0d0
 
         DO i=1,nanz
@@ -63,16 +79,29 @@ SUBROUTINE blam0()
               dum = dum + sensdc(i,j) * sensdc(i,k) * &
                    wmatd(i)*DBLE(wdfak(i))
            END DO
+
         END DO
 
-        lammax = lammax + dabs(dum)
+        jtj(j) = DABS(dum)
+        
      END DO
+
+     !$OMP END PARALLEL
 
   ELSE IF (lip) THEN
 
+     !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
+     !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,jtj,lverb,ic)
+     !$OMP DO SCHEDULE (GUIDED)
      DO j=1,manz
-        IF (lverb) WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+        IF (lverb) THEN
+           !$OMP ATOMIC
+           ic = ic + 1
+           
+           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+                'blam0/ ',REAL( ic * (100./manz)),'%'
+        END IF
+
         dum = 0d0
 
         DO i=1,nanz
@@ -82,14 +111,27 @@ SUBROUTINE blam0()
            END DO
         END DO
 
-        lammax = lammax + dabs(dum)
+        jtj(j) = DABS(dum)
+
      END DO
+     !$OMP END PARALLEL
 
   ELSE
 
+     !$OMP PARALLEL DEFAULT(none) PRIVATE (cdum) &
+     !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,jtj,lverb,ic)
+     !$OMP DO SCHEDULE (GUIDED)
      DO j=1,manz
-        IF (lverb) WRITE(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
-             'blam0/ ',REAL( j * (100./manz)),'%'
+
+        
+        IF (lverb) THEN
+           !$OMP ATOMIC
+           ic = ic + 1
+           
+           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
+                'blam0/ ',REAL( ic * (100./manz)),'%'
+        END IF
+
         cdum = dcmplx(0d0)
 
         DO i=1,nanz
@@ -98,13 +140,17 @@ SUBROUTINE blam0()
                    dcmplx(wmatd(i)*DBLE(wdfak(i)))
            END DO
         END DO
+        
+        jtj(j) = cdabs(cdum)
 
-        lammax = lammax + cdabs(cdum)
      END DO
+     !$OMP END PARALLEL
 
   END IF
 
-  lammax = lammax/DBLE(manz)
+  lammax = SUM(jtj)/DBLE(manz)
+
+  DEALLOCATE (jtj)
 
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default

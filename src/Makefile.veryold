@@ -62,7 +62,9 @@ ifeq	($(OS), Msys)
 else
 	WPATH		= $${HOME}/bin
 	PREFIX		= $(BRANCH)_$(MACHINE)_$(F90)
-	FFLAG90		+= -fopenmp
+	ifeq ($(F90),gfortran)
+		FFLAG90		+= -fopenmp
+	endif
 endif
 
 ################################################################
