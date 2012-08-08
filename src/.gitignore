@@ -1,5 +1,7 @@
 crerror.h
 Makefile.in
+Makefile
+Makefile.am
 CRTomo
 CRMod
 my_git_version.h
