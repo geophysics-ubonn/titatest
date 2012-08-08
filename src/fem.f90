@@ -151,9 +151,9 @@ program fem
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
   IF (lsr) THEN
      PRINT*,'WITH SINGULARITY REMOVAL'
-     lana = .FALSE. ! analytical is indeed controlled by lsr and not lana..
+     lana = .TRUE. ! analytical is indeed controlled by lsr and not lana..
   END IF
-  lsr = lana
+!  lsr = lana
 
   IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
@@ -229,7 +229,7 @@ program fem
   end if
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-  if (lsr) call refsig()
+  if (lsr.OR.lana) call refsig()
 
   IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')&
        'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
@@ -258,9 +258,11 @@ program fem
   !$OMP PARALLEL DEFAULT (none) &
   !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
   !$OMP PRIVATE (j,l,k) &
-  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count,lana)
+  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,&
+  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma)
   !$OMP DO
 !!!$   POTENTIALWERTE BERECHNEN
+  print*,'sigma',sigma(INT(elanz/3))
   do k=1,kwnanz
 !!!$   Kontrollausgabe
      !$OMP ATOMIC
@@ -274,14 +276,13 @@ program fem
      end if
 
      do l=1,eanz
-        if (lsr.or.lbeta.or.l.eq.1) then
 
-!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-           if (lsr) call potana(l,k,pota)
 
+        if (lbeta.or.l.eq.1) then
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
            !           if (errnr.ne.0) goto 999
+                    print*,l,a(mb+1)
 
 !!!$   Ggf. Randbedingung beruecksichtigen
            if (lrandb) call randb(a,b)
@@ -300,12 +301,21 @@ program fem
            call kompb(l,b,fak)
         end if
 
+!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+
+        if (lsr.OR.lana) call potana(l,k,pota)
 !!!$   Gleichungssystem loesen
         IF (.NOT.lana) call vre(a,b,pot)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
+
+!!$        PRINT*,k,l,kg(INT(relanz/3),l,k),elbg(1,1,k),&
+!!$             relbg(INT(relanz/3),INT(relanz/3))
+!!$        PRINT*,k,l,pot(INT(sanz/3))
+        
         do j=1,sanz
-           IF (lana) THEN
+           IF (lana .AND..NOT. lsr) THEN
+              print*,'analytical only!!'
               kpot(j,l,k) = pota(j)
            ELSE
               kpot(j,l,k) = pot(j) * dcmplx(fak(j))
