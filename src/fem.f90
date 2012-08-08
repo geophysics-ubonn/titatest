@@ -151,9 +151,10 @@ program fem
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
   IF (lsr) THEN
      PRINT*,'WITH SINGULARITY REMOVAL'
-     lana = .TRUE. ! analytical is indeed controlled by lsr and not lana..
+     lana = .FALSE. ! analytical for singularity 
+! is indeed controlled by lsr and not lana..
+! lana is only true for analytical solution only
   END IF
-!  lsr = lana
 
   IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
@@ -276,9 +277,10 @@ program fem
      end if
 
      do l=1,eanz
+        if (lbeta.or.l.eq.1).AND..NOT.lana) then
 
+!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
 
-        if (lbeta.or.l.eq.1) then
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
            !           if (errnr.ne.0) goto 999
@@ -295,7 +297,7 @@ program fem
 !!!$   Cholesky-Zerlegung der Matrix
            call chol(a)
            !           if (errnr.ne.0) goto 999
-        else
+        else if (.NOT. lana)
 
 !!!$   Stromvektor modifizieren
            call kompb(l,b,fak)
@@ -304,17 +306,13 @@ program fem
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
 
         if (lsr.OR.lana) call potana(l,k,pota)
-!!!$   Gleichungssystem loesen
-        IF (.NOT.lana) call vre(a,b,pot)
+!!!$   Gleichungssystem loesen only for 
+!!!$ non analytical
+        IF (.NOT. lana) call vre(a,b,pot)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
-
-!!$        PRINT*,k,l,kg(INT(relanz/3),l,k),elbg(1,1,k),&
-!!$             relbg(INT(relanz/3),INT(relanz/3))
-!!$        PRINT*,k,l,pot(INT(sanz/3))
-        
         do j=1,sanz
-           IF (lana .AND..NOT. lsr) THEN
+           IF (lana) THEN
               print*,'analytical only!!'
               kpot(j,l,k) = pota(j)
            ELSE

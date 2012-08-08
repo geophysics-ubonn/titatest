@@ -1,4 +1,4 @@
-subroutine choldc(a_chol)
+SUBROUTINE choldc(a_chol)
 
 !!!$  Cholesky-Zerlegung der positiv definiten Matrix 'adc'; erfolgt auf dem
 !!!$  Platz von 'adc', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
@@ -15,7 +15,7 @@ subroutine choldc(a_chol)
   USE elemmod
   USE errmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -35,49 +35,46 @@ subroutine choldc(a_chol)
 
   m1 = mb+1
 
-  do i=1,sanz
+  DO i=1,sanz
 
      idi = i*m1
      fi  = max0(1,i-mb)
      i0  = idi-i
 
-     do j=fi,i
+     DO j=fi,i
 
         ij = i0+j
         j0 = j*mb
         s  = a_chol(ij)
 
-        do k=fi,j-1
+        DO k=fi,j-1
            s = s - a_chol(i0+k)*a_chol(j0+k)
-        END do
+        END DO
 
-        if (j.lt.i) then
+        IF (j.LT.i) THEN
 
            a_chol(ij) = s / a_chol(j*m1)
 
-        else
+        ELSE
 
-           if (s.le.0d0) then
+           IF (s.LE.0d0) THEN
               fetxt = ' '
               errnr = 28
-              goto 1000
-           end if
+              RETURN
+           END IF
 
            a_chol(idi) = dsqrt(s)
 
-        end if
+        END IF
 
      END DO
 
-  END do
+  END DO
 
   errnr = 0
-  return
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-1000 return
-
-end subroutine choldc
+END SUBROUTINE choldc
