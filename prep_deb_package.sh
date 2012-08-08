@@ -1,10 +1,9 @@
 #!/bin/bash
 
-# generate configure
-./prep_autotools.sh
+# generate configure, configure
+./autogen.sh
 
-# configure and create archive
-./configure
+# create archive
 make dist-bzip2
 
 # delete if necessary
