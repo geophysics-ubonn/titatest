@@ -137,12 +137,6 @@ subroutine rwaven()
      kwn(i)   = kwn0*(kwn(i)+1d0)
   end do
 
-  PRINT*
-  DO i = 1, ganz + lanz
-     PRINT*,kwnwi(i),kwn(i)
-  END DO
-  PRINT*
-
   errnr = 0
   return
 

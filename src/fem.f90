@@ -230,7 +230,7 @@ program fem
   end if
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-  if (lsr.OR.lana) call refsig()
+  call refsig()
 
   IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')&
        'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
@@ -263,7 +263,6 @@ program fem
   !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma)
   !$OMP DO
 !!!$   POTENTIALWERTE BERECHNEN
-  print*,'sigma',sigma(INT(elanz/3))
   do k=1,kwnanz
 !!!$   Kontrollausgabe
      !$OMP ATOMIC
@@ -277,14 +276,18 @@ program fem
      end if
 
      do l=1,eanz
-        if (lbeta.or.l.eq.1).AND..NOT.lana) then
 
 !!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+        if (lsr.OR.lana) call potana(l,k,pota)
+!!!$ is also needed by kompab for reference therfore it is placed here
+!!!$
+
+!!!$ for analytical only, the linear system is never solved
+        if ((lbeta.or.l.eq.1.OR.lsr).AND..NOT.lana) then
 
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
            call kompab(l,k,a,b)
            !           if (errnr.ne.0) goto 999
-                    print*,l,a(mb+1)
 
 !!!$   Ggf. Randbedingung beruecksichtigen
            if (lrandb) call randb(a,b)
@@ -297,15 +300,12 @@ program fem
 !!!$   Cholesky-Zerlegung der Matrix
            call chol(a)
            !           if (errnr.ne.0) goto 999
-        else if (.NOT. lana)
+        else if (.NOT. lana) THEN
 
 !!!$   Stromvektor modifizieren
            call kompb(l,b,fak)
         end if
 
-!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-
-        if (lsr.OR.lana) call potana(l,k,pota)
 !!!$   Gleichungssystem loesen only for 
 !!!$ non analytical
         IF (.NOT. lana) call vre(a,b,pot)

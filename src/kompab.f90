@@ -51,7 +51,7 @@ subroutine kompab(nelec,ki,my_a,my_b)
 
 !!!$     Hilfsvariablen
   REAL (KIND(0D0))   ::     dum
-  COMPLEX(KIND(0D0)) ::    dum2
+  COMPLEX(KIND(0D0)) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
 
@@ -103,13 +103,19 @@ subroutine kompab(nelec,ki,my_a,my_b)
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
-                    idum = rnr(rel)
+                    dum2 = sigma(rnr(rel))
+                    dum2 = sigma0
+                    dum2 = DCMPLX(0d0) ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
                     idum = iel
+                    dum2 = sigma(iel)
                  end if
+!!!$ BUG
+!!$ THE PROBLEM IS HERE, IF THERE ARE TOO FEW OUTER GRID CELLS
+!!!$ SIGMA IS NO MORE DENFINED!!!
 
-                 my_a(im) = my_a(im) + dcmplx(dum) * sigma(idum)
+                 my_a(im) = my_a(im) + dcmplx(dum) * dum2
 
                  if (lsr) then
                     dum2   = dcmplx(dum) * (sigma(idum)-sigma0)

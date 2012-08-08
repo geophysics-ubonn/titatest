@@ -768,7 +768,12 @@ PROGRAM inv
         CALL brough
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-        IF (lsr) CALL refsig()
+!!!$ >>> RM
+!! $THIS has now a general meaning with the 
+!!!$ mixed boundary, since we like to set sigma0
+!!!$ as reference sigma as "mean" boundary value
+!!!$ <<< RM
+        IF (lbeta) CALL refsig()
 !!!$   Neues Modelling
      END DO ! DO WHILE (.not. converged)
 
