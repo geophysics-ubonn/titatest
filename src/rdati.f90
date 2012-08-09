@@ -185,7 +185,38 @@ SUBROUTINE rdati(kanal,datei)
 
               END IF
            END IF
+        END IF ! lindiv
+
+!!!$ >> RM
+!!!$ plausibility check of possible electrode intersection
+!!!$ devide the strnr and vnr into elec{1,2,3,4}
+!!!$ 
+!!!$ Current electrodes
+        elec1 = MOD(strnr(i),10000)
+        elec2 = (strnr(i)-elec1)/10000
+!!!$    potential electrodes
+        elec3 = MOD(vnr(i),10000)
+        elec4 = (vnr(i)-elec3)/10000
+
+        IF ((elec1 == elec2).OR.(elec3 == elec4)&
+             .OR.(elec1 == elec3).OR.(elec1 == elec4)&
+             .OR.(elec2 == elec3).OR.(elec2 == elec4)) THEN
+           WRITE (fetxt,*)' duplicate electrodes for reading ',i
+           errnr = 73
+           GOTO 1000
         END IF
+
+!!!$     Ggf. Fehlermeldung
+     IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
+          elec2.LT.0.OR.elec2.GT.eanz.OR. &
+          elec3.LT.0.OR.elec3.GT.eanz.OR. &
+          elec4.LT.0.OR.elec4.GT.eanz) THEN
+        WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
+        errnr = 46
+        GOTO 1000
+     END IF
+!!!$ << RM
+        
 
 !!!$     Ggf. Fehlermeldung
         IF (stabw.LE.0d0) THEN
