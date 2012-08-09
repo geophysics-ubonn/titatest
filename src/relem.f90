@@ -1,4 +1,4 @@
-subroutine relem(kanal,datei)
+SUBROUTINE relem(kanal,datei)
 
 !!!$     Unterprogramm zum Einlesen der FEM-Parameter aus 'datei'.
 
@@ -11,7 +11,7 @@ subroutine relem(kanal,datei)
   USE errmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -39,7 +39,7 @@ subroutine relem(kanal,datei)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
 
 !!!$ NEW rnr
-  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
+!  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
 
 !!!$.....................................................................
 
@@ -47,13 +47,13 @@ subroutine relem(kanal,datei)
   fetxt = datei
 
   errnr = 1
-  open(kanal,file=TRIM(fetxt),status='old',err=999)
+  OPEN(kanal,file=TRIM(fetxt),status='old',err=999)
 
   errnr = 3
 
 !!!$     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
 !!!$     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
-  read(kanal,*,end=1001,err=1000) sanz,typanz,mb
+  READ(kanal,*,END=1001,err=1000) sanz,typanz,mb
 
 !!$ now get some memory for the fields..
 !!$ first the sanz fields
@@ -73,7 +73,7 @@ subroutine relem(kanal,datei)
 
 !!!$     Elementtypen, Anzahl der Elemente eines bestimmten Typs sowie
 !!!$     Anzahl der Knoten in einem Elementtyp einlesen
-  read(kanal,*,end=1001,err=1000)(typ(i),nelanz(i),selanz(i),i=1,typanz)
+  READ(kanal,*,END=1001,err=1000)(typ(i),nelanz(i),selanz(i),i=1,typanz)
 
 !!$ set number of node points for regular elements
   smaxs = MAXVAL(selanz)
@@ -85,22 +85,21 @@ subroutine relem(kanal,datei)
 
   my_check = .FALSE.
 
-  do i=1,typanz
-     if (typ(i).gt.10) then
+  DO i=1,typanz
+     IF (typ(i).GT.10) THEN
         relanz = relanz + nelanz(i)
-     else
+     ELSE
         elanz  = elanz  + nelanz(i)
-     end if
+     END IF
      my_check = my_check .OR. (typ(i) == 11)
-  end do
+  END DO
 
 !!!$ if all no flow boundaries, we do not have to search for a 
 !!!$ average sy top...
 !!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
-  ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),&
-       my_rnr(relanz),stat=errnr)
+  ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation nrel,rnr failed'
      errnr = 94
@@ -116,12 +115,12 @@ subroutine relem(kanal,datei)
   espx = 0.;espy = 0.
 !!!$     Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
 !!!$     einlesen
-  read(kanal,*,end=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
+  READ(kanal,*,END=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
 !!!$     Knotennummern der Elemente einlesen
   idum = 0;ifln = 0;iflnr = 0
-  do i=1,typanz
-     do j=1,nelanz(i)
-        read(kanal,*,end=1001,err=1000)(nrel(idum+j,k),k=1,selanz(i))
+  DO i=1,typanz
+     DO j=1,nelanz(i)
+        READ(kanal,*,END=1001,err=1000)(nrel(idum+j,k),k=1,selanz(i))
 
         IF (typ(i) < 10) THEN ! set midpoints
 
@@ -134,59 +133,54 @@ subroutine relem(kanal,datei)
 
            espx(ifln) = espx(ifln) / selanz(i)
            espy(ifln) = espy(ifln) / selanz(i)
-
+           
         END IF
-
-     end do
+     END DO
      idum = idum + nelanz(i)
-  end do
+     
+  END DO
 
-!!!$     Zeiger auf Werte der Randelemente einlesen
-  read(kanal,*,end=1001,err=1000) (rnr(i),i=1,relanz)
-!!!$
+!!!$     Zeiger auf Werte der Randelemente einlesen not anymore
+!!$!  READ(kanal,*,END=1001,err=1000) (rnr(i),i=1,relanz)
+
+!!!$ >> RM
 !!!$ IF THIS IS NOT a pointer to the
 !!!$ REGULAR ELEMENT adjacent to the border line
 !!!$ THIS MAY CAUSE THE MIXED BOUNDARY TO BLOW UP
-!!!$ <<< RM
-  ic = 0
-  DO i=1,relanz
-     IF (rnr(i) > elanz.OR.rnr(i)<1) ic = ic + 1
-  END DO
-  IF (ic > 0) THEN
+!!$  ic = 0
+!!$  DO i=1,relanz
+!!$     IF (rnr(i) > elanz.OR.rnr(i)<1) ic = ic + 1
+!!$  END DO
+  
+!!$  IF (ic > 0) THEN
 !!!$ CHECK where the BORDER ELE begin in nrel
 
-     PRINT*,'--- Pointer of border elements are not right:'
-     WRITE(*,'(a)',ADVANCE='no')'    --> rearranging'
-     idum = 0;
-     DO i=1,typanz
-        IF (typ(i) <= 10) idum = idum + nelanz(i)
-     END DO
-
-     DO i=1,relanz
+  WRITE(*,'(a)',ADVANCE='no')'+++ rearranging pointer '//&
+       'of border elements'
+  DO i=1,relanz
 !!!$ define the node points of the border-line
-        ik1 = nrel(elanz + i,1)
-        ik2 = nrel(elanz + i,2)
+     ik1 = nrel(elanz + i,1)
+     ik2 = nrel(elanz + i,2)
 !!!$ now search for the corresponding element
 !!!$ how to do so?
 !!!$ suppose we have a ordered input file, where the
 !!!$ big elements come first, than we might have something like
-        DO k = 1,elanz
-           jk1 = 0;jk2 = 0
-           DO  l = 1, selanz(1) ! TODO : fix this for multi FE
-              IF (nrel(k,l) == ik1) jk1 = 1
-              IF (nrel(k,l) == ik2) jk2 = 1
-           END DO
-           IF (jk1 == 1 .AND. jk2 == 1) THEN
-              IF (lverb) PRINT*,'found border to finite element',i,k
-              my_rnr(i) = k
-           END IF
+     DO k = 1,elanz
+        jk1 = 0;jk2 = 0
+        DO  l = 1, selanz(1) ! TODO : fix this for multi FE
+           IF (nrel(k,l) == ik1) jk1 = 1
+           IF (nrel(k,l) == ik2) jk2 = 1
         END DO
+        IF (jk1 == 1 .AND. jk2 == 1) THEN
+           IF (lverb) PRINT*,'found border to finite element',i,k
+           rnr(i) = k
+        END IF
      END DO
-  END IF
-
+  END DO
+  
   ic = 0
   DO i=1,relanz
-     IF (my_rnr(i) > elanz.OR.my_rnr(i) < 1) ic = ic + 1
+     IF (rnr(i) > elanz.OR.rnr(i) < 1) ic = ic + 1
   END DO
   
   IF (ic > 0) THEN
@@ -195,29 +189,44 @@ subroutine relem(kanal,datei)
      errnr = 111
      RETURN
   ELSE
-     PRINT*,'ok, copy my_rnr -> rnr'
-     rnr = my_rnr
+     PRINT*,'done!'
   END IF
+!!$
+!!$  END IF
 
-  DEALLOCATE (my_rnr)
+!!!$            IF (typ(i) > 10) THEN ! randele zeiger kann man auch so belegen
+!!!$               iflnr = iflnr + 1
+!!!$               IF (iflnr > relanz) THEN
+!!!$                  fetxt = 'relem:: iflnr > relanz!'
+!!!$                  errnr = 9
+!!!$                  goto 1000
+!!!$               END IF                  
+!!!$               rnr(iflnr) = nrel(idum+j,1)
+!!!$            END IF
+     END DO
+     idum = idum + nelanz(i)
+  END DO
 
+!  DEALLOCATE (my_rnr)
+
+!!!$ << RM
 !!!$     'datei' schliessen
-  close(kanal)
+  CLOSE(kanal)
 
   errnr = 0
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
-1000 close(kanal)
-  return
+1000 CLOSE(kanal)
+  RETURN
 
-1001 close(kanal)
+1001 CLOSE(kanal)
   errnr = 2
-  return
+  RETURN
 
-end subroutine relem
+END SUBROUTINE relem
