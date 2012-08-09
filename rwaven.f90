@@ -79,7 +79,7 @@ subroutine rwaven()
 
 !!!$     Ggf. Fehlermeldung
   if (amin.lt.1d-12.or.amax.lt.1d-12) then
-     fetxt = ' '
+     WRITE (fetxt,*)'check for duplicate electrodes'
      errnr = 73
      goto 1000
   end if
