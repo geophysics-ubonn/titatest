@@ -145,7 +145,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bdmin = 0.0d0
+  bdmin = 1d-6
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
@@ -426,7 +426,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
   IF (exi) THEN
 !!!$ Overwriting lamfix with crt.lamnull content
-     PRINT*,'overwriting lamfix with content of ',TRIM(fetxt)
+     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
      OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
      READ(kanal,*,END=1001,ERR=999)lamnull_cri
      PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
@@ -446,10 +446,20 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      WRITE (kanal,*)lamnull_cri
      WRITE (kanal,*)lamnull_fpi
      CLOSE (kanal)
+  ELSE IF (nz < 0) THEN
+     lamnull_cri = ABS(DBLE(nz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_fpi = 0d0
   ELSE
      lamnull_cri = 0d0
      lamnull_fpi = 0d0
   END IF
+
+  OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
+  WRITE (kanal,*)lamnull_cri
+  WRITE (kanal,*)lamnull_fpi
+  CLOSE (kanal)
+  
 !!$<< RM
 
 

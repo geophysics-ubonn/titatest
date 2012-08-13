@@ -19,9 +19,10 @@ MODULE bmcm_mod
   USE elemmod, ONLY : smaxs,espx,espy
   USE invmod , ONLY : lip,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,lverb_dat
+  USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,&
+       lverb_dat,lelerr,lam_cri
   USE modelmod , ONLY : manz
-  USE datmod , ONLY : nanz
+  USE datmod , ONLY : nanz,wmatdr,wmatd_cri
   USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
@@ -61,7 +62,13 @@ CONTAINS
 
     WRITE(*,'(a)')'Calculating model uncertainty..'
     WRITE (fprun,'(a)')'Calculating model uncertainty..'
-    lam = lamalt
+    IF (lip) THEN
+       WRITE(*,'(a)')' --> resetting lambda of FPI to CRI value'
+       lam = lam_cri
+    ELSE
+       WRITE(*,'(a)')' --> taking last good lambda'
+       lam = lamalt
+    END IF
     WRITE (*,'(/a,G10.3,a/)')'take current lambda ?',lam,&
          ACHAR(9)//':'//ACHAR(9)
     IF (BTEST(mswitch,6)) THEN 
@@ -78,6 +85,16 @@ CONTAINS
          'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
     WRITE(fprun,'(a)')'MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'
 
+    IF (lelerr) THEN
+       WRITE (*,'(/a/a/)')'++ Resetting error weighting for uncertainty',&
+            '  --> Complex error ellipses of CRI'
+       wmatd = wmatd_cri
+    ELSE IF (lip) THEN
+       WRITE (*,'(/a/a/)')'++ Resetting error weighting for uncertainty',&
+            '  --> Magnitude error of CRI'
+       wmatd = wmatdr
+    END IF
+    
     ALLOCATE (ata(manz,manz),STAT=errnr)
     IF (errnr /= 0) THEN
        errnr = 97

@@ -11,12 +11,13 @@ subroutine bbsens(kanal,datei)
 !!!$....................................................................
 
   USE alloci , ONLY : sens,sensdc
-  USE datmod , ONLY : nanz
+  USE datmod , ONLY : nanz,wmatd_cri,wmatdr
   USE invmod , ONLY : lip,wmatd,wdfak
   USE modelmod , ONLY : manz
   USE elemmod , ONLY: espx,espy
   USE errmod , ONLY : errnr,fetxt
   USE femmod , ONLY : ldc
+  USE konvmod, ONLY : lelerr
   IMPLICIT none
 
 
@@ -35,41 +36,73 @@ subroutine bbsens(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens
+  REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens,csens_fpi
   REAL (KIND(0D0))                          :: csensmax
-  REAL (KIND(0D0))                          :: dum
+  REAL (KIND(0D0))                          :: dum,dum_fpi
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
 !!!$.....................................................................
 
+
+  ALLOCATE (csens(manz),STAT=errnr)
+  IF (errnr /= 0) RETURN
+!!!$     Werte berechnen
+  csens = 0D0
+
+  IF (lip) THEN
+     ALLOCATE (csens_fpi(manz),STAT=errnr)
+     IF (errnr /= 0) RETURN
+!!!$     Werte berechnen
+     csens_fpi = 0D0
+  END IF
+
+  DO j=1,manz
+     DO i=1,nanz
+        dum = SQRT(wmatd(i)) * DBLE(wdfak(i))
+!!!$ CR case: 
+!!!$  wmatd = wmatdr without error ellipses
+!!!$  wmatd = wmatd_cri with error ellipses
+!!!$ DC case:
+!!!$  wmatd = wmatdr
+!!!$ FPI case:
+!!!$  wmatd = wmatdp
+
+!!!$ >> RM we modify this to make sure, that even for FPI (case lip=.T.)
+!!!$ we can calculate a complex coverage as well as treating the error right
+        IF (lip) THEN
+           dum_fpi = SQRT(wmatd(i)) * DBLE(wdfak(i))
+           IF (lelerr) THEN
+              dum = SQRT(wmatd_cri(i)) * DBLE(wdfak(i))
+           ELSE
+              dum = SQRT(wmatdr(i)) * DBLE(wdfak(i))
+           END IF
+!!!$ this sensitivity is the one which is used through the FPI
+           csens_fpi(j) = csens_fpi(j) + ABS(DBLE(sens(i,j))) * dum_fpi
+
+!!!$ this one is the COMPLEX sensitivity of the final estimate
+           csens(j) = csens(j) + ABS(sens(i,j)) * dum
+
+        ELSE IF (ldc) THEN
+
+           csens(j) = csens(j) + ABS(sensdc(i,j)) * dum
+
+        ELSE
+
+           csens(j) = csens(j) + ABS(sens(i,j)) * dum
+
+        ENDIF
+
+     END DO
+  END DO
+
+!!!$ for normalization
+  csensmax = MAXVAL(csens)
 
 !!!$     'datei' oeffnen
   fetxt = datei
   errnr = 1
   open(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
-  ALLOCATE (csens(manz),STAT=errnr)
-  IF (errnr /= 0) RETURN
-!!!$     Werte berechnen
-  csens = 0D0
-
-  DO j=1,manz
-     DO i=1,nanz
-        dum = SQRT(wmatd(i)) * DBLE(wdfak(i))
-        IF (lip) THEN
-           csens(j) = csens(j) + ABS(DBLE(sens(i,j))) * dum
-        ELSE IF (ldc) THEN
-           csens(j) = csens(j) + ABS(sensdc(i,j)) * dum
-        ELSE
-!!!$ wechselt automatisch wmatdp bei lip
-           csens(j) = csens(j) + ABS(sens(i,j)) * dum
-        ENDIF
-     END DO
-  END DO
-  
-!!!$ for normalization
-  csensmax = MAXVAL(csens)
-  
   write(kanal,*,err=1000) manz
 
 !!!$     Koordinaten und Sensitivitaetsbetraege schreiben
@@ -82,9 +115,34 @@ subroutine bbsens(kanal,datei)
   write(kanal,*,err=1000)'Max:',csensmax
 !!!$     'datei' schliessen
   close(kanal)
-  
+
   DEALLOCATE (csens)
-  
+
+  IF (lip) THEN
+!!!$ for normalization
+     csensmax = MAXVAL(csens_fpi)
+
+!!!$     'datei' oeffnen
+     fetxt = datei
+     errnr = 1
+     open(kanal,file=TRIM(fetxt)//'_fpi',status='replace',err=999)
+     errnr = 4
+     write(kanal,*,err=1000) manz
+
+!!!$     Koordinaten und Sensitivitaetsbetraege schreiben
+!!!$     (logarithmierter (Basis 10) normierter Betrag)
+     DO i=1,manz
+        WRITE (kanal,*,err=1000)espx(i),espy(i),LOG10(csens_fpi(i)/csensmax)
+     END DO
+
+!!!$     Maximale Sensitivitaet schreiben
+     write(kanal,*,err=1000)'Max:',csensmax
+!!!$     'datei' schliessen
+     close(kanal)
+
+     DEALLOCATE (csens_fpi)
+  END IF
+
   errnr = 0
   return
 

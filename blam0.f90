@@ -38,15 +38,15 @@ SUBROUTINE blam0()
      IF (nz==-1) THEN ! this is a special switch, but only taken for 
 !!!!$ CRI/DC
         lammax = MAX(REAL(manz),REAL(nanz))
-        WRITE (*,'(t5,a,F12.1)')'taking easy lam_0 ',lammax
+        WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'taking easy lam_0 ',lammax
      ELSE
         lammax = DBLE(lamnull_cri)
-        PRINT*,'-> presetting lam0 CRI',lammax
+        WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 CRI',lammax
      END IF
      RETURN
   ELSE IF ( llamf .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
      lammax = DBLE(lamnull_fpi)
-     PRINT*,'-> presetting lam0 FPI',lammax
+     WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 FPI',lammax
      RETURN
   END IF
   
@@ -109,11 +109,8 @@ SUBROUTINE blam0()
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
   lammax = lammax * 5d0
-  IF (lammax > 1e10) THEN
-     WRITE (*,'(t5,a,G12.1)')'found lam_0 ',lammax
-  ELSE
-     WRITE (*,'(t5,a,F12.1)')'found lam_0 ',lammax
-  END IF
+  WRITE (*,'(a,t5,a,G12.4,t60)')ACHAR(13),'found lam_0 ',lammax
+
 !!!$     ak Synthetic Example (JoH)
 !!!$     ak        lammax = lammax * 1d1
 

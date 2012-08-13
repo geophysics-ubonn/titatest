@@ -200,11 +200,23 @@ PROGRAM inv
      OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
 !!!$  Write errors for all measurements to fpeps
+!!!$ >> RM
      IF (ldc) THEN
+        WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
+        wmatd = wmatdr
         WRITE (fpeps,'(a)')'1/eps_r      datum'
         WRITE (fpeps,'(G12.3,2x,G14.5)')(SQRT(wmatdr(i)),&
              REAL(dat(i)),i=1,nanz)
      ELSE
+
+        IF (lelerr) THEN
+           WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
+           wmatd = wmatd_cri
+        ELSE
+           WRITE (*,'(/a/)')'++ (CRI) Setting complex error of magnitude'
+           wmatd = wmatdr
+        END IF
+!!!$ << RM
         WRITE (fpeps,'(t5,a,t14,a,t27,a,t38,a,t50,a,t62,a,t71,a,t87,a)')'1/eps_r','1/eps_p',&
              '1/eps','eps_r','eps_p','eps','-log(|R|)', '-Phase (rad)'
         WRITE (fpeps,'(3F10.1,2x,3G12.3,2G15.7)')&
@@ -427,7 +439,8 @@ PROGRAM inv
 
 !!!$   Wiederholt minimale step-length ?
            IF (stpalt.EQ.0d0) errnr2=92
-
+           WRITE (*,'(/a,G12.4,a/)')'+++ Convergence check (CHI (old/new)) ',&
+                100.0*(1d0-rmsalt/nrmsd),' %'
 !!!$   Keine Verbesserung des Daten-RMS ?
            IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) errnr2=81
 
@@ -471,6 +484,9 @@ PROGRAM inv
 
 !!!$   Wichtungsfeld umspeichern
                  wmatd = wmatdp
+                 lam_cri = lamalt
+                 WRITE (*,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
+                      'and saving lam_cri: ',REAL(lam_cri)
 
                  lip    = .TRUE.
                  lsetip = .TRUE. ! 
@@ -600,6 +616,10 @@ PROGRAM inv
                    dabs(1d0-rmsreg/nrmsdm).GT.mqrms).OR.&
                    (rmsreg.EQ.0d0)).AND.&
                    (bdpar >= bdmin)) THEN
+!!$                 WRITE (*,'(/a,G12.4,a)')'Rms increase:',&
+!!$                      100.0*(1d0-rmsalt/nrmsd),' %'
+!!$                 WRITE (*,'(a,G12.4,a)')'Stepsize :',bdpar
+!!$                 WRITE (*,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
 !!!$   Regularisierungsparameter bestimmen
                  IF (lsetup.OR.lsetip) THEN
 
@@ -712,7 +732,7 @@ PROGRAM inv
         CALL brough
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
-        IF (lsr) CALL refsig()
+        CALL refsig()
 !!!$   Neues Modelling
      END DO ! DO WHILE (.not. converged)
 

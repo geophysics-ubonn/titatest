@@ -88,9 +88,9 @@ SUBROUTINE rdati(kanal,datei)
 
   ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
        kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),&
-       wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),&
+       wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),wmatd_cri(nanz),&
        stat=errnr)
-  wmatd = 0.;wmatdp = 0.; wmatdr = 0.
+  wmatd = 0d0;wmatdp = 0d0; wmatdr = 0d0;wmatd_cri = 0d0
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation data space'
      errnr = 94
@@ -335,10 +335,9 @@ SUBROUTINE rdati(kanal,datei)
 
      dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
      wmatdr(i) = 1d0/(stabw**2d0)
-     wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
-        IF (lelerr) wmatd(i)=1d0/(stabw**2d0+stabwp**2d0)
+        wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)
      END IF
      wdfak(i) = 1
