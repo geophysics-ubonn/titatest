@@ -145,7 +145,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bdmin = 1d-6
+  bdmin = 0d0
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
