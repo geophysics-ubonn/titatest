@@ -59,8 +59,6 @@ SUBROUTINE rdati(kanal,datei)
   REAL(KIND(0D0))     ::     stabwp,stabwb
 !!!$     Error of the phase
   REAL(KIND(0D0))     ::     eps_p
-
-
 !!!$     Pi
   REAL(KIND(0D0))     ::     pi
 !!!$ check whether the file format is crtomo konform or not..
@@ -87,18 +85,12 @@ SUBROUTINE rdati(kanal,datei)
 
   elec3=elec1-10000 ! are we still positive?
   crtf=(elec3 > 0) ! crtomo konform?
-  IF (crtf) THEN
-     PRINT*,'+ CRTomo conform data format'
-  ELSE
-     PRINT*,'+ NO CRTomo conform data format'
-     print*,elec1,elec3
-  END IF
 
   ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
        kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),&
-       wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),&
+       wmatd(nanz),wmatd2(nanz),sgmaa2(nanz),wdfak(nanz),wmatd_cri(nanz),&
        stat=errnr)
-  wmatd = 0.;wmatdp = 0.; wmatdr = 0.
+  wmatd = 0d0;wmatdp = 0d0; wmatdr = 0d0;wmatd_cri = 0d0
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation data space'
      errnr = 94
@@ -110,11 +102,11 @@ SUBROUTINE rdati(kanal,datei)
   IF (lnse ) THEN
      icount_mag = 0;icount_pha = 0
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
+     CALL get_unit(ifp3)
+     OPEN (ifp3,FILE='inv.mynoise_voltages',STATUS='replace')
+     WRITE (ifp3,*) nanz
      CALL get_unit(ifp1)
      OPEN (ifp1,FILE='inv.mynoise_rho',STATUS='replace')
-     CALL get_unit(ifp3)
-     OPEN (ifp3,FILE='inv.mynoise_voltage',STATUS='replace')
-     WRITE (ifp3,*)nanz
      WRITE(ifp1,'(a)')'#  rnd_r'//ACHAR(9)//'eps_r'//&
           ACHAR(9)//ACHAR(9)//'bet(old)'//ACHAR(9)//'bet(new)'
      IF (.NOT. ldc) THEN
@@ -349,10 +341,9 @@ SUBROUTINE rdati(kanal,datei)
 
      wmatdr(i) = 1d0/(stabw**2d0) !=C_d^{-1} !!!!
 
-     wmatd(i) = wmatdr(i)
 !!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
-        IF (lelerr) wmatd(i)=1d0/(stabw**2d0+stabwp**2d0)
+        wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)
      END IF
      wdfak(i) = 1
@@ -385,7 +376,6 @@ SUBROUTINE rdati(kanal,datei)
            errnr = 88
            goto 1000
         end if
-        wmatd = wmatd * stabw * stabw
         wmatdr = wmatdr * stabw * stabw
      ELSE
         read(kanal,*,end=1001,err=1000) stabw,stabwp
@@ -394,7 +384,6 @@ SUBROUTINE rdati(kanal,datei)
            errnr = 88
            goto 1000
         end if
-        wmatd = wmatd * stabw * stabw
         wmatdr = wmatdr * stabw * stabw
         wmatdp = wmatdp * stabwp * stabwp
      END IF

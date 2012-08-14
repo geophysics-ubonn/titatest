@@ -12,6 +12,8 @@ MODULE konvmod
   REAL(KIND(0D0)), PUBLIC ::     lammax
 
 !!$ >> RM
+!!!$ Post CRI regularization parameter
+  REAL(KIND(0D0)), PUBLIC ::     lam_cri
 !!$ Starting regularization parameter (CRI)
   REAL(KIND(0D0)), PUBLIC ::     lamnull_cri
 !!$ Starting regularization parameter (FPI)

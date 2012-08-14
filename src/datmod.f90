@@ -27,6 +27,8 @@ MODULE datmod
   REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdp
 !!$c Wichtungsvektor der Widerstaende
   REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdr
+!!$c Wichtungsvektor der Komplexen Fehlerellipsen
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatd_cri
 !!$c parameters of resistance error model (dR=stabw0*R+stabm0)
   REAL (KIND(0D0)), PUBLIC                              :: stabw0,stabm0
 !!$c parameters of phase error model

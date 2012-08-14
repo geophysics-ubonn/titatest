@@ -126,9 +126,11 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   ELSE
 	  print*,'Linux-OS'
      slash = '/'
+  ELSE
+     slash = '\'
   END IF
 
-  !  CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
+  !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
 !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
   l1min = 1d0
 !!!$     ak        l1min = 1.2d0
@@ -150,7 +152,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bdmin = 1d-5
+  bdmin = 1d-6
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
@@ -226,14 +228,17 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   fetxt = 'rall -> Diff. measurements'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) dd0
+  CALL clear_string (dd0)
 
   fetxt = 'rall -> Diff. model (prior)'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) dm0
+  CALL clear_string (dm0)
 
   fetxt = 'rall -> Diff. model response of prior'
   CALL read_comments(fpcfg)
   READ (fpcfg,'(a)',end=1001,err=999) dfm0
+  CALL clear_string (dfm0)
 
   IF (dm0 /= '') THEN
      INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
@@ -436,7 +441,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
   IF (exi) THEN
 !!!$ Overwriting lamfix with crt.lamnull content
-     PRINT*,'overwriting lamfix with content of ',TRIM(fetxt)
+     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
      OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
      READ(kanal,*,END=1001,ERR=999)lamnull_cri
      PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
@@ -447,19 +452,26 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      IF (llamf) lamnull_fpi = lamfix ! in case of llamf we possibly 
 !!!$ do not want lam0 search at the beginning of FPI
 31   CLOSE(kanal)
+     PRINT*
   ELSE IF (llamf) THEN
+     WRITE (*,'(/a,G12.4/)')'Presetting lamnull with lamfix ',REAL(lamfix)
      lamnull_cri = lamfix
      lamnull_fpi = lamfix
-     PRINT*,'writing ',TRIM(fetxt)
-     OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',&
-          STATUS='replace')
-     WRITE (kanal,*)lamnull_cri
-     WRITE (kanal,*)lamnull_fpi
-     CLOSE (kanal)
+  ELSE IF (nz < 0) THEN
+     lamnull_cri = ABS(DBLE(nz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_fpi = 0d0
   ELSE
+     WRITE (*,'(/a/)')'+++ Found no presettings for lambda_0 (default)'
      lamnull_cri = 0d0
      lamnull_fpi = 0d0
   END IF
+  PRINT*,'Saving lamba presettings -> '//TRIM(fetxt)
+  OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
+  WRITE (kanal,*)lamnull_cri
+  WRITE (kanal,*)lamnull_fpi
+  CLOSE (kanal)
+  
 !!$<< RM
 
 
@@ -533,7 +545,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
-  lsytop = BTEST (mswitch,8) ! +256 enables sy top check of 
+  lsytop = BTEST (mswitch,8) ! +256 disables sy top check of 
   !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
   !     This is useful for including topographical effects and should be used
 
