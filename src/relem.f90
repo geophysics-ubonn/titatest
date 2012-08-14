@@ -191,21 +191,6 @@ SUBROUTINE relem(kanal,datei)
   ELSE
      PRINT*,'done!'
   END IF
-!!$
-!!$  END IF
-
-!!!$            IF (typ(i) > 10) THEN ! randele zeiger kann man auch so belegen
-!!!$               iflnr = iflnr + 1
-!!!$               IF (iflnr > relanz) THEN
-!!!$                  fetxt = 'relem:: iflnr > relanz!'
-!!!$                  errnr = 9
-!!!$                  goto 1000
-!!!$               END IF                  
-!!!$               rnr(iflnr) = nrel(idum+j,1)
-!!!$            END IF
-     END DO
-     idum = idum + nelanz(i)
-  END DO
 
 !  DEALLOCATE (my_rnr)
 

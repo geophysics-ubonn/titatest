@@ -126,8 +126,6 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   ELSE
 	  print*,'Linux-OS'
      slash = '/'
-  ELSE
-     slash = '\'
   END IF
 
   !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
