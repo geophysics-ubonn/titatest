@@ -433,34 +433,44 @@ PROGRAM inv
 
 !!!$   ABBRUCHBEDINGUNGEN
         IF (llam.AND..NOT.lstep) THEN
-           lamalt = lam 
 !!!$   Polaritaeten checken
            CALL chkpol(lsetup.OR.lsetip)
 
 !!!$   Wiederholt minimale step-length ?
-           IF (stpalt.EQ.0d0) errnr2=92
+           IF (stpalt.EQ.0d0) THEN
+              errnr2 = 92
+              fetxt = 'repeated step length'
+           END IF
            WRITE (*,'(/a,G12.4,a/)')'+++ Convergence check (CHI (old/new)) ',&
                 100.0*(1d0-rmsalt/nrmsd),' %'
 !!!$   Keine Verbesserung des Daten-RMS ?
-           IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) errnr2=81
-
+           IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
+              errnr2 = 81
+              fetxt = 'No RMS decrease'
+           END IF
 !!!$   Minimaler Daten-RMS erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
-           IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) errnr2=80
+           IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
+              errnr2 = 80
+              fetxt = 'Min RMS reached'
+           END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
-           IF (it.GE.itmax) errnr2=79
-
+           IF (it.GE.itmax) THEN
+              errnr2 = 79
+              fetxt = 'Reached max number of iterations'
+           END IF
 !!!$   Minimal stepsize erreicht ?
-           IF (bdpar < bdmin) THEN
-              errnr2=109
-              WRITE (ftext,*)'check stepsize',bdpar,it,itr
+           IF (errnr2 == 0.AND.bdpar <= bdmin) THEN
+              errnr2 = 109
+              WRITE (fetxt,*)'check stepsize',bdpar,it,itr
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
            IF (errnr2.NE.0) THEN
+
               IF (lfphai.AND.errnr2.NE.79) THEN
-                 errnr2 = 0
+                 PRINT*,'CRI termination '//TRIM(fetxt),errnr2
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
                  CALL wout(kanal,dsigma,dvolt)
@@ -485,6 +495,7 @@ PROGRAM inv
 !!!$   Wichtungsfeld umspeichern
                  wmatd = wmatdp
                  lam_cri = lamalt
+
                  WRITE (*,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
                       'and saving lam_cri: ',REAL(lam_cri)
 
@@ -495,6 +506,7 @@ PROGRAM inv
                  ldlami = .TRUE.
                  lfstep = .TRUE.
                  step   = 1d0
+                 errnr2 = 0
 
 !!!$   ak
                  fetxt = 'cp -f inv.lastmod inv.lastmod_rho'
@@ -532,6 +544,10 @@ PROGRAM inv
                  EXIT
               END IF
            ELSE
+!!!$ >> RM
+              lamalt = lam ! save the lambda of the previous iteration
+!!!$ if, and only if the iterate was successful...
+!!!$ << RM
 !!!$   ak
 !!!$   Widerstandsverteilung und modellierte Daten ausgeben
 !!$              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
@@ -610,16 +626,18 @@ PROGRAM inv
 
 !!!$   Regularisierungsindex hochzaehlen
               itr = itr+1
-              IF (((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
+              IF ((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
                    (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
                    (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
-                   dabs(1d0-rmsreg/nrmsdm).GT.mqrms).OR.&
-                   (rmsreg.EQ.0d0)).AND.&
-                   (bdpar >= bdmin)) THEN
-!!$                 WRITE (*,'(/a,G12.4,a)')'Rms increase:',&
-!!$                      100.0*(1d0-rmsalt/nrmsd),' %'
-!!$                 WRITE (*,'(a,G12.4,a)')'Stepsize :',bdpar
-!!$                 WRITE (*,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
+                   (bdpar > bdmin).AND.&
+                   (dabs(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
+                   (rmsreg.EQ.0d0)) THEN
+                 IF (rmsreg > 0d0) THEN
+                    WRITE (fprun,'(/a,G12.4,a)')'Rms increase:',&
+                         100.0*(1d0-rmsalt/nrmsd),' %'
+                    WRITE (fprun,'(a,G12.4,a)')'Stepsize :',bdpar
+                    WRITE (fprun,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
+                 END IF
 !!!$   Regularisierungsparameter bestimmen
                  IF (lsetup.OR.lsetip) THEN
 
@@ -637,6 +655,7 @@ PROGRAM inv
                        WRITE (*,'(a,G10.2)',ADVANCE='no')'lam_0:: ',lammax
                        WRITE (fprun,'(a,G10.2)')'lam_0 ',lammax
                        lam = lammax
+                       lamalt = lammax
 !!!$   ak Model EGS2003, ERT2003                        call blam0()
 !!!$   ak Model EGS2003, ERT2003                        lam = lammax
 !!!$   ak                        lam = 1d4
