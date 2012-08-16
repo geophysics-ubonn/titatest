@@ -112,7 +112,7 @@ subroutine kompadc(nelec,ki)
 !!$ THE PROBLEM IS HERE, IF THERE ARE TOO FEW OUTER GRID CELLS
 !!!$ SIGMA IS NO MORE DENFINED!!!
 
-                 a(im) = a(im) + dum * dum2
+                 adc(im) = adc(im) + dum * dum2
 
                  if (lsr) then
                     dum2   = dum * DBLE(dum2 - sigma0)
