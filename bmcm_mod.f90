@@ -22,7 +22,7 @@ MODULE bmcm_mod
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,&
        lverb_dat,lelerr,lam_cri
   USE modelmod , ONLY : manz
-  USE datmod , ONLY : nanz,wmatdr,wmatd_cri
+  USE datmod , ONLY : nanz,wmatdr,wmatd_cri,wmatdp
   USE errmod, ONLY : errnr,fetxt,fprun
   USE sigmamod , ONLY : sigma
   USE pathmod
@@ -56,6 +56,7 @@ CONTAINS
 !!! for tic_toc
     INTEGER (KIND = 4 )            :: c1
     INTEGER (KIND = 4)             :: i
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
     CALL TIC(c1)
@@ -181,21 +182,29 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
-    INTEGER                       :: kanal
-    INTEGER                       :: i,j,k
-    REAL,DIMENSION(:),ALLOCATABLE :: dig
-    REAL                          :: dig_min,dig_max
-    INTEGER                                      :: c1
-    CHARACTER(80)                                :: csz
+    INTEGER                                  :: kanal
+    INTEGER                                  :: i,j,k
+    COMPLEX (KIND(0D0))                      :: cdum
+    REAL (KIND(0D0))                         :: dum
+    REAL(KIND(0d0)),DIMENSION(:),ALLOCATABLE :: dig,dig_fpi    ! contains diagonal of ATA
+    REAL (KIND(0D0))                         :: dig_min,dig_max ! MINMAX(diag{ATA})
+    INTEGER                                  :: c1
+    CHARACTER(80)                            :: csz
+    CHARACTER(256)                           :: fname
+
 !!!$....................................................................
 
 !!!$  A^TC_d^-1A
 
-    errnr = 1
-    OPEN (kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
+    fname = TRIM(fetxt) ! reassign
 
-    ALLOCATE(dig(manz))
+    fetxt = 'allocating digs'
+    ALLOCATE(dig(manz),dig_fpi(manz),STAT=errnr)
+    IF (errnr /= 0) THEN
+       errnr = 97
+       RETURN
+    END IF
 
     ata = 0d0
 
@@ -203,13 +212,7 @@ CONTAINS
 
     IF (ldc) THEN
 
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (ata,sensdc,wmatd,wdfak,dig,manz,nanz) &
-       !$OMP PRIVATE (i,j,k)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO k=1,manz
-          !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-          !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
           DO j=k,manz ! fills upper triangle (k,j)
              DO i=1,nanz
                 ata(k,j) = ata(k,j) + sensdc(i,k) * & 
@@ -219,27 +222,25 @@ CONTAINS
           END DO
           dig(k) = ata(k,k)
        END DO
-       !$OMP END PARALLEL
-
     ELSE
-
-       !$OMP PARALLEL DEFAULT (none) &
-       !$OMP SHARED (ata,sens,wmatd,wdfak,dig,manz,nanz) &
-       !$OMP PRIVATE (i,j,k)
-       !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
        DO k=1,manz
-          !       write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)//&
-          !            'ATC_d^-1A/ ',REAL( k * (100./manz)),'%'
-          DO j=k,manz ! fills upper triangle (k,j)
+          DO j=k,manz ! upper triangle
+             cdum = DCMPLX(0d0)
+             IF (j==k) dum = 0d0
              DO i=1,nanz
-                ata(k,j) = ata(k,j) + DCONJG(sens(i,k)) * &
+                cdum = cdum + DCONJG(sens(i,k)) * &
                      sens(i,j) * wmatd(i) * DBLE(wdfak(i))
+                
+                IF (j==k) dum = dum + DBLE(sens(i,k)) * DBLE(sens(i,j)) * &
+                     wmatdp(i)*DBLE(wdfak(i))
+
              END DO
-             ata(j,k) = ata(k,j) ! fills lower triangle (k,j)
+             ata(k,j) = cdum ! fills upper triangle (k,j)
+             ata(j,k) = cdum ! fills lower triangle (j,k)
           END DO
           dig(k) = ata(k,k)
+          dig_fpi(k) = dum
        END DO
-       !$OMP END PARALLEL
     END IF
 
     csz = 'ATA time'
@@ -249,6 +250,10 @@ CONTAINS
     dig_min = MINVAL(dig)
     dig_max = MAXVAL(dig)
 !!!$    write out 
+    errnr = 1
+    OPEN (kanal,file=TRIM(fname),status='replace',err=999)
+    errnr = 4
+
     WRITE (kanal,*)manz
     DO i=1,manz
        WRITE (kanal,*)dig(i),LOG10(dig(i))-LOG10(dig_max)
@@ -257,7 +262,23 @@ CONTAINS
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
     CLOSE(kanal)
 
-    DEALLOCATE (dig)
+    IF (lip) THEN
+       WRITE (*,'(/a/)')'Writing out:: '//TRIM(fname)//'_fpi'
+       dig_min = MINVAL(dig_fpi)
+       dig_max = MAXVAL(dig_fpi)
+       errnr = 1
+       OPEN (kanal,file=TRIM(fname)//'_fpi',status='replace',err=999)
+       errnr = 4
+       
+       WRITE (kanal,*)manz
+       DO i=1,manz
+          WRITE (kanal,*)dig_fpi(i),LOG10(dig_fpi(i))-LOG10(dig_max)
+       END DO
+       WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+       WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
+       CLOSE(kanal)
+    END IF
+    DEALLOCATE (dig,dig_fpi)
 
     errnr = 0
 999 RETURN
@@ -279,8 +300,8 @@ CONTAINS
     INTEGER                        :: kanal ! io number
 !!!$   Hilfsvariablen 
     INTEGER                        :: i,j,k,ik
-    REAL,DIMENSION(:),ALLOCATABLE  :: dig
-    REAL                           :: dig_min,dig_max
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE  :: dig
+    REAL(KIND(0D0))                           :: dig_min,dig_max
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................

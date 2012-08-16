@@ -446,24 +446,24 @@ PROGRAM inv
 !!!$   Keine Verbesserung des Daten-RMS ?
            IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
               errnr2 = 81
-              fetxt = 'No RMS decrease'
+              WRITE (fetxt,*)'No further RMS decrease ',mqrms
            END IF
 !!!$   Minimaler Daten-RMS erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
            IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
               errnr2 = 80
-              fetxt = 'Min RMS reached'
+              WRITE (fetxt,*)'Optimal RMS ',REAL(nrmsd),' reached'
            END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
            IF (it.GE.itmax) THEN
               errnr2 = 79
-              fetxt = 'Reached max number of iterations'
+              WRITE (fetxt,*)'Reached max number of iterations ',itmax
            END IF
 !!!$   Minimal stepsize erreicht ?
            IF (errnr2 == 0.AND.bdpar <= bdmin) THEN
               errnr2 = 109
-              WRITE (fetxt,*)'check stepsize',bdpar,it,itr
+              WRITE (fetxt,*)' Stepsize ',bdpar,' < Min stepsize ',bdmin
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
