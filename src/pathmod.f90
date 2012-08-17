@@ -30,7 +30,7 @@ CONTAINS
 
     CHARACTER (*) :: string
 
-    INTEGER ( KIND = 4 ) :: iblank,itab
+    INTEGER ( KIND = 4 ) :: iblank
     
     string = ADJUSTL(string)
 

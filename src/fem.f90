@@ -136,7 +136,7 @@ program fem
   read(12,*,end=1001,err=999) lrandb2
   read(12,'(a80)',end=1001,err=999) drandb
   fetxt = 'reading mswitch'
-  read(12,'(I2)',end=101,err=100) mswitch
+  read(12,'(I5)',end=101,err=100) mswitch
 
   GOTO 101
 
@@ -145,7 +145,7 @@ program fem
 101 lana = BTEST(mswitch,0)
   wkfak = BTEST(mswitch,1)
   lsr = BTEST(mswitch,2)
-  lverb = BTEST(mswitch,5)
+  lverb = BTEST(mswitch,10)
 
   IF (lana) PRINT*,'ANALYTICAL SOLUTION'
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
