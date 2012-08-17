@@ -37,6 +37,7 @@ SUBROUTINE relem(kanal,datei)
 
 !!!$ To check for border to element connection (rnr)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
+
 !!!$ NEW rnr
   !  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
 
@@ -120,19 +121,19 @@ SUBROUTINE relem(kanal,datei)
   DO i=1,typanz
      DO j=1,nelanz(i)
         READ(kanal,*,END=1001,err=1000)(nrel(idum+j,k),k=1,selanz(i))
-
+        
         IF (typ(i) < 10) THEN ! set midpoints
-
+           
            ifln = ifln + 1
-
+           
            DO k = 1,selanz(i)
               espx(ifln) = espx(ifln) + sx(snr(nrel(idum+j,k)))
               espy(ifln) = espy(ifln) + sy(snr(nrel(idum+j,k)))
            END DO
-
+           
            espx(ifln) = espx(ifln) / selanz(i)
            espy(ifln) = espy(ifln) / selanz(i)
-
+           
         END IF
      END DO
      idum = idum + nelanz(i)
@@ -220,6 +221,8 @@ SUBROUTINE relem(kanal,datei)
   ELSE
      PRINT*,'done!'
   END IF
+!!$
+!!$  END IF
 
   !  DEALLOCATE (my_rnr)
 
@@ -230,6 +233,13 @@ SUBROUTINE relem(kanal,datei)
 
 !!!$ 
   IF (failed) THEN
+
+101  FORMAT (I9)
+102  FORMAT (2(I9,1X))
+103  FORMAT (3(I9,1X))
+104  FORMAT (4(I9,1X))
+105  FORMAT (I9,2(1X,G12.4))
+
      fetxt = TRIM(datei)//'_new'
      PRINT*,'+++ WRITING OUT IMPROVED GRID --> Writing',TRIM(fetxt)
      errnr = 1
@@ -239,22 +249,30 @@ SUBROUTINE relem(kanal,datei)
 
 !!!$     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
 !!!$     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
-     WRITE(kanal,*) sanz,typanz,mb
-     WRITE(kanal,*) (typ(i),nelanz(i),selanz(i),i=1,typanz)
-     WRITE(kanal,*) (snr(i),sx(i),sy(i),i=1,sanz)
+     WRITE(kanal,103) sanz,typanz,mb
+     WRITE(kanal,103) (typ(i),nelanz(i),selanz(i),i=1,typanz)
+     DO i=1,sanz
+        WRITE(kanal,105) snr(i),sx(i),sy(i)
+     END DO
+!     STOP
 !!!$     Knotennummern der Elemente einlesen
      idum = 0;ifln = 0;iflnr = 0
      DO i=1,typanz
         DO j=1,nelanz(i)
-           WRITE(kanal,*)(nrel(idum+j,k),k=1,selanz(i))
-
+           IF (typ(i) == 8)  THEN
+              WRITE(kanal,104)(nrel(idum+j,k),k=1,selanz(i))
+           ELSE IF (typ(i) == 4)  THEN
+              WRITE(kanal,103)(nrel(idum+j,k),k=1,selanz(i))
+           ELSE
+              WRITE(kanal,102)(nrel(idum+j,k),k=1,selanz(i))
+           END IF
         END DO
 
         idum = idum + nelanz(i)
         
      END DO
      
-     WRITE(kanal,*) (rnr(i),i=1,relanz)
+     WRITE(kanal,101) (rnr(i),i=1,relanz)
 
      CLOSE (kanal)
 

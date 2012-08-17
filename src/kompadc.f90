@@ -110,19 +110,22 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
+!!!$ >> RM
                     dum2 = DBLE(sigma(rnr(rel)))
-                    dum2 = DBLE(sigma0)
-                    dum2 = 0d0 ! which removes the influence
+!!$                    dum2 = DBLE(sigma0)
+!!$                    dum2 = 0d0 ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
                     dum2 = DBLE(sigma(iel))
                  end if
-!!!$ BUG
-!!$ THE PROBLEM IS HERE, IF THERE ARE TOO FEW OUTER GRID CELLS
-!!!$ SIGMA IS NO MORE DENFINED!!!
 
-                 a(im) = a(im) + dum * dum2
+!!!$ GRIDBUG was causing some problems here
+!!!$ sigma index can be overaccessed due to some segementation
+!!!$ issue which will cause undefined sigma access..
+!!!$ FIXED this with grid consisitency check during read in
 
+                 adc(im) = adc(im) + dum * dum2
+!!!$ << RM
                  if (lsr) then
                     dum2   = dum * DBLE(dum2 - sigma0)
                     b_komp(nzp) = b_komp(nzp) + dum2 * dble(pota(nnp))
