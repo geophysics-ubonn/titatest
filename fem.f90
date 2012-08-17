@@ -127,7 +127,7 @@ program fem
   read(12,*,end=1001,err=999) lrandb2
   read(12,'(a80)',end=1001,err=999) drandb
   fetxt = 'reading mswitch'
-  read(12,'(I2)',end=101,err=100) mswitch
+  read(12,'(I4)',end=101,err=100) mswitch
 
   GOTO 101
 
@@ -136,8 +136,11 @@ program fem
 101 lana = BTEST(mswitch,0)
   wkfak = BTEST(mswitch,1)
   lsr = BTEST(mswitch,2)
+  lverb = BTEST(mswitch,10) ! +1024 for verbose output
 
+  print*,mswitch
 
+  IF (lverb) WRITE (*,'(/a/)')'+++ VERBOSE +++++'
 
 !!!$   Alles einlesen
   call relem(kanal,delem)
