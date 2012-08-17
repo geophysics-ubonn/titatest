@@ -33,13 +33,12 @@ SUBROUTINE relem(kanal,datei)
 
 !!!$     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
-  LOGICAL            ::    my_check  
+  LOGICAL            ::    my_check, failed
 
 !!!$ To check for border to element connection (rnr)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
-
 !!!$ NEW rnr
-!  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
+  !  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
 
 !!!$.....................................................................
 
@@ -133,11 +132,37 @@ SUBROUTINE relem(kanal,datei)
 
            espx(ifln) = espx(ifln) / selanz(i)
            espy(ifln) = espy(ifln) / selanz(i)
-           
+
         END IF
      END DO
      idum = idum + nelanz(i)
-     
+
+  END DO
+
+  failed = .FALSE.
+  ik1 = nrel(elanz + 1,1)
+  ik2 = nrel(elanz + 1,2)
+  ic = 1
+  DO i=2,relanz
+!!!$ consistency check of node ordering, assume ascending?
+
+     jk1 = nrel(elanz + i,1)
+     jk2 = nrel(elanz + i,2)
+     IF (ik2 /= jk1 .OR. ik1 /= jk2) THEN
+        failed = .TRUE.
+        ic = ic + 1
+     END IF
+  END DO
+  IF (ic == relanz) THEN
+     WRITE(*,'(/a/)',ADVANCE='no')'+++ consistency check '//&
+          'border-line-elements failed -> swapping elements'
+  END IF
+
+  DO i=1,relanz
+
+     ik1 = nrel(elanz + i,2)
+     nrel(elanz + i,2) = nrel(elanz + i,1)
+     nrel(elanz + i,1) = ik1
   END DO
 
 !!!$     Zeiger auf Werte der Randelemente einlesen not anymore
@@ -151,16 +176,16 @@ SUBROUTINE relem(kanal,datei)
 !!$  DO i=1,relanz
 !!$     IF (rnr(i) > elanz.OR.rnr(i)<1) ic = ic + 1
 !!$  END DO
-  
+
 !!$  IF (ic > 0) THEN
 !!!$ CHECK where the BORDER ELE begin in nrel
 
-  WRITE(*,'(a)',ADVANCE='no')'+++ rearranging pointer '//&
-       'of border elements'
+  ic = 0
   DO i=1,relanz
 !!!$ define the node points of the border-line
      ik1 = nrel(elanz + i,1)
      ik2 = nrel(elanz + i,2)
+
 !!!$ now search for the corresponding element
 !!!$ how to do so?
 !!!$ suppose we have a ordered input file, where the
@@ -171,18 +196,22 @@ SUBROUTINE relem(kanal,datei)
            IF (nrel(k,l) == ik1) jk1 = 1
            IF (nrel(k,l) == ik2) jk2 = 1
         END DO
-        IF (jk1 == 1 .AND. jk2 == 1) THEN
-           IF (lverb) PRINT*,'found border to finite element',i,k
+        IF (jk1 == 1 .AND. jk2 == 1.AND.rnr(i) /= k) THEN
+           ic = ic + 1
+           WRITE (*,'(a,I7,1x,a,I7)',ADVANCE='no')ACHAR(13)//&
+                'wrong element to border connection: ',ic,'/',relanz
            rnr(i) = k
+           failed = .TRUE.
         END IF
      END DO
+
   END DO
-  
+
   ic = 0
   DO i=1,relanz
      IF (rnr(i) > elanz.OR.rnr(i) < 1) ic = ic + 1
   END DO
-  
+
   IF (ic > 0) THEN
      PRINT*,'Kann nich sein'
      fetxt = 'border to element context is wrong'
@@ -192,11 +221,45 @@ SUBROUTINE relem(kanal,datei)
      PRINT*,'done!'
   END IF
 
-!  DEALLOCATE (my_rnr)
+  !  DEALLOCATE (my_rnr)
 
 !!!$ << RM
 !!!$     'datei' schliessen
   CLOSE(kanal)
+
+
+!!!$ 
+  IF (failed) THEN
+     fetxt = TRIM(datei)//'_new'
+     PRINT*,'+++ WRITING OUT IMPROVED GRID --> Writing',TRIM(fetxt)
+     errnr = 1
+     OPEN(kanal,file=TRIM(fetxt),status='replace')
+     
+     errnr = 3
+
+!!!$     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
+!!!$     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
+     WRITE(kanal,*) sanz,typanz,mb
+     WRITE(kanal,*) (typ(i),nelanz(i),selanz(i),i=1,typanz)
+     WRITE(kanal,*) (snr(i),sx(i),sy(i),i=1,sanz)
+!!!$     Knotennummern der Elemente einlesen
+     idum = 0;ifln = 0;iflnr = 0
+     DO i=1,typanz
+        DO j=1,nelanz(i)
+           WRITE(kanal,*)(nrel(idum+j,k),k=1,selanz(i))
+
+        END DO
+
+        idum = idum + nelanz(i)
+        
+     END DO
+     
+     WRITE(kanal,*) (rnr(i),i=1,relanz)
+
+     CLOSE (kanal)
+
+  END IF
+
 
   errnr = 0
   RETURN

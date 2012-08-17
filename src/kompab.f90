@@ -104,8 +104,8 @@ subroutine kompab(nelec,ki,my_a,my_b)
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
                     dum2 = sigma(rnr(rel))
-                    dum2 = sigma0
-                    dum2 = DCMPLX(0d0) ! which removes the influence
+!!$                    dum2 = sigma0
+!!$                    dum2 = DCMPLX(0d0) ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
                     dum2 = sigma(iel)
