@@ -148,7 +148,7 @@ SUBROUTINE relem(kanal,datei)
 
      jk1 = nrel(elanz + i,1)
      jk2 = nrel(elanz + i,2)
-     IF (ik2 /= jk1 .OR. ik1 /= jk2) THEN
+     IF (ik2 /= jk1) THEN
         failed = .TRUE.
         ic = ic + 1
      END IF
