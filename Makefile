@@ -51,6 +51,7 @@ MACHINE		= $(shell uname -n)
 OS		= $(shell uname -o)
 PREFIX		= $(BRANCH)
 DOC		= doxygen
+SCRIPTS		= scripts
 
 # query for OS dependant flags
 ifeq    ($(OS), Msys)
@@ -149,7 +150,7 @@ $(ggvo):	%.o : %.f90
 		$(F90) $(FFLAG90) -c $<
 
 $(ferr):	error.txt get_error.f90
-		./make_crerr.sh
+		$(SCRIPTS)/make_crerr.sh
 		$(F90) $(FFLAG90) -c get_error.f90
 $(f90mini):	%.o : %.f90		
 		$(F90) $(FFLAG90) -c $<
@@ -217,7 +218,7 @@ cbn:
 			echo "Du hast kein bin in deinem home.--"; \
 		fi
 ggv:		
-		./get_git_version.sh $(F90)
+		$(SCRIPTS)/get_git_version.sh $(F90)
 
 crt:		$(C1) $(C2) $(f90crt) $(f90crtsub) $(forcrt) $(fcrt) $(ferr) $(ggvo)
 		$(F90) $(FFLAG90) -o $(CRT) \
@@ -233,7 +234,7 @@ ctm:
 		cd ./cutmckee ; make
 
 dox:		
-		./make_doxygen.sh $(CRT)
+		$(SCRIPTS)/make_doxygen.sh $(CRT)
 
 minimal:	$(C1) $(f90mini)
 		$(F90) $(FFLAG90) -o $(PR4) $(f90mini) tic_toc.o
