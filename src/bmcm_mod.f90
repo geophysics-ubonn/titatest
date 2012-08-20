@@ -65,13 +65,17 @@ CONTAINS
     WRITE (fprun,'(a)')'Calculating model uncertainty..'
     IF (lip) THEN
        WRITE(*,'(a)')' --> resetting lambda of FPI to CRI value'
+       WRITE(fprun,'(a)')' --> resetting lambda of FPI to CRI value'
        lam = lam_cri
     ELSE
        WRITE(*,'(a)')' --> taking last good lambda'
+       WRITE(fprun,'(a)')' --> taking last good lambda'
        lam = lamalt
     END IF
+
     WRITE (*,'(/a,G10.3,a/)')'take current lambda ?',lam,&
          ACHAR(9)//':'//ACHAR(9)
+
     IF (BTEST(mswitch,6)) THEN 
        READ (*,*)fetxt
        IF (fetxt/='')READ(fetxt,*)lam
@@ -80,7 +84,7 @@ CONTAINS
        WRITE (*,*)' Yes'
     END IF
 
-    WRITE (fprun,*)'Taking lam=',lam
+    WRITE (fprun,*)'----> taking lam=',lam
 
     WRITE(*,'(a)')ACHAR(13)//&
          'calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1'

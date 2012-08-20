@@ -458,7 +458,7 @@ PROGRAM inv
         CALL dmisft(lsetup.OR.lsetip)
 !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
-        WRITE (*,'(a,F8.3)',ADVANCE='no')'actual fit',nrmsd
+        WRITE (*,'(a,t60,a,F8.3)',ADVANCE='no')ACHAR(13),'actual fit',nrmsd
 !!!$   'nrmsd=0' ausschliessen
         IF (nrmsd.LT.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
@@ -493,7 +493,8 @@ PROGRAM inv
 !!!$   Keine Verbesserung des Daten-RMS ?
            IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
               errnr2 = 81
-              WRITE (fetxt,*)'No further RMS decrease ',mqrms
+              WRITE (fetxt,*)'No further RMS approvement ',&
+                   REAL(ABS(1d0-rmsalt/nrmsd))
            END IF
 !!!$   Minimaler Daten-RMS erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
@@ -544,6 +545,8 @@ PROGRAM inv
                  lam_cri = lamalt
 
                  WRITE (*,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
+                      'and saving lam_cri: ',REAL(lam_cri)
+                 WRITE (fprun,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
                       'and saving lam_cri: ',REAL(lam_cri)
 
                  lip    = .TRUE.

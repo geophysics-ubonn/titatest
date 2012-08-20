@@ -242,9 +242,9 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
      IF (lstart) THEN       ! set the starting model
         dstart = dm0
-        PRINT*,'reading prior:',ACHAR(9)//TRIM(dm0)
+        PRINT*,'++ reading prior:',ACHAR(9)//TRIM(dm0)
      ELSE
-        PRINT*,'omitting prior:',ACHAR(9)//TRIM(dm0)
+        PRINT*,'-- omitting prior (NO FILE):',ACHAR(9)//TRIM(dm0)
         dm0 = ''
      END IF
   END IF
