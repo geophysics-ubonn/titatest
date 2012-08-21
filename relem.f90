@@ -38,7 +38,7 @@ SUBROUTINE relem(kanal,datei)
 !!!$ To check for border to element connection (rnr)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
 !!!$ NEW rnr
-  !  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:) :: my_rnr
+  INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:,:) :: my_nrel
 
 !!!$.....................................................................
 
@@ -98,7 +98,8 @@ SUBROUTINE relem(kanal,datei)
 !!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
-  ALLOCATE (nrel(elanz+relanz,smaxs),rnr(relanz),stat=errnr)
+  ALLOCATE (nrel(elanz+relanz,smaxs),my_nrel(elanz+relanz,smaxs),rnr(relanz),&
+       stat=errnr)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation nrel,rnr failed'
      errnr = 94
@@ -139,6 +140,13 @@ SUBROUTINE relem(kanal,datei)
 
   END DO
 
+!!!$ >> RM
+!!!$ border lines have to be clock wise oriented to let the normal vector point
+!!!$ outwards
+
+!!!$ internal copy of element numberings
+  my_nrel = nrel
+
   failed = .FALSE.
   ik1 = nrel(elanz + 1,1)
   ik2 = nrel(elanz + 1,2)
@@ -153,32 +161,35 @@ SUBROUTINE relem(kanal,datei)
         ic = ic + 1
      END IF
   END DO
+
   IF (ic == relanz) THEN
-     WRITE(*,'(/a/)',ADVANCE='no')'+++ consistency check '//&
-          'border-line-elements failed -> swapping elements'
+
+     !!!$ if consisntency check fails, reorder the stuff
+
+     WRITE(*,'(/a/a/)',ADVANCE='no')'+++ WARNING: consistency check of border numbering failed ',&
+          '-> swapping border-line-elements and writing it to '//TRIM(datei)//'_new'
+
+     DO i=1,relanz
+        
+        my_nrel(elanz + i,1) = nrel(elanz + i,2)
+        my_nrel(elanz + i,2) = nrel(elanz + i,1)
+
+     END DO
+  ELSE
+     
+     
+
   END IF
+!!!$ << RM
 
-  DO i=1,relanz
-
-     ik1 = nrel(elanz + i,2)
-     nrel(elanz + i,2) = nrel(elanz + i,1)
-     nrel(elanz + i,1) = ik1
-  END DO
-
-!!!$     Zeiger auf Werte der Randelemente einlesen not anymore
-!!$!  READ(kanal,*,END=1001,err=1000) (rnr(i),i=1,relanz)
 
 !!!$ >> RM
-!!!$ IF THIS IS NOT a pointer to the
 !!!$ REGULAR ELEMENT adjacent to the border line
 !!!$ THIS MAY CAUSE THE MIXED BOUNDARY TO BLOW UP
-!!$  ic = 0
-!!$  DO i=1,relanz
-!!$     IF (rnr(i) > elanz.OR.rnr(i)<1) ic = ic + 1
-!!$  END DO
 
-!!$  IF (ic > 0) THEN
-!!!$ CHECK where the BORDER ELE begin in nrel
+!!!$ TODO: 
+!!!$ - independent of numbering order (plane b4 line elements)
+!!!$ - CHECK where the BORDER ELE begin in nrel
 
   ic = 0
   DO i=1,relanz
@@ -221,14 +232,13 @@ SUBROUTINE relem(kanal,datei)
      PRINT*,'done!'
   END IF
 
-  !  DEALLOCATE (my_rnr)
-
 !!!$ << RM
 !!!$     'datei' schliessen
   CLOSE(kanal)
 
 
-!!!$ 
+!!!$ >> RM
+!!!$ write new grid if one of the checks failed
   IF (failed) THEN
 
 101  FORMAT (I9)
@@ -257,11 +267,11 @@ SUBROUTINE relem(kanal,datei)
      DO i=1,typanz
         DO j=1,nelanz(i)
            IF (typ(i) == 8)  THEN
-              WRITE(kanal,104)(nrel(idum+j,k),k=1,selanz(i))
+              WRITE(kanal,104)(my_nrel(idum+j,k),k=1,selanz(i))
            ELSE IF (typ(i) == 4)  THEN
-              WRITE(kanal,103)(nrel(idum+j,k),k=1,selanz(i))
+              WRITE(kanal,103)(my_nrel(idum+j,k),k=1,selanz(i))
            ELSE
-              WRITE(kanal,102)(nrel(idum+j,k),k=1,selanz(i))
+              WRITE(kanal,102)(my_nrel(idum+j,k),k=1,selanz(i))
            END IF
         END DO
 
@@ -274,6 +284,9 @@ SUBROUTINE relem(kanal,datei)
      CLOSE (kanal)
 
   END IF
+
+  DEALLOCATE (my_nrel)
+!!!$ << RM
 
 
   errnr = 0
