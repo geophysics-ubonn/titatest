@@ -190,29 +190,26 @@ PROGRAM inv
      END IF
      IF (errnr /= 0) GOTO 999
 
-
 !!!$ get CG data storage of residuums and bvec, which is global
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
 
-!!!$ set starting model 
-     CALL bsigm0(kanal,dstart)
-     IF (errnr.NE.0) GOTO 999
 
+!!!!$ INITIALIZE
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
      IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
-     lsetup = .TRUE.; lsetip = .FALSE.; lip    = .FALSE.
+     lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
      llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
      lfstep = .FALSE.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
 
 !!!$   Kontrolldateien oeffnen
      errnr = 1
-
+!!!$ OPEN CONTRL FILES
      fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
      OPEN(fpinv,file=TRIM(fetxt),status='replace',err=999)
      CLOSE(fpinv)
@@ -225,7 +222,7 @@ PROGRAM inv
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
-!!!$  Write errors for all measurements to fpeps
+!!!$  SET ERRORS for all measurements and write control to fpeps
 !!!$ >> RM
      IF (ldc) THEN
         WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
@@ -251,6 +248,12 @@ PROGRAM inv
      END IF
      CLOSE(fpeps)
      errnr = 4
+
+
+!!!$ set starting model 
+     CALL bsigm0(kanal,dstart)
+     IF (errnr.NE.0) GOTO 999
+
 
 !!!$   Kontrolldateien initialisieren
 !!!$   diff-        call kont1(delem,delectr,dstrom,drandb)
@@ -465,7 +468,7 @@ PROGRAM inv
 !!!$   tst
 !!!$   tst        if (lfphai) then
 !!!$   tst            llam = .true.
-!!!$   tst            if (.not.lip) nrmsd = 1d0
+!!!$   tst            if (.not.lfpi) nrmsd = 1d0
 !!!$   tst        end if
 
 !!!$.............................
@@ -549,7 +552,7 @@ PROGRAM inv
                  WRITE (fprun,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
                       'and saving lam_cri: ',REAL(lam_cri)
 
-                 lip    = .TRUE.
+                 lfpi    = .TRUE.
                  lsetip = .TRUE. ! 
                  lfphai = .FALSE.
                  llam   = .FALSE.

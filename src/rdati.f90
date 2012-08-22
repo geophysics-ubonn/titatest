@@ -217,19 +217,8 @@ SUBROUTINE rdati(kanal,datei)
            GOTO 1000
         END IF
 
-!!!$     ak                stabw = stabw0 * stabw
+     ELSE ! lindiv
 
-!!!$     ak!!!$         Ggf. Fehlermeldung
-!!!$     ak                if (bet.le.0d0) then
-!!!$     akcak
-!!!$     ak                    write(*,*) i
-!!!$     ak                    fetxt = ' '
-!!!$     ak                    errnr = 94
-!!!$     ak                    goto 1000
-!!!$     ak                end if
-
-!!!$     ak                stabw = (stabw0 + stabm0/bet) * stabw
-     ELSE
         IF (ldc) THEN
            IF (crtf) THEN
               READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet
@@ -248,20 +237,23 @@ SUBROUTINE rdati(kanal,datei)
               vnr(i)   = elec3*10000 + elec4
            END IF
 
-           IF (.NOT. ldc) stabwp = ( stabpA1*bet**stabpB &
+!!!!!!!!!!!!!!!!!!! PHASE ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+           stabwp = ( stabpA1*bet**stabpB &
                 + 1d-2*stabpA2*dabs(pha) + stabp0 ) * 1d-3
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         END IF
 
 !!!$     Ggf. Fehlermeldung
         IF (bet.LE.0d0) THEN
-!!!$     ak
-!!!$     ak                    write(*,*) i
            fetxt = ' '
            errnr = 94
            GOTO 1000
         END IF
 
+!!!!!!!!!!!! RESISTANCE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!
         stabw = 1d-2*stabw0 + stabm0/bet
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         IF ( lnse ) THEN ! add synthetic noise
 
@@ -304,7 +296,7 @@ SUBROUTINE rdati(kanal,datei)
               
            END IF
 
-! assign the noised values
+!!!$! assign the noised values
            bet = new_bet;pha = new_pha
 
            ! write out full noisy data as measured voltages..
@@ -323,14 +315,13 @@ SUBROUTINE rdati(kanal,datei)
 
      IF (ldc) THEN
 
-!!!$     Phase intern auf Null setzen
+!!!$     set phase to zero internally
         pha = 0d0
+
      ELSE
 
 !!!$     Ggf. Fehlermeldung
         IF (dabs(pha).GT.1d3*pi) THEN
-!!!$     ak
-!!!$     ak                    write(*,*) i
            fetxt = ' '
            errnr = 95
            GOTO 1000
@@ -346,6 +337,7 @@ SUBROUTINE rdati(kanal,datei)
         wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)
      END IF
+
      wdfak(i) = 1
 
 !!!$     Stromelektroden bestimmen

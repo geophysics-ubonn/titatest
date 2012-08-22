@@ -36,7 +36,7 @@ SUBROUTINE blam0()
 
 !!!$ for fixed lambda set the values according to preset fixed lamfix
   IF (( llamf .OR. (lamnull_cri > EPSILON(lamnull_cri)) ) .AND..NOT. &
-       lip ) THEN
+       lfpi ) THEN
      IF (nz==-1) THEN ! this is a special switch, but only taken for 
 !!!!$ CRI/DC
         lammax = MAX(REAL(manz),REAL(nanz))
@@ -88,7 +88,7 @@ SUBROUTINE blam0()
 
      !$OMP END PARALLEL
 
-  ELSE IF (lip) THEN
+  ELSE IF (lfpi) THEN
 
      !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
      !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,jtj,lverb,ic)

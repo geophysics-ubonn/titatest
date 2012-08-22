@@ -61,7 +61,7 @@ subroutine kont2(lsetup)
   ncg = INT(cgres(1))
 !!!$     Erste Iteration (?)
   if (lsetup) then
-     IF (lip) THEN          ! FPI?
+     IF (lfpi) THEN          ! FPI?
         write(fpinv,'(a)',err=1000)cdump
 !!!$     Robuste Inversion
         if (lrobust) then
@@ -85,7 +85,7 @@ subroutine kont2(lsetup)
 !!!$     Hauptiterationen
      if (llam.and..not.lstep) then
         write(fpinv,'(a)',err=1000)cdump
-        if (lip) then
+        if (lfpi) then
            if (lrobust) then
               write(fpinv,110,err=1000)'PIT',it,nrmsd,bdpar,lam,rough,&
                    ncg,betrms,pharms,npol,l1rat,step
@@ -114,7 +114,7 @@ subroutine kont2(lsetup)
         end do
 !!!$     lambda search and steplength search
      else
-        IF (lip) THEN
+        IF (lfpi) THEN
            if (lrobust) then
               write(fpinv,106,err=1000)'PUP',itr,nrmsd,bdpar,lam,rough,ncg,l1rat,step
            ELSE

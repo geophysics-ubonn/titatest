@@ -12,7 +12,7 @@ SUBROUTINE bbsens(kanal,datei)
 
   USE alloci , ONLY : sens,sensdc
   USE datmod , ONLY : nanz,wmatd_cri,wmatdr
-  USE invmod , ONLY : lip,wmatd,wdfak
+  USE invmod , ONLY : lfpi,wmatd,wdfak
   USE modelmod , ONLY : manz
   USE elemmod , ONLY: espx,espy
   USE errmod , ONLY : errnr,fetxt
@@ -52,7 +52,7 @@ SUBROUTINE bbsens(kanal,datei)
 !!!$     Werte berechnen
   csens = 0D0
 
-  IF (lip) THEN
+  IF (lfpi) THEN
      ALLOCATE (csens_fpi(manz),STAT=errnr)
      IF (errnr /= 0) RETURN
 !!!$     Werte berechnen
@@ -70,9 +70,9 @@ SUBROUTINE bbsens(kanal,datei)
 !!!$ FPI case:
 !!!$  wmatd = wmatdp
 
-!!!$ >> RM we modify this to make sure, that even for FPI (case lip=.T.)
+!!!$ >> RM we modify this to make sure, that even for FPI (case lfpi=.T.)
 !!!$ we can calculate a complex coverage as well as treating the error right
-        IF (lip) THEN
+        IF (lfpi) THEN
            dum_fpi = SQRT(wmatd(i)) * DBLE(wdfak(i))
            IF (lelerr) THEN
               dum = SQRT(wmatd_cri(i)) * DBLE(wdfak(i))
@@ -121,7 +121,7 @@ SUBROUTINE bbsens(kanal,datei)
 
   DEALLOCATE (csens)
 
-  IF (lip) THEN
+  IF (lfpi) THEN
 !!!$ for normalization
      csensmax = MAXVAL(csens_fpi)
 

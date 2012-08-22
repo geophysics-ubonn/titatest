@@ -149,22 +149,23 @@ SUBROUTINE relem(kanal,datei)
 
      jk1 = nrel(elanz + i,1)
      jk2 = nrel(elanz + i,2)
-     IF (ik2 /= jk1 .OR. ik1 /= jk2) THEN
+     IF (ik2 /= jk1) THEN
         failed = .TRUE.
         ic = ic + 1
      END IF
   END DO
+  
   IF (ic == relanz) THEN
      WRITE(*,'(/a/)',ADVANCE='no')'+++ consistency check '//&
           'border-line-elements failed -> swapping elements'
+     DO i=1,relanz
+        
+        ik1 = nrel(elanz + i,2)
+        nrel(elanz + i,2) = nrel(elanz + i,1)
+        nrel(elanz + i,1) = ik1
+     END DO
   END IF
 
-  DO i=1,relanz
-
-     ik1 = nrel(elanz + i,2)
-     nrel(elanz + i,2) = nrel(elanz + i,1)
-     nrel(elanz + i,1) = ik1
-  END DO
 
 !!!$     Zeiger auf Werte der Randelemente einlesen not anymore
 !!$!  READ(kanal,*,END=1001,err=1000) (rnr(i),i=1,relanz)

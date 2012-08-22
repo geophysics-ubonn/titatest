@@ -17,7 +17,7 @@ MODULE bmcm_mod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs,espx,espy
-  USE invmod , ONLY : lip,wmatd,wdfak,par
+  USE invmod , ONLY : lfpi,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,&
        lverb_dat,lelerr,lam_cri
@@ -63,7 +63,7 @@ CONTAINS
 
     WRITE(*,'(a)')'Calculating model uncertainty..'
     WRITE (fprun,'(a)')'Calculating model uncertainty..'
-    IF (lip) THEN
+    IF (lfpi) THEN
        WRITE(*,'(a)')' --> resetting lambda of FPI to CRI value'
        WRITE(fprun,'(a)')' --> resetting lambda of FPI to CRI value'
        lam = lam_cri
@@ -94,7 +94,7 @@ CONTAINS
        WRITE (*,'(/a/a/)')'++ Resetting error weighting for uncertainty',&
             '  --> Complex error ellipses of CRI'
        wmatd = wmatd_cri
-    ELSE IF (lip) THEN
+    ELSE IF (lfpi) THEN
        WRITE (*,'(/a/a/)')'++ Resetting error weighting for uncertainty',&
             '  --> Magnitude error of CRI'
        wmatd = wmatdr
@@ -266,7 +266,7 @@ CONTAINS
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
     CLOSE(kanal)
 
-    IF (lip) THEN
+    IF (lfpi) THEN
        WRITE (*,'(/a/)')'Writing out:: '//TRIM(fname)//'_fpi'
        dig_min = MINVAL(dig_fpi)
        dig_max = MAXVAL(dig_fpi)
