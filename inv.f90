@@ -202,21 +202,11 @@ PROGRAM inv
 !!!$  Write errors for all measurements to fpeps
 !!!$ >> RM
      IF (ldc) THEN
-        WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
-        wmatd = wmatdr
         WRITE (fpeps,'(a)')'1/eps_r      datum'
         WRITE (fpeps,'(G12.3,2x,G14.5)')(SQRT(wmatdr(i)),&
              REAL(dat(i)),i=1,nanz)
      ELSE
 
-        IF (lelerr) THEN
-           WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
-           wmatd = wmatd_cri
-        ELSE
-           WRITE (*,'(/a/)')'++ (CRI) Setting complex error of magnitude'
-           wmatd = wmatdr
-        END IF
-!!!$ << RM
         WRITE (fpeps,'(t5,a,t14,a,t27,a,t38,a,t50,a,t62,a,t71,a,t87,a)')'1/eps_r','1/eps_p',&
              '1/eps','eps_r','eps_p','eps','-log(|R|)', '-Phase (rad)'
         WRITE (fpeps,'(3F10.1,2x,3G12.3,2G15.7)')&
