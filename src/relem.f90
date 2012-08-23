@@ -33,7 +33,7 @@ SUBROUTINE relem(kanal,datei)
 
 !!!$     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
-  LOGICAL            ::    my_check, failed
+  LOGICAL            ::    my_check, failed(2)
 
 !!!$ To check for border to element connection (rnr)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
@@ -140,6 +140,8 @@ SUBROUTINE relem(kanal,datei)
      idum = idum + nelanz(i)
 
   END DO
+!!!$     Zeiger auf Werte der Randelemente einlesen
+  READ(kanal,*,END=1001,err=1000) (rnr(i),i=1,relanz)
 
 !!!$ >> RM
 !!!$ border lines have to be clock wise oriented to let the normal vector point
@@ -149,6 +151,8 @@ SUBROUTINE relem(kanal,datei)
   my_nrel = nrel
 
   failed = .FALSE.
+
+  WRITE (*,'(a)',ADVANCE='no')'++ check 1'
   ik1 = nrel(elanz + 1,1)
   ik2 = nrel(elanz + 1,2)
   ic = 1
@@ -158,9 +162,13 @@ SUBROUTINE relem(kanal,datei)
      jk1 = nrel(elanz + i,1)
      jk2 = nrel(elanz + i,2)
      IF (ik2 /= jk1) THEN
-        failed = .TRUE.
+        failed(1) = .TRUE.
         ic = ic + 1
      END IF
+
+     ik1 = jk1
+     ik2 = jk2
+
   END DO
 
   IF (ic == relanz) THEN
@@ -174,15 +182,11 @@ SUBROUTINE relem(kanal,datei)
         
         my_nrel(elanz + i,1) = nrel(elanz + i,2)
         my_nrel(elanz + i,2) = nrel(elanz + i,1)
-
+        
      END DO
-  ELSE
-     
-     
-
   END IF
 !!!$ << RM
-
+  IF (failed(1)) print*,'-- failed'
 
 !!!$ >> RM
 !!!$ IF THIS IS NOT a pointer to the
@@ -193,6 +197,7 @@ SUBROUTINE relem(kanal,datei)
 !!!$ - independent of numbering order (plane b4 line elements)
 !!!$ - CHECK where the BORDER ELE begin in nrel
 
+  WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'++ check 2'
   ic = 0
   DO i=1,relanz
 !!!$ define the node points of the border-line
@@ -206,19 +211,24 @@ SUBROUTINE relem(kanal,datei)
      DO k = 1,elanz
         jk1 = 0;jk2 = 0
         DO  l = 1, selanz(1) ! TODO : fix this for multi FE
+!!!$ so, we set jk1 if the node of the element coincides
            IF (nrel(k,l) == ik1) jk1 = 1
+!!!$ so, we set jk2 if the node of the lement coincides
            IF (nrel(k,l) == ik2) jk2 = 1
         END DO
+!!!$ if both nodes are found, k is the only element possible
         IF (jk1 == 1 .AND. jk2 == 1.AND.rnr(i) /= k) THEN
            ic = ic + 1
            WRITE (*,'(a,I7,1x,a,I7)',ADVANCE='no')ACHAR(13)//&
-                'wrong element to border connection: ',ic,'/',relanz
+                'wrong element to border connection: ',ic,'/',&
+                relanz
            rnr(i) = k
-           failed = .TRUE.
+           failed(2) = .TRUE.
         END IF
      END DO
 
   END DO
+  IF (failed(2)) print*,'-- failed'
 
   ic = 0
   DO i=1,relanz
@@ -238,10 +248,9 @@ SUBROUTINE relem(kanal,datei)
 !!!$     'datei' schliessen
   CLOSE(kanal)
 
-
 !!!$ >> RM
 !!!$ write new grid if one of the checks failed
-  IF (failed) THEN
+  IF (ANY(failed)) THEN
 
 101  FORMAT (I9)
 102  FORMAT (2(I9,1X))
