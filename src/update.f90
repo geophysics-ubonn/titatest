@@ -1,4 +1,4 @@
-subroutine update()
+SUBROUTINE update()
 !!!$     
 !!!$     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
 !!!$     mittels 'Smoothness Least Squares Method' und konjugierten
@@ -23,7 +23,7 @@ subroutine update()
   USE errmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -46,34 +46,35 @@ subroutine update()
 
 !!!$     Smoothnessvektor berechnen, bzw die RHS (Right Hand Side)
 !!!$       b_q = A_q^h*C_d^-1*A_q*(d-f(m_q))-\lam C_m^-1 m_q
-     if (ltri==0) then
-        do i=1,manz
+     IF (ltri==0) THEN
+        DO i=1,manz
            cdum = dcmplx(0d0)
 !!!$     diff+<
-           if (.not.lprior) then
+           IF (.NOT.lprior) THEN
 !!!$ C_m^-1 * m_q
 !!!$     diff+>
-              if (i.gt.1) cdum = dcmplx(smatm(i-1,2))*par(i-1)
-              if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
-              if (i.gt.nx) cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
-              if (i.lt.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
+              IF (i.GT.1) cdum = dcmplx(smatm(i-1,2))*par(i-1)
+              IF (i.LT.manz) cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
+              IF (i.GT.nx) cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
+              IF (i.LT.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
 
               bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
 !!!$     diff+<
-           else
+           ELSE
 !!!$ C_m^-1 * (m_q - m_0)
-              if (i.gt.1) cdum = dcmplx(smatm(i-1,2)) * (par(i-1)-m0(i-1))
-              if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2)) * &
+              IF (i.GT.1) cdum = dcmplx(smatm(i-1,2)) * (par(i-1)-m0(i-1))
+              IF (i.LT.manz) cdum = cdum + dcmplx(smatm(i,2)) * &
                    (par(i+1)-m0(i+1))
-              if (i.gt.nx) cdum = cdum + dcmplx(smatm(i-nx,3)) * &
+              IF (i.GT.nx) cdum = cdum + dcmplx(smatm(i-nx,3)) * &
                    (par(i-nx)-m0(i-nx))
-              if (i.lt.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3)) * &
+              IF (i.LT.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3)) * &
                    (par(i+nx)-m0(i+nx))
 
               bvec(i)=cdum+dcmplx(smatm(i,1))*(par(i)-m0(i))
-           end if
+
+           END IF
 !!!$     diff+>
-        end do
+        END DO
 !!$c Damping--
      ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
@@ -82,7 +83,7 @@ subroutine update()
 
 !!!$     triang>
      ELSE IF (ltri == 1.OR.ltri == 2.OR. &
-          (ltri > 4 .AND. ltri < 15)) then
+          (ltri > 4 .AND. ltri < 15)) THEN
 !!!$ C_m^-1 * m_q
 !!!$ C_m^-1 * (m_q - m_0)
         DO i=1,manz
@@ -124,25 +125,25 @@ subroutine update()
 !!!$  Skalierungsfaktoren bestimmen
 !!!$ Preconditioning factors: 
 !!!$ cgfac = diag(A^h_q * C_d^-1 * A + \lam C_m^-1)^-1
-     do j=1,manz
+     DO j=1,manz
         dum = 0d0
 
-        if (ldc) then
-           do i=1,nanz
+        IF (ldc) THEN
+           DO i=1,nanz
               dum = dum + sensdc(i,j) * sensdc(i,j) * wmatd(i) * &
-                   dble(wdfak(i))
-           end do
-        else if (lip) then
-           do i=1,nanz
-              dum = dum + dble(sens(i,j)) * dble(sens(i,j)) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        else
-           do i=1,nanz
-              dum = dum + dble(dconjg(sens(i,j)) * sens(i,j)) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        end if
+                   DBLE(wdfak(i))
+           END DO
+        ELSE IF (lfpi) THEN
+           DO i=1,nanz
+              dum = dum + DBLE(sens(i,j)) * DBLE(sens(i,j)) * &
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        ELSE
+           DO i=1,nanz
+              dum = dum + DBLE(dconjg(sens(i,j)) * sens(i,j)) * &
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        END IF
         dum2 = dum
 
         IF (ltri==0) THEN
@@ -164,53 +165,53 @@ subroutine update()
 
         END IF
         cgfac(j) = 1d0/dsqrt(dum)
-     end do
+     END DO
 
 !!!$     Konstantenvektor berechen und skalieren (RHS)
 !!!$ the other part of the RHS system...
 !!!$ A_q^h * C_d^-1 * (d-f(m_q)) + \lam C_m^-1 (m_q,(m_q-m_0))
-    do j=1,manz
+    DO j=1,manz
 
         cdum = dcmplx(0d0)
 
 !!!$     diff+<
-        if (.not.ldiff) then
+        IF (.NOT.ldiff) THEN
 !!!$     diff+>
-           if (ldc) then
-              do i=1,nanz
+           IF (ldc) THEN
+              DO i=1,nanz
                  cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           else if (lip) then
-              do i=1,nanz
-                 cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           else
-              do i=1,nanz
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           ELSE IF (lfpi) THEN
+              DO i=1,nanz
+                 cdum = cdum + dcmplx(DBLE(sens(i,j))*wmatd(i)* &
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           ELSE
+              DO i=1,nanz
                  cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           end if
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           END IF
 !!!$     diff+<
-        else
-           if (ldc) then
-              do i=1,nanz
+        ELSE
+           IF (ldc) THEN
+              DO i=1,nanz
                  cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           else if (lip) then
-              do i=1,nanz
-                 cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           else
-              do i=1,nanz
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           ELSE IF (lfpi) THEN
+              DO i=1,nanz
+                 cdum = cdum + dcmplx(DBLE(sens(i,j))*wmatd(i)* &
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           ELSE
+              DO i=1,nanz
                  cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           end if
-        end if
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           END IF
+        END IF
 !!!$     diff+>
         IF (ltri == 3.OR.ltri == 4) THEN
 
@@ -224,7 +225,7 @@ subroutine update()
         bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
 !!$        print*,j,cdum,sens(1,j),sigma(j)
-     end do
+     END DO
 
 !!$     DO i=1,nanz
 !!$        print*,i,wmatd(i),dat(i),sigmaa(i),wdfak(i)
@@ -233,9 +234,9 @@ subroutine update()
      CALL cjg
 
 !!!$     Ggf. Verbesserung umspeichern
-     if (lip) then
+     IF (lfpi) THEN
         dpar = DCMPLX(0D0,DBLE(dpar))
-     end if
+     END IF
 
 !!!$     Verbesserung skalieren
      dpar = dpar * DCMPLX(cgfac)
@@ -243,17 +244,17 @@ subroutine update()
 !!$        dpar(j) = dpar(j)*dcmplx(cgfac(j))
 !!$     end do
 
-  else                      ! (llam==.TRUE.)
+  ELSE                      ! (llam==.TRUE.)
 
 
 !!!$     Felder zuruecksetzen
      dpar = dpar2
 
-     i = int(cgres2(1))+1
+     i = INT(cgres2(1))+1
 
      cgres(1:i) = cgres2(1:i)
 
-  end if
+  END IF
 
 !!!$     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 !!!$     if (lphi0.and.dimag(par(j)).lt.0d0)
@@ -266,7 +267,7 @@ subroutine update()
   bdpar = 0d0
 
   in = 0
-  do j=1,manz
+  DO j=1,manz
 
      par(j) = par(j) + DCMPLX(step) * dpar(j) ! model update
 
@@ -276,12 +277,12 @@ subroutine update()
         in = in + 1 
      END IF
 
-     bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
+     bdpar = bdpar + DBLE(dpar(j)*dconjg(dpar(j)))
 
-  end do
+  END DO
 
   IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&
        ,' times'
   bdpar = bdpar * step
 
-end subroutine update
+END SUBROUTINE update

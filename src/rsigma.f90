@@ -1,4 +1,4 @@
-subroutine rsigma(kanal,datei)
+SUBROUTINE rsigma(kanal,datei)
 
 !!!$     Unterprogramm zum Einlesen der Widerstandsverteilung aus 'datei'.
 
@@ -8,7 +8,7 @@ subroutine rsigma(kanal,datei)
 !!!$.....................................................................
 
   USE make_noise
-  USE alloci,only:rnd_r,rnd_p
+  USE alloci,ONLY:rnd_r,rnd_p
   USE femmod
   USE invmod
   USE sigmamod
@@ -17,7 +17,7 @@ subroutine rsigma(kanal,datei)
   USE errmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 !!!$.....................................................................
 
@@ -36,17 +36,19 @@ subroutine rsigma(kanal,datei)
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     i,idum,ifp1,ifp2
   REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p
-
+!!!$
+  LOGICAL          ::     has_wmfak
 !!!$ Pi
   REAL (KIND(0D0)) ::    pi
 !!!$.....................................................................
   pi = dacos(-1d0)
 
+  has_wmfak = .FALSE.
 !!!$     'datei' oeffnen
   fetxt = datei
 
   errnr = 1
-  open(kanal,file=TRIM(fetxt),status='old',err=999)
+  OPEN(kanal,file=TRIM(fetxt),status='old',err=999)
 
   errnr = 3
   IF (lnsepri) THEN
@@ -72,32 +74,45 @@ subroutine rsigma(kanal,datei)
      PRINT*,''
   END IF
 
-!!!$     Anzahl der Elemente (ohne Randelemente) einlesen
-  read(kanal,*,end=1001,err=1000) idum
+!!!$     Anzahl der Messwerte lesen
+!!!$ also check if we may use individual errors or not
+!!$  READ(kanal,*,END=1001,err=11) idum,has_wmfak
+!!$  IF (has_wmfak) PRINT*,'---> Reference model regularization !'
+!!$  GOTO 12
+!!$11 PRINT*,' no reference model regularization '
+!!$  BACKSPACE (kanal)
 
+!!!$     Anzahl der Elemente (ohne Randelemente) einlesen
+  READ(kanal,*,END=1001,err=1000) idum
+!12 CONTINUE
 !!!$     Ggf. Fehlermeldung
-  if (idum.ne.elanz) then
+  IF (idum.NE.elanz) THEN
      fetxt = ' '
      errnr = 47
-     goto 1000
-  end if
-
+     GOTO 1000
+  END IF
+  
 !!!$     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
-  do i=1,elanz
-     read(kanal,*,end=1001,err=1000) bet,pha
+  DO i=1,elanz
+     
+     IF (has_wmfak) THEN
+        READ(kanal,*,END=1001,err=1002) bet,pha,wmfak(i)
+     ELSE
+        READ(kanal,*,END=1001,err=1000) bet,pha
+     END IF
 
      pha      = 1d-3*pha
 
      IF (lprior) THEN 
         !     set prior model ...             
         IF (bet0 <= 0. .OR. &
-             (.not.ldc.and.dabs(pha0).gt.1d3*pi)) THEN
+             (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi)) THEN
            fetxt = 'starting model incorrect '
            errnr = 91
-           goto 999
+           GOTO 999
         END IF
 
-        IF (bet > 0.) THEN  
+        IF (bet > 0d0) THEN  
            !     TODO: meaningful phase check.. 
            IF (lnsepri) THEN
               eps_r = 1d-2*modl_stdn * bet
@@ -123,40 +138,45 @@ subroutine rsigma(kanal,datei)
      ELSE
 
 !!!$     Ggf. Fehlermeldung
-        if (bet.lt.1d-12) then
+        IF (bet.LT.1d-12) THEN
            fetxt = ' '
            errnr = 11
-           goto 999
-        end if
+           GOTO 999
+        END IF
 
 !!!$     Komplexe Leitfaehigkeit bestimmen
         sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
 
      END IF
-  end do
+  END DO
 
 !!!$     'datei' schliessen
-  close(kanal)
+  CLOSE(kanal)
 
   IF (lnsepri) THEN
-     close (ifp1)
-     IF (.NOT.ldc) close(ifp2)
+     CLOSE (ifp1)
+     IF (.NOT.ldc) CLOSE(ifp2)
   END IF
 
   errnr = 0
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
-1000 close(kanal)
-  return
+1000 CLOSE(kanal)
+  RETURN
 
-1001 close(kanal)
+1001 CLOSE(kanal)
   errnr = 2
-  return
+  RETURN
 
-end subroutine rsigma
+1002 CLOSE(kanal)
+  fetxt = 'no reference factor'
+  errnr = 2
+  RETURN
+
+END SUBROUTINE rsigma

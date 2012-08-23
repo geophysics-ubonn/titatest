@@ -1,4 +1,4 @@
-subroutine bbsens(kanal,datei)
+SUBROUTINE bbsens(kanal,datei)
 
 !!!$     Unterprogramm zur Berechnung der Summe der Sensitivitaeten 
 !!!$     aller Messungen (normiert)
@@ -12,14 +12,14 @@ subroutine bbsens(kanal,datei)
 
   USE alloci , ONLY : sens,sensdc
   USE datmod , ONLY : nanz,wmatd_cri,wmatdr
-  USE invmod , ONLY : lip,wmatd,wdfak
+  USE invmod , ONLY : lfpi,wmatd,wdfak
   USE modelmod , ONLY : manz
   USE elemmod , ONLY: espx,espy
   USE errmod , ONLY : errnr,fetxt
   USE femmod , ONLY : ldc
   USE konvmod, ONLY : lelerr
   USE ompmod
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -46,16 +46,13 @@ subroutine bbsens(kanal,datei)
 
 
 !!!$     'datei' oeffnen
-  fetxt = datei
-  errnr = 1
-  open(kanal,file=TRIM(fetxt),status='replace',err=999)
-  errnr = 4
+
   ALLOCATE (csens(manz),STAT=errnr)
   IF (errnr /= 0) RETURN
 !!!$     Werte berechnen
   csens = 0D0
 
-  IF (lip) THEN
+  IF (lfpi) THEN
      ALLOCATE (csens_fpi(manz),STAT=errnr)
      IF (errnr /= 0) RETURN
 !!!$     Werte berechnen
@@ -73,9 +70,9 @@ subroutine bbsens(kanal,datei)
 !!!$ FPI case:
 !!!$  wmatd = wmatdp
 
-!!!$ >> RM we modify this to make sure, that even for FPI (case lip=.T.)
+!!!$ >> RM we modify this to make sure, that even for FPI (case lfpi=.T.)
 !!!$ we can calculate a complex coverage as well as treating the error right
-        IF (lip) THEN
+        IF (lfpi) THEN
            dum_fpi = SQRT(wmatd(i)) * DBLE(wdfak(i))
            IF (lelerr) THEN
               dum = SQRT(wmatd_cri(i)) * DBLE(wdfak(i))
@@ -107,9 +104,9 @@ subroutine bbsens(kanal,datei)
 !!!$     'datei' oeffnen
   fetxt = datei
   errnr = 1
-  open(kanal,file=TRIM(fetxt),status='replace',err=999)
+  OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
-  write(kanal,*,err=1000) manz
+  WRITE(kanal,*,err=1000) manz
 
 !!!$     Koordinaten und Sensitivitaetsbetraege schreiben
 !!!$     (logarithmierter (Basis 10) normierter Betrag)
@@ -118,22 +115,22 @@ subroutine bbsens(kanal,datei)
   END DO
 
 !!!$     Maximale Sensitivitaet schreiben
-  write(kanal,*,err=1000)'Max:',csensmax
+  WRITE (kanal,*,err=1000)'Max:',csensmax
 !!!$     'datei' schliessen
-  close(kanal)
+  CLOSE (kanal)
 
   DEALLOCATE (csens)
 
-  IF (lip) THEN
+  IF (lfpi) THEN
 !!!$ for normalization
      csensmax = MAXVAL(csens_fpi)
 
 !!!$     'datei' oeffnen
      fetxt = datei
      errnr = 1
-     open(kanal,file=TRIM(fetxt)//'_fpi',status='replace',err=999)
+     OPEN(kanal,file=TRIM(datei)//'_fpi',status='replace',err=999)
      errnr = 4
-     write(kanal,*,err=1000) manz
+     WRITE(kanal,*,err=1000) manz
 
 !!!$     Koordinaten und Sensitivitaetsbetraege schreiben
 !!!$     (logarithmierter (Basis 10) normierter Betrag)
@@ -142,23 +139,23 @@ subroutine bbsens(kanal,datei)
      END DO
 
 !!!$     Maximale Sensitivitaet schreiben
-     write(kanal,*,err=1000)'Max:',csensmax
+     WRITE(kanal,*,err=1000)'Max:',csensmax
 !!!$     'datei' schliessen
-     close(kanal)
+     CLOSE(kanal)
 
      DEALLOCATE (csens_fpi)
   END IF
 
   errnr = 0
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
-1000 close(kanal)
-  return
+1000 CLOSE(kanal)
+  RETURN
 
-end subroutine bbsens
+END SUBROUTINE bbsens

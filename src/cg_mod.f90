@@ -15,7 +15,7 @@ MODULE cg_mod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs
-  USE invmod , ONLY : lip,wmatd,wdfak,dpar
+  USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb
   USE modelmod , ONLY : manz
@@ -72,7 +72,7 @@ CONTAINS
 !> cjg flow control subroutine is called from outside
 !! and checks for the different cases (DC,IP,FPI)
   SUBROUTINE cjg
-    if (ldc.or.lip) then
+    if (ldc.or.lfpi) then
        CALL con_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
        call cjggdc
@@ -110,7 +110,7 @@ CONTAINS
 !!!$
 !!!$....................................................................
 
-    if (lip) then
+    if (lfpi) then
        bvecdc = dimag(bvec)
     else
        bvecdc = dble(bvec)
@@ -204,7 +204,7 @@ CONTAINS
 
     
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
-    !$OMP SHARED (nanz,apdc,ldc,lip,manz,pvecdc,sensdc,cgfac,sens)
+    !$OMP SHARED (nanz,apdc,ldc,lfpi,manz,pvecdc,sensdc,cgfac,sens)
 
     apdc = 0D0
 
@@ -215,7 +215,7 @@ CONTAINS
           do j=1,manz
              apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
           end do
-       else if (lip) then
+       else if (lfpi) then
           do j=1,manz
              apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
           end do
@@ -367,7 +367,7 @@ CONTAINS
 !!!$....................................................................
 
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
-    !$OMP SHARED (manz,ldc,lip,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
+    !$OMP SHARED (manz,ldc,lfpi,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
     !$OMP DO
     do j=1,manz
        dum = 0d0
@@ -377,7 +377,7 @@ CONTAINS
              dum = dum + sensdc(i,j) * &
                   wmatd(i)*dble(wdfak(i))*apdc(i)
           end do
-       else if (lip) then
+       else if (lfpi) then
           do i=1,nanz
              dum = dum + dble(sens(i,j)) * &
                   wmatd(i)*dble(wdfak(i))*apdc(i)

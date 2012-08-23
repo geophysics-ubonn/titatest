@@ -32,6 +32,10 @@ MODULE invmod
 !!$c beruecksichtigt (=0) werden
   INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE    :: wdfak
 !!$c Schalter ob reine Phaseninversion durchgefuehrt werden soll
-  LOGICAL(KIND = 4),PUBLIC                             :: lip
+  LOGICAL(KIND = 4),PUBLIC                             :: lfpi
+!!!$ Auxiliary field accounts for if the background value is used as
+!!$ hard reference regularization, i.e. RTR m + I(m - m0), where 
+!!!$ each entry of m0 is multiplied with wmfak to cancel values out
+  INTEGER (KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: wmfak
 
 END MODULE invmod

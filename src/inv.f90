@@ -190,29 +190,26 @@ PROGRAM inv
      END IF
      IF (errnr /= 0) GOTO 999
 
-
 !!!$ get CG data storage of residuums and bvec, which is global
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
 
-!!!$ set starting model 
-     CALL bsigm0(kanal,dstart)
-     IF (errnr.NE.0) GOTO 999
 
+!!!!$ INITIALIZE
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
      IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
-     lsetup = .TRUE.; lsetip = .FALSE.; lip    = .FALSE.
+     lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
      llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
      lfstep = .FALSE.; l_bsmat = .TRUE.
      step   = 1d0; stpalt = 1d0; alam   = 0d0
 
 !!!$   Kontrolldateien oeffnen
      errnr = 1
-
+!!!$ OPEN CONTRL FILES
      fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
      OPEN(fpinv,file=TRIM(fetxt),status='replace',err=999)
      CLOSE(fpinv)
@@ -225,7 +222,7 @@ PROGRAM inv
      fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
      OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
-!!!$  Write errors for all measurements to fpeps
+!!!$  SET ERRORS for all measurements and write control to fpeps
 !!!$ >> RM
      IF (ldc) THEN
         WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
@@ -251,6 +248,12 @@ PROGRAM inv
      END IF
      CLOSE(fpeps)
      errnr = 4
+
+
+!!!$ set starting model 
+     CALL bsigm0(kanal,dstart)
+     IF (errnr.NE.0) GOTO 999
+
 
 !!!$   Kontrolldateien initialisieren
 !!!$   diff-        call kont1(delem,delectr,dstrom,drandb)
@@ -458,14 +461,14 @@ PROGRAM inv
         CALL dmisft(lsetup.OR.lsetip)
 !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
-        WRITE (*,'(a,F8.3)',ADVANCE='no')'actual fit',nrmsd
+        WRITE (*,'(a,t60,a,F8.3)',ADVANCE='no')ACHAR(13),'actual fit',nrmsd
 !!!$   'nrmsd=0' ausschliessen
         IF (nrmsd.LT.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
 !!!$   tst
 !!!$   tst        if (lfphai) then
 !!!$   tst            llam = .true.
-!!!$   tst            if (.not.lip) nrmsd = 1d0
+!!!$   tst            if (.not.lfpi) nrmsd = 1d0
 !!!$   tst        end if
 
 !!!$.............................
@@ -493,24 +496,25 @@ PROGRAM inv
 !!!$   Keine Verbesserung des Daten-RMS ?
            IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
               errnr2 = 81
-              fetxt = 'No RMS decrease'
+              WRITE (fetxt,*)'No further RMS approvement ',&
+                   REAL(ABS(1d0-rmsalt/nrmsd))
            END IF
 !!!$   Minimaler Daten-RMS erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
            IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
               errnr2 = 80
-              fetxt = 'Min RMS reached'
+              WRITE (fetxt,*)'Optimal RMS ',REAL(nrmsd),' reached'
            END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
            IF (it.GE.itmax) THEN
               errnr2 = 79
-              fetxt = 'Reached max number of iterations'
+              WRITE (fetxt,*)'Reached max number of iterations ',itmax
            END IF
 !!!$   Minimal stepsize erreicht ?
            IF (errnr2 == 0.AND.bdpar <= bdmin) THEN
               errnr2 = 109
-              WRITE (fetxt,*)'check stepsize',bdpar,it,itr
+              WRITE (fetxt,*)' Stepsize ',bdpar,' < Min stepsize ',bdmin
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
@@ -545,8 +549,10 @@ PROGRAM inv
 
                  WRITE (*,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
                       'and saving lam_cri: ',REAL(lam_cri)
+                 WRITE (fprun,'(/a,g12.4/)')'++ (FPI) setting phase error '//&
+                      'and saving lam_cri: ',REAL(lam_cri)
 
-                 lip    = .TRUE.
+                 lfpi    = .TRUE.
                  lsetip = .TRUE. ! 
                  lfphai = .FALSE.
                  llam   = .FALSE.

@@ -103,7 +103,6 @@ program fem
   lkpot = .false.
   wkfak = .false.
   lana = .FALSE.
-  ldc = .FALSE.
   lprior = .false. ! kann prior modell verrauschen
   ldc = .FALSE.
   lnsepri = .false.
@@ -136,7 +135,7 @@ program fem
   read(12,*,end=1001,err=999) lrandb2
   read(12,'(a80)',end=1001,err=999) drandb
   fetxt = 'reading mswitch'
-  read(12,'(I5)',end=101,err=100) mswitch
+  read(12,'(I4)',end=101,err=100) mswitch
 
   GOTO 101
 

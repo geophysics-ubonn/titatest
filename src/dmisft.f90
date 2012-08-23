@@ -49,7 +49,7 @@ SUBROUTINE dmisft(lsetup)
 11 FORMAT (I6,G12.3,1x,F10.6,2x,I3,2X,4(1X,G15.7))
 
   IF ((llam.AND..NOT.lstep).OR.lsetup) THEN
-     IF (lip) THEN
+     IF (lfpi) THEN
         WRITE(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
      ELSE
         WRITE(fpeps,'(/a,t7,I4)',err=1000)'IT#',it
@@ -91,7 +91,7 @@ SUBROUTINE dmisft(lsetup)
      END IF
 !!!$     diff+>
 
-     IF (lip) THEN
+     IF (lfpi) THEN
         psi(i) = dsqrt(wmatd(i))*dabs(dimag(cdum))
      ELSE
         psi(i) = dsqrt(wmatd(i))*cdabs(cdum)

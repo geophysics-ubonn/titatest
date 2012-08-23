@@ -13,7 +13,7 @@ MODULE brough_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   USE alloci , ONLY : smatm,nachbar
-  USE invmod , ONLY : lip,par,m0
+  USE invmod , ONLY : lfpi,par,m0
   USE konvmod , ONLY : ltri,nx,nz,lprior,rough
   USE modelmod , ONLY : manz
   USE elemmod, ONLY : smaxs
@@ -90,7 +90,7 @@ CONTAINS
 
           cdum = cdum + dcmplx(smatm(i,1))*par(i)
 
-          if (lip) then
+          if (lfpi) then
              rough = rough + dimag(cdum)*dimag(par(i))
           else
              rough = rough + dble(cdum*dconjg(par(i)))
@@ -108,7 +108,7 @@ CONTAINS
           
           cdum = cdum + dcmplx(smatm(i,1))*(par(i)-m0(i))
           
-          if (lip) then
+          if (lfpi) then
              rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
           else
              rough = rough + dble(cdum*dconjg(par(i) - m0(i)))
@@ -145,7 +145,7 @@ CONTAINS
                   DCMPLX(smatm(i,j)) * par(nachbar(i,j))
           END DO
           cdum = cdum + dcmplx(smatm(i,smaxs+1)) * par(i)
-          IF (lip) THEN
+          IF (lfpi) THEN
              rough = rough + dimag(cdum) * dimag(par(i))
           ELSE
              rough = rough + dble(cdum * dconjg(par(i)))
@@ -160,7 +160,7 @@ CONTAINS
                   (par(nachbar(i,j)) - m0(nachbar(i,j)))
           END DO
           cdum = cdum + dcmplx(smatm(i,smaxs+1)) * (par(i) - m0(i))
-          IF (lip) THEN
+          IF (lfpi) THEN
              rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
           ELSE
              rough = rough + dble(cdum * dconjg(par(i) - m0(i)))
@@ -196,7 +196,7 @@ CONTAINS
 
           cdum = DCMPLX(smatm(j,1)) * par(j)
 
-          IF (lip) THEN
+          IF (lfpi) THEN
 
              rough = DIMAG(cdum) * SUM(DIMAG(par))
 
@@ -210,7 +210,7 @@ CONTAINS
 
           cdum = DCMPLX(smatm(j,1)) * (par(j)-m0(j))
 
-          IF (lip) THEN
+          IF (lfpi) THEN
 
              DO i=1,manz
                 rough = rough + dimag(cdum)*dimag(par(i)-m0(i))
@@ -260,7 +260,7 @@ CONTAINS
        parh = MATMUL(par,DCMPLX(smatm))
        !$OMP END WORKSHARE
 
-       IF (lip) THEN
+       IF (lfpi) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par))
        ELSE
           rough = DOT_PRODUCT(DBLE(parh),DCONJG(par))
@@ -272,7 +272,7 @@ CONTAINS
        parh = MATMUL((par - m0),DCMPLX(smatm))
        !$OMP END WORKSHARE
 
-       IF (lip) THEN
+       IF (lfpi) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par - m0))
        ELSE
           rough = DOT_PRODUCT(DBLE(parh),DCONJG(par - m0))

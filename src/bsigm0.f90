@@ -81,7 +81,6 @@ subroutine bsigm0(kanal,dstart)
      dum    = 0d0
 
      do i=1,nanz
-
 !!!$     Phase lokal korrigieren
 !!!$     (entspricht hier "lpol=.true.", aber anders nicht moeglich)
         imdat = dimag(dat(i))
@@ -94,8 +93,11 @@ subroutine bsigm0(kanal,dstart)
            idat = 0
         end if
 
-        if (idat.ne.0) imdat=imdat+dble(idat)*pi
-
+        if (idat.ne.0) THEN
+           imdat=imdat+dble(idat)*pi
+           PRINT*,'swapping line',idat,i
+        END if
+        
 !!!$     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
         redat = dble(dat(i))-dlog(dabs(kfak(i)))
 
@@ -103,16 +105,20 @@ subroutine bsigm0(kanal,dstart)
         dum2   = dsqrt(wmatd(i))*dble(wdfak(i))
         sigma0 = sigma0 + dcmplx(redat,imdat)*dcmplx(dum2)
         dum    = dum + dum2
+        print*,'Write:',REAL(DBLE(sigma0)),REAL(DBLE(dat(i))),REAL(redat),REAL(dum2)
+
+
      end do
 
 !!!$     Ggf. Fehlermeldung
      if (dabs(dum).eq.0d0) then
-        fetxt = ' '
+        fetxt = 'unable to find starting value sigma0'
         errnr = 99
         goto 999
      end if
 
 !!!$     'sigma' belegen
+     print*,'Write:',sigma0
      do i=1,elanz
         sigma(i) = cdexp(sigma0/dcmplx(dum))
      end do
@@ -126,13 +132,11 @@ subroutine bsigm0(kanal,dstart)
 
   end if
 
-!!!$  do i=1,elanz
-!!!$  print*,sigma(i),m0(i),cdexp(m0(i))
-!!!$  END DO
-!!!$     Referenzleitfaehigkeit 'sigma0' bestimmen
+
+!!$     Referenzleitfaehigkeit 'sigma0' bestimmen
 
 !!!$ >> RM This is now a must have for mixed boundaries
-  call refsig()
+  IF (lbeta) call refsig()
 !!!!$ << RM because the sigma0 is needed
   errnr = 0
   return

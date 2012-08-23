@@ -16,7 +16,7 @@ MODULE bsmatm_mod
   USE alloci , ONLY : sens,sensdc,smatm,nachbar
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz
-  USE invmod , ONLY : lip,par,wmatd,wdfak
+  USE invmod , ONLY : lfpi,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat
   USE modelmod , ONLY : manz
@@ -176,18 +176,18 @@ CONTAINS
     csens=0d0 ! csens was already allocated (low dimensional) in bsmatm 
 
     !$OMP PARALLEL DEFAULT (none) &
-    !$OMP SHARED (csens,wmatd,sens,sensdc,wdfak,lip,ldc,manz,nanz) &
+    !$OMP SHARED (csens,wmatd,sens,sensdc,wdfak,lfpi,ldc,manz,nanz) &
     !$OMP PRIVATE(j,i)
     !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
     DO j=1,manz
        DO i=1,nanz
-          IF (lip) THEN
+          IF (lfpi) THEN
              csens(j) = csens(j) + DBLE(sens(i,j)) * &
                   DBLE(sens(i,j)) * wmatd(i)*DBLE(wdfak(i))
           ELSE IF (ldc) THEN
              csens(j) = csens(j) + sensdc(i,j) * &
                   sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
-!!!$ wechselt automatisch wmatdp bei lip
+!!!$ wechselt automatisch wmatdp bei lfpi
           ELSE
              csens(j) = csens(j) + DCONJG(sens(i,j)) * &
                   sens(i,j) * wmatd(i)*DBLE(wdfak(i)) 
