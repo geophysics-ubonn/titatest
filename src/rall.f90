@@ -1,4 +1,4 @@
-subroutine rall(kanal,delem,delectr,dstrom,drandb,&
+SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     diff-     1                  dsigma,dvolt,dsens,dstart,lsens,lagain)
 !!!$     diff+<
      dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
@@ -26,8 +26,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   USE errmod
   USE konvmod
   USE pathmod
-  USE get_ver, only:version
-  IMPLICIT none
+  USE get_ver, ONLY:version
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
@@ -88,23 +88,23 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     ak        lpol   = .false.
 !!!$     Sonstiges
 !!!$     diff+<
-  lsr    = .false.
-  lpol   = .false.
-  lindiv = .false.
+  lsr    = .FALSE.
+  lpol   = .FALSE.
+  lindiv = .FALSE.
 !!!$     ak
 !!!$     'dstart'
-  lstart = .false.
+  lstart = .FALSE.
   dstart = ' '
 !!!$     ak        lstart = .true.
 !!!$     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
   ltri   = 0
-  lsto = .false.            !default--
+  lsto = .FALSE.            !default--
 !!!$     "Force negative phase" ?
 !!!$     sandra        lphi0 = .true.
   lphi0 = .FALSE.
 !!!$     ak        lphi0 = .false.
 !!!$     "ratio-dataset" ?
-  lratio = .false.
+  lratio = .FALSE.
 !!!$     ak        lratio = .true.
   llamf = .FALSE.
 !!!$     final phase improvement setzt phase zueruck auf homogenes modell
@@ -256,94 +256,94 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     diff+>
   fetxt = 'trying noise model seed'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=99) iseedpri,modl_stdn
+  READ (fpcfg,*,END=1001,err=99) iseedpri,modl_stdn
   !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
   !      lnse2 = .NOT.lprior       ! kein prior?
   !     Daten Rauschen unabhängig vom Fehlermodell?
   lnsepri = lprior          ! if we have seed and std we assume to add noise to prior
 99 fetxt = 'rall -> Gitter nx'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) nx
+  READ (fpcfg,*,END=1001,err=999) nx
   fetxt = 'rall -> (lamfix) Gitter nz'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) nz
+  READ (fpcfg,*,END=1001,err=999) nz
   fetxt = 'rall -> Anisotropie /x'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) alfx
+  READ (fpcfg,*,END=1001,err=999) alfx
   fetxt = 'rall -> Anistotropie /y'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) alfz
+  READ (fpcfg,*,END=1001,err=999) alfz
   fetxt = 'rall -> Maximale Iterationen'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) itmax
+  READ (fpcfg,*,END=1001,err=999) itmax
 !!!$     ak        READ (fpcfg,*,end=1001,err=999) nrmsdm
   fetxt = 'rall -> DC/IP Inversion'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) ldc
+  READ (fpcfg,*,END=1001,err=999) ldc
 !!!$     ak        READ (fpcfg,*,end=1001,err=999) lsr
   fetxt = 'rall -> Robuste Inversion'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lrobust
+  READ (fpcfg,*,END=1001,err=999) lrobust
   IF (lrobust) PRINT*,'## Robust inversion ##'
 !!!$     ak        READ (fpcfg,*,end=1001,err=999) lpol
   fetxt = 'rall -> Finale Phasen Inversion'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lfphai
+  READ (fpcfg,*,END=1001,err=999) lfphai
 !!!$     ak        READ (fpcfg,*,end=1001,err=999) lindiv
   fetxt = 'rall -> Relativer Fehler Widerstand'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabw0
+  READ (fpcfg,*,END=1001,err=999) stabw0
   fetxt = 'rall -> Absoluter Fehler Widerstand'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabm0
+  READ (fpcfg,*,END=1001,err=999) stabm0
   fetxt = 'rall -> Phasenfehlerparameter A1'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabpA1
+  READ (fpcfg,*,END=1001,err=999) stabpA1
   fetxt = 'rall -> Phasenfehlerparameter B'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabpB
+  READ (fpcfg,*,END=1001,err=999) stabpB
   fetxt = 'rall -> Relative Fehler Phasen'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabpA2
+  READ (fpcfg,*,END=1001,err=999) stabpA2
   fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) stabp0
+  READ (fpcfg,*,END=1001,err=999) stabp0
   fetxt = 'rall -> Homogenes Startmodell?'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lrho0
+  READ (fpcfg,*,END=1001,err=999) lrho0
   fetxt = 'rall -> rho_0'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) bet0
+  READ (fpcfg,*,END=1001,err=999) bet0
   fetxt = 'rall -> phase_0'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) pha0
+  READ (fpcfg,*,END=1001,err=999) pha0
   fetxt = 'rall -> Noch eine Inversion'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lagain
+  READ (fpcfg,*,END=1001,err=999) lagain
   fetxt = 'rall -> 2D oder 2.5D ?'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) swrtr
+  READ (fpcfg,*,END=1001,err=999) swrtr
   fetxt = 'rall -> weitere Quelle?'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lsink
+  READ (fpcfg,*,END=1001,err=999) lsink
   fetxt = 'rall -> Nummer der Quelle'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) nsink
+  READ (fpcfg,*,END=1001,err=999) nsink
   fetxt = 'rall -> Randbedingungen ?'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) lrandb2
+  READ (fpcfg,*,END=1001,err=999) lrandb2
   fetxt = 'rall -> Datei mit Randwerten'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',end=1001,err=999) drandb
+  READ (fpcfg,'(a80)',END=1001,err=999) drandb
   fetxt = 'triangularization switch'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(I2)',end=100,err=100) ltri
+  READ (fpcfg,'(I2)',END=100,err=100) ltri
 
   IF (BTEST(ltri,5)) THEN
      llamf = .TRUE.
      fetxt = 'rall -> fixed lam value'
      CALL read_comments(fpcfg)
-     READ (fpcfg,*,end=104,err=104) lamfix
+     READ (fpcfg,*,END=104,err=104) lamfix
      GOTO 105
 104  lamfix = 1.0           ! default value for MGS
      BACKSPACE(fpcfg)
@@ -372,7 +372,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   IF (ltri > 4 .AND. ltri < 15) THEN
      fetxt = 'rall -> beta value'
      CALL read_comments(fpcfg)
-     READ (fpcfg,*,end=102,err=102) betamgs
+     READ (fpcfg,*,END=102,err=102) betamgs
      GOTO 103
 102  betamgs = 0.1          ! default value for MGS
      BACKSPACE (fpcfg)
@@ -393,7 +393,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   lnse = ( stabw0 < 0 )     ! couple error and noise model
   IF ( lnse ) THEN
      stabw0 = -stabw0 ! reset standard deviation to positive val
-     IF (lnse2) print*,'overriding seperate noise model'
+     IF (lnse2) PRINT*,'overriding seperate noise model'
      lnse2 = .FALSE.        ! overrides the lnse2 switch
 !!!$     copy error model into noise model
      nstabw0 = stabw0
@@ -404,7 +404,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
      fetxt = 'rall -> seed'
      CALL read_comments(fpcfg)
-     READ (fpcfg,*,end=106,err=106) iseed
+     READ (fpcfg,*,END=106,err=106) iseed
      GOTO 107
 106  iseed = 1              ! default value for PRS
      BACKSPACE(fpcfg)
@@ -476,22 +476,22 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
 !!!$     Ggf. Fehlermeldungen
-  if (ltri==0.AND.(nx.lt.2.or.nz.lt.2)) then
+  IF (ltri==0.AND.(nx.LT.2.OR.nz.LT.2)) THEN
      fetxt = ' '
      errnr = 89
-     goto 999
+     GOTO 999
 !!!$  else if (alfx.le.0d0.or.alfz.le.0d0) then
 !!!$  fetxt = ' '
 !!!$  errnr = 96
 !!!$  goto 999
-  else if (itmax<0.or.itmax.ge.100) then
+  ELSE IF (itmax<0.OR.itmax.GE.100) THEN
      fetxt = ' '
      errnr = 61
-     goto 999
-  else if (nrmsdm.lt.1d-12) then
+     GOTO 999
+  ELSE IF (nrmsdm.LT.1d-12) THEN
      fetxt = ' '
      errnr = 62
-     goto 999
+     GOTO 999
 !!!$     else if (nlam.lt.0) then
 !!!$     fetxt = ' '
 !!!$     errnr = 83
@@ -502,21 +502,21 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     fetxt = ' '
 !!!$     errnr = 98
 !!!$     goto 999
-  else if (stabw0.le.0d0.or.stabm0.lt.0d0) then
+  ELSE IF (stabw0.LE.0d0.OR.stabm0.LT.0d0) THEN
      fetxt = ' '
      errnr = 104
-     goto 999
-  else if (.not.ldc.and.lfphai.and.&
-       ((stabp0.lt.0d0.or.stabpA2.lt.0d0).OR. &
-       ((stabp0 == 0d0).and.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) then
+     GOTO 999
+  ELSE IF (.NOT.ldc.AND.lfphai.AND.&
+       ((stabp0.LT.0d0.OR.stabpA2.LT.0d0).OR. &
+       ((stabp0 == 0d0).AND.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) THEN
      fetxt = ' '
      errnr = 105
-     goto 999
-  else if (lrho0.and.(bet0.le.0d0.or.&
-       (.not.ldc.and.dabs(pha0).gt.1d3*pi))) then
+     GOTO 999
+  ELSE IF (lrho0.AND.(bet0.LE.0d0.OR.&
+       (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi))) THEN
      fetxt = ' '
      errnr = 91
-     goto 999
+     GOTO 999
 !!!$     else if (mqrms.lt.0d0.or.mqrms.ge.1d0) then
 !!!$     fetxt = ' '
 !!!$     errnr = 64
@@ -525,7 +525,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     fetxt = ' '
 !!!$     errnr = 90
 !!!$     goto 999
-  end if
+  END IF
 
   lelerr = .NOT.lfphai.AND..NOT.ldc ! complex inversion only
 
@@ -555,38 +555,38 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 
   IF (lverb) WRITE(*,'(/a/)')' #  ## VERBOSE ## #'
 
-  lres = (lres.or.lcov2)    ! compute mcm2 on top of resolution
-  lcov1 = (lres.or.lcov1)   ! compute resolution by taking mcm1
+  lres = (lres.OR.lcov2)    ! compute mcm2 on top of resolution
+  lcov1 = (lres.OR.lcov1)   ! compute resolution by taking mcm1
 !!!$     
   lsens = .TRUE.            ! default immer coverages schreiben..
 !!!$     
-  if (lratio) then
-     lrho0  = .true.
-     lstart = .false.
-     lphi0  = .false.
-     lpol   = .false.
-  end if
+  IF (lratio) THEN
+     lrho0  = .TRUE.
+     lstart = .FALSE.
+     lphi0  = .FALSE.
+     lpol   = .FALSE.
+  END IF
 !!!$     diff-        if (lstart) lrho0=.false.
 
-  if (lstart.or.ldiff) lrho0=.false.
+  IF (lstart.OR.ldiff) lrho0=.FALSE.
 !!!$     ak
-  if (ldiff) then
-     ldc  = .true.
-     lpol = .false.
-  end if
+  IF (ldiff) THEN
+     ldc  = .TRUE.
+     lpol = .FALSE.
+  END IF
 !!!$     diff+>
 !!!$     ak        if (ldc.or.stabp0.ge.stabw0) lfphai=.false.
-  if (ldc) lfphai=.false.
+  IF (ldc) lfphai=.FALSE.
 !!!$     Dateien
-  lnramd = index(ramd,' ')-1
+  lnramd = INDEX(ramd,' ')-1
   dsigma = ramd(1:lnramd)//slash(1:1)//'rho.dat'
   dvolt  = ramd(1:lnramd)//slash(1:1)//'volt.dat'
   dsens  = ramd(1:lnramd)//slash(1:1)//'coverage.mag'
 
 !!!$     Elementeinteilung einlesen
   IF (lverb) WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'reading grid'
-  call relem(kanal,delem)
-  if (errnr.ne.0) goto 999
+  CALL relem(kanal,delem)
+  IF (errnr.NE.0) GOTO 999
 
   IF (ltri/=0) THEN
      manz = elanz           ! wichtig an dieser stelle..
@@ -602,7 +602,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      IF (errnr /= 0) THEN
         fetxt = 'Error memory allocation m0'
         errnr = 94
-        goto 999
+        GOTO 999
      END IF
   END IF
 !!$  lvario = lvario.OR. &       ! if already set or
@@ -611,22 +611,22 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
   IF (lvario) CALL set_vario (nx,alfx,alfz,esp_mit,esp_med) ! nx is than
   !     the variogram and covariance function type, see variomodel.f90
 
-  if (manz.ne.elanz) then
+  IF (manz.NE.elanz) THEN
      fetxt = 'manz /= elanz .. is not implemented yet'
      errnr = 50
-     goto 999
-  end if
+     GOTO 999
+  END IF
   !     !$ get memory for mnr..
   ALLOCATE (mnr(elanz),stat=errnr)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation mnr failed'
      errnr = 94
-     goto 999
+     GOTO 999
   END IF
   !     !$ set mnr.. this may be altered if we have zonal approach..
-  do i=1,elanz
+  DO i=1,elanz
      mnr(i) = i
-  end do
+  END DO
   !     !$ all the model mapping is than beased on a new numbering..
   !     !$ zonal approach ?
 
@@ -640,8 +640,8 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Elektrodenverteilung und Daten einlesen sowie Wellenzahlwerte
 !!!$     bestimmen
 
-  call relectr(kanal,delectr)
-  if (errnr.ne.0) goto 999
+  CALL relectr(kanal,delectr)
+  IF (errnr.NE.0) GOTO 999
 
   IF (lsink) THEN
      IF (nsink > sanz) THEN
@@ -655,12 +655,25 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     1        nsink,sx(snr(nsink)),sy(snr(nsink))
   END IF
 
-  call rdati (kanal,dstrom)
+  CALL rdati (kanal,dstrom)
+  IF (errnr.NE.0) GOTO 999
 
-  if (errnr.ne.0) goto 999
+  IF (ldc) THEN
+     WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
+     wmatd = wmatdr
+  ELSE
+     
+     IF (lelerr) THEN
+        WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
+        wmatd = wmatd_cri
+     ELSE
+        WRITE (*,'(/a/)')'++ (CRI) Setting complex error of magnitude'
+        wmatd = wmatdr
+     END IF
+  END IF
 
-  if (swrtr.eq.0) then
-     lsr    = .false.
+  IF (swrtr.EQ.0) THEN
+     lsr    = .FALSE.
      kwnanz = 1
      ALLOCATE (kwn(kwnanz),kwnwi(kwnanz),stat=errnr)
      IF (errnr /= 0) THEN
@@ -669,7 +682,7 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         GOTO 999
      END IF
      kwn = 0d0; kwnwi = 0D0
-     do i=1,typanz
+     DO i=1,typanz
         IF (typ(i) == 11) THEN
            fetxt = 'in 2D keine gemischten RB'
            PRINT*,TRIM(fetxt)
@@ -681,27 +694,27 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
         WRITE (*,'(//a,t33,a)')'2D without Dirichlet nodes','setting k=1e-6'
         kwn = 1d-6  ! make sure A is still pos definite
      END IF
-  else
-     call rwaven()
-     if (errnr.ne.0) goto 999
-  end if
+  ELSE
+     CALL rwaven()
+     IF (errnr.NE.0) GOTO 999
+  END IF
 
 !!!$     read boundary values
-  if (lrandb2) then
-     call rrandb(kanal,drandb)
-     if (errnr.ne.0) goto 999
-  end if
+  IF (lrandb2) THEN
+     CALL rrandb(kanal,drandb)
+     IF (errnr.NE.0) GOTO 999
+  END IF
 !!!$     diff+<
-  if (ldiff) then
+  IF (ldiff) THEN
      ALLOCATE (d0(nanz),fm0(nanz),stat=errnr)
      IF (errnr /= 0) THEN
         fetxt = 'Error memory allocation diff data '
         errnr = 94
-        goto 999
+        GOTO 999
      END IF
-     open(kanal,file=TRIM(dd0),status='old')
-     read(kanal,*) nanz0
-     read(kanal,*,err=999) elec1
+     OPEN(kanal,file=TRIM(dd0),status='old')
+     READ(kanal,*) nanz0
+     READ(kanal,*,err=999) elec1
      BACKSPACE(kanal)
 
      elec3=elec1-10000      ! are we still positive?
@@ -712,79 +725,79 @@ subroutine rall(kanal,delem,delectr,dstrom,drandb,&
      IF (errnr /= 0) THEN
         fetxt = 'Error memory allocation dum'
         errnr = 94
-        goto 999
+        GOTO 999
      END IF
 
-     do j=1,nanz0
+     DO j=1,nanz0
         IF (crtf) THEN
-           read(kanal,*) ic(j),ip(j),dum(j)
+           READ(kanal,*) ic(j),ip(j),dum(j)
         ELSE
-           read(kanal,*) elec1,elec2,elec3,elec4,dum(j)
+           READ(kanal,*) elec1,elec2,elec3,elec4,dum(j)
            ic(j) = elec1*10000 + elec2
            ip(j) = elec3*10000 + elec4
         END IF
-     end do
-     close(kanal)
+     END DO
+     CLOSE(kanal)
 
-     open(kanal,file=TRIM(dfm0),status='old')
-     read(kanal,*)
-     do j=1,nanz0
-        read(kanal,*) i,i,dum2(j),idum(j)
-     end do
-     close(kanal)
+     OPEN(kanal,file=TRIM(dfm0),status='old')
+     READ(kanal,*)
+     DO j=1,nanz0
+        READ(kanal,*) i,i,dum2(j),idum(j)
+     END DO
+     CLOSE(kanal)
 
      j0 = 0
      i  = 0
 10   i  = i+1
      j = j0
 20   j = j+1
-     if (strnr(i).eq.ic(j).and.vnr(i).eq.ip(j).and.idum(j).eq.1) then
+     IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
 !!!$     nur falls jede Messkonfiguration nur einmal!
 !!!$     j0     = j
         d0(i)  = dcmplx(-dlog(dum(j)),0d0)
         fm0(i) = dcmplx(-dlog(dum2(j)),0d0)
-     else if (j.lt.nanz0) then
-        goto 20
-     else
-        write(fprun,'(i7,1x,i7,a12)',err=999)strnr(i),vnr(i),' : discarded'
+     ELSE IF (j.LT.nanz0) THEN
+        GOTO 20
+     ELSE
+        WRITE(fprun,'(i7,1x,i7,a12)',err=999)strnr(i),vnr(i),' : discarded'
 
         nanz = nanz-1
-        do j=i,nanz
+        DO j=i,nanz
            strnr(j) = strnr(j+1)
            vnr(j)   = vnr(j+1)
            dat(j)   = dat(j+1)
            wmatd(j) = wmatd(j+1)
-           if (lfphai) wmatdp(j)=wmatdp(j+1)
+           IF (lfphai) wmatdp(j)=wmatdp(j+1)
 !!!$     nicht notwendig, da Werte eh alle 1
 !!!$     wdfak(j) = wdfak(j+1)
-        end do
+        END DO
         i = i-1
-     end if
-     if (i.lt.nanz) goto 10
+     END IF
+     IF (i.LT.nanz) GOTO 10
 
-     open(kanal,file=TRIM(dm0),status='old')
-     read(kanal,*)
-     do j=1,elanz
-        read(kanal,*) dum3,dum3,dum3
+     OPEN(kanal,file=TRIM(dm0),status='old')
+     READ(kanal,*)
+     DO j=1,elanz
+        READ(kanal,*) dum3,dum3,dum3
         m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
-     end do
-     close(kanal)
+     END DO
+     CLOSE(kanal)
      DEALLOCATE (dum,dum2,idum,ic,ip)
-  end if ! ldiff
+  END IF ! ldiff
 !!!$     diff+>
 
   errnr = 0
 
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
 1001 errnr = 2
-  return
+  RETURN
 
-end subroutine rall
+END SUBROUTINE rall
 
