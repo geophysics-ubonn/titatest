@@ -12,6 +12,5 @@ CutMcK_myBranchName_LDFLAGS = -lm # -llapack -lblas
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
 clean-local:
 		if [ `ls -1  | sed '/\.mod/!d' | wc -l` -gt 0 ]; then  rm *.mod; fi
-		rm -f Makefile.am
 
 EXTRA_DIST = error.txt err.fin # file with error text messages
