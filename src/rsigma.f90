@@ -35,15 +35,16 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     i,idum,ifp1,ifp2
-  REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p
-!!!$
-  LOGICAL          ::     has_wmfak
+  REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p,bet_ref,pha_ref
 !!!$ Pi
   REAL (KIND(0D0)) ::    pi
+  CHARACTER (100)  :: cbuff
 !!!$.....................................................................
   pi = dacos(-1d0)
 
-  has_wmfak = .FALSE.
+  lw_ref = .FALSE.
+  lam_ref = 1d0 
+
 !!!$     'datei' oeffnen
   fetxt = datei
 
@@ -76,15 +77,19 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$     Anzahl der Messwerte lesen
 !!!$ also check if we may use individual errors or not
-!!$  READ(kanal,*,END=1001,err=11) idum,has_wmfak
-!!$  IF (has_wmfak) PRINT*,'---> Reference model regularization !'
-!!$  GOTO 12
-!!$11 PRINT*,' no reference model regularization '
-!!$  BACKSPACE (kanal)
+!!! Failsafe read in one line
 
-!!!$     Anzahl der Elemente (ohne Randelemente) einlesen
-  READ(kanal,*,END=1001,err=1000) idum
-!12 CONTINUE
+  READ(kanal,*,END=11,err=11) idum,lw_ref,lam_ref
+  PRINT*,'Successful reference options'
+  GOTO 12
+11 lam_ref = 1d0 
+  BACKSPACE (kanal)
+
+12 IF (lw_ref) THEN
+     PRINT*,'---> Reference model regularization '
+     PRINT*,'     lambda ref (factor)=',REAL(lam_ref)
+  END IF
+
 !!!$     Ggf. Fehlermeldung
   IF (idum.NE.elanz) THEN
      fetxt = ' '
@@ -92,11 +97,14 @@ SUBROUTINE rsigma(kanal,datei)
      GOTO 1000
   END IF
   
+
+
 !!!$     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
   DO i=1,elanz
      
-     IF (has_wmfak) THEN
-        READ(kanal,*,END=1001,err=1002) bet,pha,wmfak(i)
+     IF (lw_ref) THEN
+        READ(kanal,*,END=1001,err=1002) bet,pha,idum,bet_ref,pha_ref
+        wref(mnr(i)) = (idum == 1)
      ELSE
         READ(kanal,*,END=1001,err=1000) bet,pha
      END IF
@@ -148,6 +156,23 @@ SUBROUTINE rsigma(kanal,datei)
         sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
 
      END IF
+
+!!!$ >> RM ref model regu
+     IF (.NOT.lw_ref) CYCLE ! next i 
+     IF (wref(mnr(i))) THEN
+!!!$ assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
+!!!$              = -\ln(|\rho|) - i\phi(\rho) 
+!!!$              = - (\ln(|\rho|)+i\phi(\rho)
+!!!$ for \phi(z) = Im(z) / Re(z), z\inC
+
+        m_ref(mnr(i)) = -DCMPLX(DLOG(bet_ref),pha_ref)
+!        PRINT*,'assign',mnr(i),wref(mnr(i))
+     ELSE
+        m_ref(mnr(i)) = DCMPLX(0d0)
+!        PRINT*,'dont assign',mnr(i)
+     END IF
+!!!$ << RM ref model regu
+
   END DO
 
 !!!$     'datei' schliessen
@@ -175,7 +200,7 @@ SUBROUTINE rsigma(kanal,datei)
   RETURN
 
 1002 CLOSE(kanal)
-  fetxt = 'no reference factor'
+  fetxt = 'reference assignment failed'
   errnr = 2
   RETURN
 

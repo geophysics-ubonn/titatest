@@ -17,12 +17,12 @@ MODULE cg_mod
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lam,nx,nz,lverb
-  USE modelmod , ONLY : manz
+  USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref
+  USE modelmod , ONLY : manz,wref
   USE datmod , ONLY : nanz
   USE cjgmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 !> number of threads.
 !! NOTE that we restrict the total thread numbers here to avoid atomization 
@@ -46,6 +46,8 @@ MODULE cg_mod
   PRIVATE :: bpdclma
 !!$ calculates b = B * p (RHS) for stochastical regularization
   PRIVATE :: bpdcsto
+!!$ adds additional parts to b = B * p (RHS) for reference model regularization
+  PRIVATE :: bpdcref
 
 
 !!$ IP subroutines
@@ -64,6 +66,8 @@ MODULE cg_mod
   PRIVATE :: bpsto
 !!$ for stochastical regularization, MATMUL is 
 !!$ now explicitly formed because of conjugate complex
+!!$ adds additional parts to b = B * p (RHS) for reference model regularization
+  PRIVATE :: bpref
   PRIVATE :: bb
 !!!$ calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
 
@@ -72,19 +76,19 @@ CONTAINS
 !> cjg flow control subroutine is called from outside
 !! and checks for the different cases (DC,IP,FPI)
   SUBROUTINE cjg
-    if (ldc.or.lfpi) then
+    IF (ldc.OR.lfpi) THEN
        CALL con_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
-       call cjggdc
+       CALL cjggdc
        CALL des_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
-    else
+    ELSE
        CALL con_cjgmod (3,fetxt,errnr)
        IF (errnr /= 0) RETURN
-       call cjggra
+       CALL cjggra
        CALL des_cjgmod (3,fetxt,errnr)
        IF (errnr /= 0) RETURN
-    end if
+    END IF
 
   END SUBROUTINE cjg
 
@@ -93,7 +97,7 @@ CONTAINS
 !!!!                          DC_PART                               !!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cjggdc()
+  SUBROUTINE cjggdc()
 !!!$    Unterprogramm berechnet Modellverbesserung mittels konjugierter
 !!!$    Gradienten.
 !!!$
@@ -110,11 +114,11 @@ CONTAINS
 !!!$
 !!!$....................................................................
 
-    if (lfpi) then
+    IF (lfpi) THEN
        bvecdc = dimag(bvec)
-    else
-       bvecdc = dble(bvec)
-    end if
+    ELSE
+       bvecdc = DBLE(bvec)
+    END IF
 
     dpar = DCMPLX(0D0)
     rvecdc = bvecdc
@@ -122,23 +126,23 @@ CONTAINS
 
     fetxt = 'CG iteration'
 
-    do k=1,ncgmax
+    DO k=1,ncgmax
 
        ncg = k-1
 
        dr = DOT_PRODUCT(rvecdc,rvecdc)
 
-       if (k.eq.1) then
+       IF (k.EQ.1) THEN
           dr0  = dr*eps
           beta = 0d0
-       else
+       ELSE
           beta = dr/dr1
-       end if
+       END IF
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
-       if (dr.le.dr0) goto 10
+       IF (dr.LE.dr0) GOTO 10
 
        pvecdc= rvecdc + beta * pvecdc
 
@@ -158,6 +162,8 @@ CONTAINS
           CALL bpdcsto
 
        END IF
+       
+       IF (lw_ref) CALL bpdcref
 
        CALL bbdc
 
@@ -172,20 +178,20 @@ CONTAINS
        dr1 = dr
 
 !!!$    Residuum speichern
-       cgres(k+1) = real(eps*dr/dr0)
+       cgres(k+1) = REAL(eps*dr/dr0)
 
-    end do
+    END DO
 
     ncg = ncgmax
 
 !!!$    Anzahl an CG-steps speichern
-10  cgres(1) = real(ncg)
+10  cgres(1) = REAL(ncg)
 
     !    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
 
     RETURN
 
-  end subroutine cjggdc
+  END SUBROUTINE cjggdc
 
   SUBROUTINE bapdc
 !!$
@@ -210,21 +216,21 @@ CONTAINS
 
     !$OMP DO
 !!!$    A * p  berechnen (skaliert)
-    do i=1,nanz
-       if (ldc) then
-          do j=1,manz
+    DO i=1,nanz
+       IF (ldc) THEN
+          DO j=1,manz
              apdc(i) = apdc(i) + pvecdc(j)*sensdc(i,j)*cgfac(j)
-          end do
-       else if (lfpi) then
-          do j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*dble(sens(i,j))*cgfac(j)
-          end do
-       end if
-    end do
+          END DO
+       ELSE IF (lfpi) THEN
+          DO j=1,manz
+             apdc(i) = apdc(i) + pvecdc(j)*DBLE(sens(i,j))*cgfac(j)
+          END DO
+       END IF
+    END DO
     !$OMP END PARALLEL
   END SUBROUTINE bapdc
 
-  subroutine bpdc()
+  SUBROUTINE bpdc()
 !!$
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$
@@ -241,24 +247,24 @@ CONTAINS
 !!!$....................................................................
 
 !!!$    R^m * p  berechnen (skaliert)
-    do i=1,manz
+    DO i=1,manz
        dum = 0d0
 
-       if (i.gt.1) &
+       IF (i.GT.1) &
             dum = pvecdc(i-1)*smatm(i-1,2)*cgfac(i-1)
-       if (i.lt.manz) &
+       IF (i.LT.manz) &
             dum = dum + pvecdc(i+1)*smatm(i,2)*cgfac(i+1)
-       if (i.gt.nx) &
+       IF (i.GT.nx) &
             dum = dum + pvecdc(i-nx)*smatm(i-nx,3)*cgfac(i-nx)
-       if (i.lt.manz-nx+1) &
+       IF (i.LT.manz-nx+1) &
             dum = dum + pvecdc(i+nx)*smatm(i,3)*cgfac(i+nx)
 
        bvecdc(i) = dum + pvecdc(i)*smatm(i,1)*cgfac(i)
-    end do
+    END DO
 
-  end subroutine bpdc
+  END SUBROUTINE bpdc
 
-  subroutine bpdctri()
+  SUBROUTINE bpdctri()
 !!!$    
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$    Fuer beliebige Triangulierung
@@ -290,11 +296,11 @@ CONTAINS
        bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * cgfac(i) 
     END DO
 
-  end subroutine bpdctri
+  END SUBROUTINE bpdctri
 
 
 
-  subroutine bpdclma()
+  SUBROUTINE bpdclma()
 !!!$    
 !!!$    Unterprogramm berechnet b = B * p . 
 !!!$    Angepasst an Levenberg-Marquardt-Daempfung
@@ -316,13 +322,13 @@ CONTAINS
 
 
 !!!$    R^m * p  berechnen (skaliert)
-    do i=1,manz
+    DO i=1,manz
        bvecdc(i)=pvecdc(i)*cgfac(i)*smatm(i,1) ! damping stuff..
-    end do
+    END DO
 
-  end subroutine bpdclma
+  END SUBROUTINE bpdclma
 
-  subroutine bpdcsto()
+  SUBROUTINE bpdcsto()
 !!!$
 !!!$    Unterprogramm berechnet b = B * p . 
 !!!$    Angepasst an die neue Regularisierungsmatrix
@@ -342,13 +348,41 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
 
-    !$OMP WORKSHARE
+!    !$OMP WORKSHARE
     bvecdc = MATMUL(smatm,pvecdc)
-    !$OMP END WORKSHARE
+!    !$OMP END WORKSHARE
 
     bvecdc = bvecdc * cgfac
 
-  end subroutine bpdcsto
+  END SUBROUTINE bpdcsto
+
+  SUBROUTINE bpdcref()
+!!!$    
+!!!$    additional entries due to b = B*p
+!!!$    for reference model regu
+!!!$   
+!!!$    Copyright by Andreas Kemna 2010
+!!!$    
+!!!$    Created by Roland Martin                            05-Sep-2012
+!!!$    
+!!!$    Last changes        RM                                Sep-2012
+!!!$
+!!!$....................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+
+!!!$    Hilfsvariablen
+    INTEGER         ::     i
+
+!!!$....................................................................
+
+
+!!!$    R^m * p  berechnen (skaliert)
+    DO i=1,manz
+       IF (wref(i)) bvecdc(i) = bvecdc(i) + pvecdc(i) * lam_ref * cgfac(i) 
+!!!!$! according to damping stuff..
+    END DO
+
+  END SUBROUTINE bpdcref
 
   SUBROUTINE bbdc
 !!$
@@ -369,34 +403,34 @@ CONTAINS
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
     !$OMP SHARED (manz,ldc,lfpi,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
     !$OMP DO
-    do j=1,manz
+    DO j=1,manz
        dum = 0d0
 
-       if (ldc) then
-          do i=1,nanz
+       IF (ldc) THEN
+          DO i=1,nanz
              dum = dum + sensdc(i,j) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       else if (lfpi) then
-          do i=1,nanz
-             dum = dum + dble(sens(i,j)) * &
-                  wmatd(i)*dble(wdfak(i))*apdc(i)
-          end do
-       end if
+                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
+          END DO
+       ELSE IF (lfpi) THEN
+          DO i=1,nanz
+             dum = dum + DBLE(sens(i,j)) * &
+                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
+          END DO
+       END IF
 
        bvecdc(j) = dum + lam*bvecdc(j)
        bvecdc(j) = bvecdc(j)*cgfac(j)
-    end do
+    END DO
     !$OMP END PARALLEL
 
-  end subroutine bbdc
+  END SUBROUTINE bbdc
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!                         IP_PART                                !!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine cjggra()
+  SUBROUTINE cjggra()
 !!!$    Unterprogramm berechnet Modellverbesserung mittels konjugierter
 !!!$    Gradienten.
 !!!$
@@ -419,7 +453,7 @@ CONTAINS
 
     fetxt = 'CG iteration'
 
-    do k=1,ncgmax
+    DO k=1,ncgmax
 
        ncg = k-1
 
@@ -428,11 +462,11 @@ CONTAINS
           dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
        END DO
 
-       if (k.eq.1) then
+       IF (k.EQ.1) THEN
           dr0  = dr*eps
           beta = 0d0
-       else
-          if (dr.le.dr0) goto 10
+       ELSE
+          IF (dr.LE.dr0) GOTO 10
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
@@ -454,12 +488,14 @@ CONTAINS
           CALL bp
        ELSE IF (ltri == 1.OR.ltri == 2.OR.&
             (ltri > 4 .AND. ltri < 15)) THEN
-          call bptri
+          CALL bptri
        ELSE IF (ltri == 3.OR.ltri == 4) THEN
           CALL bplma
        ELSE IF (ltri == 15) THEN
-          call bpsto
+          CALL bpsto
        END IF
+
+       IF (lw_ref) CALL bpref
 
        CALL bb
 
@@ -476,17 +512,17 @@ CONTAINS
        dr1 = dr
 
 !!!$    Residuum speichern
-       cgres(k+1) = real(eps*dr/dr0)
+       cgres(k+1) = REAL(eps*dr/dr0)
 
-    end do
+    END DO
 
     ncg = ncgmax
 
 !!!$    Anzahl an CG-steps speichern
-10  cgres(1) = real(ncg)
+10  cgres(1) = REAL(ncg)
 
 
-  end subroutine cjggra
+  END SUBROUTINE cjggra
 
   SUBROUTINE bap
 !!!$
@@ -509,18 +545,18 @@ CONTAINS
     !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
     !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
     !$OMP DO
-    do i=1,nanz
+    DO i=1,nanz
        ap(i) = dcmplx(0d0)
 
-       do j=1,manz
+       DO j=1,manz
           ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
-       end do
-    end do
+       END DO
+    END DO
     !$OMP END PARALLEL
 
   END SUBROUTINE bap
 
-  subroutine bp()
+  SUBROUTINE bp()
 !!!$
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$
@@ -537,22 +573,22 @@ CONTAINS
 
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-    do i=1,manz
+    DO i=1,manz
        cdum = dcmplx(0d0)
 
-       if (i.gt.1) &
+       IF (i.GT.1) &
             cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*cgfac(i-1))
-       if (i.lt.manz) &
+       IF (i.LT.manz) &
             cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*cgfac(i+1))
-       if (i.gt.nx) &
+       IF (i.GT.nx) &
             cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*cgfac(i-nx))
-       if (i.lt.manz-nx+1) &
+       IF (i.LT.manz-nx+1) &
             cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
        bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
-    end do
-  end subroutine bp
+    END DO
+  END SUBROUTINE bp
 
-  subroutine bptri()
+  SUBROUTINE bptri()
 !!!$    
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$    Fuer beliebige Triangulierung
@@ -586,9 +622,9 @@ CONTAINS
 
     END DO
 
-  end subroutine bptri
+  END SUBROUTINE bptri
 
-  subroutine bplma()
+  SUBROUTINE bplma()
 !!!$
 !!!$    Unterprogramm berechnet b = B * p . 
 !!!$    Angepasst an Levenberg-Marquardt-Daempfung
@@ -612,10 +648,10 @@ CONTAINS
 !!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
 !!$    end do
 
-  end subroutine bplma
+  END SUBROUTINE bplma
 
 
-  subroutine bpsto()
+  SUBROUTINE bpsto()
 !!!$
 !!!$    Unterprogramm berechnet b = B * p .
 !!!$    Angepasst an die neue Regularisierungsmatrix 
@@ -644,7 +680,35 @@ CONTAINS
     !$OMP END WORKSHARE
 
     bvec = bvec * DCMPLX(cgfac)
-  end subroutine bpsto
+  END SUBROUTINE bpsto
+
+  SUBROUTINE bpref()
+!!!$    
+!!!$    additional entries due to b = B*p
+!!!$    for reference model regu
+!!!$   
+!!!$    Copyright by Andreas Kemna 2010
+!!!$    
+!!!$    Created by Roland Martin                            05-Sep-2012
+!!!$    
+!!!$    Last changes        RM                                Sep-2012
+!!!$
+!!!$....................................................................
+!!!$    PROGRAMMINTERNE PARAMETER:
+
+!!!$    Hilfsvariablen
+    INTEGER         ::     i
+
+!!!$....................................................................
+
+
+!!!$    R^m * p  berechnen (skaliert)
+    DO i=1,manz
+       IF (wref(i)) bvec(i) = bvec(i) + pvec(i) * DCMPLX(lam_ref * cgfac(i))
+!!!!$! according to damping stuff..
+    END DO
+
+  END SUBROUTINE bpref
 
   SUBROUTINE bb
 !!!$
@@ -667,17 +731,17 @@ CONTAINS
     !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
     !$OMP DO
 
-    do j=1,manz
+    DO j=1,manz
        cdum = dcmplx(0d0)
 
-       do i=1,nanz
+       DO i=1,nanz
           cdum = cdum + dconjg(sens(i,j)) * &
-               dcmplx(wmatd(i)*dble(wdfak(i)))*ap(i)
-       end do
+               dcmplx(wmatd(i)*DBLE(wdfak(i)))*ap(i)
+       END DO
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
        bvec(j) = bvec(j)*dcmplx(cgfac(j))
-    end do
+    END DO
 
     !$OMP END PARALLEL
 

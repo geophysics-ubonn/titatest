@@ -843,7 +843,9 @@ CONTAINS
        !$OMP END PARALLEL
 
        IF (lverb_dat) THEN
-          OPEN (ifp,FILE='cm0.dat',STATUS='replace',&
+          fetxt = 'cm0.dat'
+          PRINT*,'writing '//TRIM(fetxt)
+          OPEN (ifp,FILE=TRIM(fetxt),STATUS='replace',&
                ACCESS='sequential',FORM='formatted')
           DO i = 1,manz
              WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
@@ -890,7 +892,6 @@ CONTAINS
              END DO
           END DO
           !$OMP END PARALLEL
-          IF (lverb_dat) CLOSE (ifp)
        END IF
 
        IF (lverb) THEN
@@ -928,7 +929,9 @@ CONTAINS
 
 !!!!$ verbose output of inverse smatm data
        IF (lverb_dat) THEN
-          OPEN (ifp,FILE='cm0_inv.dat',STATUS='replace',&
+          fetxt = 'cm0_inv.dat'
+          PRINT*,'writing '//TRIM(fetxt)
+          OPEN (ifp,FILE=TRIM(fetxt),STATUS='replace',&
                ACCESS='sequential',FORM='formatted')
           DO i = 1,manz
              WRITE (ifp,*)espx(i),espy(i),(smatm(i,j),j=i,manz)
@@ -939,8 +942,6 @@ CONTAINS
 
     END IF
     IF (ALLOCATED(proof)) DEALLOCATE (proof)
-
-    STOP
 
   END SUBROUTINE bsmatmsto
 

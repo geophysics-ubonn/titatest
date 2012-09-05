@@ -194,6 +194,12 @@ PROGRAM inv
      CALL con_cjgmod (1,fetxt,errnr)
      IF (errnr /= 0) GOTO 999
 
+!!!$ >> RM ref model regu
+!!!$ assign memory to global variables
+     fetxt = 'allocation problem reference model'
+     ALLOCATE (wref(manz),m_ref(manz),STAT=errnr)
+     IF (errnr /= 0) GOTO 999
+!!!$ << RM ref model regu
 
 
 !!!!$ INITIALIZE
@@ -879,7 +885,7 @@ PROGRAM inv
      END IF
 
      IF (lvario) THEN
-        IF (lsens) CALL bvariogram_s ! calculate experimental variogram
+!        IF (lsens) CALL bvariogram_s ! calculate experimental variogram
         CALL bvariogram
      END IF
 

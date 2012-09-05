@@ -120,6 +120,15 @@ SUBROUTINE update()
 
         END IF
      END IF
+
+!!!$ >> RM ref model regu
+     IF (lw_ref) THEN
+        DO i=1,manz
+           IF (wref(i)) bvec(i) = bvec(i) + lam_ref * (par(i) - m_ref(i))
+        END DO
+     END IF
+!!!$ << RM ref model regu
+
 !!!$     triang<
 
 !!!$  Skalierungsfaktoren bestimmen
@@ -164,6 +173,11 @@ SUBROUTINE update()
            dum    = dum + lam * smatm(j,j)
 
         END IF
+
+!!!$ >> RM ref model regu
+        IF (wref(j)) dum = dum + lam * lam_ref
+!!!!$<< RM
+
         cgfac(j) = 1d0/dsqrt(dum)
      END DO
 
@@ -218,13 +232,15 @@ SUBROUTINE update()
            bvec(j) = cdum
 
         ELSE
+!!!$ RM ref model regu: reference model regu is already included in bvec (see above)..
+           bvec(j) = cdum - dcmplx(lam)*bvec(j) 
 
-           bvec(j) = cdum - dcmplx(lam)*bvec(j)
         END IF
 
         bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
 !!$        print*,j,cdum,sens(1,j),sigma(j)
+
      END DO
 
 !!$     DO i=1,nanz

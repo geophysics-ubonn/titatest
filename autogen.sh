@@ -16,15 +16,26 @@ fi
 
 touch NEWS ChangeLog
 
+echo -n "aclocal... "
 aclocal
+echo "ok"
 # Das erste autoreconf bemerkt, welche Dateien fehlen
+echo -n "autoreconf (1)... "
 autoreconf
+echo "ok"
 # Wenn möglich, werden Standarddateien kopiert
+echo -n "automake... "
 automake --add-missing
+echo "ok"
 # Jetzt sollten alle Dateien vorhanden sein, und das configure-Skript kann erstellt werden
+echo -n "autoreconf (2)... "
 autoreconf
+echo "ok"
 # now invoke configure
+echo "confifgure"
 ./configure
 # 
 # Wenn möglich, werden Standarddateien kopiert
+echo -n "automake... "
 automake --add-missing
+echo "ok"

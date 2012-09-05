@@ -22,6 +22,11 @@ MODULE invmod
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m0
 !!$c model vector for diff inv
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: fm0
+!!!$ >> RM ref model regu
+!!$c parameter vector for reference model regularization
+  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m_ref
+!!!$ << RM ref model regu
+!!!$ the reference vector is of the same length as par or m0
 !!$c data weighting (data covariance) matrix (diag)
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd
 !!$c storage

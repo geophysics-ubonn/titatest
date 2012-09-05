@@ -20,6 +20,11 @@ MODULE konvmod
   REAL(KIND(0D0)), PUBLIC ::     lamnull_fpi
 !!$ << RM
 
+!!$ >> RM
+!!!$ Reference model regularization lambda (currently its a factor for lam)
+  REAL(KIND(0D0)), PUBLIC ::     lam_ref
+!!! << RM
+
 !!!$Fester Regularisierungsparameter
   REAL(KIND(0D0)), PUBLIC ::     lamfix
 
@@ -119,6 +124,10 @@ MODULE konvmod
 !!$c	triang<	
 !!!$Schalter ob prior model vorhanden
   LOGICAL,PUBLIC  :: lprior
+!!!$ >> RM ref model regu
+!!!$switch is true for reference model regularization (DAMPING)
+  LOGICAL,PUBLIC  :: lw_ref
+!!!$ << RM ref model regu
 !!!$Schalter ob prior model verrauschen
   LOGICAL,PUBLIC  :: lnsepri
 !!!$Schalter ob Summe der Sensitivitaeten aller Messungen ausgegeben
