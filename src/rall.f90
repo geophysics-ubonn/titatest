@@ -249,7 +249,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      END IF
   END IF
   IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
-     PRINT*,'Reference model regularization!'
+     PRINT*,'Prior model regularization (smooth)!'
      lprior = .TRUE.        ! reference model regu only if there is no
      ldiff = .FALSE.        ! time difference inversion
   END IF

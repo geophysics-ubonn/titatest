@@ -139,6 +139,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE(fpinv,101,err=999)'    Variance',modl_stdn
   WRITE(fpinv,'(/a)',err=999)'******** Regularization Part *********'
   WRITE(fpinv,100,err=999)'Prior regualrization',lprior
+  WRITE(fpinv,100,err=999)'Reference regualrization',lw_ref
   WRITE(fpinv,101,err=999)'Regularization-switch',ltri
   WRITE(fpinv,100,err=999)'Regular grid smooth',(ltri==0)
   WRITE(fpinv,100,err=999)'Triangular regu',(ltri==1)
