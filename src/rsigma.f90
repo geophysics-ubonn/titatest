@@ -105,6 +105,7 @@ SUBROUTINE rsigma(kanal,datei)
      IF (lw_ref) THEN
         READ(kanal,*,END=1001,err=1002) bet,pha,idum,bet_ref,pha_ref
         wref(mnr(i)) = (idum == 1)
+        pha_ref = 1d-3 * pha_ref ! mRad -> Rad
      ELSE
         READ(kanal,*,END=1001,err=1000) bet,pha
      END IF

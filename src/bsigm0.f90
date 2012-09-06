@@ -105,7 +105,7 @@ subroutine bsigm0(kanal,dstart)
         dum2   = dsqrt(wmatd(i))*dble(wdfak(i))
         sigma0 = sigma0 + dcmplx(redat,imdat)*dcmplx(dum2)
         dum    = dum + dum2
-        print*,'Write:',REAL(DBLE(sigma0)),REAL(DBLE(dat(i))),REAL(redat),REAL(dum2)
+!        print*,'Write:',REAL(DBLE(sigma0)),REAL(DBLE(dat(i))),REAL(redat),REAL(dum2)
 
 
      end do
@@ -118,7 +118,7 @@ subroutine bsigm0(kanal,dstart)
      end if
 
 !!!$     'sigma' belegen
-     print*,'Write:',sigma0
+!     print*,'Write:',sigma0
      do i=1,elanz
         sigma(i) = cdexp(sigma0/dcmplx(dum))
      end do
