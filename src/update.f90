@@ -124,7 +124,14 @@ SUBROUTINE update()
 !!!$ >> RM ref model regu
      IF (lw_ref) THEN
         DO i=1,manz
-           IF (wref(i)) bvec(i) = bvec(i) + lam_ref * (par(i) - m_ref(i))
+           IF (BTEST(wref(i),0)) THEN
+              IF (BTEST(wref(i),1)) THEN ! wref = wref + 2
+                 cdum = (par(i) - m_ref(i))
+              ELSE
+                 cdum = DCMPLX(DBLE((par(i) - m_ref(i)))) ! default, do not trust phase
+              END IF
+              bvec(i) = bvec(i) + lam_ref * cdum
+           END IF
         END DO
      END IF
 !!!$ << RM ref model regu
@@ -175,7 +182,7 @@ SUBROUTINE update()
         END IF
 
 !!!$ >> RM ref model regu
-        IF (wref(j)) dum = dum + lam * lam_ref
+        IF (BTEST(wref(j),0)) dum = dum + lam * lam_ref
 !!!!$<< RM
 
         cgfac(j) = 1d0/dsqrt(dum)

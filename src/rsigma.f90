@@ -104,7 +104,7 @@ SUBROUTINE rsigma(kanal,datei)
      
      IF (lw_ref) THEN
         READ(kanal,*,END=1001,err=1002) bet,pha,idum,bet_ref,pha_ref
-        wref(mnr(i)) = (idum == 1)
+        wref(mnr(i)) = idum
         pha_ref = 1d-3 * pha_ref ! mRad -> Rad
      ELSE
         READ(kanal,*,END=1001,err=1000) bet,pha
@@ -160,14 +160,14 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$ >> RM ref model regu
      IF (.NOT.lw_ref) CYCLE ! next i 
-     IF (wref(mnr(i))) THEN
+     IF (BTEST(wref(mnr(i)),0)) THEN
 !!!$ assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
 !!!$              = -\ln(|\rho|) - i\phi(\rho) 
 !!!$              = - (\ln(|\rho|)+i\phi(\rho)
 !!!$ for \phi(z) = Im(z) / Re(z), z\inC
 
         m_ref(mnr(i)) = -DCMPLX(DLOG(bet_ref),pha_ref)
-!        PRINT*,'assign',mnr(i),wref(mnr(i))
+        !        PRINT*,'assign',mnr(i),wref(mnr(i))
      ELSE
         m_ref(mnr(i)) = DCMPLX(0d0)
 !        PRINT*,'dont assign',mnr(i)

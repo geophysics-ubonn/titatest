@@ -378,7 +378,7 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       IF (wref(i)) bvecdc(i) = bvecdc(i) + pvecdc(i) * lam_ref * cgfac(i) 
+       IF (BTEST(wref(i),0)) bvecdc(i) = bvecdc(i) + pvecdc(i) * lam_ref * cgfac(i) 
 !!!!$! according to damping stuff..
     END DO
 
@@ -704,7 +704,7 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       IF (wref(i)) bvec(i) = bvec(i) + pvec(i) * DCMPLX(lam_ref * cgfac(i))
+       IF (BTEST(wref(i),0)) bvec(i) = bvec(i) + pvec(i) * DCMPLX(lam_ref * cgfac(i))
 !!!!$! according to damping stuff..
     END DO
 
