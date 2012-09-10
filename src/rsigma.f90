@@ -86,6 +86,8 @@ SUBROUTINE rsigma(kanal,datei)
   BACKSPACE (kanal)
 
 12 IF (lw_ref) THEN
+     IF (lam_ref <= EPSILON(REAL(lam_ref))) lam_ref = 0d0
+
      PRINT*,'---> Reference model regularization '
      PRINT*,'     lambda ref (factor)=',REAL(lam_ref)
   END IF
@@ -159,6 +161,7 @@ SUBROUTINE rsigma(kanal,datei)
      END IF
 
 !!!$ >> RM ref model regu
+     IF (lam_ref <= EPSILON(REAL(lam_ref))) wref(mnr(i)) = 0
      IF (.NOT.lw_ref) CYCLE ! next i 
      IF (BTEST(wref(mnr(i)),0)) THEN
 !!!$ assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
