@@ -182,7 +182,7 @@ SUBROUTINE update()
         END IF
 
 !!!$ >> RM ref model regu
-        IF (BTEST(wref(j),0)) dum = dum + lam * lam_ref
+        IF (lw_ref.AND.BTEST(wref(j),0)) dum = dum + lam * lam_ref
 !!!!$<< RM
 
         cgfac(j) = 1d0/dsqrt(dum)
