@@ -788,7 +788,7 @@ PROGRAM inv
 !!!$   Step-length speichern
               stpalt = step
            END IF
-           itr = itr + 1
+
         END IF
 !!!$   Kontrollausgaben
         WRITE(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
