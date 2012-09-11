@@ -54,7 +54,8 @@ subroutine bsigm0(kanal,dstart)
 
 !!!$     diff-        if (lstart) then
 !!!$     diff+<
-  if (ldiff) then
+  if (ldiff) then ! m0 was set within rall for this case 
+!!!!$ (absolute difference inversion)
      do i=1,elanz
         sigma(i) = cdexp(m0(mnr(i)))
      end do
