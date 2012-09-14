@@ -197,8 +197,8 @@ PROGRAM inv
 !!!$ >> RM ref model regu
 !!!$ assign memory to global variables
      fetxt = 'allocation problem reference model'
-     ALLOCATE (wref(manz),m_ref(manz),STAT=errnr)
-     wref = 0;m_ref = DCMPLX(0d0)
+     ALLOCATE (v_ref_re(manz),v_ref_im(manz),m_ref(manz),STAT=errnr)
+     v_ref_re = 0d0;m_ref = DCMPLX(0d0);v_ref_im = 0d0
      IF (errnr /= 0) GOTO 999
 !!!$ << RM ref model regu
 
@@ -557,13 +557,6 @@ PROGRAM inv
                  lfstep = .TRUE.
                  step   = 1d0
                  errnr2 = 0
-!!!$ >> RM ref regu
-                 IF (lw_ref) THEN
-                    DO i = 1,manz
-                       IF (BTEST(wref(i),2)) wref(i) = wref(i) - 4
-                    END DO
-                 END IF
-!!!$ << RM 
 
 !!!$   ak
                  fetxt = 'cp -f inv.lastmod inv.lastmod_rho'

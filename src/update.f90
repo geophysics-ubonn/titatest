@@ -124,12 +124,12 @@ SUBROUTINE update()
 !!!$ >> RM ref model regu
      IF (lw_ref) THEN
         DO i=1,manz
-           IF (BTEST(wref(i),0)) THEN
-              IF (BTEST(wref(i),1)) THEN ! wref = wref + 2
-                 cdum = (par(i) - m_ref(i))
-              ELSE
-                 cdum = DCMPLX(DBLE((par(i) - m_ref(i)))) ! default, do not trust phase
-              END IF
+           IF ((v_ref_re(i) > EPSILON(v_ref_re(i)) ).OR.&
+                (v_ref_im(i) > EPSILON(v_ref_im(i))) ) THEN
+              cdum = (par(i) - m_ref(i))
+!!!$ (a*va , b*vb)
+              cdum = DCMPLX(DBLE(cdum)*v_ref_re(i),DIMAG(cdum)*v_ref_im(i))
+
               bvec(i) = bvec(i) + lam_ref * cdum
            END IF
         END DO
@@ -182,7 +182,14 @@ SUBROUTINE update()
         END IF
 
 !!!$ >> RM ref model regu
-        IF (lw_ref.AND.BTEST(wref(j),0)) dum = dum + lam * lam_ref
+        
+        IF (lw_ref .AND. ( &
+             (v_ref_re(i) > EPSILON(v_ref_re(i))) .OR. &
+             (v_ref_im(i) > EPSILON(v_ref_im(i))) ) ) THEN
+           dum = dum + lam * lam_ref*(v_ref_re(i) + v_ref_im(i))
+!!!$ adding variances.. 
+!!$ TODO: checking for exactness
+        END IF
 !!!!$<< RM
 
         cgfac(j) = 1d0/dsqrt(dum)

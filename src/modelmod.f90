@@ -12,15 +12,9 @@ MODULE modelmod
   INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE :: mnr
 
 !!!$ >> RM ref model regu
-!!$c reference field of reference vector data with some switches
-!!!$ which can be enabled in the binary way (tested via BTEST) and thus
-!!!$ are additive!
-!!!$ wref = 0        -> not use data at all
-!!!$ wref = 1        -> use only magnitude data for CRI 
-!!!$                    (work only on the REAL part of parameter)
-!!!$ wref = wref + 2 -> use magnitude and phase data for CRI and FPI
-!!!$ wref = wref + 4 -> reset wref(i) to zero for FPI
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE :: wref
+!!!$ variance of magnitude (re) and phase (im) of the reference model
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: v_ref_re
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: v_ref_im
 !!!$ << RM ref model regu
   
 END MODULE modelmod

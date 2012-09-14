@@ -18,7 +18,7 @@ MODULE cg_mod
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref
-  USE modelmod , ONLY : manz,wref
+  USE modelmod , ONLY : manz,v_ref_re,v_ref_im
   USE datmod , ONLY : nanz
   USE cjgmod
 
@@ -372,13 +372,15 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-
+    REAL (KIND(0D0)) :: rdum
 !!!$....................................................................
 
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       IF (BTEST(wref(i),0)) bvecdc(i) = bvecdc(i) + pvecdc(i) * lam_ref * cgfac(i) 
+       rdum = pvecdc(i)*v_ref_re(i)
+
+       bvecdc(i) = bvecdc(i) + rdum * lam_ref * cgfac(i)
 !!!!$! according to damping stuff..
     END DO
 
@@ -698,13 +700,14 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-
+    COMPLEX (KIND(0D0)) :: cdum
 !!!$....................................................................
 
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       IF (BTEST(wref(i),0)) bvec(i) = bvec(i) + pvec(i) * DCMPLX(lam_ref * cgfac(i))
+       cdum = DCMPLX(DBLE(pvec(i))*v_ref_re(i), DIMAG(pvec(i))*v_ref_re(i))
+       bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
 !!!!$! according to damping stuff..
     END DO
 

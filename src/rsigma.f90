@@ -107,9 +107,15 @@ SUBROUTINE rsigma(kanal,datei)
   DO i=1,elanz
      
      IF (lw_ref) THEN
-        READ(kanal,*,END=1001,err=1002) bet,pha,idum,bet_ref,pha_ref
-        wref(mnr(i)) = idum
+!!$        IF (ldc) THEN
+!!$           READ(kanal,*,END=1001,err=1002) bet,pha,bet_ref,v_ref_re(mnr(i))
+!!$           pha_ref = 0d0
+!!$        ELSE
+        READ(kanal,*,END=1001,err=1002) bet,pha,bet_ref,eps_r,pha_ref,eps_p
+        v_ref_re(mnr(i)) = eps_r * eps_r
+        v_ref_im(mnr(i)) = eps_p * eps_p
         pha_ref = 1d-3 * pha_ref ! mRad -> Rad
+!!$        END IF
      ELSE
         READ(kanal,*,END=1001,err=1000) bet,pha
      END IF
@@ -164,7 +170,7 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$ >> RM ref model regu
      IF (.NOT.lw_ref) CYCLE ! next i 
-     IF (BTEST(wref(mnr(i)),0)) THEN
+     IF (v_ref_re(mnr(i)) > EPSILON(eps_r)) THEN
 !!!$ assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
 !!!$              = -\ln(|\rho|) - i\phi(\rho) 
 !!!$              = - (\ln(|\rho|)+i\phi(\rho)
