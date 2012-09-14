@@ -13,8 +13,8 @@ MODULE modelmod
 
 !!!$ >> RM ref model regu
 !!!$ variance of magnitude (re) and phase (im) of the reference model
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: v_ref_re
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: v_ref_im
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: w_ref_re
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: w_ref_im
 !!!$ << RM ref model regu
   
 END MODULE modelmod

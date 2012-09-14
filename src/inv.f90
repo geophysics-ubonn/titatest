@@ -197,8 +197,8 @@ PROGRAM inv
 !!!$ >> RM ref model regu
 !!!$ assign memory to global variables
      fetxt = 'allocation problem reference model'
-     ALLOCATE (v_ref_re(manz),v_ref_im(manz),m_ref(manz),STAT=errnr)
-     v_ref_re = 0d0;m_ref = DCMPLX(0d0);v_ref_im = 0d0
+     ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=errnr)
+     w_ref_re = 0d0;m_ref = DCMPLX(0d0);w_ref_im = 0d0
      IF (errnr /= 0) GOTO 999
 !!!$ << RM ref model regu
 

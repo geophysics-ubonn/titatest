@@ -124,11 +124,11 @@ SUBROUTINE update()
 !!!$ >> RM ref model regu
      IF (lw_ref) THEN
         DO i=1,manz
-           IF ((v_ref_re(i) > EPSILON(v_ref_re(i)) ).OR.&
-                (v_ref_im(i) > EPSILON(v_ref_im(i))) ) THEN
+           IF ((w_ref_re(i) > EPSILON(w_ref_re(i)) ).OR.&
+                (w_ref_im(i) > EPSILON(w_ref_im(i))) ) THEN
               cdum = (par(i) - m_ref(i))
 !!!$ (a*va , b*vb)
-              cdum = DCMPLX(DBLE(cdum)*v_ref_re(i),DIMAG(cdum)*v_ref_im(i))
+              cdum = DCMPLX(DBLE(cdum)*w_ref_re(i),DIMAG(cdum)*w_ref_im(i))
 
               bvec(i) = bvec(i) + lam_ref * cdum
            END IF
@@ -184,9 +184,9 @@ SUBROUTINE update()
 !!!$ >> RM ref model regu
         
         IF (lw_ref .AND. ( &
-             (v_ref_re(i) > EPSILON(v_ref_re(i))) .OR. &
-             (v_ref_im(i) > EPSILON(v_ref_im(i))) ) ) THEN
-           dum = dum + lam * lam_ref*(v_ref_re(i) + v_ref_im(i))
+             (w_ref_re(i) > EPSILON(w_ref_re(i))) .OR. &
+             (w_ref_im(i) > EPSILON(w_ref_im(i))) ) ) THEN
+           dum = dum + lam * lam_ref*(w_ref_re(i) + w_ref_im(i))
 !!!$ adding variances.. 
 !!$ TODO: checking for exactness
         END IF

@@ -18,7 +18,7 @@ MODULE cg_mod
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref
-  USE modelmod , ONLY : manz,v_ref_re,v_ref_im
+  USE modelmod , ONLY : manz,w_ref_re,w_ref_im
   USE datmod , ONLY : nanz
   USE cjgmod
 
@@ -378,7 +378,7 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       rdum = pvecdc(i)*v_ref_re(i)
+       rdum = pvecdc(i)*w_ref_re(i)
 
        bvecdc(i) = bvecdc(i) + rdum * lam_ref * cgfac(i)
 !!!!$! according to damping stuff..
@@ -706,7 +706,7 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       cdum = DCMPLX(DBLE(pvec(i))*v_ref_re(i), DIMAG(pvec(i))*v_ref_re(i))
+       cdum = DCMPLX(DBLE(pvec(i))*w_ref_re(i), DIMAG(pvec(i))*w_ref_re(i))
        bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
 !!!!$! according to damping stuff..
     END DO
