@@ -140,6 +140,12 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE(fpinv,'(/a)',err=999)'******** Regularization Part *********'
   WRITE(fpinv,100,err=999)'Prior regualrization',lprior
   WRITE(fpinv,100,err=999)'Reference regualrization',lw_ref
+  IF (lw_ref) THEN
+     IF (lam_ref_sw == 1) WRITE(fpinv,'(a)',err=999)&
+          '  -> vertical gradient'
+     IF (lam_ref_sw == 2) WRITE(fpinv,'(a)',err=999)&
+          '  -> horizontal gradient'
+  END IF
   WRITE(fpinv,101,err=999)'Regularization-switch',ltri
   WRITE(fpinv,100,err=999)'Regular grid smooth',(ltri==0)
   WRITE(fpinv,100,err=999)'Triangular regu',(ltri==1)

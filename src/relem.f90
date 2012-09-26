@@ -123,7 +123,8 @@ SUBROUTINE relem(kanal,datei)
      DO j=1,nelanz(i)
         READ(kanal,*,END=1001,err=1000)(nrel(idum+j,k),k=1,selanz(i))
 
-        IF (typ(i) < 10) THEN ! set midpoints
+        IF (typ(i) < 10) THEN ! set midpoints of the parameters
+!!!$ in correct numbering of j = 1, .... m
 
            ifln = ifln + 1
 

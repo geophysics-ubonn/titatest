@@ -549,7 +549,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   lvario = BTEST (mswitch,9) ! +512 calculate variogram
 
-  lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnachbar..
+  lverb = BTEST (mswitch,10) ! +1024 Verbose output CG, daten, bnchbar..
 
   lverb_dat = BTEST (mswitch,11) ! +2048 writing out full resolution, covariance and cm0
 
@@ -590,13 +590,17 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   IF (ltri/=0) THEN
      manz = elanz           ! wichtig an dieser stelle..
-     CALL bnachbar          ! blegt nachbar
-     CALL besp_elem
      lvario = lvario.OR.lsto
   ELSE
 !!!$     Modelleinteilung gemaess Elementeinteilung belegen
      manz = nx*nz           ! nur für strukturierte gitter
   END IF
+
+
+  CALL bnachbar          ! blegt nachbar
+  CALL besp_elem
+
+
   IF (lstart .OR. ldiff .OR. lprior) THEN
      ALLOCATE (m0(manz),stat=errnr)
      IF (errnr /= 0) THEN

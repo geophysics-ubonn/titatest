@@ -17,7 +17,7 @@ MODULE cg_mod
   USE elemmod, ONLY : smaxs
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
-  USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref
+  USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref, lam_ref_sw
   USE modelmod , ONLY : manz,w_ref_re,w_ref_im
   USE datmod , ONLY : nanz
   USE cjgmod
@@ -378,6 +378,9 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
+
+       IF (w_ref_re(i) <= EPSILON(rdum)) CYCLE 
+
        rdum = pvecdc(i)*w_ref_re(i)
 
        bvecdc(i) = bvecdc(i) + rdum * lam_ref * cgfac(i)
@@ -706,8 +709,14 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
+
+       IF (w_ref_re(i) <= EPSILON(w_ref_re(i)) .AND. &
+            w_ref_im(i) <= EPSILON(w_ref_im(i))) CYCLE 
+!!$ scaling for real and imaginary part separately       
        cdum = DCMPLX(DBLE(pvec(i))*w_ref_re(i), DIMAG(pvec(i))*w_ref_re(i))
+
        bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
+
 !!!!$! according to damping stuff..
     END DO
 

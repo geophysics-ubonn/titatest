@@ -23,6 +23,8 @@ MODULE konvmod
 !!$ >> RM
 !!!$ Reference model regularization lambda (currently its a factor for lam)
   REAL(KIND(0D0)), PUBLIC ::     lam_ref
+!!!$ switch if we want the absolute or just the gradient regularized
+  INTEGER, PUBLIC         ::     lam_ref_sw
 !!! << RM
 
 !!!$Fester Regularisierungsparameter

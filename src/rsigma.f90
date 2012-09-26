@@ -30,6 +30,8 @@ SUBROUTINE rsigma(kanal,datei)
   CHARACTER (80)   ::    datei
 
 !!!$.....................................................................
+!!!$ FUNCTION
+  INTEGER :: set_ind_ref_grad
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
@@ -43,7 +45,8 @@ SUBROUTINE rsigma(kanal,datei)
   pi = dacos(-1d0)
 
   lw_ref = .FALSE.
-  lam_ref = 1d0 
+  lam_ref = -1d0 
+  lam_ref_sw = 0
 
 !!!$     'datei' oeffnen
   fetxt = datei
@@ -79,13 +82,23 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$ also check if we may use individual errors or not
 !!! Failsafe read in one line
 
-  READ(kanal,*,END=11,err=11) idum,lw_ref,lam_ref
-  PRINT*,'Successful reference options'
-  GOTO 12
-11 lam_ref = 1d0 
-  BACKSPACE (kanal)
+  READ(kanal,*,END=11,err=11) idum,lw_ref,lam_ref,lam_ref_sw
+  WRITE (*,'(a)',ADVANCE='no')'Successful I/O of all reference regu options'
+  IF (lam_ref_sw == 1) WRITE(*,'(a)')&
+       '  -> vertical gradient'
+  IF (lam_ref_sw == 2) WRITE(*,'(a)')&
+       '  -> horizontal gradient'
 
+  GOTO 12
+11 IF (lam_ref < 0d0) lam_ref = 1d0 
+  BACKSPACE (kanal)
+  
 12 IF (lw_ref) THEN
+     
+
+     ALLOCATE (ind_ref_grad(manz)) ! which is in fact manz for now
+     
+     ind_ref_grad = 0
 
      PRINT*,'---> Reference model regularization '
      IF (lam_ref <= EPSILON(REAL(lam_ref))) THEN
@@ -181,8 +194,13 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$ for \phi(z) = Im(z) / Re(z), z\inC
 
         m_ref(mnr(i)) = -DCMPLX(DLOG(bet_ref),pha_ref)
-        IF (w_ref_im(mnr(i)) > EPSILON(eps_p)) &
-             w_ref_im(mnr(i)) = 1d0/w_ref_im(mnr(i))
+        IF (w_ref_im(mnr(i)) > EPSILON(eps_p)) THEN
+           w_ref_im(mnr(i)) = 1d0/w_ref_im(mnr(i))
+        ELSE ! force zero
+           w_ref_im(mnr(i)) = 0D0
+        END IF
+
+        ind_ref_grad(i) = set_ind_ref_grad(i)
 
      ELSE
         m_ref(mnr(i)) = DCMPLX(0d0)
@@ -194,6 +212,15 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$     'datei' schliessen
   CLOSE(kanal)
+
+  OPEN (kanal,FILE='tmp.ind_ref',STATUS='replace')
+  DO i = 1,elanz
+     IF (ind_ref_grad(i) /= 0) WRITE (kanal,*) &
+          i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i)),&
+          REAL(espx(ind_ref_grad(i))),REAL(espy(ind_ref_grad(i)))
+  END DO
+  CLOSE (kanal)
+!  IF (lw_ref .AND. (lam_ref_sw > 0)) CALL set_ind_ref_grad2
 
   IF (lnsepri) THEN
      CLOSE (ifp1)
@@ -222,3 +249,118 @@ SUBROUTINE rsigma(kanal,datei)
   RETURN
 
 END SUBROUTINE rsigma
+
+INTEGER FUNCTION set_ind_ref_grad(i)
+
+  USE alloci,ONLY:nachbar
+  USE elemmod
+  USE konvmod, ONLY: lam_ref_sw
+
+  IMPLICIT NONE
+
+  INTEGER :: k,nik
+  INTEGER,INTENT(IN) :: i
+  REAL(KIND(0d0)) :: ax,ay
+
+  set_ind_ref_grad = 0
+
+  DO k = 1, nachbar(i,smaxs + 1) ! check all neighboring elements
+     
+     nik = nachbar(i,k)
+     
+     IF (nik == 0) CYCLE ! if it is not a neighbor.. skip it
+!!! else check the element number
+     ax = ABS(espx(i) - espx(nik)) !!!$ center point differences
+!!!$ for vertical gradient, this needs to be smaller than the grid distance
+     ay = ABS(espy(i) - espy(nik)) !!!$ center point differences
+     
+     
+     IF ( ((lam_ref_sw == 1) .AND. &
+          (ax >= grid_minx .OR. espy(nik) > espy(i))) .OR. &
+          ((lam_ref_sw == 2) .AND. &
+          (ay >= grid_miny .OR. espx(nik) < espx(i))) ) CYCLE
+     
+     set_ind_ref_grad = nik
+     
+  END DO
+
+END FUNCTION  set_ind_ref_grad
+
+SUBROUTINE set_ind_ref_grad2
+  USE alloci,ONLY:nachbar
+  USE sigmamod
+  USE modelmod
+  USE elemmod
+  USE errmod
+  USE elemmod
+  USE konvmod, ONLY: lam_ref_sw
+
+  IMPLICIT NONE
+
+  INTEGER :: i,k,nik
+  INTEGER :: ifp
+  REAL(KIND(0d0)) :: ax,ay
+
+
+  PRINT*,'setting ind_ref_grad'
+  CALL get_unit(ifp)
+  OPEN (ifp,FILE='tmp.ind_ref',STATUS='replace')
+
+  DO i = 1,elanz
+
+     DO k = 1, nachbar(i,smaxs + 1) ! check all neighboring elements
+
+        nik = nachbar(i,k)
+
+        IF (nik == 0) CYCLE ! if it is not a neighbor.. skip it
+!!! else check the element number
+        ax = ABS(espx(i) - espx(nik)) !!!$ center point differences
+!!!$ for vertical gradient, this needs to be smaller than the grid distance
+        ay = ABS(espy(i) - espy(nik)) !!!$ center point differences
+        
+
+!!$        IF (lam_ref_sw == 1 ) THEN ! vertical gradient
+!!$           IF (ax < grid_minx) THEN ! if the points are at the same profile coordinate
+!!$!!! There are just two or less more pints: 
+!!$!!!$ one above and one below
+!!$              PRINT*,i,nachbar(i,k)
+!!$              IF (espy(nachbar(i,k)) < espy(i)) THEN ! is the point is _below_ the other..
+!!$!!!$ save its number
+!!$                 ind_ref_grad(i) = nachbar(i,k)
+!!$              END IF
+!!$           END IF
+!!$        ELSE
+!!$           IF (ay < grid_miny) THEN ! if the points are at the same profile coordinate
+!!$              IF (espx(nachbar(i,k)) > espx(i)) THEN ! i the point is _below_ the other..
+!!$                 ind_ref_grad(i) = nachbar(i,k)
+!!$              END IF
+!!$           END IF
+!!$
+!!$        END IF
+
+
+!!!$ shorter XOR variant
+
+        IF ( ((lam_ref_sw == 1) .AND. &
+             (ax >= grid_minx .OR. espy(nik) > espy(i))) .OR. &
+             ((lam_ref_sw == 2) .AND. &
+             (ay >= grid_miny .OR. espx(nik) < espx(i))) ) CYCLE
+
+        ind_ref_grad(i) = nik
+        
+     END DO
+
+     IF (ind_ref_grad(i) /= 0) THEN
+        WRITE (ifp,*) i,ind_ref_grad(i),REAL(espx(i)),&
+             REAL(espy(i)),REAL(espx(ind_ref_grad(i))),REAL(espy(ind_ref_grad(i)))
+     ELSE
+        WRITE (ifp,*) nachbar(i,smaxs + 1),i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i))
+     END IF
+
+
+  END DO
+
+  CLOSE (ifp)
+
+
+END SUBROUTINE set_ind_ref_grad2

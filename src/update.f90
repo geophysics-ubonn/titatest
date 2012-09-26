@@ -31,7 +31,7 @@ SUBROUTINE update()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  COMPLEX (KIND(0D0)) ::   cdum
+  COMPLEX (KIND(0D0)) ::   cdum,cdum2
   REAL (KIND(0D0))    ::   dum,dum2
 
 !!!$     Indexvariablen
@@ -127,10 +127,31 @@ SUBROUTINE update()
            IF ((w_ref_re(i) > EPSILON(w_ref_re(i)) ).OR.&
                 (w_ref_im(i) > EPSILON(w_ref_im(i))) ) THEN
               cdum = (par(i) - m_ref(i))
+!!!$ ind ref grad
+              IF (lam_ref_sw > 0) THEN
+                 IF(ind_ref_grad(i) /= 0) THEN
+                    
+                    in = ind_ref_grad(i)
+                    cdum2 = (par(in) - m_ref(in))
+!!$
+!!$                    cdum = ABS(CDEXP(par(i)) - CDEXP(par(in)))
+!!$
+!!$                    cdum2 = ABS(CDEXP(m_ref(i)) - CDEXP(m_ref(in)))
+
+                    cdum =  (cdum - cdum2)
+
+                 ELSE
+
+                    cdum = 0d0 ! if the gradient is not there, we do not have a contribution on this side
+
+                 END IF
+              END IF
+
 !!!$ (a*va , b*vb)
               cdum = DCMPLX(DBLE(cdum)*w_ref_re(i),DIMAG(cdum)*w_ref_im(i))
 
               bvec(i) = bvec(i) + lam_ref * cdum
+
            END IF
         END DO
      END IF

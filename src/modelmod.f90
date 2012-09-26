@@ -15,6 +15,7 @@ MODULE modelmod
 !!!$ variance of magnitude (re) and phase (im) of the reference model
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: w_ref_re
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: w_ref_im
+  INTEGER,PUBLIC,DIMENSION(:),ALLOCATABLE :: ind_ref_grad
 !!!$ << RM ref model regu
   
 END MODULE modelmod
