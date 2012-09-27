@@ -145,6 +145,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
           '  -> vertical gradient'
      IF (lam_ref_sw == 2) WRITE(fpinv,'(a)',err=999)&
           '  -> horizontal gradient'
+     WRITE(fpinv,101,err=999)'  global regularization strength',lam_ref
   END IF
   WRITE(fpinv,101,err=999)'Regularization-switch',ltri
   WRITE(fpinv,100,err=999)'Regular grid smooth',(ltri==0)
