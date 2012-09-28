@@ -84,11 +84,12 @@ SUBROUTINE rsigma(kanal,datei)
 
   READ(kanal,*,END=11,err=11) idum,lw_ref,lam_ref,lam_ref_sw
   WRITE (*,'(a)',ADVANCE='no')'Successful I/O of all reference regu options'
-  IF (lam_ref_sw == 1) WRITE(*,'(a)')&
-       '  -> vertical gradient'
-  IF (lam_ref_sw == 2) WRITE(*,'(a)')&
-       '  -> horizontal gradient'
-
+  IF (lw_ref) THEN
+     IF (lam_ref_sw == 1) WRITE(*,'(a)')&
+          '  -> vertical gradient'
+     IF (lam_ref_sw == 2) WRITE(*,'(a)')&
+          '  -> horizontal gradient'
+  END IF
   GOTO 12
 11 IF (lam_ref < 0d0) lam_ref = 1d0 
   BACKSPACE (kanal)
@@ -213,13 +214,15 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$     'datei' schliessen
   CLOSE(kanal)
 
-  OPEN (kanal,FILE='tmp.ind_ref',STATUS='replace')
-  DO i = 1,elanz
-     IF (ind_ref_grad(i) /= 0) WRITE (kanal,*) &
-          i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i)),&
-          REAL(espx(ind_ref_grad(i))),REAL(espy(ind_ref_grad(i)))
-  END DO
-  CLOSE (kanal)
+  IF (lw_ref .AND. lam_ref_sw > 0) THEN
+     OPEN (kanal,FILE='tmp.ind_ref',STATUS='replace')
+     DO i = 1,elanz
+        IF (ind_ref_grad(i) /= 0) WRITE (kanal,*) &
+             i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i)),&
+             REAL(espx(ind_ref_grad(i))),REAL(espy(ind_ref_grad(i)))
+     END DO
+     CLOSE (kanal)
+  END IF
 !  IF (lw_ref .AND. (lam_ref_sw > 0)) CALL set_ind_ref_grad2
 
   IF (lnsepri) THEN
