@@ -60,7 +60,7 @@ MODULE variomodel
 CONTAINS
 
   SUBROUTINE set_vario (type,ax,ay,esp_mit,esp_med) 
-! is called at the beginning
+    ! is called at the beginning
     INTEGER,INTENT(IN)          :: type ! type of variogram model
     REAL(KIND(0D0)),INTENT(IN)  :: ax,ay ! ax/ay anisotropy coefficients
     REAL(KIND(0D0)),INTENT(IN)  :: esp_mit,esp_med ! aus (besp_elem.for)
@@ -128,7 +128,7 @@ CONTAINS
        Iy_c = Iy_c / 3D0
        WRITE (cszc,'(a)')'va*EXP(-3h/a)'
     END SELECT
-    
+
   END SUBROUTINE set_vario
 
   SUBROUTINE get_vario (ax,ay,csz,type)
@@ -136,7 +136,7 @@ CONTAINS
 !!$! which info type=0 -> variogram type = 1->covariance
     REAL (KIND(0D0)),INTENT (OUT) :: ax,ay
     CHARACTER (*)                   :: csz
-! gives back the correlation length used for the variogram
+    ! gives back the correlation length used for the variogram
     ax = axs
     ay = ays
 
@@ -173,7 +173,7 @@ CONTAINS
     CASE DEFAULT
        mvario = varianz*(1d0 - DEXP(-r)) !from GSlib
     END SELECT
-    
+
   END FUNCTION mvario
 
   REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
@@ -181,17 +181,17 @@ CONTAINS
     REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
     REAL (KIND (0D0))             :: r,r2 ! distances
     mcova = 0d0
-    
+
     r = DSQRT((lagx / Ix_c)**2d0 + (lagy / Iy_c)**2d0)
-    
+
     r2 = r*r 
 
-    IF (c2 == 1) r2 = r**1.99999 ! this is odd.. if we put it to 2., C_m is no longer
+    IF (c2 == 1) r2 = r**1.9999 ! this is odd.. if we put it to 2., C_m is no longer
 !!$ pos definite.. but with 1.99999, which is in fact nearly 2. it is ok
 !!$ happens not all the time but sometimes..
 !!$ the digit can vary up to 7 digits behind the dot. With 8 digits it becomes
 !!$ somehow unstable..
-!!$ I took 5 digits to be sure.
+!!$ I took 5 digits to be sure.machine
 !!$ To me this sounds like a DOUBLE_PRECISION / SINGLE_PRECISION Problem..
 
     SELECT CASE (c2)
@@ -213,5 +213,5 @@ CONTAINS
     END SELECT
 
   END FUNCTION mcova
-  
+
 END MODULE variomodel

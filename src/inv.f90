@@ -114,7 +114,7 @@ PROGRAM inv
      i = OMP_GET_MAX_THREADS()
      WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
 !!!$
-     
+
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !!!$   zur Berechnung der gemischten Randbedingung bestimmen
      CALL precal()
@@ -292,12 +292,12 @@ PROGRAM inv
            fetxt = 'allocation problem adc'
            IF (errnr /= 0) GOTO 999
 
-!$OMP PARALLEL DEFAULT (none) &
-!$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
-!$OMP PRIVATE (j,l) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,&
-!$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)           
-!$OMP DO 
+           !$OMP PARALLEL DEFAULT (none) &
+           !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
+           !$OMP PRIVATE (j,l) &
+           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,&
+           !$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)           
+           !$OMP DO 
 !!!$   DC CASE
 
            DO k=1,kwnanz
@@ -314,7 +314,7 @@ PROGRAM inv
 !!!$   COMPilation of the linear system
                     fetxt = 'kompadc'
                     CALL kompadc(l,k,adc,bdc)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
 
 !!!$   Evtl take Dirichlet boundary values into account
                     IF (lrandb) CALL randdc(adc,bdc)
@@ -323,11 +323,11 @@ PROGRAM inv
 !!!$   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
                     CALL scaldc(adc,bdc,fak)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
 !!!$   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     CALL choldc(adc)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
                  ELSE
                     fetxt = 'kompbdc'
 !!!$   Modification of the current vector (Right Hand Side)
@@ -350,8 +350,8 @@ PROGRAM inv
               END DO
 
            END DO
-!$OMP END DO
-!$OMP END PARALLEL
+           !$OMP END DO
+           !$OMP END PARALLEL
 
         ELSE
 
@@ -364,10 +364,10 @@ PROGRAM inv
            fetxt = 'allocation problem b'
            ALLOCATE (b(sanz),STAT=errnr)
            IF (errnr /= 0) GOTO 999
-!$OMP PARALLEL DEFAULT (none) &
-!$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
-!$OMP PRIVATE (j,l,k) &
-!$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
+           !$OMP PARALLEL DEFAULT (none) &
+           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
+           !$OMP PRIVATE (j,l,k) &
+           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
            !$OMP DO
 !!!$   COMPLEX CASE
            DO k=1,kwnanz
@@ -385,7 +385,7 @@ PROGRAM inv
 !!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
                     fetxt = 'kompab'
                     CALL kompab(l,k,a,b)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
 
 !!!$   Ggf. Randbedingung beruecksichtigen
                     IF (lrandb) CALL randb(a,b)
@@ -394,12 +394,12 @@ PROGRAM inv
 !!!$   Gleichungssystem skalieren
                     fetxt = 'scalab'
                     CALL scalab(a,b,fak)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
 
 !!!$   Cholesky-Zerlegung der Matrix
                     fetxt = 'chol'
                     CALL chol(a)
-!                    if (errnr.ne.0) goto 999
+                    !                    if (errnr.ne.0) goto 999
                  ELSE
 
 !!!$   Stromvektor modifizieren
@@ -421,8 +421,8 @@ PROGRAM inv
                  END DO
               END DO
            END DO
-!$OMP END DO
-!$OMP END PARALLEL
+           !$OMP END DO
+           !$OMP END PARALLEL
 
         END IF
 
@@ -434,7 +434,14 @@ PROGRAM inv
         END IF
 !!!$   Spannungswerte berechnen
         CALL bvolti()
-        IF (errnr.NE.0) GOTO 999
+        IF (errnr.NE.0) THEN
+!!!$   reset model and data
+           sigma = sigma2
+
+           sigmaa = sgmaa2
+
+           EXIT
+        END IF
 !!$  free some memory..
         IF (ldc) THEN
            DEALLOCATE(adc,hpotdc,bdc)
@@ -456,7 +463,7 @@ PROGRAM inv
 
 !!!$   Daten-RMS berechnen
         CALL dmisft(lsetup.OR.lsetip)
-!        print*,nrmsd,betrms,pharms,lrobust,l1rat
+        !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
         WRITE (*,'(a,t60,a,F8.3)',ADVANCE='no')ACHAR(13),'actual fit',nrmsd
 !!!$   'nrmsd=0' ausschliessen
@@ -813,7 +820,7 @@ PROGRAM inv
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
 !!!$ >>> RM
-!! $THIS has now a general meaning with the 
+        !! $THIS has now a general meaning with the 
 !!!$ mixed boundary, since we like to set sigma0
 !!!$ as reference sigma as "mean" boundary value
 !!!$ <<< RM
@@ -827,7 +834,7 @@ PROGRAM inv
      WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
           'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
      CALL wout(kanal,dsigma,dvolt)
-     IF (errnr.NE.0) GOTO 999
+     IF (errnr.NE.0 .AND..NOT. errnr == 82) GOTO 999
 
 !!!$   Kontrollausgaben
 
@@ -886,7 +893,7 @@ PROGRAM inv
      END IF
 
      IF (lvario) THEN
-!        IF (lsens) CALL bvariogram_s ! calculate experimental variogram
+        !        IF (lsens) CALL bvariogram_s ! calculate experimental variogram
         CALL bvariogram
      END IF
 

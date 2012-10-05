@@ -162,25 +162,26 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 
   IF (ltri>4.AND.ltri<15)&
        WRITE(fpinv,101,err=999)'  Stabilizer beta',betamgs
-  WRITE(fpinv,100,err=999)'Stochastic regu',(ltri==15)
+
+!  WRITE(fpinv,100,err=999)'Stochastic regu',(ltri==15)
+
+  IF (ltri == 15) THEN
+     CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
+     WRITE (fpinv,'(a)',err=999)'Covariance regu ('//TRIM(fetxt)//')'
+     WRITE (*,'(a)')ACHAR(9)//'Covariance ('//TRIM(fetxt)//')'
+  END IF
   
   IF (lvario) THEN
-     WRITE (fpinv,'(a)',err=999)'Experimental Variogram::'
+     WRITE (fpinv,'(a)',err=999)'Caculate experimental Variogram::'
      WRITE (fpinv,'(a,I4)',err=999)ACHAR(9)//'nx-switch  : ',nx
      CALL get_vario (Ix,Iy,fetxt,0) ! get korrelation lengths
      WRITE (fpinv,'(2(a,F5.2))',ERR=999)ACHAR(9)// &
           'Correlation lengths Ix/Iy',Ix,'/',Iy
-     WRITE (*,'(2(a,F5.2))')ACHAR(9)// &
-          'Correlation lengths Ix/Iy',Ix,'/',Iy
+     WRITE (*,'(2(a,F5.2),a)')ACHAR(9)// &
+          'Correlation lengths (I{x,y}) (',Ix,'/',Iy,') [m]'
      WRITE (fpinv,'(a)',err=999)ACHAR(9)// &
-          'Variogram('//TRIM(fetxt)//')'
-     WRITE (*,'(a)')ACHAR(9)//'Variogram('//TRIM(fetxt)//')' 
-     IF (ltri == 15) THEN
-        CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
-        WRITE (fpinv,'(a)',err=999)ACHAR(9)// &
-             'Covariance('//TRIM(fetxt)//')'
-        WRITE (*,'(a)')ACHAR(9)//'Covariance('//TRIM(fetxt)//')'
-     END IF
+          'Variogram ('//TRIM(fetxt)//')'
+     WRITE (*,'(a)')ACHAR(9)//'Variogram ('//TRIM(fetxt)//')' 
   END IF
 
   WRITE(fpinv,100,err=999)'Fixed lambda?',llamf

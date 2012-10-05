@@ -85,7 +85,7 @@ SUBROUTINE bvariogram
 !!$! gets the current variogram function parameters
   CALL get_vario(Ix,Iy,fetxt,0) 
 !!$  ! now prepare title string of gnuplot plot
-  WRITE (mti,'(2(a,F3.1))')'Correlation lengths ax=',Ix,', ay=',Iy
+  WRITE (mti,'(2(a,F4.2))')'Correlation lengths ax=',Ix,', ay=',Iy
 !!$     for postscript 
   tg = '{/Symbol g}'
   WRITE (tgam,'(a)')tg//'(h)='//TRIM(fetxt) 
@@ -241,11 +241,11 @@ SUBROUTINE bvariogram
      WRITE (ifp,'(a)')'set tit "'//TRIM(mti)//'\n'//&
           TRIM(tgam)//'"'
   END IF
-  WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag h/[m]'"
+  WRITE (ifp,'(a)')"set xlab offset 0,0.5 'Lag [m]'"
   WRITE (ifp,'(a,2(F10.2,a))')'set xrange [',grid_min,':',&
        grid_max/2.,']'
   WRITE (ifp,'(a)')"set ylab offset 2,0 'sv(h)=1/2N(h)"//&
-       " {/Symbol S}_i(Z(m_i)-Z(m_i+h))^2, {/Symbol g}(h) /[SI]'"
+       " {/Symbol S}_i(Z(m_i)-Z(m_i+h))^2, {/Symbol g}(h) [1]'"
   WRITE (ifp,'(a,F10.3,a)')"plot"//&
        "'inv.variogram' u 1:2 w p lc 1 pt 7 ti 'sv(h)',"//&
        "'inv.variogram' u 1:3 w l lc 1 lw 4 ti '"//TRIM(tmgam)//&

@@ -121,10 +121,10 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   betamgs = 1d0
 
   IF (INDEX ( version(5), 'Msys') /= 0) THEN
-	  print*,'MS-OS'
+     print*,'MS-OS'
      slash = '\'
   ELSE
-	  print*,'Linux-OS'
+     print*,'Linux-OS'
      slash = '/'
   END IF
 
@@ -249,7 +249,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      END IF
   END IF
   IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
-     PRINT*,'Prior model regularization (smooth)!'
+     PRINT*,'Prior model regularization !'
      lprior = .TRUE.        ! reference model regu only if there is no
      ldiff = .FALSE.        ! time difference inversion
   END IF
@@ -469,7 +469,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   WRITE (kanal,*)lamnull_cri
   WRITE (kanal,*)lamnull_fpi
   CLOSE (kanal)
-  
+
 !!$<< RM
 
 
@@ -666,7 +666,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
      wmatd = wmatdr
   ELSE
-     
+
      IF (lelerr) THEN
         WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
         wmatd = wmatd_cri

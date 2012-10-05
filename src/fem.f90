@@ -312,7 +312,7 @@ program fem
 !!!$   analytische Loesung addieren
         do j=1,sanz
            IF (lana) THEN
-              print*,'analytical only!!'
+
               kpot(j,l,k) = pota(j)
            ELSE
               kpot(j,l,k) = pot(j) * dcmplx(fak(j))
