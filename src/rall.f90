@@ -260,7 +260,8 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
   !      lnse2 = .NOT.lprior       ! kein prior?
   !     Daten Rauschen unabhängig vom Fehlermodell?
-  lnsepri = lprior          ! if we have seed and std we assume to add noise to prior
+  lnsepri = lstart          ! if we have seed and std we assume to add noise to prior
+  PRINT*,'Prior model noise !'
 99 fetxt = 'rall -> Gitter nx'
   CALL read_comments(fpcfg)
   READ (fpcfg,*,END=1001,err=999) nx

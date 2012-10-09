@@ -78,7 +78,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   write(fpinv,'(a)',err=999) TRIM(dfm0)
 !!!$     diff+>
   IF (lnsepri) THEN
-     READ (fpinv,*,err=999) iseedpri,modl_stdn
+     WRITE (fpinv,*,err=999) iseedpri,modl_stdn
   ELSE
      write(fpinv,'(a)',err=999) '***PARAMETERS***'
   END IF

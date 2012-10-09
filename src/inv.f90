@@ -207,6 +207,7 @@ PROGRAM inv
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
+!     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
      IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
      lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
