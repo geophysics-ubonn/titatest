@@ -137,7 +137,7 @@ subroutine elem8(kelmas,kelve,kwert,smaxs)
 !!!$     Ggf. Fehlermeldung
      if (det.le.1d-12) then
         fetxt = ' '
-!!!$     ak                write(fetxt(1:20),'(g20.5)') det
+        write(fetxt(1:20),'(g20.5)') det
         errnr = 26
         goto 1000
      end if

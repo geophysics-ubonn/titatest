@@ -47,7 +47,7 @@ PROGRAM inv
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
 
-  INTEGER :: getpid,pid
+  INTEGER :: getpid,pid,myerr
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$   SETUP UND INPUT
@@ -150,56 +150,56 @@ PROGRAM inv
      errnr = 94
 !!!$ physical model
      fetxt = 'allocation problem sigma'
-     ALLOCATE (sigma(elanz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (sigma(elanz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
      fetxt = 'allocation problem sigma2'
-     ALLOCATE (sigma2(elanz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (sigma2(elanz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
 !!!$  model parameters
      fetxt = 'allocation problem par'
-     ALLOCATE (par(manz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (par(manz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
      fetxt = 'allocation problem dpar'
-     ALLOCATE (dpar(manz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (dpar(manz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
      fetxt = 'allocation problem dpar2'
-     ALLOCATE (dpar2(manz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (dpar2(manz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
      fetxt = 'allocation problem pot'
-     ALLOCATE(pot(sanz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE(pot(sanz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
      fetxt = 'allocation problem pota'
-     ALLOCATE (pota(sanz),STAT=errnr)
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (pota(sanz),STAT=myerr)
+     IF (myerr /= 0) GOTO 999
 !!!$ now the big array are coming.. 
      fetxt = 'allocation problem fak'
-     ALLOCATE (fak(sanz),STAT=errnr) ! fak for modeling
-     IF (errnr /= 0) GOTO 999
+     ALLOCATE (fak(sanz),STAT=myerr) ! fak for modeling
+     IF (myerr /= 0) GOTO 999
      IF (ldc) THEN
         fetxt = 'allocation problem sensdc'
-        ALLOCATE (sensdc(nanz,manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
+        ALLOCATE (sensdc(nanz,manz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
         fetxt = 'allocation problem kpotdc'
-        ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=errnr)
+        ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=myerr)
      ELSE
         fetxt = 'allocation problem sens'
-        ALLOCATE (sens(nanz,manz),STAT=errnr)
-        IF (errnr /= 0) GOTO 999
+        ALLOCATE (sens(nanz,manz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
         fetxt = 'allocation problem kpot'
-        ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=errnr)
+        ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=myerr)
      END IF
-     IF (errnr /= 0) GOTO 999
+     IF (myerr /= 0) GOTO 999
 
 !!!$ get CG data storage of residuums and bvec, which is global
-     CALL con_cjgmod (1,fetxt,errnr)
-     IF (errnr /= 0) GOTO 999
+     CALL con_cjgmod (1,fetxt,myerr)
+     IF (myerr /= 0) GOTO 999
 
 !!!$ >> RM ref model regu
 !!!$ assign memory to global variables
      fetxt = 'allocation problem reference model'
-     ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=errnr)
+     ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=myerr)
      w_ref_re = 0d0;m_ref = DCMPLX(0d0);w_ref_im = 0d0
-     IF (errnr /= 0) GOTO 999
+     IF (myerr /= 0) GOTO 999
 !!!$ << RM ref model regu
 
 
@@ -207,7 +207,7 @@ PROGRAM inv
 !!!$   Startparameter setzen
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
-!     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
+     !     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
      IF (llamf) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
      lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
@@ -284,14 +284,14 @@ PROGRAM inv
         count = 0
         IF (ldc) THEN
            fetxt = 'allocation problem adc'
-           ALLOCATE (adc((mb+1)*sanz),STAT=errnr)
-           IF (errnr /= 0) GOTO 999
+           ALLOCATE (adc((mb+1)*sanz),STAT=myerr)
+           IF (myerr /= 0) GOTO 999
            fetxt = 'allocation problem hpotdc'
-           ALLOCATE (hpotdc(sanz,eanz),STAT=errnr)
-           IF (errnr /= 0) GOTO 999
-           ALLOCATE (bdc(sanz),STAT=errnr)
+           ALLOCATE (hpotdc(sanz,eanz),STAT=myerr)
+           IF (myerr /= 0) GOTO 999
+           ALLOCATE (bdc(sanz),STAT=myerr)
            fetxt = 'allocation problem adc'
-           IF (errnr /= 0) GOTO 999
+           IF (myerr /= 0) GOTO 999
 
            !$OMP PARALLEL DEFAULT (none) &
            !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
@@ -357,14 +357,14 @@ PROGRAM inv
         ELSE
 
            fetxt = 'allocation problem a'
-           ALLOCATE (a((mb+1)*sanz),STAT=errnr)
-           IF (errnr /= 0) GOTO 999
+           ALLOCATE (a((mb+1)*sanz),STAT=myerr)
+           IF (myerr /= 0) GOTO 999
            fetxt = 'allocation problem hpot'
-           ALLOCATE (hpot(sanz,eanz),STAT=errnr) 
-           IF (errnr /= 0) GOTO 999
+           ALLOCATE (hpot(sanz,eanz),STAT=myerr) 
+           IF (myerr /= 0) GOTO 999
            fetxt = 'allocation problem b'
-           ALLOCATE (b(sanz),STAT=errnr)
-           IF (errnr /= 0) GOTO 999
+           ALLOCATE (b(sanz),STAT=myerr)
+           IF (myerr /= 0) GOTO 999
            !$OMP PARALLEL DEFAULT (none) &
            !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
            !$OMP PRIVATE (j,l,k) &
@@ -466,7 +466,7 @@ PROGRAM inv
         CALL dmisft(lsetup.OR.lsetip)
         !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
-        WRITE (*,'(a,t60,a,F8.3)',ADVANCE='no')ACHAR(13),'actual fit',nrmsd
+        WRITE (*,'(a,t60,a,G8.3)',ADVANCE='no')ACHAR(13),'actual fit ',nrmsd
 !!!$   'nrmsd=0' ausschliessen
         IF (nrmsd.LT.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
@@ -488,6 +488,7 @@ PROGRAM inv
 
 !!!$   ABBRUCHBEDINGUNGEN
         IF (llam.AND..NOT.lstep) THEN
+
 !!!$   Polaritaeten checken
            CALL chkpol(lsetup.OR.lsetip)
 
@@ -510,6 +511,14 @@ PROGRAM inv
               errnr2 = 80
               WRITE (fetxt,*)'Optimal RMS ',REAL(nrmsd),' reached'
            END IF
+
+        IF (llam) THEN
+           WRITE (6,'(a)',ADVANCE='no')'convergence '
+           IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
+           IF (nrmsd < 1d0 ) errnr2 = 94
+           IF (nrmsd > rmsalt) errnr2 = 95
+           PRINT*,errnr2        
+        END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
            IF (it.GE.itmax) THEN
@@ -564,7 +573,7 @@ PROGRAM inv
                  ldlami = .TRUE.
                  lfstep = .TRUE.
                  step   = 1d0
-                 errnr2 = 0
+                 errnr2 = 0 ! reset convergence case "error"
 
 !!!$   ak
                  fetxt = 'cp -f inv.lastmod inv.lastmod_rho'
@@ -587,7 +596,8 @@ PROGRAM inv
                     END DO
                     lsetup = .TRUE. ! ensure proper misfit and kont2 output
                     CYCLE       ! neues calc
-
+                 ELSE
+                    lsetup = .FALSE.
                  END IF
 !!!$   ak
 
@@ -679,36 +689,43 @@ PROGRAM inv
            EXIT
         END IF
 
-!!!$   REGULARISIERUNG / STEP-LENGTH einstellen
-        IF (.NOT.lstep) THEN
-           IF (llam) THEN
+        IF (llamf) THEN ! for fixed lambda we do not want any parabola fitting?
+           lam = lamfix
+           llam = .FALSE. ! in order to calculate any update this needs to be false
+           IF (lsetup.OR.lsetip) THEN
+              lsetup = .FALSE.
+              lsetip = .FALSE.
+           END IF
 
+!!!$   REGULARISIERUNG / STEP-LENGTH einstellen
+        ELSE 
+           IF (.NOT.lstep) THEN
+
+              IF (llam) THEN
 !!!$   "Regularisierungsschleife" initialisieren und step-length zuruecksetzen
-              llam = .FALSE.
-              step = 1d0
-           ELSE
+                 llam = .FALSE.
+                 step = 1d0
+              ELSE
 
 !!!$   Regularisierungsindex hochzaehlen
-              itr = itr+1
-              IF ((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
-                   (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
-                   (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
-                   (bdpar > bdmin).AND.&
-                   (dabs(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
-                   (rmsreg.EQ.0d0)) THEN
-                 IF (rmsreg > 0d0) THEN
-                    WRITE (fprun,'(/a,G12.4,a)')'Rms increase:',&
-                         100.0*(1d0-rmsalt/nrmsd),' %'
-                    WRITE (fprun,'(a,G12.4,a)')'Stepsize :',bdpar
-                    WRITE (fprun,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
-                 END IF
+                 itr = itr+1
+                 IF ((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
+                      (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
+                      (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
+                      (bdpar > bdmin).AND.&
+                      (dabs(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
+                      (rmsreg.EQ.0d0)) THEN
+
+                    IF (rmsreg > 0d0) THEN
+                       WRITE (fprun,'(/a,G12.4,a)')'Rms increase:',&
+                            100.0*(1d0-rmsalt/nrmsd),' %'
+                       WRITE (fprun,'(a,G12.4,a)')'Stepsize :',bdpar
+                       WRITE (fprun,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
+                    END IF
 !!!$   Regularisierungsparameter bestimmen
-                 IF (lsetup.OR.lsetip) THEN
+                    IF (lsetup.OR.lsetip) THEN
 
 !!!$   Kontrollausgabe
-                    IF (llamf) THEN
-                       lam = lamfix
-                    ELSE
                        WRITE(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
                             ACHAR(13)//' Iteration ',it,', ',itr,&
                             ' : Calculating 1st regularization parameter',''
@@ -723,10 +740,6 @@ PROGRAM inv
 !!!$   ak Model EGS2003, ERT2003                        call blam0()
 !!!$   ak Model EGS2003, ERT2003                        lam = lammax
 !!!$   ak                        lam = 1d4
-                    END IF
-                 ELSE
-                    IF (llamf) THEN
-                       lam = lamfix
                     ELSE
                        dlalt = dlam
                        IF (ldlami) THEN
@@ -747,47 +760,46 @@ PROGRAM inv
 !!!$   tst                        if (dlam.gt.1d0) lfstep=.true.
 !!!$   ak Model EGS2003
                        IF (dlam.GT.1d0) lrobust=.FALSE.
+
                     END IF
-                 END IF
-              ELSE
+                 ELSE
 
 !!!$   Regularisierungsparameter zuruecksetzen und step-length verkleinern
-                 llam = .TRUE.
-                 IF (llamf) THEN
-                    lam = lamfix
-                 ELSE
+                    llam = .TRUE.
                     lam  = lam/dlam
+
+                    IF (lfstep) THEN
+                       lfstep = .FALSE.
+                    ELSE
+                       lstep = .TRUE.
+                       step  = 5d-1
+                    END IF
                  END IF
-                 IF (lfstep) THEN
-                    lfstep = .FALSE.
-                 ELSE
-                    lstep = .TRUE.
-                    step  = 5d-1
-                 END IF
-              END IF
 
 !!!$   Ggf. Daten-RMS speichern
-              IF (lsetup.OR.lsetip) THEN
-                 lsetup = .FALSE.
-                 lsetip = .FALSE.
-              ELSE
-                 IF (.NOT.lstep) rmsreg=nrmsd
+                 IF (lsetup.OR.lsetip) THEN
+                    lsetup = .FALSE.
+                    lsetip = .FALSE.
+                 ELSE
+                    IF (.NOT.lstep) rmsreg=nrmsd
+                 END IF
               END IF
-           END IF
-        ELSE
-           lstep = .FALSE.
+           ELSE
+              lstep = .FALSE.
 
 !!!$   Parabolische Interpolation zur Bestimmung der optimalen step-length
-           CALL parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
+              CALL parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
 
-           IF (step.EQ.stpmin.AND.stpalt.EQ.stpmin)THEN
+              IF (step.EQ.stpmin.AND.stpalt.EQ.stpmin)THEN
 
 !!!$   Nach naechstem Modelling abbrechen
-              stpalt = 0d0
-           ELSE
+                 stpalt = 0d0
+              ELSE
 
 !!!$   Step-length speichern
-              stpalt = step
+                 stpalt = step
+              END IF
+
            END IF
 
         END IF
@@ -826,53 +838,96 @@ PROGRAM inv
 !!!$ as reference sigma as "mean" boundary value
 !!!$ <<< RM
         IF (lbeta) CALL refsig()
+
+        IF (llamf) THEN
+           llam = .TRUE.
+        END IF
+
 !!!$   Neues Modelling
      END DO ! DO WHILE (.not. converged)
 
+!!!$ RESET FPI status variable to proceed with full COMPLEX calculus
+     lfpi = .FALSE.
+!!!$
 !!!$.................................................
 
 !!!$   OUTPUT
      WRITE (*,'(a,t25,I4,t35,a,t100,a)')ACHAR(13)//&
           'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
-     CALL wout(kanal,dsigma,dvolt)
-     IF (errnr.NE.0 .AND..NOT. errnr == 82) GOTO 999
+
 
 !!!$   Kontrollausgaben
+!!!$ errnr2 is more a status variable than a pure error number
+!!!$ it shows which case was the reason for termination of the algorithm
+     SELECT CASE (errnr2)
+     CASE (95)
 
-     IF (errnr2.EQ.92) THEN
+        WRITE(*,'(a22,a31)') ' Iteration terminated:',&
+             ' no RMS decrease'
+        WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
+             ' no RMS decrease'
+!!!$ reset model to previous state
+        IF (llamf) THEN
+           WRITE (*,'(a)',ADVANCE='no')'Taking model state of previous iteration... '
+           sigma = sigma2
+           sigmaa = sgmaa2
+           nrmsd = rmsalt
+           PRINT*,'RMS = ',REAL(nrmsd)
+        END IF
+
+     CASE (94)
+
+        WRITE(*,'(a22,a31)') ' Iteration terminated:',&
+             ' RMS < 1'
+        WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
+             ' RMS < 1'
+
+     CASE (93)
+
+        WRITE(*,'(a22,a31)') ' Iteration terminated:',&
+             ' RMS decrease sufficiently'
+        WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
+             ' RMS decreasse sufficiently'
+
+     CASE (92)
 
         WRITE(*,'(a22,a31)') ' Iteration terminated:',&
              ' Min. step-length for 2nd time.'
 
         WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
              ' Min. step-length for 2nd time.'
-     ELSE IF (errnr2.EQ.80) THEN
+     CASE (80)
         WRITE(*,'(a22,a10)') ' Iteration terminated:', &
              ' Min. RMS.'
 
         WRITE(fprun,'(a22,a10)',err=999) ' Iteration terminated:',&
              ' Min. RMS.'
-     ELSE IF (errnr2.EQ.81) THEN
+     CASE (81)
         WRITE(*,'(a22,a24)') ' Iteration terminated:',&
              ' Min. rel. RMS decrease.'
 
         WRITE(fprun,'(a22,a24)',err=999) ' Iteration terminated:',&
              ' Min. rel. RMS decrease.'
-     ELSE IF (errnr2.EQ.79) THEN
+     CASE (79)
         WRITE(*,'(a22,a19)') ' Iteration terminated:',&
              ' Max. # iterations.'
 
         WRITE(fprun,'(a22,a19)',err=999) ' Iteration terminated:',&
              ' Max. # iterations.'
 
-     ELSE IF (errnr2.EQ.109) THEN
+     CASE (109)
         WRITE(*,'(a)') ' Iteration terminated:'//&
              ' Min. model changes reached'
 
         WRITE(fprun,'(a)',err=999) ' Iteration terminated:'//&
              ' Min. model changes reached'
 
-     END IF
+     END SELECT
+
+     CALL wout(kanal,dsigma,dvolt)
+     IF (errnr.NE.0 .AND..NOT. errnr == 82) GOTO 999
+
+!!!$   Kontrollausgaben
 
 !!!$   Run-time abfragen und ausgeben
      fetxt = ' CPU time: '
@@ -900,8 +955,8 @@ PROGRAM inv
 
      IF (lcov1) CALL buncert (kanal,lamalt)
 
-     CALL des_cjgmod(1,fetxt,errnr) ! call cjgmod destructor
-     IF (errnr /= 0) GOTO 999
+     CALL des_cjgmod(1,fetxt,myerr) ! call cjgmod destructor
+     IF (myerr /= 0) GOTO 999
 
 !!!$   'sens' und 'pot' freigeben
      IF (ldc) THEN
@@ -948,7 +1003,8 @@ PROGRAM inv
 
      fetxt = 'allocation strnr,strom,volt,etc'
      IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,&
-          kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak)
+          kfak,wmatdr,wmatdp,vnr,dat,wmatd,wmatd2,sgmaa2,wdfak,&
+          wmatd_cri) !!! these are allocated in rdati!!!
 
      fetxt = 'allocation par,dpar,dpar2'
 
@@ -966,6 +1022,9 @@ PROGRAM inv
      IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
      IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
      IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+
+     IF (ALLOCATED (w_ref_re)) DEALLOCATE (w_ref_re,w_ref_im,m_ref)
+
      CLOSE(fprun)
 
 !!!$   Ggf. weiteren Datensatz invertieren

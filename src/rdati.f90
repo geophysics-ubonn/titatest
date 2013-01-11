@@ -199,16 +199,16 @@ SUBROUTINE rdati(kanal,datei)
         END IF
 
 !!!$     Ggf. Fehlermeldung
-     IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
-          elec2.LT.0.OR.elec2.GT.eanz.OR. &
-          elec3.LT.0.OR.elec3.GT.eanz.OR. &
-          elec4.LT.0.OR.elec4.GT.eanz) THEN
-        WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
-        errnr = 46
-        GOTO 1000
-     END IF
+        IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
+             elec2.LT.0.OR.elec2.GT.eanz.OR. &
+             elec3.LT.0.OR.elec3.GT.eanz.OR. &
+             elec4.LT.0.OR.elec4.GT.eanz) THEN
+           WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
+           errnr = 46
+           GOTO 1000
+        END IF
 !!!$ << RM
-        
+
 
 !!!$     Ggf. Fehlermeldung
         IF (stabw.LE.0d0) THEN
@@ -246,7 +246,9 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!$     Ggf. Fehlermeldung
         IF (bet.LE.0d0) THEN
-           fetxt = ' '
+           WRITE (fetxt,'(A,I6)')'Error reading ',i
+           fetxt = 'Error memory allocation data space'
+
            errnr = 94
            GOTO 1000
         END IF
@@ -261,16 +263,16 @@ SUBROUTINE rdati(kanal,datei)
 
            WRITE(ifp1,'(3(G14.4,1X))',ADVANCE='no')rnd_r(i),eps_r,bet
 
-! initialize
+           ! initialize
            new_pha = pha; new_bet = bet
 
            IF (.NOT. ldc) THEN
 
               eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*dabs(pha) &
                    + nstabp0)
-              
+
 !!$                  eps_p = (nstabpA1*bet**nstabpB + 1d-2*nstabpA2*dabs(pha) + nstabp0)
-              
+
               WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
 
               new_pha = pha + rnd_p(i) * eps_p ! add noise
@@ -278,9 +280,9 @@ SUBROUTINE rdati(kanal,datei)
               WRITE(ifp2,'(G14.4)')new_pha
 
               IF (SIGN(pha,new_pha) /= SIGN(pha,pha)) THEN
-                 
+
                  icount_pha = icount_pha + 1 
-                 
+
               END IF
 
            END IF
@@ -289,11 +291,11 @@ SUBROUTINE rdati(kanal,datei)
 
            WRITE(ifp1,'(G14.4)')new_bet
 
-           
+
            IF (SIGN(bet,new_bet) /= SIGN(bet,bet)) THEN
-              
+
               icount_mag = icount_mag + 1
-              
+
            END IF
 
 !!!$! assign the noised values
