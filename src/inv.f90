@@ -46,6 +46,8 @@ PROGRAM inv
   INTEGER                :: c1,i,count,mythreads,maxthreads
   REAL(KIND(0D0))        :: lamalt
   LOGICAL                :: converged,l_bsmat
+  INTEGER,PARAMETER      :: clrln_len=50
+  CHARACTER(clrln_len)   :: clrln ! clear line
 
   INTEGER :: getpid,pid,myerr
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -61,6 +63,10 @@ PROGRAM inv
   fpinv = 13 
   fpcjg = 14 
   fpeps = 15 
+
+  DO i=1,clrln_len-1
+     clrln(i:i+1) = ' ' ! fill clear line CHARACTER array
+  END DO
 
   pid = getpid()
   fetxt = 'crtomo.pid'
@@ -275,8 +281,9 @@ PROGRAM inv
      DO WHILE (.NOT.converged) ! optimization loop
 
 !!!$   Control output
-        WRITE(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')ACHAR(13)//&
-             ' Iteration ',it,', ',itr,' : Calculating Potentials',''
+        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//clrln
+        WRITE(*,'(a,i3,a,i3,a)',ADVANCE='no')ACHAR(13)//&
+             ' Iteration ',it,', ',itr,' : Calculating Potentials'
         WRITE(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 
@@ -466,7 +473,21 @@ PROGRAM inv
         CALL dmisft(lsetup.OR.lsetip)
         !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
-        WRITE (*,'(a,t60,a,G8.3)',ADVANCE='no')ACHAR(13),'actual fit ',nrmsd
+
+        IF ((llam.AND..NOT.lstep).OR.lsetup) THEN
+           IF (itmax == 0) THEN
+              WRITE (*,'(t20,a,G14.4/)')'++ Calculated Fit',nrmsd
+           ELSE
+              IF (it == 0)  THEN
+                 WRITE (*,'(a,G14.4/)')'++ Starting Fit',nrmsd
+              ELSE
+                 WRITE (*,'(t10,a,G14.4/)',ADVANCE='no')'++ Actual Fit',nrmsd
+              END IF
+           END IF
+        ELSE
+           WRITE (*,'(t10,a,G14.4)',ADVANCE='no')'-- Update Fit',nrmsd
+        END IF
+
 !!!$   'nrmsd=0' ausschliessen
         IF (nrmsd.LT.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
@@ -512,13 +533,13 @@ PROGRAM inv
               WRITE (fetxt,*)'Optimal RMS ',REAL(nrmsd),' reached'
            END IF
 
-        IF (llam) THEN
-           WRITE (6,'(a)',ADVANCE='no')'convergence '
-           IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
-           IF (nrmsd < 1d0 ) errnr2 = 94
-           IF (nrmsd > rmsalt) errnr2 = 95
-           PRINT*,errnr2        
-        END IF
+           IF (llam) THEN
+              WRITE (6,'(a)',ADVANCE='no')'convergence '
+              IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
+              IF (nrmsd < 1d0 ) errnr2 = 94
+              IF (nrmsd > rmsalt) errnr2 = 95
+              PRINT*,errnr2        
+           END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
            IF (it.GE.itmax) THEN
@@ -604,6 +625,8 @@ PROGRAM inv
 !!!$   Daten-RMS berechnen
                  CALL dmisft(lsetip)
                  IF (errnr.NE.0) GOTO 999
+                 WRITE (*,'(a,t45,a,t78,F14.4)') &
+                      ACHAR(13),'++ Phase data fit',nrmsd
 
 !!!$   Kontrollvariablen ausgeben
                  CALL kont2(lsetip)
@@ -651,9 +674,10 @@ PROGRAM inv
            IF (lrobust) wmatd2 = wmatd
 
 !!!$   Kontrollausgaben
-           WRITE (*,'(a,i3,a,i3,a,t63,a,t78,F8.3,t100,a)',ADVANCE='no') &
+           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//clrln
+           WRITE (*,'(a,i3,a,i3,a)',ADVANCE='no') &
                 ACHAR(13)//' Iteration ',it,', ',itr,&
-                ' : Calculating Sensitivities','fit',nrmsd,''
+                ' : Calculating Sensitivities'
 
            WRITE(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
@@ -804,9 +828,10 @@ PROGRAM inv
 
         END IF
 !!!$   Kontrollausgaben
-        WRITE(*,'(a,i3,a,i3,a,t56,a)',ADVANCE='no')&
+        WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//clrln
+        WRITE(*,'(a,i3,a,i3,a)',ADVANCE='no')&
              ACHAR(13)//' Iteration ',it,', ',itr,&
-             ' : Updating',''
+             ' : Updating'
 
         WRITE(fprun,*)' Iteration ',it,', ',itr,&
              ' : Updating'

@@ -404,6 +404,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      nstabp0 = stabp0
 
      fetxt = 'rall -> seed'
+
      CALL read_comments(fpcfg)
      READ (fpcfg,*,END=106,err=106) iseed
      GOTO 107
