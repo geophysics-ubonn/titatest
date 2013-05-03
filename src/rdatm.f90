@@ -53,7 +53,7 @@ subroutine rdatm(kanal,datei)
 
   elec3=elec1-10000 ! are we still positive?
 
-  crtf=(elec3 > 0) ! crtomo konform?
+  crtf=(elec3 .ge. 0) ! crtomo konform?
 
   ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
        kfak(nanz),vnr(nanz),stat=errnr)
@@ -98,13 +98,13 @@ subroutine rdatm(kanal,datei)
 !!!$ plausibility check of possible electrode intersection
 !!!$ devide the strnr and vnr into elec{1,2,3,4}
 !!!$ 
-     IF ((elec1 == elec2).OR.(elec3 == elec4).OR.&
-          (elec1 == elec3).OR.(elec1 == elec4).OR.&
-          (elec2 == elec3).OR.(elec2 == elec4)) THEN
-        WRITE (fetxt,'(a,I7)')' duplicate electrodes for reading ',i
-        errnr = 73
-        GOTO 1000
-     END IF
+!     IF ((elec1 == elec2).OR.(elec3 == elec4).OR.&
+!          (elec1 == elec3).OR.(elec1 == elec4).OR.&
+!          (elec2 == elec3).OR.(elec2 == elec4)) THEN
+!        WRITE (fetxt,'(a,I7)')' duplicate electrodes for reading ',i
+!        errnr = 73
+!        GOTO 1000
+!     END IF
 !!!$ << RM
 
   end do

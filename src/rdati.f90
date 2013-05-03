@@ -190,13 +190,13 @@ SUBROUTINE rdati(kanal,datei)
         elec3 = MOD(vnr(i),10000)
         elec4 = (vnr(i)-elec3)/10000
 
-        IF ((elec1 == elec2).OR.(elec3 == elec4)&
-             .OR.(elec1 == elec3).OR.(elec1 == elec4)&
-             .OR.(elec2 == elec3).OR.(elec2 == elec4)) THEN
-           WRITE (fetxt,*)' duplicate electrodes for reading ',i
-           errnr = 73
-           GOTO 1000
-        END IF
+!        IF ((elec1 == elec2).OR.(elec3 == elec4)&
+!             .OR.(elec1 == elec3).OR.(elec1 == elec4)&
+!             .OR.(elec2 == elec3).OR.(elec2 == elec4)) THEN
+!           WRITE (fetxt,*)' duplicate electrodes for reading ',i
+!           errnr = 73
+!           GOTO 1000
+!        END IF
 
 !!!$     Ggf. Fehlermeldung
         IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
