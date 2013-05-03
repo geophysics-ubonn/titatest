@@ -84,7 +84,7 @@ SUBROUTINE rdati(kanal,datei)
   BACKSPACE(kanal)
 
   elec3=elec1-10000 ! are we still positive?
-  crtf=(elec3 > 0) ! crtomo konform?
+  crtf=(elec3 .ge. 0) ! crtomo konform?
 
   ALLOCATE (strnr(nanz),strom(nanz),volt(nanz),sigmaa(nanz),&
        kfak(nanz),wmatdr(nanz),wmatdp(nanz),vnr(nanz),dat(nanz),&
@@ -190,13 +190,13 @@ SUBROUTINE rdati(kanal,datei)
         elec3 = MOD(vnr(i),10000)
         elec4 = (vnr(i)-elec3)/10000
 
-!        IF ((elec1 == elec2).OR.(elec3 == elec4)&
-!             .OR.(elec1 == elec3).OR.(elec1 == elec4)&
-!             .OR.(elec2 == elec3).OR.(elec2 == elec4)) THEN
-!           WRITE (fetxt,*)' duplicate electrodes for reading ',i
-!           errnr = 73
-!           GOTO 1000
-!        END IF
+     IF ((elec1.eq.elec2).OR.(elec3.eq.elec4).OR.&
+          &((((elec1.eq.elec3).or.(elec1.eq.elec4)).and.(elec1.ne.0)).or.&
+          (((elec2.eq.elec3).or.(elec2.eq.elec4)).and.(elec2.ne.0)))) THEN
+        WRITE (fetxt,'(a,I7)')' duplicate electrodes for reading ',i
+        errnr = 73
+        GOTO 1000
+     END IF
 
 !!!$     Ggf. Fehlermeldung
         IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &

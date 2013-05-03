@@ -98,13 +98,13 @@ subroutine rdatm(kanal,datei)
 !!!$ plausibility check of possible electrode intersection
 !!!$ devide the strnr and vnr into elec{1,2,3,4}
 !!!$ 
-!     IF ((elec1 == elec2).OR.(elec3 == elec4).OR.&
-!          (elec1 == elec3).OR.(elec1 == elec4).OR.&
-!          (elec2 == elec3).OR.(elec2 == elec4)) THEN
-!        WRITE (fetxt,'(a,I7)')' duplicate electrodes for reading ',i
-!        errnr = 73
-!        GOTO 1000
-!     END IF
+     IF ((elec1.eq.elec2).OR.(elec3.eq.elec4).OR.&
+          &((((elec1.eq.elec3).or.(elec1.eq.elec4)).and.(elec1.ne.0)).or.&
+          (((elec2.eq.elec3).or.(elec2.eq.elec4)).and.(elec2.ne.0)))) THEN
+        WRITE (fetxt,'(a,I7)')' duplicate electrodes for reading ',i
+        errnr = 73
+        GOTO 1000
+     END IF
 !!!$ << RM
 
   end do
