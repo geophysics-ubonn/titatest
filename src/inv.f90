@@ -70,13 +70,15 @@ PROGRAM inv
 
   pid = getpid()
   fetxt = 'crtomo.pid'
-  PRINT*,'CRTomo Process_ID ::',pid
+  PRINT*,'######### CRTomo ############'
+  PRINT*,'Process_ID ::',pid
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (fprun,*)pid
   CLOSE (fprun)
   maxthreads = OMP_GET_MAX_THREADS()
-  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
+  WRITE(6,"(a, i5)") " OpenMP max threads: ", maxthreads
 
+  PRINT*,'Version control of binary:'
   CALL get_git_ver
 
   fetxt = 'crtomo.cfg'
@@ -214,7 +216,7 @@ PROGRAM inv
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
      !     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
-     IF (llamf) lamalt = lamfix
+     IF (BTEST(llamf,0)) lamalt = lamfix
      betrms = 0d0; pharms = 0d0
      lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
      llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
@@ -469,7 +471,7 @@ PROGRAM inv
            CALL chkpol(lsetup.OR.lsetip)
         END IF
 
-!!!$   Daten-RMS berechnen
+!!!$   Daten-CHI berechnen
         CALL dmisft(lsetup.OR.lsetip)
         !        print*,nrmsd,betrms,pharms,lrobust,l1rat
         IF (errnr.NE.0) GOTO 999
@@ -520,13 +522,13 @@ PROGRAM inv
            END IF
            WRITE (*,'(/a,G12.4,a/)')'+++ Convergence check (CHI (old/new)) ',&
                 100.0*(1d0-rmsalt/nrmsd),' %'
-!!!$   Keine Verbesserung des Daten-RMS ?
+!!!$   Keine Verbesserung des Daten-CHI ?
            IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
               errnr2 = 81
-              WRITE (fetxt,*)'No further RMS approvement ',&
+              WRITE (fetxt,*)'No further CHI approvement ',&
                    REAL(ABS(1d0-rmsalt/nrmsd))
            END IF
-!!!$   Minimaler Daten-RMS erreicht ?
+!!!$   Minimaler Daten-CHI erreicht ?
 !!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
            IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
               errnr2 = 80
@@ -622,7 +624,7 @@ PROGRAM inv
                  END IF
 !!!$   ak
 
-!!!$   Daten-RMS berechnen
+!!!$   Daten-CHI berechnen
                  CALL dmisft(lsetip)
                  IF (errnr.NE.0) GOTO 999
                  WRITE (*,'(a,t45,a,t78,F14.4)') &
@@ -660,7 +662,7 @@ PROGRAM inv
            dlalt  = 1d0
            ldlamf = .FALSE.
 
-!!!$   Daten-RMS speichern
+!!!$   Daten-CHI speichern
            rmsalt = nrmsd
 
 !!!$   Lambda speichen
@@ -689,7 +691,7 @@ PROGRAM inv
               CALL bsensi((it==0))
            END IF
 
-!!!$   evtl   Rauhigkeitsmatrix belegen
+!!!$   evtl   Rauhigkeitsmatrix oder CmS-Matrix belegen
            IF (l_bsmat) CALL bsmatm(it,l_bsmat)
 
         ELSE
@@ -713,8 +715,9 @@ PROGRAM inv
            EXIT
         END IF
 
-        IF (llamf) THEN ! for fixed lambda we do not want any parabola fitting?
+        IF (BTEST(llamf,0)) THEN ! for fixed lambda we do not want any parabola fitting?
            lam = lamfix
+           IF (BTEST(llamf,1).AND.it>1) lam = lamfix / (2d0 * DBLE(it - 1))
            llam = .FALSE. ! in order to calculate any update this needs to be false
            IF (lsetup.OR.lsetip) THEN
               lsetup = .FALSE.
@@ -741,13 +744,13 @@ PROGRAM inv
                       (rmsreg.EQ.0d0)) THEN
 
                     IF (rmsreg > 0d0) THEN
-                       WRITE (fprun,'(/a,G12.4,a)')'Rms increase:',&
+                       WRITE (fprun,'(/a,G12.4,a)')'Chi increase:',&
                             100.0*(1d0-rmsalt/nrmsd),' %'
                        WRITE (fprun,'(a,G12.4,a)')'Stepsize :',bdpar
                        WRITE (fprun,'(a,G12.4/)')'nrmsd/rmsreg :',nrmsd/rmsreg
                     END IF
 !!!$   Regularisierungsparameter bestimmen
-                    IF (lsetup.OR.lsetip) THEN
+                    IF (lsetup.OR.lsetip) THEN ! general initialization, lam0
 
 !!!$   Kontrollausgabe
                        WRITE(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
@@ -764,20 +767,48 @@ PROGRAM inv
 !!!$   ak Model EGS2003, ERT2003                        call blam0()
 !!!$   ak Model EGS2003, ERT2003                        lam = lammax
 !!!$   ak                        lam = 1d4
-                    ELSE
+!!!$
+!!!$ GENERAL REMARK ON OUR REGULARISATION PARAMETER
+!!!$ Standard normal equations are
+!!!$ (A^h * Cd^-1 A + Cm^-1) dm = A_q^h * C_d^-1 * (d - f(m_q)) + C_m^-1 * ({m_q,(m_q-m_0)})
+!!!$ Where we identify lam as inverse a-priori variance:
+!!!$ Cm^-1 = \lam R^T * R.
+!!!$ If we solve the normal equation 
+!!!$  Cm * (A^h * Cd^-1 A + I) dm = Cm * (A_q^h * C_d^-1 * (d - f(m_q)) - ({m_q,(m_q-m_0)}))
+!!!$ instead, we use \lam as prior variance.
+!!!$ This also results in the fundamental problem on how to adjust the search direction which depends on the 
+!!!$ CHI decrease and thus should also be reciprocal.
+!!!$
+!!!$ nrmsdm and mqrms, fstart and fstop are set in rall.f90.
+!!!$ Defaults are
+!!!$ nrmsdm := 1d0; mqrms := 2d-2; fstart := 0.5; fstop := 0.9
+!!!$
+                    ELSE ! for lambda search we go here
                        dlalt = dlam
-                       IF (ldlami) THEN
-                          ldlami = .FALSE.
+                       IF (ldlami) THEN ! initialize search
+                          ldlami = .FALSE. 
                           alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),&
-                               dlog(1d0+mqrms))
-                          dlam   = fstart
+                               dlog(1d0+mqrms)) 
+!!!$ alam = MAX(log(actual chi),log(1+0.02))
+                          dlam   = fstart ! sets first dlam (0.5 default, which should be fine)
                        ELSE
-                          alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
+                          alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm))) 
+!!!$ CHI dependend partial fraction of lam variation
+!!!$ alam = MAX(alam,log(actual chi))
                           dlam = dlog(fstop)*&
                                SIGN(1d0,dlog(nrmsd/nrmsdm))+&
                                dlog(fstart/fstop)*&
-                               dlog(nrmsd/nrmsdm)/alam
+                               dlog(nrmsd/nrmsdm)/alam 
+!!!$
+!!!$ dlam = ln(0.9) * sign(1,ln(act chi)) + (ln(0.5/0.9)) * ln(act chi)/alam
+!!!$ this makes mostly the same and dlam = exp(ln(0.9) + ln(0.5/0.9)) = 0.5
+!!!$ This holds until the act chi value drops below 1. Than sign gives -1 and
+!!!$ also alam is now not identical to log(act chi) but log(1.02), which results
+!!!$ (for example act chi = 0,98)
+!!!$ dlam = exp(-ln(0.9) + ln(0.5/0.9) * ln(0.98)/log(1.02)) = 2
+!!!$
                           dlam = dexp(dlam)
+
                        END IF
                        lam = lam*dlam
                        IF (dlalt.GT.1d0.AND.dlam.LT.1d0) ldlamf=.TRUE.
@@ -789,6 +820,7 @@ PROGRAM inv
                  ELSE
 
 !!!$   Regularisierungsparameter zuruecksetzen und step-length verkleinern
+!!!$ if no Chi decrease found
                     llam = .TRUE.
                     lam  = lam/dlam
 
@@ -800,7 +832,7 @@ PROGRAM inv
                     END IF
                  END IF
 
-!!!$   Ggf. Daten-RMS speichern
+!!!$   Ggf. Daten-CHI speichern
                  IF (lsetup.OR.lsetip) THEN
                     lsetup = .FALSE.
                     lsetip = .FALSE.
@@ -864,7 +896,7 @@ PROGRAM inv
 !!!$ <<< RM
         IF (lbeta) CALL refsig()
 
-        IF (llamf) THEN
+        IF (BTEST(llamf,0)) THEN
            llam = .TRUE.
         END IF
 
@@ -888,31 +920,31 @@ PROGRAM inv
      CASE (95)
 
         WRITE(*,'(a22,a31)') ' Iteration terminated:',&
-             ' no RMS decrease'
+             ' no CHI decrease'
         WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
-             ' no RMS decrease'
+             ' no CHI decrease'
 !!!$ reset model to previous state
-        IF (llamf) THEN
+        IF (BTEST(llamf,0)) THEN
            WRITE (*,'(a)',ADVANCE='no')'Taking model state of previous iteration... '
            sigma = sigma2
            sigmaa = sgmaa2
            nrmsd = rmsalt
-           PRINT*,'RMS = ',REAL(nrmsd)
+           PRINT*,'CHI = ',REAL(nrmsd)
         END IF
 
      CASE (94)
 
         WRITE(*,'(a22,a31)') ' Iteration terminated:',&
-             ' RMS < 1'
+             ' CHI < 1'
         WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
-             ' RMS < 1'
+             ' CHI < 1'
 
      CASE (93)
 
         WRITE(*,'(a22,a31)') ' Iteration terminated:',&
-             ' RMS decrease sufficiently'
+             ' CHI decrease sufficiently'
         WRITE(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
-             ' RMS decreasse sufficiently'
+             ' CHI decreasse sufficiently'
 
      CASE (92)
 
@@ -923,16 +955,16 @@ PROGRAM inv
              ' Min. step-length for 2nd time.'
      CASE (80)
         WRITE(*,'(a22,a10)') ' Iteration terminated:', &
-             ' Min. RMS.'
+             ' Min. CHI.'
 
         WRITE(fprun,'(a22,a10)',err=999) ' Iteration terminated:',&
-             ' Min. RMS.'
+             ' Min. CHI.'
      CASE (81)
         WRITE(*,'(a22,a24)') ' Iteration terminated:',&
-             ' Min. rel. RMS decrease.'
+             ' Min. rel. CHI decrease.'
 
         WRITE(fprun,'(a22,a24)',err=999) ' Iteration terminated:',&
-             ' Min. rel. RMS decrease.'
+             ' Min. rel. CHI decrease.'
      CASE (79)
         WRITE(*,'(a22,a19)') ' Iteration terminated:',&
              ' Max. # iterations.'

@@ -106,7 +106,6 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     "ratio-dataset" ?
   lratio = .FALSE.
 !!!$     ak        lratio = .true.
-  llamf = .FALSE.
 !!!$     final phase improvement setzt phase zueruck auf homogenes modell
   lffhom = .FALSE.
 !!!$     Daten Rauschen vom Fehlermodell entkoppeln ?
@@ -119,12 +118,12 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$ BETA MGS
   betamgs = 1d0
-
+  WRITE (*,'(/a)',ADVANCE='no')'OS identification:'
   IF (INDEX ( version(5), 'Msys') /= 0) THEN
-     print*,'MS-OS'
-     slash = '\'
+     PRINT*,' MS-OS'
+     slash = '\'  !' \ is escape char for syntax highlights
   ELSE
-     print*,'Linux-OS'
+     PRINT*,' Linux-OS'
      slash = '/'
   END IF
 
@@ -158,6 +157,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   fstart = 0.5d0
   fstop  = 0.9d0
   lamfix = 0.0D0
+  llamf = 0
 !!!$     ak MMAJ
 !!!$     ak        fstart = 0.2d0
 !!!$     ak        fstop  = 0.8d0
@@ -171,26 +171,26 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   fetxt = 'rall -> mswitch'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=98) mswitch
+  READ (fpcfg,*,END=1001,err=98) mswitch
 
 98 fetxt = 'rall -> grid file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) delem
+  READ (fpcfg,'(a)',END=1001,err=999) delem
   CALL clear_string (delem)
 
   fetxt = 'rall -> electrode file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) delectr
+  READ (fpcfg,'(a)',END=1001,err=999) delectr
   CALL clear_string (delectr)
 
   fetxt = 'rall -> meaurement file'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) dstrom
+  READ (fpcfg,'(a)',END=1001,err=999) dstrom
   CALL clear_string (dstrom)
 
   fetxt = 'rall -> directory for inversion results'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) ramd
+  READ (fpcfg,'(a)',END=1001,err=999) ramd
   CALL clear_string (ramd)
 
 !!$! checks if dir exists and if not, create it
@@ -221,30 +221,30 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   END IF
   fetxt = 'rall -> Difference inversion ?'
   CALL read_comments(fpcfg)
-  READ (fpcfg,*,end=1001,err=999) ldiff
+  READ (fpcfg,*,END=1001,err=999) ldiff
 
   fetxt = 'rall -> Diff. measurements'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) dd0
+  READ (fpcfg,'(a)',END=1001,err=999) dd0
   CALL clear_string (dd0)
 
   fetxt = 'rall -> Diff. model (prior)'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) dm0
+  READ (fpcfg,'(a)',END=1001,err=999) dm0
   CALL clear_string (dm0)
 
   fetxt = 'rall -> Diff. model response of prior'
   CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',end=1001,err=999) dfm0
+  READ (fpcfg,'(a)',END=1001,err=999) dfm0
   CALL clear_string (dfm0)
 
   IF (dm0 /= '') THEN
      INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
      IF (lstart) THEN       ! set the starting model
         dstart = dm0
-        PRINT*,'++ reading prior:',ACHAR(9)//TRIM(dm0)
+        PRINT*,'+ read prior:',ACHAR(9)//TRIM(dm0)
      ELSE
-        PRINT*,'-- omitting prior (NO FILE):',ACHAR(9)//TRIM(dm0)
+        PRINT*,'- omit prior (NO FILE):',ACHAR(9)//TRIM(dm0)
         dm0 = ''
      END IF
   END IF
@@ -341,7 +341,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   READ (fpcfg,'(I2)',END=100,err=100) ltri
 
   IF (BTEST(ltri,5)) THEN
-     llamf = .TRUE.
+     llamf = 1
      fetxt = 'rall -> fixed lam value'
      CALL read_comments(fpcfg)
      READ (fpcfg,*,END=104,err=104) lamfix
@@ -351,6 +351,13 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
 105  PRINT*,'Fixing Lambda =', lamfix
      ltri = ltri - 2**5
+
+     IF (BTEST(ltri,6)) THEN 
+        llamf = llamf + 2
+        PRINT*,'NEW:: COOLING lambdas during inv'
+        ltri = ltri - 2**6
+     END IF
+
   END IF
 
   IF (ltri > 15) THEN ! exception for wrong ltri switch
@@ -436,45 +443,6 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   END IF
 
 
-!!$>> RM
-  fetxt = 'crt.lamnull'
-  INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
-  IF (exi) THEN
-!!!$ Overwriting lamfix with crt.lamnull content
-     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
-     OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
-     READ(kanal,*,END=1001,ERR=999)lamnull_cri
-     PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
-     READ(kanal,*,END=30,ERR=30)lamnull_fpi
-     PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
-     GOTO 31
-30   lamnull_fpi = 0d0
-     IF (llamf) lamnull_fpi = lamfix ! in case of llamf we possibly 
-!!!$ do not want lam0 search at the beginning of FPI
-31   CLOSE(kanal)
-     PRINT*
-  ELSE IF (llamf) THEN
-     WRITE (*,'(/a,G12.4/)')'Presetting lamnull with lamfix ',REAL(lamfix)
-     lamnull_cri = lamfix
-     lamnull_fpi = lamfix
-  ELSE IF (nz < 0) THEN
-     lamnull_cri = ABS(DBLE(nz))
-     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
-     lamnull_fpi = 0d0
-  ELSE
-     WRITE (*,'(/a/)')'+++ Found no presettings for lambda_0 (default)'
-     lamnull_cri = 0d0
-     lamnull_fpi = 0d0
-  END IF
-  PRINT*,'Saving lamba presettings -> '//TRIM(fetxt)
-  OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
-  WRITE (kanal,*)lamnull_cri
-  WRITE (kanal,*)lamnull_fpi
-  CLOSE (kanal)
-
-!!$<< RM
-
-
   IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
 !!!$     Ggf. Fehlermeldungen
@@ -529,6 +497,8 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     goto 999
   END IF
 
+!!$ RM >>
+!!!$ assign all the logical switches and settings for the inversion
   lelerr = .NOT.lfphai.AND..NOT.ldc ! complex inversion only
 
 !!!$     (mswitch) Mega switch testing..
@@ -579,7 +549,10 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     diff+>
 !!!$     ak        if (ldc.or.stabp0.ge.stabw0) lfphai=.false.
   IF (ldc) lfphai=.FALSE.
-!!!$     Dateien
+!!!$ << RM
+
+!!!$ append path string (saved in ramd) and prepare
+!!!$ output file names
   lnramd = INDEX(ramd,' ')-1
   dsigma = ramd(1:lnramd)//slash(1:1)//'rho.dat'
   dvolt  = ramd(1:lnramd)//slash(1:1)//'volt.dat'
@@ -663,6 +636,51 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   CALL rdati (kanal,dstrom)
   IF (errnr.NE.0) GOTO 999
+
+
+
+!!$>> RM
+  fetxt = 'crt.lamnull'
+  INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
+  IF (exi) THEN
+!!!$ Overwriting lamfix with crt.lamnull content
+     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
+     OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
+     READ(kanal,*,END=1001,ERR=999)lamnull_cri
+     PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
+     READ(kanal,*,END=30,ERR=30)lamnull_fpi
+     PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
+     GOTO 31
+30   lamnull_fpi = 0d0
+     IF (BTEST(llamf,0)) lamnull_fpi = lamfix ! in case of llamf we possibly 
+!!!$ do not want lam0 search at the beginning of FPI
+31   CLOSE(kanal)
+     PRINT*
+  ELSE IF (BTEST(llamf,0)) THEN
+     WRITE (*,'(/a,G12.4/)')'Presetting lamnull with lamfix ',REAL(lamfix)
+     lamnull_cri = lamfix
+     lamnull_fpi = lamfix
+  ELSE IF (nz == -1) THEN
+     lamnull_cri = DBLE(MAX(manz,nanz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_fpi = 0d0
+  ELSE IF (nz < 0) THEN
+     lamnull_cri = ABS(DBLE(nz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_fpi = 0d0
+  ELSE
+     WRITE (*,'(/a/)')'+++ Found no presettings for lambda_0 (default)'
+     lamnull_cri = 0d0
+     lamnull_fpi = 0d0
+  END IF
+  PRINT*,'Saving lamba presettings -> '//TRIM(fetxt)
+  OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
+  WRITE (kanal,*)lamnull_cri
+  WRITE (kanal,*)lamnull_fpi
+  CLOSE (kanal)
+
+!!$<< RM
+
 
   IF (ldc) THEN
      WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'

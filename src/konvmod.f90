@@ -49,8 +49,10 @@ MODULE konvmod
   REAL(KIND(0D0)), PUBLIC ::     stpmin
 
 !!!$Schalter zur Steuerung der Regularisierung und der step-length-Wahl
-  LOGICAL,PUBLIC  ::     llam,lstep,ldlami,ldlamf,llamf
-!!!$wenn llamf wahr ist wird ein fixes Lambda gesetzt
+  LOGICAL,PUBLIC  ::     llam,lstep,ldlami,ldlamf
+!!!$wenn llamf >0 ist wird ein fixes Lambda gesetzt, llamf = BTEST(llamf,1) fuer lambda 
+!!!$ cooling 
+  INTEGER,PUBLIC  ::     llamf
 !!!$Schalter ob volle step-length angebracht werden soll
   LOGICAL,PUBLIC  ::     lfstep
 

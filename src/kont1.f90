@@ -1,6 +1,6 @@
 !!!$     diff-        subroutine kont1(delem,delectr,dstrom,drandb)
 !!!$     diff+<
-subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
+SUBROUTINE kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 !!!$     diff+>
 
 !!!$     Unterprogramm zur Ausgabe der Kontrollvariablen.
@@ -24,7 +24,7 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   USE pathmod
   USE get_ver,ONLY : version
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 !!!$.....................................................................
 !!!$     EIN-/AUSGABEPARAMETER:
@@ -43,9 +43,9 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 11 FORMAT (g11.5,t20,a)
 12 FORMAT (I8,t20,a)
 13 FORMAT (t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
-        t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)
+       t69,a8,t81,a8,t93,a8,t105,a8,t117,a10)
 14 FORMAT (t1, a3, t5,a3,t11,a8,t23,a8,t34,a8,t46,a8,t58,a8,&
-        t69,a8,t81,a8,t93,a8,t105,a10)
+       t69,a8,t81,a8,t93,a8,t105,a10)
 
 
   WRITE (fpinv,'(a)')'##'
@@ -61,64 +61,73 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE (fpinv,'(a)')''
 
   IF (mswitch /= 0) THEN
-     write(fpinv,12,err=999)mswitch,'#  mswitch'
+     WRITE(fpinv,12,err=999)mswitch,'#  mswitch'
   ELSE
-     write(fpinv,'(a)',err=999) '***FILES***'
+     WRITE(fpinv,'(a)',err=999) '***FILES***'
   END IF
 
-  write(fpinv,'(a)',err=999) TRIM(delem)//' # FEM grid'
-  write(fpinv,'(a)',err=999) TRIM(delectr)//' # Electrodes'
-  write(fpinv,'(a)',err=999) TRIM(dstrom)//' # Measurements'
-  write(fpinv,'(a)',err=999) TRIM(ramd)//' # Inversion results'
+  WRITE(fpinv,'(a)',err=999) TRIM(delem)//' # FEM grid'
+  WRITE(fpinv,'(a)',err=999) TRIM(delectr)//' # Electrodes'
+  WRITE(fpinv,'(a)',err=999) TRIM(dstrom)//' # Measurements'
+  WRITE(fpinv,'(a)',err=999) TRIM(ramd)//' # Inversion results'
 !!!$     diff+<
-  write(fpinv,10,err=999) ldiff.OR.lprior,&
+  WRITE(fpinv,10,err=999) ldiff.OR.lprior,&
        '! difference inversion or (m - m_{prior})'
-  write(fpinv,'(a)',err=999) TRIM(dd0)
-  write(fpinv,'(a)',err=999) TRIM(dm0)
-  write(fpinv,'(a)',err=999) TRIM(dfm0)
+  WRITE(fpinv,'(a)',err=999) TRIM(dd0)
+  WRITE(fpinv,'(a)',err=999) TRIM(dm0)
+  WRITE(fpinv,'(a)',err=999) TRIM(dfm0)
 !!!$     diff+>
   IF (lnsepri) THEN
      WRITE (fpinv,*,err=999) iseedpri,modl_stdn
   ELSE
-     write(fpinv,'(a)',err=999) '***PARAMETERS***'
+     WRITE(fpinv,'(a)',err=999) '***PARAMETERS***'
   END IF
-  write(fpinv,12,err=999) nx,'! nx-switch or # cells in x-direction'
-  write(fpinv,12,err=999) nz,'! nz-switch or # cells in z-direction'
-  write(fpinv,11,err=999) alfx,'! smoothing parameter in x-direction'
-  write(fpinv,11,err=999) alfz,'! smoothing parameter in z-direction'
-  write(fpinv,12,err=999) itmax,'! max. # inversion iterations'
+  WRITE(fpinv,12,err=999) nx,'! nx-switch or # cells in x-direction'
+  WRITE(fpinv,12,err=999) nz,'! nz-switch or # cells in z-direction'
+  WRITE(fpinv,11,err=999) alfx,'! smoothing parameter in x-direction'
+  WRITE(fpinv,11,err=999) alfz,'! smoothing parameter in z-direction'
+  WRITE(fpinv,12,err=999) itmax,'! max. # inversion iterations'
 !!!$     ak        write(fpinv,'(g11.5,t18,a15)',err=999) nrmsdm,'! min. data RMS'
-  write(fpinv,10,err=999) ldc,'! DC inversion ?'
+  WRITE(fpinv,10,err=999) ldc,'! DC inversion ?'
 !!!$     ak        write(fpinv,'(l1,t18,a23)',err=999) lsr,'! singularity removal ?'
-  write(fpinv,10,err=999) lrobust,'! robust inversion ?'
+  WRITE(fpinv,10,err=999) lrobust,'! robust inversion ?'
 !!!$     ak        write(fpinv,'(l1,t18,a33)',err=999) lpol,
 !!!$     ak     1           '! automatic polarity adjustment ?'
-  write(fpinv,10,err=999) lfphai,'! final phase improvement ?'
-  write(fpinv,11,err=999) stabw0,'! rel. resistance error level (%)'// &
+  WRITE(fpinv,10,err=999) lfphai,'! final phase improvement ?'
+  WRITE(fpinv,11,err=999) stabw0,'! rel. resistance error level (%)'// &
        '  (parameter A1 in err(R) = A1*abs(R) + A2)'
-  write(fpinv,11,err=999) stabm0,'! min. abs. resistance error (ohm)'// &
+  WRITE(fpinv,11,err=999) stabm0,'! min. abs. resistance error (ohm)'// &
        ' (parameter A2 in err(R) = A1*abs(R) + A2)'
-  write(fpinv,11,err=999) stabpA1,&
+  WRITE(fpinv,11,err=999) stabpA1,&
        '! phase error model parameter A1 (mrad/ohm^B) '// &
        '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-  write(fpinv,11,err=999) stabpB, &
+  WRITE(fpinv,11,err=999) stabpB, &
        '! phase error model parameter B  (-)          '// &
        '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-  write(fpinv,11,err=999) stabpA2, &
+  WRITE(fpinv,11,err=999) stabpA2, &
        '! phase error model parameter A2 (%)          '// &
        '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-  write(fpinv,11,err=999) stabp0, &
+  WRITE(fpinv,11,err=999) stabp0, &
        '! phase error model parameter A3 (mrad)       '// &
        '(in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)'
-  write(fpinv,10,err=999) lrho0,'! homogeneous background resistivity ?'
-  write(fpinv,11,err=999) bet0,'! background magnitude (ohm*m)'
-  write(fpinv,11,err=999) pha0,'! background phase (mrad)'
-  write(fpinv,10,err=999) lagain,'! Another dataset?'
-  write(fpinv,12,err=999) swrtr,'! 2D (=0) or 2.5D (=1)'
-  write(fpinv,10,err=999) lsink,'! fictitious sink ?'
+  WRITE(fpinv,10,err=999) lrho0,'! homogeneous background resistivity ?'
+  WRITE(fpinv,11,err=999) bet0,'! background magnitude (ohm*m)'
+  WRITE(fpinv,11,err=999) pha0,'! background phase (mrad)'
+  WRITE(fpinv,10,err=999) lagain,'! Another dataset?'
+  WRITE(fpinv,12,err=999) swrtr,'! 2D (=0) or 2.5D (=1)'
+  WRITE(fpinv,10,err=999) lsink,'! fictitious sink ?'
   WRITE(fpinv,12,err=999) nsink,'! fictitious sink node number'
-  write(fpinv,10,err=999) lrandb2,'! boundary values ?'
-  write(fpinv,'(a)',err=999) TRIM(drandb)
+  WRITE(fpinv,10,err=999) lrandb2,'! boundary values ?'
+  WRITE(fpinv,'(a)',err=999) TRIM(drandb)
+  IF (BTEST(llamf,0)) THEN
+     IF (BTEST(llamf,1)) THEN
+        WRITE (fpinv,'(I2)') ltri + 2**5 + 2**6
+     ELSE
+        WRITE (fpinv,'(I2)') ltri + 2**5
+     END IF
+  ELSE
+     WRITE (fpinv,'(I2)') ltri
+  END IF
   WRITE (fpinv,'(I2)',err=999) ltri
   IF (BTEST(ltri,5)) WRITE (fpinv,*,err=999) lamfix
   IF (ltri > 4 .AND. ltri < 15) WRITE (fpinv,*,err=999) betamgs
@@ -163,14 +172,14 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   IF (ltri>4.AND.ltri<15)&
        WRITE(fpinv,101,err=999)'  Stabilizer beta',betamgs
 
-!  WRITE(fpinv,100,err=999)'Stochastic regu',(ltri==15)
+  !  WRITE(fpinv,100,err=999)'Stochastic regu',(ltri==15)
 
   IF (ltri == 15) THEN
      CALL get_vario (Ix,Iy,fetxt,1) ! get covariance..
      WRITE (fpinv,'(a)',err=999)'Covariance regu ('//TRIM(fetxt)//')'
      WRITE (*,'(a)')ACHAR(9)//'Covariance ('//TRIM(fetxt)//')'
   END IF
-  
+
   IF (lvario) THEN
      WRITE (fpinv,'(a)',err=999)'Caculate experimental Variogram::'
      WRITE (fpinv,'(a,I4)',err=999)ACHAR(9)//'nx-switch  : ',nx
@@ -184,8 +193,10 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
      WRITE (*,'(a)')ACHAR(9)//'Variogram ('//TRIM(fetxt)//')' 
   END IF
 
-  WRITE(fpinv,100,err=999)'Fixed lambda?',llamf
-  IF (llamf) WRITE (fpinv,101,err=999)'Lambda=',lamfix
+  WRITE(fpinv,100,err=999)'Fixed lambda?',BTEST(llamf,0)
+  IF (BTEST(llamf,0)) WRITE (fpinv,101,err=999)'Lambda=',lamfix
+  IF (BTEST(llamf,1)) WRITE(fpinv,100,err=999)'Cooling lambda?',&
+       BTEST(llamf,1)
 
   IF (nz<0) THEN
      WRITE(fpinv,'(a)',err=999,ADVANCE='no')'Taking easy lam_0 : '
@@ -208,71 +219,71 @@ subroutine kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
   WRITE(fpinv,100,err=999)'Restart FPI with homogenous phase?',lffhom
   WRITE(fpinv,'(l1,t18,a20)',err=999) lindiv,'! individual error ?'
 
-  write(fpinv,'(/a)',err=999) '***FIXED***'
+  WRITE(fpinv,'(/a)',err=999) '***FIXED***'
 
-  if (swrtr.eq.1) then
-     write(fpinv,'(a,t50,i2)',err=999) ' # wavenumbers :',kwnanz
-     write(fpinv,'(a,t50,g11.5,t62,a1)',err=999)&
+  IF (swrtr.EQ.1) THEN
+     WRITE(fpinv,'(a,t50,i2)',err=999) ' # wavenumbers :',kwnanz
+     WRITE(fpinv,'(a,t50,g11.5,t62,a1)',err=999)&
           ' Inverse Fourier transform range :',amin,'m'
-     write(fpinv,'(t50,g11.5,t62,a1)',err=999) amax,'m'
-  end if
+     WRITE(fpinv,'(t50,g11.5,t62,a1)',err=999) amax,'m'
+  END IF
   IF (lsytop) THEN
-     write(fpinv,'(a,t50,g11.5)',err=999) &
+     WRITE(fpinv,'(a,t50,g11.5)',err=999) &
           ' -- Sytop [m] :',sytop
   END IF
-  if (.not.lrho0.and..not.lstart) then
+  IF (.NOT.lrho0.AND..NOT.lstart) THEN
      bet0 = cdabs(dcmplx(1d0)/sigma0)
-     pha0 = 1d3*datan2(dimag(dcmplx(1d0)/sigma0),dble(dcmplx(1d0)/sigma0))
-     write(fpinv,'(a,t50,g11.5,t62,a5)',err=999) &
+     pha0 = 1d3*datan2(dimag(dcmplx(1d0)/sigma0),DBLE(dcmplx(1d0)/sigma0))
+     WRITE(fpinv,'(a,t50,g11.5,t62,a5)',err=999) &
           ' Background resistivity :',bet0,'ohm*m'
-     write(fpinv,'(t50,g11.5,t62,a4)',err=999)pha0,'mrad'
-  end if
-  write(fpinv,'(a,t50,l1)',err=999)' Force negative phase ?',lphi0
-  write(fpinv,'(a16,t50,l1)',err=999) ' Ratio dataset ?',lratio
-  if (lrobust.or.lfphai) write(fpinv,'(a13,t50,g11.5)',err=999)&
+     WRITE(fpinv,'(t50,g11.5,t62,a4)',err=999)pha0,'mrad'
+  END IF
+  WRITE(fpinv,'(a,t50,l1)',err=999)' Force negative phase ?',lphi0
+  WRITE(fpinv,'(a16,t50,l1)',err=999) ' Ratio dataset ?',lratio
+  IF (lrobust.OR.lfphai) WRITE(fpinv,'(a13,t50,g11.5)',err=999)&
        ' Min. L1 norm',l1min
-  write(fpinv,'(a,t50,g11.5)',err=999)&
+  WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. rel. decrease of data RMS :',mqrms
-  write(fpinv,'(a,t50,g11.5)',err=999)&
+  WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. steplength              :',stpmin
   WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. stepsize (||\delta m||) :',bdmin
-  write(fpinv,'(a,t50,g11.5)',err=999)&
+  WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. error in relaxation :',eps
-  write(fpinv,'(a,t50,i5)',err=999)&
+  WRITE(fpinv,'(a,t50,i5)',err=999)&
        ' Max. # relaxation iterations :',ncgmax
-  write(fpinv,'(a,t50,i3)',err=999)&
+  WRITE(fpinv,'(a,t50,i3)',err=999)&
        ' Max. # regularization steps :',nlam
-  write(fpinv,'(a,t50,g11.5)',err=999)' Initial step factor :',fstart
-  write(fpinv,'(a,t50,g11.5)',err=999)' Final   step factor :',fstop
-  write(fpinv,*,err=999)
-  write(fpinv,'(a48,a48,a13)',err=999)&
+  WRITE(fpinv,'(a,t50,g11.5)',err=999)' Initial step factor :',fstart
+  WRITE(fpinv,'(a,t50,g11.5)',err=999)' Final   step factor :',fstop
+  WRITE(fpinv,*,err=999)
+  WRITE(fpinv,'(a48,a48,a13)',err=999)&
        '------------------------------------------------',&
        '------------------------------------------------',&
        '-------------'
-  write(fpinv,*,err=999)
+  WRITE(fpinv,*,err=999)
 !!!$     Robuste Inversion
-  if (lrobust) then
-     write(fpinv,13,err=999)'ID','it.','data RMS','stepsize',&
+  IF (lrobust) THEN
+     WRITE(fpinv,13,err=999)'ID','it.','data RMS','stepsize',&
           ' lambda ',' roughn.','CG-steps',' mag RMS',' pha RMS',&
           '- # data','L1-ratio','steplength'
-  else
-     write(fpinv,14,err=999)&
+  ELSE
+     WRITE(fpinv,14,err=999)&
           'ID','it.','data RMS','stepsize',' lambda ',' roughn.',&
           'CG-steps',' mag RMS',' pha RMS','- # data','steplength'
-  end if
-  write(fpinv,*,err=999)
+  END IF
+  WRITE(fpinv,*,err=999)
 
 !!!$     'inv.ctr' schliessen
-  close(fpinv)
+  CLOSE(fpinv)
 
   errnr = 0
-  return
+  RETURN
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
 
-999 return
+999 RETURN
 
-end subroutine kont1
+END SUBROUTINE kont1
