@@ -256,7 +256,7 @@ minimal_omp:
 		cd ../minimalbeispiele; make
 
 dox:            
-		$(MYSCRIPTS)/make_doxygen.sh $(CRT)
+		$(MYSCRIPTS)/make_doxygen.sh $(CRT) ../doc
 		$(DOC) doxy.inp
 
 install:	$(CRT) $(CRM)
