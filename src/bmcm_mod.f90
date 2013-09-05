@@ -14,9 +14,9 @@ MODULE bmcm_mod
 
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm,nachbar,ata,ata_reg,cov_m
+  USE alloci , ONLY : sens,sensdc,smatm,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
-  USE elemmod, ONLY : smaxs,espx,espy
+  USE elemmod, ONLY : smaxs,espx,espy,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,&

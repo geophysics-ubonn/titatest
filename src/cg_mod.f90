@@ -12,9 +12,9 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : sens,sensdc,smatm,nachbar
+  USE alloci , ONLY : sens,sensdc,smatm
   USE femmod , ONLY : fak,ldc
-  USE elemmod, ONLY : smaxs
+  USE elemmod, ONLY : smaxs,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref, lam_ref_sw

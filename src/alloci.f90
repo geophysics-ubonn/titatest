@@ -27,8 +27,6 @@ MODULE alloci
   REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC      :: cov_d
 !!$Regularisierungsmatrix
   REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: smatm
-!!$ Zeiger auf die Nachbarn der nichtentarteten Elemente
-  INTEGER, DIMENSION(:,:), ALLOCATABLE, PUBLIC               :: nachbar
 !!$ PSR felder fuer widerstand (r) und phase (p)
   REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: rnd_r,rnd_p
 !!$real symmetric matrix to compute general inverse

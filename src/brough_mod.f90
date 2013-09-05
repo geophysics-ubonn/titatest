@@ -12,11 +12,11 @@ MODULE brough_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : smatm,nachbar
+  USE alloci , ONLY : smatm
   USE invmod , ONLY : lfpi,par,m0
   USE konvmod , ONLY : ltri,nx,nz,lprior,rough
   USE modelmod , ONLY : manz
-  USE elemmod, ONLY : smaxs
+  USE elemmod, ONLY : smaxs,nachbar
   USE errmod , ONLY : errnr,fetxt
   USE datmod , ONLY : nanz
 

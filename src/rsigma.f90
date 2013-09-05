@@ -255,7 +255,6 @@ END SUBROUTINE rsigma
 
 INTEGER FUNCTION set_ind_ref_grad(i)
 
-  USE alloci,ONLY:nachbar
   USE elemmod
   USE konvmod, ONLY: lam_ref_sw
 
@@ -290,7 +289,6 @@ INTEGER FUNCTION set_ind_ref_grad(i)
 END FUNCTION  set_ind_ref_grad
 
 SUBROUTINE set_ind_ref_grad2
-  USE alloci,ONLY:nachbar
   USE sigmamod
   USE modelmod
   USE elemmod

@@ -1,14 +1,20 @@
+!>     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
+!!     mittels 'Smoothness Least Squares Method' und konjugierten
+!!     Gradienten.
+!<     Fuer beliebige Triangulierung und Stochastische Regularisierung.
+!!!$     
+!> @author Andreas Kemna
+!> @date 01-Mar-1996
+!> @author Roland Martin     
+!> @date 03-Aug-2009 until Sep. 2013
+!> - translation to Fortran 90
+!> - added general in code docu for specific parts     
+!> - added and tested triangular regularization (2009)
+!> - added and tested stochastic regularization (2010-2011)
+!> - added and tested reference model regularization (2012)
+!> - added doxy comments (2013)
+
 SUBROUTINE update()
-!!!$     
-!!!$     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
-!!!$     mittels 'Smoothness Least Squares Method' und konjugierten
-!!!$     Gradienten.
-!!!$     Fuer beliebige Triangulierung und Stochastische Regularisierung
-!!!$     
-!!!$     Andreas Kemna                                            01-Mar-1996
-!!!$     
-!!!$     Letzte Aenderung                                         03-Aug-2009
-!!!$     
 !!!$.....................................................................
 
   USE alloci
@@ -30,11 +36,11 @@ SUBROUTINE update()
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsvariablen
+!<     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::   cdum,cdum2
   REAL (KIND(0D0))    ::   dum,dum2
 
-!!!$     Indexvariablen
+!<     Indexvariablen
   INTEGER (KIND=4)    ::  i,j,ij,in
 !!!$.....................................................................
 

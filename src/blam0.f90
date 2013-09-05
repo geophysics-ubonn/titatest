@@ -35,7 +35,7 @@ SUBROUTINE blam0()
 !!!$     Start-Regularisierungsparameter bestimmen
 
 !!!$ for fixed lambda set the values according to preset fixed lamfix
-  IF (( llamf .OR. (lamnull_cri > EPSILON(lamnull_cri)) ) .AND..NOT. &
+  IF (( BTEST(llamf,0) .OR. (lamnull_cri > EPSILON(lamnull_cri)) ) .AND..NOT. &
        lfpi ) THEN
      IF (nz==-1) THEN ! this is a special switch, but only taken for 
 !!!!$ CRI/DC
@@ -46,7 +46,7 @@ SUBROUTINE blam0()
         WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 CRI',lammax
      END IF
      RETURN
-  ELSE IF ( llamf .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
+  ELSE IF ( BTEST(llamf,0) .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
      lammax = DBLE(lamnull_fpi)
      WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 FPI',lammax
      RETURN

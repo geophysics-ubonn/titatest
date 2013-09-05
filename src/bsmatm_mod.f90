@@ -13,9 +13,9 @@ MODULE bsmatm_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm,nachbar
+  USE alloci , ONLY : sens,sensdc,smatm
   USE femmod , ONLY : fak,ldc
-  USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz
+  USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz,nachbar
   USE invmod , ONLY : lfpi,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat

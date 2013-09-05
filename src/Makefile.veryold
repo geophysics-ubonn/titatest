@@ -7,6 +7,7 @@ RM		= rm -f
 CP		= cp -f
 MV		= mv -f
 MYSCRIPTS	= ../scripts
+MYDOC		= ../doc
 
 ############################################################################
 # 			gfortran compiler flags 			   #
@@ -256,7 +257,7 @@ minimal_omp:
 		cd ../minimalbeispiele; make
 
 dox:            
-		$(MYSCRIPTS)/make_doxygen.sh $(CRT)
+		$(MYSCRIPTS)/make_doxygen.sh $(CRT) $(MYDOC)
 		$(DOC) doxy.inp
 
 install:	$(CRT) $(CRM)
