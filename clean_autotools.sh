@@ -1,5 +1,6 @@
 #!/bin/sh
-# bla
+rm cutmckee/crerror.h
+rm -r config
 
 # Die Makefiles werden beim Wechseln der branches überschrieben und gelöscht, also müssen eventuelle Objekte gelöscht werden
 rm src/*.o
@@ -23,7 +24,7 @@ rm cutmck/crerror.h
 
 # Autotools
 rm Makefile src/Makefile cutmckee/Makefile
-rm Makefile.in src/Makefile cutmckee/Makefile
+rm Makefile.in src/Makefile.in cutmckee/Makefile.in
 rm man/Makefile
 
 rm aclocal.m4

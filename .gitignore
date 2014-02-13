@@ -29,3 +29,12 @@ inv.last*
 inv.el*
 */inv/*
 config.log
+configure
+aclocal.m4
+autom4te.cache/
+config.status
+config/
+cutmckee/crerror.h
+minimalbeispiele/minimal_omp
+minimalbeispiele/minimal_prec
+INSTALL
