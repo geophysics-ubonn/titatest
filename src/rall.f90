@@ -538,18 +538,14 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      lphi0  = .FALSE.
      lpol   = .FALSE.
   END IF
-!!!$     diff-        if (lstart) lrho0=.false.
 
   IF (lstart.OR.ldiff) lrho0=.FALSE.
-!!!$     ak
+
   IF (ldiff) THEN
      ldc  = .TRUE.
      lpol = .FALSE.
   END IF
-!!!$     diff+>
-!!!$     ak        if (ldc.or.stabp0.ge.stabw0) lfphai=.false.
   IF (ldc) lfphai=.FALSE.
-!!!$ << RM
 
 !!!$ append path string (saved in ramd) and prepare
 !!!$ output file names
@@ -637,9 +633,6 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   CALL rdati (kanal,dstrom)
   IF (errnr.NE.0) GOTO 999
 
-
-
-!!$>> RM
   fetxt = 'crt.lamnull'
   INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
   IF (exi) THEN
@@ -679,14 +672,10 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   WRITE (kanal,*)lamnull_fpi
   CLOSE (kanal)
 
-!!$<< RM
-
-
   IF (ldc) THEN
      WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
      wmatd = wmatdr
   ELSE
-
      IF (lelerr) THEN
         WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
         wmatd = wmatd_cri

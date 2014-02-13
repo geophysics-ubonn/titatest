@@ -36,14 +36,12 @@ SUBROUTINE rdati(kanal,datei)
 !!!$     Indexvariable
   INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
-!!! >> RM
 !!!$  USED ONLY IF NOISE IS ADDED!!
 !!!$ Magnitude and Phase of new data
   REAL(KIND(0D0))     ::     new_bet,new_pha
-!!!$ Counting signum mismatches of magnitude and phases 
+!!!$ Counting signum mismatches of magnitude and phases
 !!!$    if noise is added
   INTEGER (KIND = 4) ::     icount_pha,icount_mag
-!!!$ << RM
 
 !!!$     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
