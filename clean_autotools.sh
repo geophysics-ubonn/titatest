@@ -8,14 +8,6 @@ rm src/*.mod
 rm cutmckee/*.o
 rm cutmckee/*.mod
 
-# WICHTIG: Die Dateien sollten nur gelöscht werden, solange sie leer sind
-rm INSTALL
-rm COPYING
-rm NEWS
-rm README
-rm AUTHORS
-rm ChangeLog
-
 # crerror.h wird automatisch generiert
 rm inc/crerror.h
 rm cutmck/crerror.h

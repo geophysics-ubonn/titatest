@@ -20,12 +20,5 @@ automake --add-missing
 echo -n "autoreconf (2)... "
 autoreconf
 
-
-exit
 # now invoke configure
-echo "configure"
 ./configure
-# Wenn möglich, werden Standarddateien kopiert
-echo -n "automake... "
-automake --add-missing
-echo "ok"
