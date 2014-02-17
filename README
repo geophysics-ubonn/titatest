@@ -1,0 +1,5 @@
+
+Limiting CPU usage
+------------------
+
+export OMP_THREAD_LIMIT=1; export OMP_NUM_THREADS=1; CRTomo_dev_knuet
