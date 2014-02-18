@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Generate src/Makefile.am
+cd src
+../scripts/make_crerror.sh
+cd ..
+
 # Diese Dateien müssen wir noch schreiben. Bis dahin werden sie immer leer erstellt (und gelöscht)
 echo "AK - A. Kemna (kemna@geo.uni-bonn.de)" > AUTHORS
 echo "JK - J. Kenkel (jkenkel@geo.uni-bonn.de)" >> AUTHORS
@@ -12,14 +17,14 @@ echo -n "aclocal... "
 aclocal
 # Das erste autoreconf bemerkt, welche Dateien fehlen
 echo -n "autoreconf (1)... "
-autoreconf
+autoreconf -v
 # Wenn möglich, werden Standarddateien kopiert
 echo -n "automake... "
 automake --add-missing
-automake
+
 # Jetzt sollten alle Dateien vorhanden sein, und das configure-Skript kann erstellt werden
 echo -n "autoreconf (2)... "
-autoreconf
+autoreconf -v
 
 # now invoke configure
 ./configure
