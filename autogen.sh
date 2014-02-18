@@ -16,6 +16,7 @@ autoreconf
 # Wenn möglich, werden Standarddateien kopiert
 echo -n "automake... "
 automake --add-missing
+automake
 # Jetzt sollten alle Dateien vorhanden sein, und das configure-Skript kann erstellt werden
 echo -n "autoreconf (2)... "
 autoreconf
