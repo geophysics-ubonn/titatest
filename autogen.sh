@@ -2,7 +2,7 @@
 
 # Generate src/Makefile.am
 cd src
-../scripts/make_crerror.sh
+../scripts/make_crerr.sh
 cd ..
 
 # Diese Dateien müssen wir noch schreiben. Bis dahin werden sie immer leer erstellt (und gelöscht)
