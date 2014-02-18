@@ -1,4 +1,8 @@
 #!/bin/bash
+# store git status (branch, commit, compiler, os, date) into my_git_version.h.
+# This file will be compiled into the binaries.
+# Run in src/
+
 # get the character specification
 grep "CHARACTER (256)" get_git_ver.f90 | sed 's/,PUBLIC//g' | sed 's/version/my_git_version/g' > my_git_version.h
 commit=$( git log | head -1 | awk '{print $2}' )

@@ -1,11 +1,13 @@
 #!/bin/bash
-# The git branch, commit, and the host machine are compiled into the final
-# binaries. In addition the filename consists of branch and host computer.
+# The git branch, commit, and the host machine are used to generate the binary
+# names for CRMod, CRTomo, and CutMcK
 # Note: This script generates a Makefile.am file needed by automake!
 
 # Additionally, we compile the list of errors only at autogen-time (i.e. in
 # this script) and generate a corresponding crerror.h file to be compiled into
 # the binaries.
+
+# Run in src/
 
 ###########################
 ## create crerror.h file ##
