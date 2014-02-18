@@ -1,3 +1,23 @@
+Installation
+------------
+
+If you are working with a git clone, run ./autogen.sh to generate a configure
+script.
+
+The run:
+./configure
+make
+make install
+
+You can change the installation directory with
+./configure --prefix=$HOME/inst/
+
+Distribution
+------------
+
+After running ./configure, create an archive using
+
+make dist
 
 Limiting CPU usage
 ------------------
