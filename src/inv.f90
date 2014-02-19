@@ -79,18 +79,19 @@ PROGRAM inv
   WRITE(6,"(a, i5)") " OpenMP max threads: ", maxthreads
 
   PRINT*,'Version control of binary:'
-  CALL get_git_ver
-
+! Get git version and store it in 'version'
+  CALL get_git_ver(version)
+  
   fetxt = 'crtomo.cfg'
   OPEN(fpcfg,file=TRIM(fetxt),status='old',err=999)
-
+! Switch: perform another inversion?
   lagain=.TRUE. ! is set afterwards by user input file to false
 
-!!!$   Allgemeine Parameter setzen
-  DO WHILE ( lagain ) ! this loop exits after all files are processed
+! Set common parameters
+  DO WHILE ( lagain ) ! loop over individual inversions, see 'lagain'
 
      errnr2 = 0
-!!!$   Benoetigte Variablen einlesen
+! Read all variables
      CALL rall(kanal,delem,delectr,dstrom,drandb,&
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 !!!$   diff+<
@@ -120,7 +121,7 @@ PROGRAM inv
      CALL OMP_SET_NUM_THREADS ( NTHREADS )
      ! recheck ..
      i = OMP_GET_MAX_THREADS()
-     WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
+     WRITE(6,'(2(a, i3),a)') " Current OpenMP threads: ",i,'(',maxthreads,')'
 !!!$
 
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren

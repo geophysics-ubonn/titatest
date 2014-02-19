@@ -2,13 +2,12 @@ MODULE get_ver
 
   IMPLICIT none
 
-  CHARACTER (256),PUBLIC  ::   version(5)
+  CHARACTER (256)  ::   version(5)
 
-  PUBLIC :: get_git_ver
-  
 CONTAINS
 
-  SUBROUTINE get_git_ver
+  SUBROUTINE get_git_ver(version)
+  CHARACTER (256)  ::   version(5)
 
   INCLUDE 'my_git_version.h'
   
