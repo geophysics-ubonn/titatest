@@ -7,6 +7,7 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
 !!!$     Letzte Aenderung   10-Mar-2007
 
 !!!$.....................................................................
+use alloci, only: prec
   USE datmod, ONLY : nanz, strnr, vnr, sigmaa
   USE invmod, ONLY : m0, wdfak
   USE sigmamod, ONLY : sigma
@@ -38,10 +39,10 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::  idum,idum2
   CHARACTER (256)   ::  file,itdir
-  COMPLEX(KIND(0D0))  ::  dum
+  COMPLEX(prec)  ::  dum
 
 !!!$     diff+<
-  REAL(KIND(0D0))  ::   dum2,dum3
+  REAL(prec)  ::   dum2,dum3
 !!!$     diff+>
   CHARACTER (12)   ::   c_i ! iteration number as string for directory like
 !!!$ IT_<number> with number in two digits (compatible with old CRTomo versions..)
@@ -97,7 +98,7 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
      OPEN (kanal,FILE=TRIM(file),STATUS='replace',ERR=1000)
      WRITE (kanal,*,err=1000) elanz,betrms,lam
      WRITE (kanal,'(3(G12.4,2x))',err=1000) (REAL(espx(i)),REAL(espy(i)),&
-          REAL(dlog10(cdabs(1d0/sigma(i)))),i=1,elanz)
+          REAL(LOG10(ABS(1d0/sigma(i)))),i=1,elanz)
      CLOSE (kanal)
 
      !  print*,TRIM(foutfn),TRIM(dvolt)
@@ -108,7 +109,7 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
      errnr = 4
      WRITE (kanal,*,err=1000) elanz,pharms,lam
      WRITE (kanal,'(3(G12.4,2x))',err=1000)(REAL(espx(i)),REAL(espy(i)),&
-          REAL(1d3*datan2(AIMAG(1d0/sigma(i)),REAL(1./sigma(i)))),i=1,elanz)
+          REAL(1d3*ATAN2(AIMAG(1./sigma(i)),REAL(1./sigma(i)))),i=1,elanz)
 
      CLOSE (kanal)
 
@@ -119,7 +120,7 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
      errnr = 4
      WRITE(kanal,*,err=1000) elanz,nrmsd,lam
      WRITE (kanal,'(2(G12.4,2x))',err=1000)(1./REAL(sigma(i)),&
-          REAL(1d3*datan2(AIMAG(1./sigma(i)),DBLE(1./sigma(i)))),&
+          REAL(1d3*ATAN2(AIMAG(1./sigma(i)),REAL(1./sigma(i)))),&
           i=1,elanz)
 
      CLOSE (kanal)
@@ -137,18 +138,18 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
      IF (ldc) THEN
         DO i=1,nanz
            WRITE(kanal,*,err=1000)strnr(i),vnr(i),&
-                !         real(1d0/dexp(dble(sigmaa(i))))
+                !         real(1d0/EXP(REAL(sigmaa(i))))
 !!$c     diff+<
-                REAL(1d0/dexp(DBLE(sigmaa(i)))),wdfak(i)
+                REAL(1d0/EXP(REAL(sigmaa(i)))),wdfak(i)
 !!$c     diff+>
         END DO
      ELSE
         DO i=1,nanz
            WRITE(kanal,*,err=1000)strnr(i),vnr(i),&
-                REAL(1d0/dexp(DBLE(sigmaa(i)))),&
-!!$c     diff-     1                      real(-1d3*dimag(sigmaa(i)))
+                REAL(1d0/EXP(REAL(sigmaa(i)))),&
+!!$c     diff-     1                      real(-1d3*aimag(sigmaa(i)))
 !!$c     diff+<
-                REAL(-1d3*dimag(sigmaa(i))),wdfak(i)
+                REAL(-1d3*aimag(sigmaa(i))),wdfak(i)
 !!$c     diff+>
         END DO
      END IF

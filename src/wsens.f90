@@ -39,7 +39,7 @@ subroutine wsens(kanal,datei)
   CHARACTER (80)   ::    htxt
   CHARACTER (12)   ::    htxt2
 
-  COMPLEX(KIND(0D0)) ::    summe
+  COMPLEX(prec) ::    summe
 !!!$     Indexvariablen
   INTEGER (KIND=4) ::     i,j
 
@@ -78,25 +78,25 @@ subroutine wsens(kanal,datei)
 !!!$     Summe der Sensitivitaeten berechnen und ausgeben
 !!!$     (Betrag und Phase (in mrad))
 !!!$     ak            sensmax = 0d0
-     summe   = dcmplx(0d0)
+     summe   = CMPLX(0d0)
 
      do j=1,manz
-!!!$     ak                sensmax = dmax1(sensmax,cdabs(sens(i,j)))
+!!!$     ak                sensmax = MAX1(sensmax,ABS(sens(i,j)))
         summe   = summe + sens(i,j)
      end do
 
-     if (cdabs(summe).gt.0d0) then
-        write(kanal,*,err=1000) real(cdabs(summe)),&
-             real(1d3*datan2(dimag(summe),dble(summe)))
+     if (ABS(summe).gt.0d0) then
+        write(kanal,*,err=1000) real(ABS(summe)),&
+             real(1d3*ATAN2(aimag(summe),real(summe)))
      else
         write(kanal,*,err=1000) 0.,0.
      end if
 
 !!!$     Koordinaten und Sensitivitaeten schreiben
-!!!$     (Real- und Imaginaerteil)
+!!!$     (Real- und aimaginaerteil)
      do j=1,manz
         write(kanal,*,err=1000)real(espx(j)),real(espy(j)),&
-             real(dble(sens(i,j))),real(dimag(sens(i,j)))
+             real(REAL(sens(i,j))),real(aimag(sens(i,j)))
      end do
 
 !!!$     'datei' schliessen

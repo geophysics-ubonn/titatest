@@ -1,20 +1,18 @@
 PROGRAM inv
 
-!!!$   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
+! Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
 
-!!!$   Belegte Kanaele:  
-!!!$   9 - error.dat   -> fperr
-!!!$   10 - run.ctr    -> fprun
-!!!$   11 - in-/output -> kanal
-!!!$   12 - crtomo.cfg -> fpcfg
-!!!$   13 - inv.ctr    -> fpinv
-!!!$   14 - cjg.ctr    -> fpcjg
-!!!$   15 - eps.ctr    -> fpeps
-!!!$
-!!!$   Andreas Kemna                                        02-May-1995
-!!!$   Letzte Aenderung                                     Jul-2010
-
-!!!$.....................................................................
+! Belegte Kanaele:  
+!  9 - error.dat   -> fperr
+! 10 - run.ctr    -> fprun
+! 11 - in-/output -> kanal
+! 12 - crtomo.cfg -> fpcfg
+! 13 - inv.ctr    -> fpinv
+! 14 - cjg.ctr    -> fpcjg
+! 15 - eps.ctr    -> fpeps
+!
+! Andreas Kemna                                        02-May-1995
+! Letzte Aenderung                                     Jul-2010
 
   USE alloci
   USE tic_toc
@@ -38,13 +36,12 @@ PROGRAM inv
   USE omp_lib
   USE ompmod
   USE get_ver
-!!!$   USE portlib
+  use iso_fortran_env  
 
   IMPLICIT NONE
-
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i,count,mythreads,maxthreads
-  REAL(KIND(0D0))        :: lamalt
+  REAL(prec)        :: lamalt
   LOGICAL                :: converged,l_bsmat
   INTEGER,PARAMETER      :: clrln_len=50
   CHARACTER(clrln_len)   :: clrln ! clear line
@@ -67,7 +64,7 @@ PROGRAM inv
   DO i=1,clrln_len-1
      clrln(i:i+1) = ' ' ! fill clear line CHARACTER array
   END DO
-
+  PRINT*,'Precision',PRECISION(a),'digits'
   pid = getpid()
   fetxt = 'crtomo.pid'
   PRINT*,'######### CRTomo ############'
@@ -75,8 +72,6 @@ PROGRAM inv
   OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (fprun,*)pid
   CLOSE (fprun)
-  maxthreads = OMP_GET_MAX_THREADS()
-  WRITE(6,"(a, i5)") " OpenMP max threads: ", maxthreads
 
   PRINT*,'Version control of binary:'
 ! Get git version and store it in 'version'
@@ -94,35 +89,9 @@ PROGRAM inv
 ! Read all variables
      CALL rall(kanal,delem,delectr,dstrom,drandb,&
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
-!!!$   diff+<
-!!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
-!!!$   diff+>
      IF (errnr.NE.0) GOTO 999
-
-     NTHREADS = maxthreads
-!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
-     IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
-        mythreads = MAX(kwnanz,2)
-        PRINT*,'Rescheduling..'
-        IF ( mythreads <= maxthreads ) THEN ! best case,
-!!!$ the number of processors is greater or equal the assumed
-!!!$ workload
-           PRINT*,'perfect match'
-        ELSE 
-!!!$ is smaller than the minimum workload.. now we have to devide a bit..
-           PRINT*,'less nodes than wavenumbers'
-           DO i = 1, INT(kwnanz/2)
-              mythreads = INT(kwnanz / i) + 1
-              IF (mythreads < maxthreads) EXIT
-           END DO
-        END IF
-        NTHREADS = mythreads
-     END IF
-     CALL OMP_SET_NUM_THREADS ( NTHREADS )
-     ! recheck ..
-     i = OMP_GET_MAX_THREADS()
-     WRITE(6,'(2(a, i3),a)') " Current OpenMP threads: ",i,'(',maxthreads,')'
-!!!$
+     
+     CALL GET_THREADS(nthreads,kwnanz)
 
 !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !!!$   zur Berechnung der gemischten Randbedingung bestimmen
@@ -207,7 +176,7 @@ PROGRAM inv
 !!!$ assign memory to global variables
      fetxt = 'allocation problem reference model'
      ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=myerr)
-     w_ref_re = 0d0;m_ref = DCMPLX(0d0);w_ref_im = 0d0
+     w_ref_re = 0d0;m_ref = CMPLX(0d0);w_ref_im = 0d0
      IF (myerr /= 0) GOTO 999
 !!!$ << RM ref model regu
 
@@ -353,9 +322,9 @@ PROGRAM inv
 !!!$   Scale back the potentials, save them and 
 !!!$   eventually add the analytical response
                  DO j=1,sanz
-                    kpotdc(j,l,k) = DBLE(pot(j)) * fak(j)
+                    kpotdc(j,l,k) = REAL(pot(j)) * fak(j)
                     IF (lsr) kpotdc(j,l,k) = kpotdc(j,l,k) + &
-                         DBLE(pota(j))
+                         REAL(pota(j))
                     IF (swrtr.EQ.0) hpotdc(j,l) = kpotdc(j,l,k)
                  END DO
               END DO
@@ -422,11 +391,11 @@ PROGRAM inv
 !!!$   Gleichungssystem loesen
                  fetxt = 'vre'
                  CALL vre(a,b,pot)
-
+                 print*,pot(1)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
                  DO j=1,sanz
-                    kpot(j,l,k) = pot(j) * dcmplx(fak(j))
+                    kpot(j,l,k) = pot(j) * CMPLX(fak(j))
                     IF (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
                     IF (swrtr.EQ.0) hpot(j,l) = kpot(j,l,k)
                  END DO
@@ -524,21 +493,21 @@ PROGRAM inv
            WRITE (*,'(/a,G12.4,a/)')'+++ Convergence check (CHI (old/new)) ',&
                 100.0*(1d0-rmsalt/nrmsd),' %'
 !!!$   Keine Verbesserung des Daten-CHI ?
-           IF (dabs(1d0-rmsalt/nrmsd).LE.mqrms) THEN
+           IF (ABS(1d0-rmsalt/nrmsd).LE.mqrms) THEN
               errnr2 = 81
               WRITE (fetxt,*)'No further CHI approvement ',&
                    REAL(ABS(1d0-rmsalt/nrmsd))
            END IF
 !!!$   Minimaler Daten-CHI erreicht ?
-!!!$   tst            if (dabs(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
-           IF (dabs(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
+!!!$   tst            if (ABS(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
+           IF (ABS(1d0-nrmsd/nrmsdm).LE.mqrms.AND.ldlamf) THEN
               errnr2 = 80
               WRITE (fetxt,*)'Optimal RMS ',REAL(nrmsd),' reached'
            END IF
 
            IF (llam) THEN
               WRITE (6,'(a)',ADVANCE='no')'convergence '
-              IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
+              IF (ABS(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
               IF (nrmsd < 1d0 ) errnr2 = 94
               IF (nrmsd > rmsalt) errnr2 = 95
               PRINT*,errnr2        
@@ -550,9 +519,9 @@ PROGRAM inv
               WRITE (fetxt,*)'Reached max number of iterations ',itmax
            END IF
 !!!$   Minimal stepsize erreicht ?
-           IF (errnr2 == 0.AND.bdpar <= bdmin) THEN
+           IF (errnr2 == 0.AND.bdpar <= bMIN) THEN
               errnr2 = 109
-              WRITE (fetxt,*)' Stepsize ',bdpar,' < Min stepsize ',bdmin
+              WRITE (fetxt,*)' Stepsize ',bdpar,' < Min stepsize ',bMIN
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
@@ -614,9 +583,9 @@ PROGRAM inv
                          ' ******* Resetting phase model ********'
                     CLOSE (fpinv)
                     DO j=1,elanz
-                       sigma(j) = dcmplx(&
-                            dcos(pha0/1d3)*cdabs(sigma(j)) ,&
-                            -dsin(pha0/1d3)*cdabs(sigma(j)) )
+                       sigma(j) = CMPLX(&
+                            COS(pha0/1d3)*ABS(sigma(j)) ,&
+                            -SIN(pha0/1d3)*ABS(sigma(j)) )
                     END DO
                     lsetup = .TRUE. ! ensure proper misfit and kont2 output
                     CYCLE       ! neues calc
@@ -718,7 +687,7 @@ PROGRAM inv
 
         IF (BTEST(llamf,0)) THEN ! for fixed lambda we do not want any parabola fitting?
            lam = lamfix
-           IF (BTEST(llamf,1).AND.it>1) lam = lamfix / (2d0 * DBLE(it - 1))
+           IF (BTEST(llamf,1).AND.it>1) lam = lamfix / (2d0 * REAL(it - 1))
            llam = .FALSE. ! in order to calculate any update this needs to be false
            IF (lsetup.OR.lsetip) THEN
               lsetup = .FALSE.
@@ -740,8 +709,8 @@ PROGRAM inv
                  IF ((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
                       (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
                       (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
-                      (bdpar > bdmin).AND.&
-                      (dabs(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
+                      (bdpar > bMIN).AND.&
+                      (ABS(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
                       (rmsreg.EQ.0d0)) THEN
 
                     IF (rmsreg > 0d0) THEN
@@ -788,18 +757,18 @@ PROGRAM inv
                        dlalt = dlam
                        IF (ldlami) THEN ! initialize search
                           ldlami = .FALSE. 
-                          alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),&
-                               dlog(1d0+mqrms)) 
+                          alam   = int(MAX(ABS(LOG(nrmsd/nrmsdm)),&
+                               LOG(1.+mqrms)))
 !!!$ alam = MAX(log(actual chi),log(1+0.02))
                           dlam   = fstart ! sets first dlam (0.5 default, which should be fine)
                        ELSE
-                          alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm))) 
+                          alam = int(MAX(alam,ABS(LOG(nrmsd/nrmsdm))) )
 !!!$ CHI dependend partial fraction of lam variation
 !!!$ alam = MAX(alam,log(actual chi))
-                          dlam = dlog(fstop)*&
-                               SIGN(1d0,dlog(nrmsd/nrmsdm))+&
-                               dlog(fstart/fstop)*&
-                               dlog(nrmsd/nrmsdm)/alam 
+                          dlam = LOG(fstop)*&
+                               SIGN(1._prec,LOG(nrmsd/nrmsdm))+&
+                               LOG(fstart/fstop)*&
+                               LOG(nrmsd/nrmsdm)/alam 
 !!!$
 !!!$ dlam = ln(0.9) * sign(1,ln(act chi)) + (ln(0.5/0.9)) * ln(act chi)/alam
 !!!$ this makes mostly the same and dlam = exp(ln(0.9) + ln(0.5/0.9)) = 0.5
@@ -808,7 +777,7 @@ PROGRAM inv
 !!!$ (for example act chi = 0,98)
 !!!$ dlam = exp(-ln(0.9) + ln(0.5/0.9) * ln(0.98)/log(1.02)) = 2
 !!!$
-                          dlam = dexp(dlam)
+                          dlam = EXP(dlam)
 
                        END IF
                        lam = lam*dlam

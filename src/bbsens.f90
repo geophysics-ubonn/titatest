@@ -10,7 +10,7 @@ SUBROUTINE bbsens(kanal,datei)
 
 !!!$....................................................................
 
-  USE alloci , ONLY : sens,sensdc
+  USE alloci , ONLY : sens,sensdc,prec
   USE datmod , ONLY : nanz,wmatd_cri,wmatdr
   USE invmod , ONLY : lfpi,wmatd,wdfak
   USE modelmod , ONLY : manz
@@ -37,9 +37,9 @@ SUBROUTINE bbsens(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0)),ALLOCATABLE,DIMENSION(:) :: csens,csens_fpi
-  REAL (KIND(0D0))                          :: csensmax
-  REAL (KIND(0D0))                          :: dum,dum_fpi
+  REAL (prec),ALLOCATABLE,DIMENSION(:) :: csens,csens_fpi
+  REAL (prec)                          :: csensmax
+  REAL (prec)                          :: dum,dum_fpi
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
 !!!$.....................................................................
@@ -61,7 +61,7 @@ SUBROUTINE bbsens(kanal,datei)
 
   DO j=1,manz
      DO i=1,nanz
-        dum = SQRT(wmatd(i)) * DBLE(wdfak(i))
+        dum = SQRT(wmatd(i)) * REAL(wdfak(i))
 !!!$ CR case: 
 !!!$  wmatd = wmatdr without error ellipses
 !!!$  wmatd = wmatd_cri with error ellipses
@@ -73,14 +73,14 @@ SUBROUTINE bbsens(kanal,datei)
 !!!$ >> RM we modify this to make sure, that even for FPI (case lfpi=.T.)
 !!!$ we can calculate a complex coverage as well as treating the error right
         IF (lfpi) THEN
-           dum_fpi = SQRT(wmatd(i)) * DBLE(wdfak(i))
+           dum_fpi = SQRT(wmatd(i)) * REAL(wdfak(i))
            IF (lelerr) THEN
-              dum = SQRT(wmatd_cri(i)) * DBLE(wdfak(i))
+              dum = SQRT(wmatd_cri(i)) * REAL(wdfak(i))
            ELSE
-              dum = SQRT(wmatdr(i)) * DBLE(wdfak(i))
+              dum = SQRT(wmatdr(i)) * REAL(wdfak(i))
            END IF
 !!!$ this sensitivity is the one which is used through the FPI
-           csens_fpi(j) = csens_fpi(j) + ABS(DBLE(sens(i,j))) * dum_fpi
+           csens_fpi(j) = csens_fpi(j) + ABS(REAL(sens(i,j))) * dum_fpi
 
 !!!$ this one is the COMPLEX sensitivity of the final estimate
            csens(j) = csens(j) + ABS(sens(i,j)) * dum

@@ -10,7 +10,7 @@ SUBROUTINE bsytop
 !!!$     Letzte Aenderung                                         20-Nov-2009
 !!!$     
 !!!$.....................................................................
-
+use alloci, only:prec
   USE elemmod               ! fuer sytop und den ganzen rest 
 
   IMPLICIT none
@@ -23,7 +23,7 @@ SUBROUTINE bsytop
 !!!$     Knotenanzahl der no flow elemente 
   INTEGER :: nkel
 !!!$     Schwerpunktskoordinaten des randelements
-  REAL(KIND(0D0)) :: sp
+  REAL(prec) :: sp
 !!!$-----------------------------------------------------------------------
 
   sytop = 0.
@@ -43,13 +43,13 @@ SUBROUTINE bsytop
            DO ik=1,nkel
               sp = sp + sy(snr(nrel(iel,ik)))
            END DO
-           sp = sp/DBLE(nkel)
+           sp = sp/REAL(nkel)
 
 
            IF (j == 1) THEN 
               sytop = sp
            ELSE             !caculate arithmetic mean (direct)
-              sytop = (sytop*dble(j-1)+sp)/dble(j)
+              sytop = (sytop*REAL(j-1)+sp)/REAL(j)
            END IF
 
         END DO

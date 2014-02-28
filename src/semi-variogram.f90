@@ -1,11 +1,11 @@
 PROGRAM semi_variogram
-
+use alloci, only: prec
   IMPLICIT none
 
   !!$c     smallest variogram distance and tolerance
-  REAL(KIND(0D0)) :: lag_unit,lag_tol
+  REAL(prec) :: lag_unit,lag_tol
   !!$c     sill value
-  REAL(KIND(0D0)) :: sill
+  REAL(prec) :: sill
 !!$c     number of equidistant lags (nlag) = INT(grid_max / grid_min)
   INTEGER :: nrows,rown1,rown2
 !!$c Row number of the data from data file
@@ -13,25 +13,25 @@ PROGRAM semi_variogram
 !!$c should we transform data or not? 0 = lin, 1 = ln, 2 = log10
   INTEGER :: nlag,ic_nlag
 !!$c     lag vector (nlag)
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: lag
+  REAL(prec),DIMENSION(:),ALLOCATABLE :: lag
 !!$c     number of headtail pairs for each semivariogram N(lag)(nlag)
   INTEGER,DIMENSION(:),ALLOCATABLE :: ngam
 !!$c     experimental semivariogram
 !!$c     gam(lag)=1/N(lag)/2 * sum_k^N(lag) (tail - head)**2.
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: gam
+  REAL(prec),DIMENSION(:),ALLOCATABLE :: gam
 !!$c     parameter mean and variance
-  REAL(KIND(0D0)) :: par_mean,par_vari
+  REAL(prec) :: par_mean,par_vari
 !!$c     head and tail
-  REAL(KIND(0D0)) :: head,tail
+  REAL(prec) :: head,tail
 !!$c     h distance
-  REAL(KIND(0D0)) :: h
+  REAL(prec) :: h
 !!$c     th = tail - head
-  REAL(KIND(0D0)) :: th
+  REAL(prec) :: th
 !!!$ grid and parameer variable storage
-  REAL(KIND(0d0)),DIMENSION(:),ALLOCATABLE :: grid,para
+  REAL(prec),DIMENSION(:),ALLOCATABLE :: grid,para
 !!!$ input storage
-  REAL(KIND(0d0)),DIMENSION(:,:),ALLOCATABLE :: inp_buff
-  REAL (KIND(0D0)) :: PI
+  REAL(prec),DIMENSION(:,:),ALLOCATABLE :: inp_buff
+  REAL (prec) :: PI
 
 
   CHARACTER(256) :: input_filename,data_filename,&
@@ -202,11 +202,11 @@ PROGRAM semi_variogram
 !!$           ngam(k) = ngam(k) + 1
            IF ( ABS( lag(k) - h ) < lag_tol ) THEN
               ngam(k) = ngam(k) + 1
-!              gam(k) = gam(k) * DBLE(ngam(k) - 1) ! multiply with previous value which was the devisor
-              gam(k) = gam(k) + DBLE(th * th) ! add correctly
-!              gam(k) = gam(k) / DBLE(ngam(k)) ! devide all throug hactual collect -> mean value
+!              gam(k) = gam(k) * REAL(ngam(k) - 1) ! multiply with previous value which was the devisor
+              gam(k) = gam(k) + REAL(th * th) ! add correctly
+!              gam(k) = gam(k) / REAL(ngam(k)) ! devide all throug hactual collect -> mean value
 !!$              PRINT*,REAL(h),k,ngam(k),REAL(gam(k)),REAL(th*th),&
-!!$                   REAL(gam(k) * DBLE(ngam(k) ))
+!!$                   REAL(gam(k) * REAL(ngam(k) ))
            END IF
            
 
@@ -219,7 +219,7 @@ PROGRAM semi_variogram
   ic_nlag = 0
   DO k = 1,nlag
      IF (ngam(k) > 0) THEN
-        gam(k) = gam(k) / DBLE(ngam(k)) / 2d0
+        gam(k) = gam(k) / REAL(ngam(k)) / 2d0
         ic_nlag = ic_nlag + 1
      END IF
   END DO

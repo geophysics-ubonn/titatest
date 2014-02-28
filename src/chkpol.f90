@@ -6,7 +6,7 @@ subroutine chkpol(lsetup)
 !!!$     Letzte Aenderung   07-Nov-1997
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE invmod
   USE datmod
   USE errmod
@@ -32,11 +32,11 @@ subroutine chkpol(lsetup)
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::  i,idat,isig
 
-!!!$     Real-, Imaginaerteile
-  REAL (KIND(0D0))    ::  redat,imdat,resig,imsig
+!!!$     Real-, aimaginaerteile
+  REAL (prec)    ::  redat,imdat,resig,imsig
 
 !!!$     Pi
-  REAL (KIND(0D0))    :: pi
+  REAL (prec)    :: pi
 
 !!!$.....................................................................
 
@@ -52,11 +52,11 @@ subroutine chkpol(lsetup)
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Logarithmierte Betraege in den Realteilen,
-!!!$     Phasen (in rad) in den Imaginaerteilen
-     redat = dble(dat(i))
-     imdat = dimag(dat(i))
-     resig = dble(sigmaa(i))
-     imsig = dimag(sigmaa(i))
+!!!$     Phasen (in rad) in den aimaginaerteilen
+     redat = real(dat(i))
+     imdat = aimag(dat(i))
+     resig = real(sigmaa(i))
+     imsig = aimag(sigmaa(i))
 
 !!!$     Phasenbereich checken
      if (imdat.gt.pi/2d0) then
@@ -80,16 +80,16 @@ subroutine chkpol(lsetup)
 !!!$     Falls lpol=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
-        imsig     = imsig + dble(isig)*pi
-        sigmaa(i) = dcmplx(resig,imsig)
-        volt(i)   = cdexp(-sigmaa(i))
+        imsig     = imsig + real(isig)*pi
+        sigmaa(i) = CMPLX(resig,imsig)
+        volt(i)   = EXP(-sigmaa(i))
 
         if (lpol) then
            write(fprun,'(i4,a30)')i,' : correct and change polarity'
            if (.not.lsetup) wdfak(i)=0
         else
-           imdat  = imdat - dsign(pi,imdat)
-           dat(i) = dcmplx(redat,imdat)
+           imdat  = imdat - sign(pi,imdat)
+           dat(i) = CMPLX(redat,imdat)
 
            write(fprun,'(i4,a18)')i,' : change polarity'
            wdfak(i) = 0
@@ -100,8 +100,8 @@ subroutine chkpol(lsetup)
 !!!$     Falls lpol=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur
         if (lpol) then
-           imdat  = imdat + dble(idat)*pi
-           dat(i) = dcmplx(redat,imdat)
+           imdat  = imdat + real(idat)*pi
+           dat(i) = CMPLX(redat,imdat)
 
            write(fprun,'(i4,a19)')i,' : correct polarity'
            if (.not.lsetup) wdfak(i)=0
@@ -113,11 +113,11 @@ subroutine chkpol(lsetup)
 
 !!!$     Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
-        imsig     = imsig + dble(isig)*pi
-        sigmaa(i) = dcmplx(resig,imsig)
-        volt(i)   = cdexp(-sigmaa(i))
-        imdat     = imdat + dble(idat)*pi
-        dat(i)    = dcmplx(redat,imdat)
+        imsig     = imsig + real(isig)*pi
+        sigmaa(i) = CMPLX(resig,imsig)
+        volt(i)   = EXP(-sigmaa(i))
+        imdat     = imdat + real(idat)*pi
+        dat(i)    = CMPLX(redat,imdat)
 
         write(fprun,'(i4,a18)')i,' : change polarity'
 

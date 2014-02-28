@@ -39,21 +39,21 @@ SUBROUTINE bsensi(tictoc)
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Beitraege zur Superposition
-  COMPLEX (KIND(0D0)) ::    sup(4)
+  COMPLEX (prec) ::    sup(4)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
   INTEGER (KIND = 4)  ::     i,j,k,icount
 
 !!!$     Hilfsfeld
-  COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
+  COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     nzp,nnp,c1
-  COMPLEX (KIND(0D0)) ::    dum
+  COMPLEX (prec) ::    dum
 
 !!!$     Pi
-  REAL (KIND(0D0))    ::     pi
+  REAL (prec)    ::     pi
 
 !!!$.....................................................................
 
@@ -68,7 +68,7 @@ SUBROUTINE bsensi(tictoc)
 
   IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
-  sens = DCMPLX(0d0)
+  sens = CMPLX(0d0)
 
   icount = 0
   !$OMP PARALLEL DEFAULT (none) &
@@ -98,7 +98,7 @@ SUBROUTINE bsensi(tictoc)
 
 !!!$     Beitraege zur Superposition auf Null setzen
      DO j=1,4
-        sup(j) = dcmplx(0d0)
+        sup(j) = CMPLX(0d0)
      END DO
 
      DO ityp=1,typanz
@@ -115,7 +115,7 @@ SUBROUTINE bsensi(tictoc)
 
 !!!$     SENSITIVITAETEN BERECHNEN
            DO k=1,kwnanz
-              hsens(k) = dcmplx(0d0)
+              hsens(k) = CMPLX(0d0)
 
 !!!$     Knoten des aktuellen Elements hochzaehlen
               DO mi=1,nkel
@@ -141,7 +141,7 @@ SUBROUTINE bsensi(tictoc)
 !!!$     -> mittels Compiler-Einstellung auf Null setzen!
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
-                    hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k))* dum
+                    hsens(k) = hsens(k) + CMPLX(elbg(iel,imn,k))* dum
 
                  END DO
               END DO
@@ -153,13 +153,13 @@ SUBROUTINE bsensi(tictoc)
 
            ELSE
 
-              dum = dcmplx(0d0)
+              dum = CMPLX(0d0)
 
               DO k=1,kwnanz
-                 dum = dum + hsens(k)*dcmplx(kwnwi(k))
+                 dum = dum + hsens(k)*CMPLX(kwnwi(k))
               END DO
 
-              dum = dum / dcmplx(pi)
+              dum = dum / CMPLX(pi)
 
            END IF
 !!!$     hier koennte auch eine mittelung passieren

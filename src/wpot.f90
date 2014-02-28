@@ -6,7 +6,7 @@ subroutine wpot(datei,np,mypot)
 !!!$     Letzte Aenderung   10-Mar-2007
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE femmod
   USE datmod
   USE elemmod
@@ -46,7 +46,7 @@ subroutine wpot(datei,np,mypot)
 
 !!!$     (Back-) Slash
   CHARACTER (1)   ::     slash
-  COMPLEX (KIND(0D0)), DIMENSION(sanz)  :: mypot
+  COMPLEX (prec), DIMENSION(sanz)  :: mypot
 
 !!!$     tst        real            * 8     dum_re,dum_im,dum_mag,dum_pha
 
@@ -77,14 +77,14 @@ subroutine wpot(datei,np,mypot)
   open(kanal,file=TRIM(fetxt),status='replace',err=999)
   errnr = 4
 
-!!!$     Koordinaten und Potentialwerte (Real- und Imaginaerteil) der
+!!!$     Koordinaten und Potentialwerte (Real- und aimaginaerteil) der
 !!!$     Knotenpunkte schreiben (in Reihenfolge der urspruenglichen
 !!!$     Numerierung)
   do i=1,sanz
      write(kanal,*,err=1000)real(sx(snr(i))),real(sy(snr(i))),&
-          real(dble(mypot(i))),real(dimag(mypot(i)))
-!!!$     ak     1                real(cdabs(mypot(i))),
-!!!$     ak     1                real(1d3*datan2(dimag(mypot(i)),dble(mypot(i))))
+          real(REAL(mypot(i))),real(aimag(mypot(i)))
+!!!$     ak     1                real(ABS(mypot(i))),
+!!!$     ak     1                real(1d3*ATAN2(aimag(mypot(i)),REAL(mypot(i))))
   end do
 
 !!!$     'datei' schliessen

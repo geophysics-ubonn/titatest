@@ -13,7 +13,7 @@ MODULE bsmatm_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm
+  USE alloci , ONLY : sens,sensdc,smatm,prec
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz,nachbar
   USE invmod , ONLY : lfpi,par,wmatd,wdfak
@@ -26,10 +26,9 @@ MODULE bsmatm_mod
   USE ompmod
   USE variomodel 
   USE pathmod
-
   IMPLICIT NONE
 
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PRIVATE :: csens 
+  REAL(prec),DIMENSION(:),ALLOCATABLE,PRIVATE :: csens 
 
   PUBLIC :: bsmatm 
 !!!$ controls which regularization is to apply
@@ -169,8 +168,8 @@ CONTAINS
 !!!$ This subroutine calculates the squared coverage or diag{A^TC_d^{-1}A}!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     INTEGER :: i,j
-    REAL(KIND(0D0)) :: csensmax ! maximum
-    REAL(KIND(0D0)) :: csensavg !mean coverage value
+    REAL(prec) :: csensmax ! maximum
+    REAL(prec) :: csensavg !mean coverage value
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     csens=0d0 ! csens was already allocated (low dimensional) in bsmatm 
@@ -182,15 +181,15 @@ CONTAINS
     DO j=1,manz
        DO i=1,nanz
           IF (lfpi) THEN
-             csens(j) = csens(j) + DBLE(sens(i,j)) * &
-                  DBLE(sens(i,j)) * wmatd(i)*DBLE(wdfak(i))
+             csens(j) = csens(j) + REAL(sens(i,j)) * &
+                  REAL(sens(i,j)) * wmatd(i)*REAL(wdfak(i))
           ELSE IF (ldc) THEN
              csens(j) = csens(j) + sensdc(i,j) * &
-                  sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
+                  sensdc(i,j) * wmatd(i)*REAL(wdfak(i))
 !!!$ wechselt automatisch wmatdp bei lfpi
           ELSE
-             csens(j) = csens(j) + DCONJG(sens(i,j)) * &
-                  sens(i,j) * wmatd(i)*DBLE(wdfak(i)) 
+             csens(j) = csens(j) + CONJG(sens(i,j)) * &
+                  sens(i,j) * wmatd(i)*REAL(wdfak(i)) 
           ENDIF
        END DO
     END DO
@@ -199,7 +198,7 @@ CONTAINS
 !!!$ for normalization
     csensmax = MAXVAL(csens)
 
-    csensavg = SUM (csens) / DBLE(manz)
+    csensavg = SUM (csens) / REAL(manz)
 
   END SUBROUTINE bcsens
 
@@ -217,10 +216,10 @@ CONTAINS
 !!!$    Glaettung in x bzw. z-Richtung)
     INTEGER(KIND = 4) ::   ndis_z,idis_z(3),m,ndis_x,idis_x(4)
     LOGICAL ::     lup,ldown,lleft,lright
-    REAL(KIND(0D0)) ::     alfdis
+    REAL(prec) ::     alfdis
 
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0)) ::     dum,dzleft,dzright,xleft,xmean,xright,&
+    REAL(prec) ::     dum,dzleft,dzright,xleft,xmean,xright,&
          dxup,dxdown,zup,zmean,zdown
 
     INTEGER(KIND = 4) ::     i,j,l
@@ -277,9 +276,9 @@ CONTAINS
           END DO
 
 !!!$    Beitrag von Wx^t*Wx zur Rauhigkeitsmatrix
-          dzleft  = dabs( sy(snr(nrel(k(i,j),4))) &
+          dzleft  = ABS( sy(snr(nrel(k(i,j),4))) &
                -sy(snr(nrel(k(i,j),1))))
-          dzright = dabs( sy(snr(nrel(k(i,j),3))) &
+          dzright = ABS( sy(snr(nrel(k(i,j),3))) &
                -sy(snr(nrel(k(i,j),2))))
 
           xmean = 0d0
@@ -304,7 +303,7 @@ CONTAINS
 
              xleft = xleft/4d0
 
-             smatm(k(i,j),1) = alfdis*alfx * dzleft/dabs(xmean-xleft)
+             smatm(k(i,j),1) = alfdis*alfx * dzleft/ABS(xmean-xleft)
           END IF
 
           IF (j.LT.nx) THEN
@@ -321,16 +320,16 @@ CONTAINS
              END DO
 
              xright = xright/4d0
-             dum    = alfdis*alfx * dzright/dabs(xright-xmean)
+             dum    = alfdis*alfx * dzright/ABS(xright-xmean)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
              smatm(k(i,j),2) = -dum
           END IF
 
 !!!$    Beitrag von Wz^t*Wz zur Rauhigkeitsmatrix
-          dxup   = dabs( sx(snr(nrel(k(i,j),3))) &
+          dxup   = ABS( sx(snr(nrel(k(i,j),3))) &
                -sx(snr(nrel(k(i,j),4))))
-          dxdown = dabs( sx(snr(nrel(k(i,j),2))) &
+          dxdown = ABS( sx(snr(nrel(k(i,j),2))) &
                -sx(snr(nrel(k(i,j),1))))
 
           zmean = 0d0
@@ -352,7 +351,7 @@ CONTAINS
              END DO
 
              zup = zup/4d0
-             dum = alfdis*alfz * dxup/dabs(zup-zmean)
+             dum = alfdis*alfz * dxup/ABS(zup-zmean)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
           END IF
@@ -370,7 +369,7 @@ CONTAINS
              END DO
 
              zdown = zdown/4d0
-             dum   = alfdis*alfz * dxdown/dabs(zmean-zdown)
+             dum   = alfdis*alfz * dxdown/ABS(zmean-zdown)
 
              smatm(k(i,j),1) = smatm(k(i,j),1) + dum
              smatm(k(i,j),3) = -dum
@@ -396,13 +395,13 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$
 !!!$    Hilfsvariablen 
-    REAL(KIND(0D0)) :: dum    !!!$dummy stores numbers
+    REAL(prec) :: dum    !!!$dummy stores numbers
     INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
-    REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
-    REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
-    REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
+    REAL(prec) :: edglen !!!$Kantenlaenge
+    REAL(prec) :: dist   !!!$Abstand der Schwerpunkte
+    REAL(prec) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
+    REAL(prec) :: ang    !Winkel fuer anisotrope Glaettung
+    REAL(prec) :: alfgeo !Anisotrope (geometrische) Glaettung
 !!!$.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
@@ -436,9 +435,9 @@ CONTAINS
 
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Angle
+             ang = ATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Angle
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
+             alfgeo = SQRT((alfx*COS(ang))**2d0 + (alfz*SIN(ang))**2d0)
              
              dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
              
@@ -464,8 +463,8 @@ CONTAINS
 !!!$    
 !!!$........................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
-    REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
-    REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
+    REAL(prec) :: csensmax  !Maximale Covarage
+    REAL(prec) :: csensavg  !Mittlere Covarage
     INTEGER :: j
 !!!$.....................................................................
 
@@ -513,17 +512,17 @@ CONTAINS
 !!!$     PROGRAMMINTERNE PARAMETER:
 !!!$     Hilfsvariablen 
 
-    REAL(KIND(0D0)) :: dum,dum2 ! helpers
-    REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
+    REAL(prec) :: dum,dum2 ! helpers
+    REAL(prec) :: mgrad,sqmgrad ! model gradient and squared model grad
     INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen ! Kantenlaenge
-    REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
-    REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
-    REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
-    REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
-    REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
-    REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
+    REAL(prec) :: edglen ! Kantenlaenge
+    REAL(prec) :: dist ! Abstand der Schwerpunkte
+    REAL(prec) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
+    REAL(prec) :: ang    !Winkel fuer anisotrope Glaettung
+    REAL(prec) :: csensmax  !Maximale Covarage
+    REAL(prec) :: csensavg  !Mittlere Covarage
+    REAL(prec) :: alfgeo !Anisotrope Glaettung
+    REAL(prec) :: alfmgs !MGS Glaettung
 !!!$.....................................................................
 
     errnr = 4
@@ -572,15 +571,15 @@ CONTAINS
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 !!$! including anisotropy!
 !angle to horizon
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
+             ang = ATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
 !!!$ geometrical contribution... (as smooth regularization..)
 ! projected effective contribution due to anisotropic regu
-             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
+             alfgeo = SQRT((alfx*COS(ang))**2d0 + (alfz*SIN(ang))**2d0)
 
 !!!$ Model value gradient (\nabla m)
 
 !!! TODO
-             mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
+             mgrad = ABS(sigma(i) - sigma(nachbar(i,k))) / dist
              sqmgrad = mgrad * mgrad
 !!!$ TODO
 !!!$    MGS Teil
@@ -604,8 +603,8 @@ CONTAINS
 
              ELSE IF (ltri == 6) THEN !!!$sensitivitaetswichtung 1 von RM
 !!!$    f(i,k) = 1 + g(i) + g(k)
-                dum2 = 1d0 + DABS(DLOG10(csens(i))) + &
-                     DABS(DLOG10(csens(nachbar(i,k))))
+                dum2 = 1d0 + ABS(LOG10(csens(i))) + &
+                     ABS(LOG10(csens(nachbar(i,k))))
 !!!$    dum2 = f(i,k)^2
                 dum2 = dum2**2d0
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
@@ -617,8 +616,8 @@ CONTAINS
              ELSE IF (ltri == 7) THEN !!!$sensitivitaetswichtung 2 von RM
 
 !!!$    f(i,k) = 1 + (g(i) + g(k))/mean(g)
-                dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
-                     DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
+                dum2 = 1d0 + ABS((LOG10(csens(i))) + &
+                     ABS(LOG10(csens(nachbar(i,k))))) / csensavg
 !!!$    dum2 = f(i,k)^2
                 dum2 = dum2**2d0
 !!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
@@ -631,16 +630,16 @@ CONTAINS
                 
 !!!$    der folgende code wurde mir so ueberliefert... 
 !!!$ kam von RB aber keine ahnung was das genau macht
-                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
-                     DLOG10(csens(nachbar(i,k))) ) ))
+                dum = mgrad * (1d0 + 0.2d0 * (ABS( LOG10(csens(i)) + & 
+                     LOG10(csens(nachbar(i,k))) ) ))
                 
                 alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                 dum =  edglen * alfgeo * alfmgs
 
              ELSE IF (ltri == 9) THEN
 
-                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
-                     DLOG10(csens(nachbar(i,k))) ) / csensavg ))
+                dum = mgrad * (1d0 + 0.2d0 * (ABS( LOG10(csens(i)) + &
+                     LOG10(csens(nachbar(i,k))) ) / csensavg ))
 
                 alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                 dum =  edglen * alfgeo * alfmgs
@@ -675,14 +674,14 @@ CONTAINS
 !!!$........................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
-    REAL(KIND(0D0)) :: dum
+    REAL(prec) :: dum
     INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
-    REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
-    REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
-    REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
-    REAL(KIND(0D0)) :: alftv  !TV Glaettung
+    REAL(prec) :: edglen !!!$Kantenlaenge
+    REAL(prec) :: dist   !!!$Abstand der Schwerpunkte
+    REAL(prec) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
+    REAL(prec) :: ang    !Winkel fuer anisotrope Glaettung
+    REAL(prec) :: alfgeo !Anisotrope (geometrische) Glaettung
+    REAL(prec) :: alftv  !TV Glaettung
 !!!$.....................................................................
 
     
@@ -709,9 +708,9 @@ CONTAINS
 !!!$   Geometrischer Teil...
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
+             ang = ATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
 
-             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
+             alfgeo = SQRT((alfx*COS(ang))**2d0 + (alfz*SIN(ang))**2d0)
 
              alftv = edglen / dist * alfgeo
 
@@ -741,10 +740,10 @@ CONTAINS
 !!!$    Last edited RM                                          Jul-2010
 !!!$....................................................................
 !!!$    Hilfsmatrix
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
-    REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: myold,proof
+    REAL(prec),DIMENSION(:),ALLOCATABLE :: work
+    REAL(prec),DIMENSION(:,:),ALLOCATABLE :: myold,proof
 !!!$    Korrelation lengths, variance (var) and nugget
-    REAL(KIND(0D0))      :: hx,hy,var,nugget
+    REAL(prec)      :: hx,hy,var,nugget
     REAL                 :: epsi
 !!!$    gibt es evtl schon eine inverse?
     LOGICAL              :: ex
@@ -858,7 +857,7 @@ CONTAINS
 !!!$    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
-          CALL gauss_dble(smatm,manz,errnr)
+          CALL gauss_REAL(smatm,manz,errnr)
           IF (errnr/=0) THEN
              fetxt='there was something wrong..'
              PRINT*,'Zeile(',ABS(errnr),')::',smatm(ABS(errnr),:)

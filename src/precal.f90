@@ -8,7 +8,7 @@ subroutine precal()
 !!!$     Letzte Aenderung   22-Sep-1998
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE femmod
   USE electrmod
   USE elemmod
@@ -23,7 +23,7 @@ subroutine precal()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsfunction
-  REAL (KIND(0D0))  ::   beta
+  REAL (prec)  ::   beta
 
 !!!$     Aktuelle Elementnummer
   INTEGER (KIND=4)  ::    iel

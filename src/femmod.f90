@@ -8,22 +8,24 @@ MODULE femmod
 !!$
 !!$ included from FEM.FIN!!! COMPLEXs
 !!$
+
+use alloci
 !!$ Berechnete Potentialwerte (bzw. Loesungsvektor)
-  COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pot
+  COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pot
 !!$ Analytische berechnete Potentialwerte 
-  COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pota
+  COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pota
 !!$ Konstanten-(bzw. Strom-) Vektor
-  COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: b
+  COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: b
 !!$ included from FEM.FIN!!! REALs
-  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: bdc
+  REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC        :: bdc
 !!$ Skalierungsfaktor
-  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: fak
+  REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC        :: fak
 !!$ Elementbeitraege
-  REAL (KIND(0D0)), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: elbg
+  REAL (prec), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: elbg
 !!$ Randelementbeitraege
-  REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: relbg
+  REAL (prec), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: relbg
 !!$ Konfigurationsfaktoren zur Berechnung der gemischten RB
-  REAL (KIND(0D0)), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: kg
+  REAL (prec), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: kg
 !!$ Schalter ob "Gemischte Randbedingung" - Geometrie
   LOGICAL, PUBLIC                                            :: lbeta
 !!$ Schalter ob Dirichletsche Randbedingung vorkommt

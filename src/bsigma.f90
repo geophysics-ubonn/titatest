@@ -36,7 +36,7 @@ SUBROUTINE bsigma
   errnr = 4
 
   do i=1,elanz
-     sigma(i) = CDEXP(par(mnr(i)))
+     sigma(i) = EXP(par(mnr(i)))
   end do
 
   errnr = 0

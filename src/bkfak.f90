@@ -7,7 +7,7 @@ subroutine bkfak()
 !!!$     Letzte Aenderung   29-Apr-2003
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE datmod
   USE electrmod
   USE elemmod,only:sx,sy,snr
@@ -27,13 +27,13 @@ subroutine bkfak()
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Koordinaten
-  REAL (KIND(0D0))    ::     xk(4),yk(4)
+  REAL (prec)    ::     xk(4),yk(4)
 
 !!!$     Pi
-  REAL (KIND(0D0))    ::     pi
+  REAL (prec)    ::     pi
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0))    ::     dx,dym,dyp,dum,r1,r2,r3,r4
+  REAL (prec)    ::     dx,dym,dyp,dum,r1,r2,r3,r4
 
 !!!$.....................................................................
 
@@ -73,8 +73,8 @@ subroutine bkfak()
         dx  = xk(3)-xk(1)
         dym = yk(3)-yk(1)
         dyp = yk(3)+yk(1)
-        dym = 1d0/dsqrt(dx*dx+dym*dym)
-        dyp = 1d0/dsqrt(dx*dx+dyp*dyp)
+        dym = 1d0/SQRT(dx*dx+dym*dym)
+        dyp = 1d0/SQRT(dx*dx+dyp*dyp)
         r4  = dym+dyp
      else
         r4  = 0d0
@@ -84,8 +84,8 @@ subroutine bkfak()
         dx  = xk(3)-xk(2)
         dym = yk(3)-yk(2)
         dyp = yk(3)+yk(2)
-        dym = 1d0/dsqrt(dx*dx+dym*dym)
-        dyp = 1d0/dsqrt(dx*dx+dyp*dyp)
+        dym = 1d0/SQRT(dx*dx+dym*dym)
+        dyp = 1d0/SQRT(dx*dx+dyp*dyp)
         r3  = dym+dyp
      else
         r3  = 0d0
@@ -95,8 +95,8 @@ subroutine bkfak()
         dx  = xk(4)-xk(1)
         dym = yk(4)-yk(1)
         dyp = yk(4)+yk(1)
-        dym = 1d0/dsqrt(dx*dx+dym*dym)
-        dyp = 1d0/dsqrt(dx*dx+dyp*dyp)
+        dym = 1d0/SQRT(dx*dx+dym*dym)
+        dyp = 1d0/SQRT(dx*dx+dyp*dyp)
         r2  = dym+dyp
      else
         r2  = 0d0
@@ -106,8 +106,8 @@ subroutine bkfak()
         dx  = xk(4)-xk(2)
         dym = yk(4)-yk(2)
         dyp = yk(4)+yk(2)
-        dym = 1d0/dsqrt(dx*dx+dym*dym)
-        dyp = 1d0/dsqrt(dx*dx+dyp*dyp)
+        dym = 1d0/SQRT(dx*dx+dym*dym)
+        dyp = 1d0/SQRT(dx*dx+dyp*dyp)
         r1  = dym+dyp
      else
         r1  = 0d0
@@ -115,7 +115,7 @@ subroutine bkfak()
 
      dum = (r1-r2) - (r3-r4)
 
-     if (dabs(dum).eq.0d0) then
+     if (ABS(dum).eq.0d0) then
         fetxt = 'index '
         write(fetxt(7:10),'(i4)') i
         errnr = 93

@@ -1,20 +1,21 @@
-REAL (KIND(0D0))  FUNCTION gammln(xx)
-  REAL (KIND(0D0))  :: xx
+FUNCTION gammln(xx)
+use alloci, only: prec
+  REAL (prec)  :: xx,gammln
   INTEGER (KIND=4)  :: j
-  REAL (KIND (0D0)) :: ser,stp,tmp,x,y,cof(6)
+  REAL (prec) :: ser,stp,tmp,x,y,cof(6)
   SAVE cof,stp
-  DATA cof,stp/76.18009172947146d0,-86.50532032941677d0, &
-       24.01409824083091d0,-1.231739572450155d0,.1208650973866179d-2, &
-       -.5395239384953d-5,2.5066282746310005d0/
+  DATA cof,stp/76.18009172947146,-86.50532032941677, &
+       24.01409824083091,-1.231739572450155,.1208650973866179e-2, &
+       -.5395239384953e-5,2.5066282746310005/
   x=xx
   y=x
-  tmp=x+5.5d0
-  tmp=(x+0.5d0)*dlog(tmp)-tmp
-  ser=1.000000000190015d0
+  tmp=x+5.5_prec
+  tmp=(x+0.5)*LOG(tmp)-tmp
+  ser=1.000000000190015_prec
   do j=1,6
-     y=y+1.d0
+     y=y+1.
      ser=ser+cof(j)/y
   END DO
-  gammln=tmp+dlog(stp*ser/x)
+  gammln=tmp+LOG(stp*ser/x)
   return
 END FUNCTION gammln

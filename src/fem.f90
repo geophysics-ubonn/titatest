@@ -33,39 +33,39 @@ program fem
 !!!$....................................................................
 
 !!!$   Kanalnummer
-  integer         * 4     kanal
+  integer             kanal
 
 
 !!!$   Dateinamen
-  character       * 80    delem,delectr,dsigma,dstrom,&
+  character (len=80)  delem,delectr,dsigma,dstrom,&
        dkpot,dpot,dvolt,dsens,drandb
 
 !!!$   Schalter ob transformierte Potentialwerte ausgegeben werden sollen
-  logical         * 4     lkpot
+  logical             lkpot
 
 !!!$   Schalter ob Potentialwerte ausgegeben werden sollen
-  logical         * 4     lpot
+  logical             lpot
 
 !!!$   Schalter ob Spannungswerte ausgegeben werden sollen
-  logical         * 4     lvolt
+  logical             lvolt
 
 !!!$   Schalter ob weiterer Datensatz modelliert werden soll
-  logical         * 4     lagain
+  logical             lagain
 
 !!!$   Schalter ob mit K-Faktor modelliert werden soll (default ohne)
-  logical         * 4     wkfak
+  logical             wkfak
 
 !!!$   Schalter ob nur analytisch modelliert werden soll (default ohne)
-  logical         * 4     lana
+  logical             lana
 
 !!!$   Indexvariablen
-  integer         * 4     j,k,l,c1
+  integer             j,k,l,c1
 
 !!!$ counting wavenumbers  
   INTEGER :: count
 
-  character       *256    ftext
-  INTEGER :: getpid,pid,maxthreads,mythreads
+  character(len=256)    ftext
+  INTEGER  getpid,pid,maxthreads,mythreads
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -80,7 +80,7 @@ program fem
   maxthreads = OMP_GET_MAX_THREADS()
   WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
-  CALL get_git_ver
+  CALL get_git_ver(version)
 
   CALL tic(c1)
 !!!$   'crmod.cfg' oeffnen
@@ -315,7 +315,7 @@ program fem
 
               kpot(j,l,k) = pota(j)
            ELSE
-              kpot(j,l,k) = pot(j) * dcmplx(fak(j))
+              kpot(j,l,k) = pot(j) * CMPLX(fak(j))
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            END IF
 !!!$   ak (fuer Testzwecke)

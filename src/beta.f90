@@ -1,4 +1,4 @@
-REAL (KIND(0D0)) function beta(nelec,k)
+function beta(nelec,k)
 
 !!!$     Function zur Berechnung der 'mixed boundary conditions'.
 
@@ -6,7 +6,7 @@ REAL (KIND(0D0)) function beta(nelec,k)
 !!!$     Letzte Aenderung                                      20-Nov-2009
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE electrmod
   USE elemmod
   USE wavenmod
@@ -28,16 +28,16 @@ REAL (KIND(0D0)) function beta(nelec,k)
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-
+real(prec) beta
 !!!$     Abstand Randelement - Quelle/Spiegelquelle
-  REAL (KIND(0D0))    ::     r1m,r1p
+  REAL (prec)    ::     r1m,r1p
 
 !!!$     Hilfsfunctions
-  REAL (KIND(0D0))    ::     bessk0,bessk1
+  REAL (prec)    ::     bessk0,bessk1
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0))    ::     cthetm,cthetp
-  REAL (KIND(0D0))    ::     xs,ys,xr,yr,x3,y3m,y3p,&
+  REAL (prec)    ::     cthetm,cthetp
+  REAL (prec)    ::     xs,ys,xr,yr,x3,y3m,y3p,&
        x4,y4,r2,bk0m,bk0p,bk1m,bk1p
 
 !!!$.....................................................................
@@ -55,14 +55,14 @@ REAL (KIND(0D0)) function beta(nelec,k)
   y3m = (yr - sytop) - (ys - sytop)
   y3p = (yr - sytop) + (ys - sytop)
 
-  r1m = dsqrt(x3*x3 + y3m*y3m)
-  r1p = dsqrt(x3*x3 + y3p*y3p)
+  r1m = SQRT(x3*x3 + y3m*y3m)
+  r1p = SQRT(x3*x3 + y3p*y3p)
 
 !!!$     Hilfsvektor bestimmen
   x4 = yk(1) - yk(2)
   y4 = xk(2) - xk(1)
 
-  r2 = dsqrt(x4*x4 + y4*y4)
+  r2 = SQRT(x4*x4 + y4*y4)
 
 !!!$     Ggf. Fehlermeldung
   if (r1m.lt.1d-12.or.r1p.lt.1d-12.or.r2.lt.1d-12) then

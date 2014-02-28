@@ -8,6 +8,7 @@ MODULE Make_noise
 !!$  the distributions are of popular algorithms
 !!$
 !!$---------------------------------------------------------------------
+use alloci, only: prec
   IMPLICIT none
   PUBLIC :: get_noisemodel
   PUBLIC :: write_noisemodel
@@ -22,7 +23,7 @@ MODULE Make_noise
 !!$ now the most important variables..
   INTEGER(KIND = 4),PARAMETER,PRIVATE:: N_RND=97 
   ! number of pseudo random numbers
-  REAL(KIND(0D0)),SAVE,DIMENSION(N_RND),PRIVATE :: Rnd 
+  REAL(prec),SAVE,DIMENSION(N_RND),PRIVATE :: Rnd 
   !  pseudo random ensemble
   INTEGER(KIND = 4),SAVE,PRIVATE :: ix1,ix2,ix3 
   ! huge numbers which are stored and altered thoroughly
@@ -36,8 +37,8 @@ MODULE Make_noise
   INTEGER(KIND = 4),PARAMETER,PRIVATE:: IC2=28441
   INTEGER(KIND = 4),PARAMETER,PRIVATE:: IC3=51349
   ! a bunch of magic numbers...
-  REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM1=1./M1
-  REAL(KIND(0D0)),PARAMETER,PRIVATE:: RM2=1./M2
+  REAL(prec),PARAMETER,PRIVATE:: RM1=1./M1
+  REAL(prec),PARAMETER,PRIVATE:: RM2=1./M2
 !!!$ character container..
   CHARACTER (128),PRIVATE :: csz
 
@@ -51,9 +52,9 @@ MODULE Make_noise
 !!!$ Integer seed
       INTEGER ( KIND = 4 ),INTENT(INOUT) :: iseed 
 !!!$ widerstand noise model output parameters
-      REAL(KIND(0D0)),INTENT(INOUT)      :: wa,w0
+      REAL(prec),INTENT(INOUT)      :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
-      REAL(KIND(0D0)),INTENT(INOUT)      :: pa1,pb,pa2,p0
+      REAL(prec),INTENT(INOUT)      :: pa1,pb,pa2,p0
       CHARACTER (80) :: buff
       INTEGER        :: ifp,ierr,myseed
       LOGICAL        :: exi
@@ -131,9 +132,9 @@ MODULE Make_noise
 !!!$ Ensemble seed
       INTEGER ( KIND = 4 ),INTENT(IN) :: iseed 
 !!!$ widerstand noise model output parameters
-      REAL(KIND(0D0)),INTENT(IN)   :: wa,w0
+      REAL(prec),INTENT(IN)   :: wa,w0
 !!!$ phase noise model: dp=pa1*R^pb+pa2*p+p0'
-      REAL(KIND(0D0)),INTENT(IN)   :: pa1,pb,pa2,p0
+      REAL(prec),INTENT(IN)   :: pa1,pb,pa2,p0
       INTEGER        :: ifp,ierr
 3     FORMAT(G10.3,t15,'#',1X,A)
 4     FORMAT(I7,t15,'#',1X,A)
@@ -182,13 +183,13 @@ MODULE Make_noise
       DO i=1,N_RND
          ix1=MOD(IA1*ix1+IC1,M1)
          ix2=MOD(IA2*ix2+IC2,M2)
-         Rnd(i)=(DBLE(ix1)+DBLE(ix2)*RM2)*RM1
+         Rnd(i)=(REAL(ix1)+REAL(ix2)*RM2)*RM1
       END DO
     END SUBROUTINE Random_Init
 !!$---------------------------------------------------------------------
 !!$ Draw a random number from the pseudo random sequence
 !!$
-    REAL (KIND(0D0)) FUNCTION Random_Draw()
+    REAL (prec) FUNCTION Random_Draw()
       INTEGER ( KIND = 4 ) :: i
 
       DO
@@ -198,7 +199,7 @@ MODULE Make_noise
          i=1+(N_RND*ix3)/M3
          IF (i>N_RND.OR.i<1) CYCLE
          Random_Draw=Rnd(i)
-         Rnd(i)=(DBLE(ix1)+DBLE(ix2)*RM2)*RM1
+         Rnd(i)=(REAL(ix1)+REAL(ix2)*RM2)*RM1
          EXIT
       END DO
     END FUNCTION Random_Draw
@@ -206,9 +207,9 @@ MODULE Make_noise
 !!$ Flat (uniform) distribution
 !!$ Returns a uniformly distributed random real number between 
 !!$ [min,max]
-    REAL (KIND (0D0)) FUNCTION Random_Double(min, max)
-      REAL (KIND (0D0)), INTENT(IN), OPTIONAL :: min, max
-      REAL (KIND (0D0)) :: x
+    REAL (prec) FUNCTION Random_Double(min, max)
+      REAL (prec), INTENT(IN), OPTIONAL :: min, max
+      REAL (prec) :: x
       
       x = Random_Draw()
       
@@ -225,7 +226,7 @@ MODULE Make_noise
 !!$ [min,max]
    INTEGER FUNCTION Random_Int(min, max)
    INTEGER, INTENT(IN), OPTIONAL :: min, max
-   REAL (KIND (0D0)) :: x
+   REAL (prec) :: x
 
      x = Random_Draw()
 
@@ -241,9 +242,9 @@ MODULE Make_noise
 !!$ Returns a normally distributed deviate with mean and sigma
 !!$ The routine uses the Box-Muller transformation of uniform 
 !!$ deviates.
-   REAL (KIND (0D0)) FUNCTION Random_Gauss(mean, sigma)
+   REAL (prec) FUNCTION Random_Gauss(mean, sigma)
    INTEGER, INTENT(IN), OPTIONAL :: mean, sigma
-   REAL (KIND (0D0)) :: x, y, z
+   REAL (prec) :: x, y, z
 
      DO
         x = 2.0 * Random_Double() - 1.0
@@ -263,10 +264,10 @@ MODULE Make_noise
 !!$ Exponential (decay) distribution
 !!$ Returns a random number between times t1 and t2 
 !!$ according to f(t) = exp (-t/tau)
-   REAL (KIND (0D0)) FUNCTION Random_Exponential(tau, tmin, tmax)
-   REAL (KIND (0D0)), INTENT(IN) :: tau
-   REAL (KIND (0D0)), INTENT(IN), OPTIONAL :: tmin, tmax
-   REAL (KIND (0D0)) :: r1, r2
+   REAL (prec) FUNCTION Random_Exponential(tau, tmin, tmax)
+   REAL (prec), INTENT(IN) :: tau
+   REAL (prec), INTENT(IN), OPTIONAL :: tmin, tmax
+   REAL (prec) :: r1, r2
 
      IF(PRESENT(tmin) .AND. PRESENT(tmax)) THEN
         r1 =  exp(-tmin/tau)
@@ -284,9 +285,9 @@ MODULE Make_noise
 !!$ Returns a random number from a Breit-Wigner distribution 
 !!$ for center mean Full Width Half Maximum fwhm
 !!$
-   REAL (KIND (0D0)) FUNCTION Random_BreitWigner(mean, fwhm)
-   REAL (KIND (0D0)), INTENT(IN), OPTIONAL :: mean, fwhm
-   REAL (KIND (0D0)) :: x, y, z
+   REAL (prec) FUNCTION Random_BreitWigner(mean, fwhm)
+   REAL (prec), INTENT(IN), OPTIONAL :: mean, fwhm
+   REAL (prec) :: x, y, z
    
      DO
         x = 2.0 * Random_Double() - 1.0

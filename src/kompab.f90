@@ -24,8 +24,8 @@ subroutine kompab(nelec,ki,my_a,my_b)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (KIND (0D0)),DIMENSION((mb+1)*sanz) ::     my_a
-  COMPLEX (KIND (0D0)),DIMENSION(sanz) ::     my_b
+  COMPLEX (prec),DIMENSION((mb+1)*sanz) ::     my_a
+  COMPLEX (prec),DIMENSION(sanz) ::     my_b
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -50,8 +50,8 @@ subroutine kompab(nelec,ki,my_a,my_b)
   INTEGER (KIND = 4) ::     nkel
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0))   ::     dum
-  COMPLEX(KIND(0D0)) ::     dum2
+  REAL (prec)   ::     dum
+  COMPLEX(prec) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
 
@@ -61,9 +61,9 @@ subroutine kompab(nelec,ki,my_a,my_b)
 !!!$.....................................................................
 
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
-  my_a = DCMPLX(0D0)
+  my_a = CMPLX(0D0)
 
-  my_b = DCMPLX(0D0)
+  my_b = CMPLX(0D0)
 
   iel = 0
 
@@ -115,10 +115,10 @@ subroutine kompab(nelec,ki,my_a,my_b)
 !!!$ issue which will cause undefined sigma access..
 !!!$ FIXED this with grid consisitency check during read in
 
-                 my_a(im) = my_a(im) + dcmplx(dum) * dum2
+                 my_a(im) = my_a(im) + CMPLX(dum) * dum2
 !!!$ << RM
                  if (lsr) then
-                    dum2   = dcmplx(dum) * (dum2 - sigma0)
+                    dum2   = CMPLX(dum) * (dum2 - sigma0)
                     my_b(nzp) = my_b(nzp) + dum2 * pota(nnp)
                     if (nnp.ne.nzp) my_b(nnp) = my_b(nnp) + dum2 * pota(nzp)
                  end if
@@ -129,28 +129,28 @@ subroutine kompab(nelec,ki,my_a,my_b)
   end do
 
 !!!$     Ggf. Konstantenvektor belegen
-  if (.not.lsr) my_b(enr(nelec)) = dcmplx(-1d0)
+  if (.not.lsr) my_b(enr(nelec)) = CMPLX(-1d0)
 
 !!!$     akc BAW-Tank
-!!!$     ak        my_b(211) = dcmplx(1d0)
+!!!$     ak        my_b(211) = CMPLX(1d0)
 !!!$     akc Model EGS2003
-!!!$     ak        my_b(1683) = dcmplx(1d0)
+!!!$     ak        my_b(1683) = CMPLX(1d0)
 !!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        my_b(129) = dcmplx(1d0)
+!!!$     ak        my_b(129) = CMPLX(1d0)
 !!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        my_b(497) = dcmplx(1d0)
+!!!$     ak        my_b(497) = CMPLX(1d0)
 !!!$     akc Simple Tucson Model
-!!!$     ak        my_b(431) = dcmplx(1d0)
+!!!$     ak        my_b(431) = CMPLX(1d0)
 !!!$     akc TU Berlin Mesokosmos
-!!!$     ak        my_b(201) = dcmplx(1d0)
+!!!$     ak        my_b(201) = CMPLX(1d0)
 !!!$     akc Andy
-!!!$     ak        my_b(2508) = dcmplx(1d0)
+!!!$     ak        my_b(2508) = CMPLX(1d0)
 !!!$     akc Sandra (ele?_anom)
-!!!$     ak        my_b(497) = dcmplx(1d0)
+!!!$     ak        my_b(497) = CMPLX(1d0)
 !!!$     akc Adrian (Tank)
-!!!$     ak        my_b(1660) = dcmplx(1d0)
+!!!$     ak        my_b(1660) = CMPLX(1d0)
 
-  if (lsink) my_b(nsink) = dcmplx(1d0)
+  if (lsink) my_b(nsink) = CMPLX(1d0)
 
   errnr = 0
   return

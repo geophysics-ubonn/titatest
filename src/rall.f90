@@ -10,7 +10,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Letzte Aenderung   20-Aug-2007
 !!!$     
 !!!$.....................................................................
-
+use alloci, only: prec
   USE make_noise
   USE variomodel
   USE femmod
@@ -58,11 +58,11 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   INTEGER (KIND = 4) ::     i
 
 !!!$     Pi
-  REAL(KIND(0D0))   ::     pi
+  REAL(prec)   ::     pi
 
 !!!$     diff+<
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
-  REAL(KIND(0D0))                            :: dum3
+  REAL(prec),DIMENSION(:),ALLOCATABLE   :: dum,dum2
+  REAL(prec)                            :: dum3
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
   INTEGER (KIND = 4) ::  nanz0,j,j0
 !!!$     diff+>
@@ -149,7 +149,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bdmin = 1d-6
+  bMIN = 1d-6
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
@@ -483,7 +483,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      errnr = 105
      GOTO 999
   ELSE IF (lrho0.AND.(bet0.LE.0d0.OR.&
-       (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi))) THEN
+       (.NOT.ldc.AND.ABS(pha0).GT.1d3*pi))) THEN
      fetxt = ' '
      errnr = 91
      GOTO 999
@@ -654,11 +654,11 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      lamnull_cri = lamfix
      lamnull_fpi = lamfix
   ELSE IF (nz == -1) THEN
-     lamnull_cri = DBLE(MAX(manz,nanz))
+     lamnull_cri = REAL(MAX(manz,nanz))
      WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE IF (nz < 0) THEN
-     lamnull_cri = ABS(DBLE(nz))
+     lamnull_cri = ABS(REAL(nz))
      WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE
@@ -767,8 +767,8 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
 !!!$     nur falls jede Messkonfiguration nur einmal!
 !!!$     j0     = j
-        d0(i)  = dcmplx(-dlog(dum(j)),0d0)
-        fm0(i) = dcmplx(-dlog(dum2(j)),0d0)
+        d0(i)  = CMPLX(-LOG(dum(j)),0d0)
+        fm0(i) = CMPLX(-LOG(dum2(j)),0d0)
      ELSE IF (j.LT.nanz0) THEN
         GOTO 20
      ELSE
@@ -792,7 +792,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      READ(kanal,*)
      DO j=1,elanz
         READ(kanal,*) dum3,dum3,dum3
-        m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
+        m0(mnr(j)) = CMPLX(-LOG(1d1)*dum3,0d0)
      END DO
      CLOSE(kanal)
      DEALLOCATE (dum,dum2,idum,ic,ip)

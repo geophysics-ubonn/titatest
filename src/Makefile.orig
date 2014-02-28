@@ -3,7 +3,9 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS =	-O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
+AM_FC_FLAGS =	-O0 -g  -fopenmp #\
+		 #-std=f2008ts -fall-intrinsics \
+		 #-Wall -fopenmp
 ## Only un-comment for debug purpose
 # TODO : figure out how to switch
 AM_DBG_FLAGS = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
@@ -58,7 +60,7 @@ crt_mods =	cjgmod.f90 \
 		variomodel.f90 
 
 # CRTomo additional subroutines 
-crt_subs = 	besp_elem.f90 blam0.f90 bnachbar.f90 bmcm_mod.f90 \
+crt_subs = 	get_threads.f90 besp_elem.f90 blam0.f90 bnachbar.f90 bmcm_mod.f90 \
 		bpar.f90 brough_mod.f90 bsendc.f90 bsensi.f90 bsigm0.f90 \
 		bsigma.f90 bsmatm_mod.f90 bvariogram.f90 bvolti.f90 \
 		bvariogram_s.f90 \

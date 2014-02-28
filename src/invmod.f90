@@ -8,31 +8,32 @@ MODULE invmod
 !!$c                                       Letzte Aenderung   27-07-2010
 !!$c 
 !!$c.....................................................................
+use alloci
 !!!$ Datenvektor
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dat
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dat
 !!$c Parametervektor
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: par
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: par
 !!$c Verbesserungsvektor
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dpar
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dpar
 !!$ storage
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dpar2
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: dpar2
 !!$c data vector for difference inversion
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: d0
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: d0
 !!$c parameter vector for diff inv
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m0
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m0
 !!$c model vector for diff inv
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: fm0
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: fm0
 !!!$ >> RM ref model regu
 !!$c parameter vector for reference model regularization
-  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m_ref
+  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE   :: m_ref
 !!!$ << RM ref model regu
 !!!$ the reference vector is of the same length as par or m0
 !!$c data weighting (data covariance) matrix (diag)
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd
+  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd
 !!$c storage
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd2
+  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE      :: wmatd2
 !!$c parameter variance
-  REAL(KIND(0D0)),PUBLIC                               :: par_vari
+  REAL(prec),PUBLIC                               :: par_vari
 !!$c Hilfsfeld, bestimmt welche Daten beruecksichtigt (=1) bzw. nicht
 !!$c beruecksichtigt (=0) werden
   INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE    :: wdfak

@@ -23,12 +23,13 @@ SUBROUTINE linvz(a,p,n)
 !!$c   p(n)    Eigenvalues of former A
 !!$c   n       leading dimension 
 !!$c-----------------------------------------------------------------
+use alloci, only: prec
   IMPLICIT none
   
   INTEGER,INTENT (IN)                  :: n
-  COMPLEX (KIND(0D0)), DIMENSION (n,n) :: a
-  COMPLEX (KIND(0D0)), DIMENSION (n)   :: p
-  COMPLEX (KIND(0D0))                  :: s
+  COMPLEX (prec), DIMENSION (n,n) :: a
+  COMPLEX (prec), DIMENSION (n)   :: p
+  COMPLEX (prec)                  :: s
   INTEGER                              :: k,i,j
 
 

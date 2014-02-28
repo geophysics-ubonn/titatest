@@ -1,10 +1,10 @@
 SUBROUTINE Gauss_cmplx (a,n,e_flag)    ! Invert matrix by Gauss method
-
+use alloci, only: prec
   IMPLICIT NONE
   INTEGER(KIND(4))                                :: n
-  COMPLEX(KIND(0D0)),DIMENSION(n,n),INTENT(INOUT) :: a
-  COMPLEX(KIND(0D0)),DIMENSION(:), ALLOCATABLE    :: temp
-  COMPLEX(KIND(0D0))                              :: c,d 
+  COMPLEX(prec),DIMENSION(n,n),INTENT(INOUT) :: a
+  COMPLEX(prec),DIMENSION(:), ALLOCATABLE    :: temp
+  COMPLEX(prec)                              :: c,d 
   INTEGER(KIND(4))                                :: i,j,e_flag
   
 
@@ -20,9 +20,9 @@ SUBROUTINE Gauss_cmplx (a,n,e_flag)    ! Invert matrix by Gauss method
 
      e_flag = -i
 
-     IF (ABS(a(i,i)) < EPSILON(DBLE(d))) RETURN
+     IF (ABS(a(i,i)) < EPSILON(REAL(d))) RETURN
 
-     d = DCMPLX(1.)/a(i,i)
+     d = CMPLX(1.)/a(i,i)
      temp = a(:,i)
      DO j = 1, n
         c = a(i,j) * d

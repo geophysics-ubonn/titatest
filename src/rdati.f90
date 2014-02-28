@@ -8,7 +8,7 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!$.....................................................................
   USE make_noise
-  USE alloci, ONLY:rnd_r,rnd_p
+  USE alloci, ONLY:rnd_r,rnd_p,prec
   USE femmod
   USE datmod
   USE invmod
@@ -38,7 +38,7 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!$  USED ONLY IF NOISE IS ADDED!!
 !!!$ Magnitude and Phase of new data
-  REAL(KIND(0D0))     ::     new_bet,new_pha
+  REAL(prec)     ::     new_bet,new_pha
 !!!$ Counting signum mismatches of magnitude and phases
 !!!$    if noise is added
   INTEGER (KIND = 4) ::     icount_pha,icount_mag
@@ -47,18 +47,18 @@ SUBROUTINE rdati(kanal,datei)
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
 !!!$     Betrag und Phase (in mrad) der Daten
-  REAL(KIND(0D0))     ::     bet,pha
+  REAL(prec)     ::     bet,pha
 
 !!!$     Standardabweichung eines logarithmierten (!) Datums
-  REAL(KIND(0D0))      ::     stabw
+  REAL(prec)      ::     stabw
 !!!$     Error of the resistance
-  REAL(KIND(0D0))     ::     eps_r
+  REAL(prec)     ::     eps_r
 !!!$     Standardabweichung der Phase
-  REAL(KIND(0D0))     ::     stabwp,stabwb
+  REAL(prec)     ::     stabwp,stabwb
 !!!$     Error of the phase
-  REAL(KIND(0D0))     ::     eps_p
+  REAL(prec)     ::     eps_p
 !!!$     Pi
-  REAL(KIND(0D0))     ::     pi
+  REAL(prec)     ::     pi
 !!!$ check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
 !!!$.....................................................................
@@ -237,7 +237,7 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!!!!!!!!!!!!!!!!! PHASE ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!
            stabwp = ( stabpA1*bet**stabpB &
-                + 1d-2*stabpA2*dabs(pha) + stabp0 ) * 1d-3
+                + 1d-2*stabpA2*ABS(pha) + stabp0 ) * 1d-3
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         END IF
@@ -266,10 +266,10 @@ SUBROUTINE rdati(kanal,datei)
 
            IF (.NOT. ldc) THEN
 
-              eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*dabs(pha) &
+              eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*ABS(pha) &
                    + nstabp0)
 
-!!$                  eps_p = (nstabpA1*bet**nstabpB + 1d-2*nstabpA2*dabs(pha) + nstabp0)
+!!$                  eps_p = (nstabpA1*bet**nstabpB + 1d-2*nstabpA2*ABS(pha) + nstabp0)
 
               WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
 
@@ -321,18 +321,18 @@ SUBROUTINE rdati(kanal,datei)
      ELSE
 
 !!!$     Ggf. Fehlermeldung
-        IF (dabs(pha).GT.1d3*pi) THEN
+        IF (ABS(pha).GT.1d3*pi) THEN
            fetxt = ' '
            errnr = 95
            GOTO 1000
         END IF
      END IF
 
-     dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
+     dat(i)   = CMPLX(-LOG(bet),-pha/1d3)
 
      wmatdr(i) = 1d0/(stabw**2d0) !=C_d^{-1} !!!!
 
-!!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
+!!!$     ak            if (lfphai) wmatd(i)=1d0/SQRT(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
         wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)

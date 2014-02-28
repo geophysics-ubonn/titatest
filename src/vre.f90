@@ -19,17 +19,17 @@ subroutine vre(a_vre,b_vre,pot_vre)
 
 !!!$.....................................................................
 !!$Gesamtsteifigkeitsmatrix
-  COMPLEX (KIND(0D0)), DIMENSION(*) :: a_vre
+  COMPLEX (prec), DIMENSION(*) :: a_vre
 !!$ Konstanten-(bzw. Strom-) Vektor
-  COMPLEX (KIND(0D0)), DIMENSION(*) :: b_vre
+  COMPLEX (prec), DIMENSION(*) :: b_vre
 !!$ Berechnete Potentialwerte (bzw. Loesungsverktor)
-  COMPLEX (KIND(0D0)), DIMENSION(*) :: pot_vre
+  COMPLEX (prec), DIMENSION(*) :: pot_vre
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4)   :: idi,i0
   INTEGER (KIND=4)   :: m1,jlow
-  COMPLEX(KIND(0D0)) ::   s
+  COMPLEX(prec) ::   s
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)   ::     i,j

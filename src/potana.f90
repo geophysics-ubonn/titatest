@@ -7,7 +7,7 @@ subroutine potana(l,k,my_pota)
 !!!$     Letzte Aenderung   11-Nov-1997
 
 !!!$.....................................................................
-
+  use alloci, only: prec
   USE sigmamod
   USE electrmod
   USE elemmod, ONLY : sanz, snr, sx, sy
@@ -26,22 +26,22 @@ subroutine potana(l,k,my_pota)
   INTEGER (KIND=4)  :: k
 
 !!$ Analytische berechnete Potentialwerte 
-  COMPLEX (KIND(0D0)), DIMENSION(sanz) :: my_pota
+  COMPLEX (prec), DIMENSION(sanz) :: my_pota
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsfunction
-  REAL (KIND(0D0))  :: bessk0
+  REAL (prec)  :: bessk0
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0))  :: xk1,yk1,xk2,yk2,x21,y21m,y21p,rm,rp,potmax,dum
-  COMPLEX (KIND(0D0))  ::    dum2
+  REAL (prec)  :: xk1,yk1,xk2,yk2,x21,y21m,y21p,rm,rp,potmax,dum
+  COMPLEX (prec)  ::    dum2
   INTEGER (KIND=4)  ::  idum,j
 
 !!!$     Pi
-  REAL (KIND(0D0))  ::  pi
+  REAL (prec)  ::  pi
 
 !!!$.....................................................................
 
@@ -58,12 +58,12 @@ subroutine potana(l,k,my_pota)
      x21  = xk2-xk1
      y21m = yk2-yk1
      y21p = yk2+yk1
-     rm   = dsqrt(x21*x21+y21m*y21m)
-     rp   = dsqrt(x21*x21+y21p*y21p)
+     rm   = SQRT(x21*x21+y21m*y21m)
+     rp   = SQRT(x21*x21+y21p*y21p)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
-     potmax  = dmax1(potmax,dum)
-     my_pota(j) = dcmplx(dum)
+     potmax  = INT(MAX(potmax,dum))
+     my_pota(j) = CMPLX(dum)
   end do
 
   do j=idum+1,sanz
@@ -72,21 +72,21 @@ subroutine potana(l,k,my_pota)
      x21  = xk2-xk1
      y21m = yk2-yk1
      y21p = yk2+yk1
-     rm   = dsqrt(x21*x21+y21m*y21m)
-     rp   = dsqrt(x21*x21+y21p*y21p)
+     rm   = SQRT(x21*x21+y21m*y21m)
+     rp   = SQRT(x21*x21+y21p*y21p)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
-     potmax  = dmax1(potmax,dum)
-     my_pota(j) = dcmplx(dum)
+     potmax  = INT(MAX(potmax,dum))
+     my_pota(j) = CMPLX(dum)
   end do
 
 !!!$     Endlichen Wert fuer Singularitaet vorgeben (beeinflusst nur
 !!!$     berechnete Potentialwerte in direkter Umgebung des Stromknotens !)
 !!!$     ak
-  my_pota(idum) = dcmplx(5d0*potmax)
+  my_pota(idum) = CMPLX(5d0*potmax)
 
 !!!$     Potentialwerte skalieren (fuer Einheitsstrom !)
-  dum2 = dcmplx(5d-1/pi) / sigma0
+  dum2 = CMPLX(5d-1/pi) / sigma0
 
   my_pota = my_pota * dum2
 

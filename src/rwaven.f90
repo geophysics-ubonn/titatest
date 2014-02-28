@@ -6,7 +6,7 @@ subroutine rwaven()
 !!!$     Letzte Aenderung   19-Jun-1998
 
 !!!$.....................................................................
-
+  use alloci, only: prec
   USE datmod
   USE electrmod
   USE elemmod
@@ -28,7 +28,7 @@ subroutine rwaven()
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     ganz,lanz
-  REAL (KIND(0D0)) ::    kwn0,dum,xke(4),yke(4),x21,y21
+  REAL (prec) ::    kwn0,dum,xke(4),yke(4),x21,y21
 
 !!!$.....................................................................
 
@@ -57,9 +57,9 @@ subroutine rwaven()
            if (elec(j).gt.0) then
               x21  = xke(3)-xke(j)
               y21  = yke(3)-yke(j)
-              dum  = dsqrt(x21*x21+y21*y21)
-              amin = dmin1(dum,amin)
-              amax = dmax1(dum,amax)
+              dum  = SQRT(x21*x21+y21*y21)
+              amin = INT(MIN(dum,amin))
+              amax = INT(MAX(dum,amax))
            end if
         end do
      end if
@@ -69,9 +69,9 @@ subroutine rwaven()
            if (elec(j).gt.0) then
               x21  = xke(4)-xke(j)
               y21  = yke(4)-yke(j)
-              dum  = dsqrt(x21*x21+y21*y21)
-              amin = dmin1(dum,amin)
-              amax = dmax1(dum,amax)
+              dum  = SQRT(x21*x21+y21*y21)
+              amin = INT(MIN(dum,amin))
+              amax = INT(MAX(dum,amax))
            end if
         end do
      end if
@@ -87,9 +87,9 @@ subroutine rwaven()
 !!!$     Wellenzahlen bestimmen
 !!!$ AK Diss p. 163
   lanz   = 4
-!!!$     ak        ganz   = int(real(6d0*dlog10(amax)))
+!!!$     ak        ganz   = int(real(6d0*LOG10(amax)))
 !!!$ Number of abcissas for Gauss-Legende-Integration (AK Diss p. 163)
-  ganz   = int(real(6d0*dlog10(amax/amin)))
+  ganz   = int(real(6d0*LOG10(amax/amin)))
 !!!$ Need at least 2 abcissas
   ganz   = max0(ganz,2)
   ganz   = min0(ganz,30 - lanz)
@@ -113,7 +113,7 @@ subroutine rwaven()
 !!!$ Variable substitution in order to overcome the singularity at zero
 !!!$ k' = (k / k_0)^{1/2}
 !!!$ Integration range changes from (0, k_0) to (0, 1)
-  call gauleg(0d0,1d0,kwn(1),kwnwi(1),ganz)
+  call gauleg(0._prec,1._prec,kwn(1),kwnwi(1),ganz)
 
 !!!$ See Ak-Diss(2000), p. 161
 !!!$ weighting factor also needs substitution: w_n = 2 k_0 k'_n w'_n / pi
@@ -121,7 +121,7 @@ subroutine rwaven()
 !!!$ anywhere.
 !!!$ k_n = k_0 k'_n^2
   do i=1,ganz
-     kwnwi(i) = 2d0*kwn0*kwnwi(i)*kwn(i)
+     kwnwi(i) = 2._prec*kwn0*kwnwi(i)*kwn(i)
      kwn(i)   = kwn0*kwn(i)*kwn(i)
   end do
 
@@ -130,11 +130,12 @@ subroutine rwaven()
 !!!$ of the upper integral (see AK Diss, p. 161ff.)
 !!!$ the alpha = 0d0 value removes the exp function in the
 !!!$ Gauss-Laguere formula (Numerical recipies, p. 144, 1992)
-  call gaulag(kwn(ganz+1),kwnwi(ganz+1),lanz,0d0)
+  call gaulag(kwn((ganz+1):kwnanz),kwnwi((ganz+1):kwnanz),lanz,0._prec)
 
   do i=ganz+1,ganz+lanz
-     kwnwi(i) = kwn0*kwnwi(i)*dexp(kwn(i))
-     kwn(i)   = kwn0*(kwn(i)+1d0)
+     kwnwi(i) = kwn0*kwnwi(i)*EXP(kwn(i))
+     kwn(i)   = kwn0*(kwn(i)+1._prec)
+     print*,kwnwi(i),kwn(i)
   end do
 
   errnr = 0

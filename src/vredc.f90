@@ -22,15 +22,15 @@ SUBROUTINE vredc(a_vre,b_vre,pot_vre)
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-  REAL(KIND(0D0)),DIMENSION((mb+1)*sanz) :: a_vre
-  REAL(KIND(0D0)),DIMENSION(sanz) :: b_vre
-  COMPLEX(KIND(0D0)),DIMENSION(sanz) :: pot_vre
+  REAL(prec),DIMENSION((mb+1)*sanz) :: a_vre
+  REAL(prec),DIMENSION(sanz) :: b_vre
+  COMPLEX(prec),DIMENSION(sanz) :: pot_vre
 
 !!!$     Hilfsvariablen
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: potdc
+  REAL(prec),DIMENSION(:),ALLOCATABLE :: potdc
   INTEGER (KIND=4)  :: idi,i0
   INTEGER (KIND=4)  :: m1,jlow
-  REAL(KIND(0D0))   ::   s
+  REAL(prec)   ::   s
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)  ::  i,j
@@ -74,10 +74,10 @@ SUBROUTINE vredc(a_vre,b_vre,pot_vre)
      idi = idi - m1
   END DO
 
-  pot_vre = dcmplx(potdc)
+  pot_vre = CMPLX(potdc)
 
 !!$  do i=1,sanz
-!!$     pot_vre(i) = dcmplx(potdc(i))
+!!$     pot_vre(i) = CMPLX(potdc(i))
 !!$  end do
 
   DEALLOCATE (potdc)

@@ -5,48 +5,49 @@ MODULE konvmod
 !!!$ Last changed       RM                                  Jul-2010
 !!!$
 !!!$.....................................................................
+use alloci
 !!!$Regularisierungsparameter
-  REAL(KIND(0D0)), PUBLIC ::     lam
+  REAL(prec), PUBLIC ::     lam
 
 !!!$Maximaler Regularisierungsparameter
-  REAL(KIND(0D0)), PUBLIC ::     lammax
+  REAL(prec), PUBLIC ::     lammax
 
 !!$ >> RM
 !!!$ Post CRI regularization parameter
-  REAL(KIND(0D0)), PUBLIC ::     lam_cri
+  REAL(prec), PUBLIC ::     lam_cri
 !!$ Starting regularization parameter (CRI)
-  REAL(KIND(0D0)), PUBLIC ::     lamnull_cri
+  REAL(prec), PUBLIC ::     lamnull_cri
 !!$ Starting regularization parameter (FPI)
-  REAL(KIND(0D0)), PUBLIC ::     lamnull_fpi
+  REAL(prec), PUBLIC ::     lamnull_fpi
 !!$ << RM
 
 !!$ >> RM
 !!!$ Reference model regularization lambda (currently its a factor for lam)
-  REAL(KIND(0D0)), PUBLIC ::     lam_ref
+  REAL(prec), PUBLIC ::     lam_ref
 !!!$ switch if we want the absolute or just the gradient regularized
   INTEGER, PUBLIC         ::     lam_ref_sw
 !!! << RM
 
 !!!$Fester Regularisierungsparameter
-  REAL(KIND(0D0)), PUBLIC ::     lamfix
+  REAL(prec), PUBLIC ::     lamfix
 
 !!!$Schrittweitenfaktor, maximale Anzahl der Schritte
-  REAL(KIND(0D0)), PUBLIC ::     dlam,dlalt
+  REAL(prec), PUBLIC ::     dlam,dlalt
   INTEGER(KIND = 4),PUBLIC ::     nlam
 
 !!!$Parameter "a", "initial/final step factor"
-  REAL(KIND(0D0)), PUBLIC ::     alam
-  REAL(KIND(0D0)), PUBLIC ::     fstart
-  REAL(KIND(0D0)), PUBLIC ::     fstop
+  REAL(prec), PUBLIC ::     alam
+  REAL(prec), PUBLIC ::     fstart
+  REAL(prec), PUBLIC ::     fstop
 
 !!!$Step-length der Modellverbesserung
-  REAL(KIND(0D0)), PUBLIC ::     step
+  REAL(prec), PUBLIC ::     step
 
 !!!$Step-length der vorherigen Iteration
-  REAL(KIND(0D0)), PUBLIC ::     stpalt
+  REAL(prec), PUBLIC ::     stpalt
 
 !!!$Mindest-step-length
-  REAL(KIND(0D0)), PUBLIC ::     stpmin
+  REAL(prec), PUBLIC ::     stpmin
 
 !!!$Schalter zur Steuerung der Regularisierung und der step-length-Wahl
   LOGICAL,PUBLIC  ::     llam,lstep,ldlami,ldlamf
@@ -57,39 +58,39 @@ MODULE konvmod
   LOGICAL,PUBLIC  ::     lfstep
 
 !!!$Daten-RMS
-  REAL(KIND(0D0)), PUBLIC ::     nrmsd
+  REAL(prec), PUBLIC ::     nrmsd
 
 !!!$Daten-RMS der vorherigen Iteration
-  REAL(KIND(0D0)), PUBLIC ::     rmsalt
+  REAL(prec), PUBLIC ::     rmsalt
 
 !!!$Daten-RMS des vorherigen "Regularisierungsschritts"
-  REAL(KIND(0D0)), PUBLIC ::     rmsreg
+  REAL(prec), PUBLIC ::     rmsreg
 
 !!!$Daten-Misfit insgesamt (in der objective function),
 !!!$Misfit der Betraege, Misfit der Phasen
-  REAL(KIND(0D0)), PUBLIC ::     rmssum,betrms,pharms
+  REAL(prec), PUBLIC ::     rmssum,betrms,pharms
 
 !!!$Roughness
-  REAL(KIND(0D0)), PUBLIC ::     rough
+  REAL(prec), PUBLIC ::     rough
 
 !!!$Minimaler Daten-RMS
-  REAL(KIND(0D0)), PUBLIC ::     nrmsdm
+  REAL(prec), PUBLIC ::     nrmsdm
 
 !!!$Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
 !!!$bzw. zwischen tatsaechlichem und minimalem Daten-RMS
-  REAL(KIND(0D0)), PUBLIC ::     mqrms
+  REAL(prec), PUBLIC ::     mqrms
 
 !!!$Minimale "L1-ratio" (Grenze der "robust inversion")
-  REAL(KIND(0D0)), PUBLIC ::     l1min
+  REAL(prec), PUBLIC ::     l1min
 
 !!!$"L1-ratio"
-  REAL(KIND(0D0)), PUBLIC ::     l1rat
+  REAL(prec), PUBLIC ::     l1rat
 
 !!!$Norm des Verbesserungsvektors (stepsize)
-  REAL(KIND(0D0)), PUBLIC ::     bdpar
+  REAL(prec), PUBLIC ::     bdpar
 
 !!!$Minimale step size 
-  REAL(KIND(0D0)), PUBLIC ::     bdmin
+  REAL(prec), PUBLIC ::     bMIN
 
 !!!$Felddimensionen in x- und z-Richtung
   INTEGER(KIND = 4),PUBLIC ::     nx,nz
@@ -105,9 +106,9 @@ MODULE konvmod
 
 !!!$Parameter zur Glaettung in x- und z-Richtung
 !!!$(=0 bedeutet keine Glaettung in der jeweiligen Richtung)
-  REAL(KIND(0D0)), PUBLIC ::     alfx,alfz
+  REAL(prec), PUBLIC ::     alfx,alfz
 !!!$MGS beta
-  REAL(KIND(0D0)), PUBLIC ::     betamgs
+  REAL(prec), PUBLIC ::     betamgs
 
 !!!$Schalter ob "robust inversion" durchgefuehrt werden soll
   LOGICAL,PUBLIC  ::     lrobust

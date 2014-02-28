@@ -9,7 +9,7 @@ subroutine randb(my_a,my_b)
 !!!$     Letzte Aenderung   05-Nov-1997
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE elemmod , ONLY : sanz, mb, typanz, typ, selanz, nrel, nelanz
 
   IMPLICIT none
@@ -18,8 +18,8 @@ subroutine randb(my_a,my_b)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
-  COMPLEX (KIND (0D0)),DIMENSION (sanz)        :: my_b
+  COMPLEX (prec),DIMENSION ((mb+1)*sanz) :: my_a
+  COMPLEX (prec),DIMENSION (sanz)        :: my_b
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
@@ -51,10 +51,10 @@ subroutine randb(my_a,my_b)
         
         do ir=1,nkel
            k    = nrel(iel,ir)
-           my_b(k) = dcmplx(0d0)
+           my_b(k) = CMPLX(0d0)
 
            idk    = k*m1
-           my_a(idk) = dcmplx(1d0)
+           my_a(idk) = CMPLX(1d0)
 
            if (k /= 1) THEN
 
@@ -62,7 +62,7 @@ subroutine randb(my_a,my_b)
 
               do i=ia,mb
                  ki    = idk+i-m1
-                 my_a(ki) = dcmplx(0d0)
+                 my_a(ki) = CMPLX(0d0)
               end do
            END IF
            if (k.eq.sanz) CYCLE ! next ir
@@ -72,7 +72,7 @@ subroutine randb(my_a,my_b)
            do i=ia,mb
               j     = k-i+m1
               ji    = (j-1)*m1+i
-              my_a(ji) = dcmplx(0d0)
+              my_a(ji) = CMPLX(0d0)
            end do
 
         END do ! ir

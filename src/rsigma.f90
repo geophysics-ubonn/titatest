@@ -8,7 +8,7 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$.....................................................................
 
   USE make_noise
-  USE alloci,ONLY:rnd_r,rnd_p
+  USE alloci,ONLY:rnd_r,rnd_p,prec
   USE femmod
   USE invmod
   USE sigmamod
@@ -37,9 +37,9 @@ SUBROUTINE rsigma(kanal,datei)
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     i,idum,ifp1,ifp2
-  REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p,bet_ref,pha_ref
+  REAL(prec)  ::     bet,pha,eps_r,eps_p,bet_ref,pha_ref
 !!!$ Pi
-  REAL (KIND(0D0)) ::    pi
+  REAL (prec) ::    pi
   CHARACTER (100)  :: cbuff
 !!!$.....................................................................
   pi = dacos(-1d0)
@@ -139,7 +139,7 @@ SUBROUTINE rsigma(kanal,datei)
      IF (lprior) THEN 
         !     set prior model ...             
         IF (bet0 <= 0. .OR. &
-             (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi)) THEN
+             (.NOT.ldc.AND.ABS(pha0).GT.1d3*pi)) THEN
            fetxt = 'starting model incorrect '
            errnr = 91
            GOTO 999
@@ -153,19 +153,19 @@ SUBROUTINE rsigma(kanal,datei)
               bet = bet + rnd_r(i) * eps_r
               WRITE(ifp1,'(G14.4)')bet
               IF (.NOT. ldc) THEN
-                 eps_p = 1d-2*modl_stdn*dabs(pha)
+                 eps_p = 1d-2*modl_stdn*ABS(pha)
                  WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
                  pha = pha + rnd_p(i) * eps_p
                  WRITE(ifp2,'(G14.4)')pha
               END IF
            END IF
-           sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
+           sigma(i) = CMPLX(COS(pha)/bet,-SIN(pha)/bet)
 !!!$    hier koennte mittelung passieren
-           m0(mnr(i)) = cdlog(sigma(i))
+           m0(mnr(i)) = LOG(sigma(i))
         ELSE                
            !     or let it stay at zero and take background cond
-           sigma(i) = dcmplx( dcos(pha0/1d3)/bet0 , -dsin(pha0/1d3)/bet0 )
-           m0(mnr(i)) = DCMPLX(0d0)
+           sigma(i) = CMPLX( COS(pha0/1d3)/bet0 , -SIN(pha0/1d3)/bet0 )
+           m0(mnr(i)) = CMPLX(0d0)
         END IF
 
      ELSE
@@ -178,7 +178,7 @@ SUBROUTINE rsigma(kanal,datei)
         END IF
 
 !!!$     Komplexe Leitfaehigkeit bestimmen
-        sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
+        sigma(i) = CMPLX(COS(pha)/bet,-SIN(pha)/bet)
 
      END IF
 
@@ -194,7 +194,7 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$              = - (\ln(|\rho|)+i\phi(\rho)
 !!!$ for \phi(z) = Im(z) / Re(z), z\inC
 
-        m_ref(mnr(i)) = -DCMPLX(DLOG(bet_ref),pha_ref)
+        m_ref(mnr(i)) = -CMPLX(LOG(bet_ref),pha_ref)
         IF (w_ref_im(mnr(i)) > EPSILON(eps_p)) THEN
            w_ref_im(mnr(i)) = 1d0/w_ref_im(mnr(i))
         ELSE ! force zero
@@ -204,7 +204,7 @@ SUBROUTINE rsigma(kanal,datei)
         ind_ref_grad(i) = set_ind_ref_grad(i)
 
      ELSE
-        m_ref(mnr(i)) = DCMPLX(0d0)
+        m_ref(mnr(i)) = CMPLX(0d0)
 
      END IF
 !!!$ << RM ref model regu
@@ -262,7 +262,7 @@ INTEGER FUNCTION set_ind_ref_grad(i)
 
   INTEGER :: k,nik
   INTEGER,INTENT(IN) :: i
-  REAL(KIND(0d0)) :: ax,ay
+  REAL(prec) :: ax,ay
 
   set_ind_ref_grad = 0
 
@@ -300,7 +300,7 @@ SUBROUTINE set_ind_ref_grad2
 
   INTEGER :: i,k,nik
   INTEGER :: ifp
-  REAL(KIND(0d0)) :: ax,ay
+  REAL(prec) :: ax,ay
 
 
   PRINT*,'setting ind_ref_grad'

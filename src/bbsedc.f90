@@ -35,7 +35,7 @@ subroutine bbsedc(kanal,datei)
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-  REAL (KIND (0D0)) ::  xdum,ydum,dum,dum2,dummax
+  REAL (prec) ::  xdum,ydum,dum,dum2,dummax
 
 !!!$    Indexvariablen
   INTEGER (KIND = 4) :: i,j,k,l,i2
@@ -60,11 +60,11 @@ subroutine bbsedc(kanal,datei)
      kpotdc(i2,l,4) = 0d0
 
      do i=1,nanz
-        dum2 = SQRT(sensdc(i,j) * sensdc(i,j)) * wmatd(i) * dble(wdfak(i))
+        dum2 = SQRT(sensdc(i,j) * sensdc(i,j)) * wmatd(i) * REAL(wdfak(i))
         kpotdc(i2,l,1) = kpotdc(i2,l,1) + dum2
      end do
 
-     dum = dmax1(dum,kpotdc(i2,l,1))
+     dum = MAX1(dum,kpotdc(i2,l,1))
   end do
   dummax = dum
 !!!$    Summe der Sensitivitaeten normieren
@@ -98,8 +98,8 @@ subroutine bbsedc(kanal,datei)
         l  = mnr(iel)/sanz + 1
         i2 = mod(mnr(iel),sanz)
 
-        kpotdc(i2,l,2) = kpotdc(i2,l,2) + xdum/dble(nkel)
-        kpotdc(i2,l,3) = kpotdc(i2,l,3) + ydum/dble(nkel)
+        kpotdc(i2,l,2) = kpotdc(i2,l,2) + xdum/REAL(nkel)
+        kpotdc(i2,l,3) = kpotdc(i2,l,3) + ydum/REAL(nkel)
         kpotdc(i2,l,4) = kpotdc(i2,l,4) + 1d0
      end do
   end do
@@ -129,7 +129,7 @@ subroutine bbsedc(kanal,datei)
 
      if (dum.gt.0d0) then
         write(kanal,*,err=1000) real(kpotdc(i,l,2)),&
-             real(kpotdc(i,l,3)),real(dlog10(dum))
+             real(kpotdc(i,l,3)),real(LOG10(dum))
      else
         write(kanal,*,err=1000) real(kpotdc(i,l,2)),&
              real(kpotdc(i,l,3)),-1.e2

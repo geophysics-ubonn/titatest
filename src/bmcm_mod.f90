@@ -14,7 +14,7 @@ MODULE bmcm_mod
 
 
   USE tic_toc ! counts calculation time
-  USE alloci , ONLY : sens,sensdc,smatm,ata,ata_reg,cov_m
+  USE alloci , ONLY : sens,sensdc,smatm,ata,ata_reg,cov_m,prec
   USE femmod , ONLY : ldc
   USE elemmod, ONLY : smaxs,espx,espy,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,par
@@ -52,7 +52,7 @@ CONTAINS
 !!!$ This sub is the control unit of the smatm calculation
 !!!$
     INTEGER (KIND = 4 ),INTENT(IN) :: kanal ! kanal is the io unit number
-    REAL (KIND(0D0)),INTENT(IN)    :: lamalt ! lambda of the last iteration
+    REAL (prec),INTENT(IN)    :: lamalt ! lambda of the last iteration
 !!! for tic_toc
     INTEGER (KIND = 4 )            :: c1
     INTEGER (KIND = 4)             :: i
@@ -188,10 +188,10 @@ CONTAINS
 !!!$   Hilfsvariablen 
     INTEGER                                  :: kanal
     INTEGER                                  :: i,j,k
-    COMPLEX (KIND(0D0))                      :: cdum
-    REAL (KIND(0D0))                         :: dum
-    REAL(KIND(0d0)),DIMENSION(:),ALLOCATABLE :: dig,dig_fpi    ! contains diagonal of ATA
-    REAL (KIND(0D0))                         :: dig_min,dig_max ! MINMAX(diag{ATA})
+    COMPLEX (prec)                      :: cdum
+    REAL (prec)                         :: dum
+    REAL(prec),DIMENSION(:),ALLOCATABLE :: dig,dig_fpi    ! contains diagonal of ATA
+    REAL (prec)                         :: dig_min,dig_max ! MINMAX(diag{ATA})
     INTEGER                                  :: c1
     CHARACTER(80)                            :: csz
     CHARACTER(256)                           :: fname
@@ -220,7 +220,7 @@ CONTAINS
           DO j=k,manz ! fills upper triangle (k,j)
              DO i=1,nanz
                 ata(k,j) = ata(k,j) + sensdc(i,k) * & 
-                     sensdc(i,j) * wmatd(i) * DBLE(wdfak(i))
+                     sensdc(i,j) * wmatd(i) * REAL(wdfak(i))
              END DO
              ata(j,k) = ata(k,j) ! fills lower triangle (k,j)
           END DO
@@ -229,14 +229,14 @@ CONTAINS
     ELSE
        DO k=1,manz
           DO j=k,manz ! upper triangle
-             cdum = DCMPLX(0d0)
+             cdum = CMPLX(0d0)
              IF (j==k) dum = 0d0
              DO i=1,nanz
-                cdum = cdum + DCONJG(sens(i,k)) * &
-                     sens(i,j) * wmatd(i) * DBLE(wdfak(i))
+                cdum = cdum + CONJG(sens(i,k)) * &
+                     sens(i,j) * wmatd(i) * REAL(wdfak(i))
                 
-                IF (j==k) dum = dum + DBLE(sens(i,k)) * DBLE(sens(i,j)) * &
-                     wmatdp(i)*DBLE(wdfak(i))
+                IF (j==k) dum = dum + REAL(sens(i,k)) * REAL(sens(i,j)) * &
+                     wmatdp(i)*REAL(wdfak(i))
 
              END DO
              ata(k,j) = cdum ! fills upper triangle (k,j)
@@ -304,8 +304,8 @@ CONTAINS
     INTEGER                        :: kanal ! io number
 !!!$   Hilfsvariablen 
     INTEGER                        :: i,j,k,ik
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE  :: dig
-    REAL(KIND(0D0))                           :: dig_min,dig_max
+    REAL(prec),DIMENSION(:),ALLOCATABLE  :: dig
+    REAL(prec)                           :: dig_min,dig_max
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -428,12 +428,12 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     INTEGER                                    :: i,kanal,j,c1
-    REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
-    REAL(KIND(0D0))                            :: dig_min,dig_max
-    REAL (KIND(0D0))                           :: dre,dim,dre2,dim2
-    REAL(KIND(0D0))                            :: dum
-    COMPLEX(KIND(0D0))                         :: dsi
+    REAL(prec),DIMENSION(:,:),ALLOCATABLE :: work
+    REAL(prec),DIMENSION(:),ALLOCATABLE   :: dig,dig2
+    REAL(prec)                            :: dig_min,dig_max
+    REAL (prec)                           :: dre,dim,dre2,dim2
+    REAL(prec)                            :: dum
+    COMPLEX(prec)                         :: dsi
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
 !!!$....................................................................
@@ -500,7 +500,7 @@ CONTAINS
     ELSE
        WRITE (*,'(a)',ADVANCE='no')'Inverting Matrix (Gauss elemination)'
 
-       CALL gauss_dble(cov_m,manz,errnr)
+       CALL gauss_REAL(cov_m,manz,errnr)
 
        IF (errnr /= 0) THEN
           fetxt = 'error matrix inverse not found'
@@ -551,11 +551,11 @@ CONTAINS
 !!$\begin{equation}
 !!$m^*=m(1\pm\Delta)= (\ln{|\sigma|}+i\phi)(1+\Delta)
 !!$\end{equation}
-!!$From Equation \ref{eq:err_m} we see, that our real-valued covariance matrix error quantities are the same for real and imaginary part of the parameters:
+!!$From Equation \ref{eq:err_m} we see, that our real-valued covariance matrix error quantities are the same for real and aimaginary part of the parameters:
 !!$\begin{equation}
 !!$\Delta m=\Delta \ln{|\rho|}+i\Delta \phi =\Delta \ln{|\sigma|}+i\Delta \phi\;. \label{eq:d_logm}
 !!$\end{equation}
-!!$If we now like to equate the errors for real and imaginary part of our complex conductivities, we have to reconsider their definitions.
+!!$If we now like to equate the errors for real and aimaginary part of our complex conductivities, we have to reconsider their definitions.
 !!$\begin{align}
 !!$\sigma'&=|\sigma|\cos{\phi}\\
 !!$\sigma'&=|\sigma|\sin{\phi}\;,
@@ -570,7 +570,7 @@ CONTAINS
 !!$\begin{equation}
 !!$\Delta \sigma'=\Delta |\sigma|\left(\cos{\phi}+\sin{\phi}\right)
 !!$\end{equation}
-!!$For the imaginary part we find
+!!$For the aimaginary part we find
 !!$\begin{align}
 !!$\MMF{d} \sigma''&=\frac{\partial \sigma''}{\partial |\sigma|}\MMF{d}|\sigma| + \frac{\partial \sigma''}{\partial\phi}\MMF{d}\phi \\
 !!$%&=\frac{\partial \sigma''}{\partial |\sigma|}|\sigma|\Delta\ln{|\sigma|} - |\sigma|\cos{\phi}\Delta\phi \\
@@ -586,10 +586,10 @@ CONTAINS
 
        dsi = sigma(i) * SQRT(dig(i))
 
-       dre = DBLE(sigma(i)) * SQRT(dig(i))
-       dim = AIMAG(sigma(i)) * SQRT(dig(i))
+       dre = REAL(sigma(i)) * SQRT(dig(i))
+       dim = aimag(sigma(i)) * SQRT(dig(i))
 
-       WRITE (kanal,*)SQRT(dig(i))*1e2,dre,dim !ABS(REAL(dsi)),ABS(AIMAG(dsi)),dre,dim
+       WRITE (kanal,*)SQRT(dig(i))*1e2,dre,dim !ABS(REAL(dsi)),ABS(Aimag(dsi)),dre,dim
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
@@ -632,8 +632,8 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen 
     INTEGER                                      :: i,j,kanal
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-    REAL(KIND(0D0))                              :: dig_min,dig_max,dum
+    REAL(prec),DIMENSION(:),ALLOCATABLE     :: dig
+    REAL(prec)                              :: dig_min,dig_max,dum
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -715,9 +715,9 @@ CONTAINS
 !!!$   Hilfsvariablen 
     INTEGER                                      :: kanal
     INTEGER                                      :: i
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-    REAL(KIND(0D0))                              :: dig_min,dig_max
-    COMPLEX(KIND(0D0))                           :: dsig 
+    REAL(prec),DIMENSION(:),ALLOCATABLE     :: dig
+    REAL(prec)                              :: dig_min,dig_max
+    COMPLEX(prec)                           :: dsig 
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................
@@ -752,7 +752,7 @@ CONTAINS
     WRITE (kanal,*)manz,lam
     DO i=1,manz
        dsig = sigma(i) * SQRT(dig(i))
-       WRITE (kanal,*)SQRT(dig(i))*1d2, REAL(dsig), AIMAG(dsig)
+       WRITE (kanal,*)SQRT(dig(i))*1d2, REAL(dsig), Aimag(dsig)
     END DO
 
     WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min

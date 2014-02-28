@@ -22,10 +22,10 @@ SUBROUTINE blam0()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  COMPLEX (KIND(0D0)) ::  cdum
-  REAL (KIND(0D0))    ::  dum
+  COMPLEX (prec) ::  cdum
+  REAL (prec)    ::  dum
 
-  REAL (KIND(0D0)),ALLOCATABLE , DIMENSION(:) :: jtj
+  REAL (prec),ALLOCATABLE , DIMENSION(:) :: jtj
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::  i,j,k,ic
@@ -42,12 +42,12 @@ SUBROUTINE blam0()
         lammax = MAX(REAL(manz),REAL(nanz))
         WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'taking easy lam_0 ',lammax
      ELSE
-        lammax = DBLE(lamnull_cri)
+        lammax = REAL(lamnull_cri)
         WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 CRI',lammax
      END IF
      RETURN
   ELSE IF ( BTEST(llamf,0) .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
-     lammax = DBLE(lamnull_fpi)
+     lammax = REAL(lamnull_fpi)
      WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 FPI',lammax
      RETURN
   END IF
@@ -77,12 +77,12 @@ SUBROUTINE blam0()
         DO i=1,nanz
            DO k=1,manz
               dum = dum + sensdc(i,j) * sensdc(i,k) * &
-                   wmatd(i)*DBLE(wdfak(i))
+                   wmatd(i)*REAL(wdfak(i))
            END DO
 
         END DO
 
-        jtj(j) = DABS(dum)
+        jtj(j) = ABS(dum)
         
      END DO
 
@@ -106,12 +106,12 @@ SUBROUTINE blam0()
 
         DO i=1,nanz
            DO k=1,manz
-              dum = dum + DBLE(sens(i,j)) * DBLE(sens(i,k)) * &
-                   wmatd(i)*DBLE(wdfak(i))
+              dum = dum + REAL(sens(i,j)) * REAL(sens(i,k)) * &
+                   wmatd(i)*REAL(wdfak(i))
            END DO
         END DO
 
-        jtj(j) = DABS(dum)
+        jtj(j) = ABS(dum)
 
      END DO
      !$OMP END PARALLEL
@@ -132,23 +132,23 @@ SUBROUTINE blam0()
                 'blam0/ ',REAL( ic * (100./manz)),'%'
         END IF
 
-        cdum = dcmplx(0d0)
+        cdum = CMPLX(0d0)
 
         DO i=1,nanz
            DO k=1,manz
-              cdum = cdum + dconjg(sens(i,j)) * sens(i,k) * &
-                   dcmplx(wmatd(i)*DBLE(wdfak(i)))
+              cdum = cdum + CONJG(sens(i,j)) * sens(i,k) * &
+                   CMPLX(wmatd(i)*REAL(wdfak(i)))
            END DO
         END DO
         
-        jtj(j) = cdabs(cdum)
+        jtj(j) = ABS(cdum)
 
      END DO
      !$OMP END PARALLEL
 
   END IF
 
-  lammax = SUM(jtj)/DBLE(manz)
+  lammax = SUM(jtj)/REAL(manz)
 
   DEALLOCATE (jtj)
 

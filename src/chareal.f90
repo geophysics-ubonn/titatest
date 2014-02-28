@@ -1,4 +1,4 @@
-REAL (KIND(0D0)) FUNCTION chareal(txt,ltxt)
+FUNCTION chareal(txt,ltxt)
 
 !!$c Die Funktion wandelt einen String in einen Real-Wert;
 !!$c bei Real-Werten muss die Laenge incl. '.' angegeben werden.
@@ -7,11 +7,11 @@ REAL (KIND(0D0)) FUNCTION chareal(txt,ltxt)
 !!!$                                       Letzte Aenderung   24-Oct-1996
 
 !!!$.....................................................................
-
+use alloci, only: prec
   CHARACTER (*) ::  txt
   INTEGER (KIND = 4)  ::     ltxt
   INTEGER (KIND = 4)  ::     i,ih1,pos,j
-  REAL (KIND(0D0)) ::    h2
+  REAL (prec) ::    h2,chareal
   LOGICAL ::     neg
 
 !!!$.....................................................................

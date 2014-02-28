@@ -25,16 +25,17 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
 !!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
 !!$c------------------------------------------------------------
+  use alloci, only: prec
   USE ompmod
 
   IMPLICIT none
 
   INTEGER,INTENT (IN)                             :: n
-  REAL (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
-  REAL (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
+  REAL (prec), DIMENSION (n,n),INTENT(INOUT) :: a
+  REAL (prec), DIMENSION (n),INTENT(OUT)     :: p
   LOGICAL,INTENT(IN)                              :: lverb
   INTEGER, INTENT (OUT)                           :: ierr
-  REAL (KIND(0D0))                                :: s
+  REAL (prec)                                :: s
   INTEGER                                         :: i,k,j,count
 
   ierr = 0
@@ -58,7 +59,7 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
         STOP
      END IF
      
-     p(j) = DSQRT(a(j,j))
+     p(j) = SQRT(a(j,j))
      a(j,j) = p(j)
      DO i = j + 1, n
         a(i,j) = a(i,j) / p(j)

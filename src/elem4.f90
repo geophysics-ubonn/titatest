@@ -11,7 +11,7 @@ subroutine elem4()
 
 !!!$.....................................................................
 
-
+use alloci, only: prec
   USE elemmod,only:xk,yk,elmam,elmas,elve
   USE errmod
 
@@ -29,7 +29,7 @@ subroutine elem4()
   INTEGER            ::    sb(6)
 
 !!!$     Hilfsvariablen
-  REAL (KIND(0D0))    ::     x21,x31,y21,y31,det,a,b,c
+  REAL (prec)    ::     x21,x31,y21,y31,det,a,b,c
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
@@ -69,12 +69,12 @@ subroutine elem4()
   c =   (x21*x21 + y21*y21) / det
 
   do i=1,6
-     elve(i) = det * dble(sb(i)) / 6d0
+     elve(i) = det * REAL(sb(i)) / 6d0
 
      do j=1,6
-        elmas(i,j) = (a*dble(s1(i,j)) + &
-             b*dble(s2(i,j)) + c*dble(s3(i,j))) / 6d0
-        elmam(i,j) = det * dble(s4(i,j)) / 3.6d2
+        elmas(i,j) = (a*REAL(s1(i,j)) + &
+             b*REAL(s2(i,j)) + c*REAL(s3(i,j))) / 6d0
+        elmam(i,j) = det * REAL(s4(i,j)) / 3.6d2
      end do
   end do
 

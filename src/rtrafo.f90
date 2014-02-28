@@ -20,11 +20,11 @@ subroutine rtrafo()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Pi
-  REAL (KIND(0D0))  ::   pi
+  REAL (prec)  ::   pi
 
 !!!$     Hilfsvariablen
-  COMPLEX (KIND(0D0))  ::    summe
-  REAL (KIND(0D0))    ::     summdc
+  COMPLEX (prec)  ::    summe
+  REAL (prec)    ::     summdc
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)    ::j,k,l
@@ -64,13 +64,13 @@ subroutine rtrafo()
      !$OMP DO COLLAPSE (2) PRIVATE (l,j,k,summe)
      do l=1,eanz
         do j=1,sanz
-           summe = dcmplx(0d0)
+           summe = CMPLX(0d0)
 
            do k=1,kwnanz
-              summe = summe + kpot(j,l,k)*dcmplx(kwnwi(k))
+              summe = summe + kpot(j,l,k)*CMPLX(kwnwi(k))
            end do
 
-           hpot(j,l) = summe / dcmplx(pi)
+           hpot(j,l) = summe / CMPLX(pi)
         end do
      end do
      !$OMP END PARALLEL

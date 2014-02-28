@@ -4,7 +4,7 @@
 # Run in src/
 
 # get the character specification
-grep "CHARACTER (256)" get_git_ver.f90 | sed 's/,PUBLIC//g' | sed 's/version/my_git_version/g' > my_git_version.h
+#grep "CHARACTER (256)" get_git_ver.f90 | sed 's/,PUBLIC//g' | sed 's/version/my_git_version/g' > my_git_version.h
 commit=$( git log | head -1 | awk '{print $2}' )
 branch=$( git branch | awk '/\*/{print $2}' )
 mydate=$( date +%c | sed 's/\ /-/g' )

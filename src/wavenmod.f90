@@ -6,7 +6,7 @@ MODULE wavenmod
 !!$c                                       Letzte Aenderung   07-Nov-1997
 !!$
 !!$c.....................................................................
-
+use alloci
 !!!$Anzahl der Wellenzahlwerte
     INTEGER(KIND = 4),PUBLIC                        :: kwnanz
 
@@ -16,12 +16,12 @@ MODULE wavenmod
     INTEGER(KIND = 4),PUBLIC                        :: swrtr
 
 !!!$Wellenzahlwerte
-    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: kwn
+    REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE :: kwn
 
 !!!$Wichtungsfaktoren fuer Ruecktransformation
-    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: kwnwi
+    REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE :: kwnwi
 
 !!!$Fuer Ruecktransformation relevanter Abstandsbereich
-    REAL(KIND(0D0)),PUBLIC                          :: amin,amax
+    REAL(prec),PUBLIC                          :: amin,amax
 
 END MODULE wavenmod

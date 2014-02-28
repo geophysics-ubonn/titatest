@@ -6,7 +6,7 @@ subroutine bsigm0(kanal,dstart)
 !!!$     Letzte Aenderung   15-Jan-2001
 
 !!!$.....................................................................
-
+use alloci, only:prec
   USE femmod
   USE datmod
   USE invmod
@@ -40,13 +40,13 @@ subroutine bsigm0(kanal,dstart)
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::   idat
-  REAL (KIND(0D0))    ::   dum,dum2
+  REAL (prec)    ::   dum,dum2
 
-!!!$     Real-, Imaginaerteil
-  REAL (KIND(0D0))    ::   redat,imdat
+!!!$     Real-, aimaginaerteil
+  REAL (prec)    ::   redat,imdat
 
 !!!$     Pi
-  REAL (KIND(0D0))    ::   pi
+  REAL (prec)    ::   pi
 
 !!!$.....................................................................
 
@@ -57,7 +57,7 @@ subroutine bsigm0(kanal,dstart)
   if (ldiff) then ! m0 was set within rall for this case 
 !!!!$ (absolute difference inversion)
      do i=1,elanz
-        sigma(i) = cdexp(m0(mnr(i)))
+        sigma(i) = EXP(m0(mnr(i)))
      end do
   else if (lstart) then
 !!!$     diff+>
@@ -69,7 +69,7 @@ subroutine bsigm0(kanal,dstart)
 
 !!!$     'sigma' gemaess 'bet0', 'pha0' belegen
      do i=1,elanz
-        sigma(i) = dcmplx( dcos(pha0/1d3)/bet0 , -dsin(pha0/1d3)/bet0 )
+        sigma(i) = CMPLX( COS(pha0/1d3)/bet0 , -SIN(pha0/1d3)/bet0 )
      end do
 
   else if (lbeta) then
@@ -78,13 +78,13 @@ subroutine bsigm0(kanal,dstart)
      call bkfak()
      if (errnr.ne.0) goto 999
 
-     sigma0 = dcmplx(0d0)
+     sigma0 = CMPLX(0d0)
      dum    = 0d0
 
      do i=1,nanz
 !!!$     Phase lokal korrigieren
 !!!$     (entspricht hier "lpol=.true.", aber anders nicht moeglich)
-        imdat = dimag(dat(i))
+        imdat = aimag(dat(i))
 
         if (imdat.gt.pi/2d0) then
            idat = -1
@@ -95,24 +95,24 @@ subroutine bsigm0(kanal,dstart)
         end if
 
         if (idat.ne.0) THEN
-           imdat=imdat+dble(idat)*pi
+           imdat=imdat+REAL(idat)*pi
            PRINT*,'swapping line',idat,i
         END if
         
 !!!$     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
-        redat = dble(dat(i))-dlog(dabs(kfak(i)))
+        redat = REAL(dat(i))-LOG(ABS(kfak(i)))
 
 !!!$     Werte gewichtet mitteln
-        dum2   = dsqrt(wmatd(i))*dble(wdfak(i))
-        sigma0 = sigma0 + dcmplx(redat,imdat)*dcmplx(dum2)
+        dum2   = SQRT(wmatd(i))*REAL(wdfak(i))
+        sigma0 = sigma0 + CMPLX(redat,imdat)*CMPLX(dum2)
         dum    = dum + dum2
-!        print*,'Write:',REAL(DBLE(sigma0)),REAL(DBLE(dat(i))),REAL(redat),REAL(dum2)
+!        print*,'Write:',REAL(REAL(sigma0)),REAL(REAL(dat(i))),REAL(redat),REAL(dum2)
 
 
      end do
 
 !!!$     Ggf. Fehlermeldung
-     if (dabs(dum).eq.0d0) then
+     if (ABS(dum).eq.0d0) then
         fetxt = 'unable to find starting value sigma0'
         errnr = 99
         goto 999
@@ -121,7 +121,7 @@ subroutine bsigm0(kanal,dstart)
 !!!$     'sigma' belegen
 !     print*,'Write:',sigma0
      do i=1,elanz
-        sigma(i) = cdexp(sigma0/dcmplx(dum))
+        sigma(i) = EXP(sigma0/CMPLX(dum))
      end do
 
   else

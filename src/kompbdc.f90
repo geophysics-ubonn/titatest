@@ -7,7 +7,7 @@ subroutine kompbdc(nelec,b_komp,fak_komp)
 !!!$     Letzte Aenderung   16-Jul-2007
 
 !!!$.....................................................................
-
+use alloci, only: prec
   USE femmod
   USE electrmod
   USE elemmod
@@ -17,8 +17,8 @@ subroutine kompbdc(nelec,b_komp,fak_komp)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
-  REAL (KIND(0D0)),DIMENSION (sanz) :: b_komp
-  REAL (KIND(0D0)),DIMENSION (sanz) :: fak_komp
+  REAL (prec),DIMENSION (sanz) :: b_komp
+  REAL (prec),DIMENSION (sanz) :: fak_komp
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
 

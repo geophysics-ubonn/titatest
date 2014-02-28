@@ -12,7 +12,7 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : sens,sensdc,smatm
+  USE alloci , ONLY : sens,sensdc,smatm,prec
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
@@ -107,7 +107,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$
 !!!$    Skalare
-    REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
+    REAL(prec) :: beta,alpha,dr,dr0,dr1
 !!!$
 !!!$    Hilfsvariablen
     INTEGER         :: k
@@ -115,12 +115,12 @@ CONTAINS
 !!!$....................................................................
 
     IF (lfpi) THEN
-       bvecdc = dimag(bvec)
+       bvecdc = aimag(bvec)
     ELSE
-       bvecdc = DBLE(bvec)
+       bvecdc = REAL(bvec)
     END IF
 
-    dpar = DCMPLX(0D0)
+    dpar = CMPLX(0D0)
     rvecdc = bvecdc
     pvecdc = 0D0
 
@@ -171,7 +171,7 @@ CONTAINS
 
        alpha = dr/dr1
 
-       dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
+       dpar = dpar + CMPLX(alpha) * CMPLX(pvecdc)
        rvecdc= rvecdc - alpha * bvecdc
 
 !!!$rm update speichern
@@ -223,7 +223,7 @@ CONTAINS
           END DO
        ELSE IF (lfpi) THEN
           DO j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*DBLE(sens(i,j))*cgfac(j)
+             apdc(i) = apdc(i) + pvecdc(j)*REAL(sens(i,j))*cgfac(j)
           END DO
        END IF
     END DO
@@ -241,7 +241,7 @@ CONTAINS
 !!!$...................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(prec)    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -281,7 +281,7 @@ CONTAINS
 !!!$!     PROGRAMMINTERNE PARAMETER:
 
 !!!$!     Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(prec)    ::     dum
     INTEGER         ::     i,j
 !!!$!.....................................................................
 
@@ -315,7 +315,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(prec)    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -343,7 +343,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(prec)    ::     dum
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
@@ -372,7 +372,7 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-    REAL (KIND(0D0)) :: rdum
+    REAL (prec) :: rdum
 !!!$....................................................................
 
 
@@ -400,7 +400,7 @@ CONTAINS
 !!!$...................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
+    REAL(prec)    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -414,12 +414,12 @@ CONTAINS
        IF (ldc) THEN
           DO i=1,nanz
              dum = dum + sensdc(i,j) * &
-                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
+                  wmatd(i)*REAL(wdfak(i))*apdc(i)
           END DO
        ELSE IF (lfpi) THEN
           DO i=1,nanz
-             dum = dum + DBLE(sens(i,j)) * &
-                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
+             dum = dum + REAL(sens(i,j)) * &
+                  wmatd(i)*REAL(wdfak(i))*apdc(i)
           END DO
        END IF
 
@@ -444,17 +444,17 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-!!$!!    COMPLEX(KIND(0D0)) :: beta
-    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
+!!$!!    COMPLEX(prec) :: beta
+    REAL(prec)    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
     INTEGER            :: k,j
 !!!$....................................................................
 
 
-    dpar = dcmplx(0d0)
+    dpar = CMPLX(0d0)
     rvec = bvec
-    pvec = dcmplx(0d0)
+    pvec = CMPLX(0d0)
 
     fetxt = 'CG iteration'
 
@@ -464,7 +464,7 @@ CONTAINS
 
        dr = 0d0
        DO j=1,manz
-          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
+          dr = dr + REAL(CONJG(rvec(j)) * rvec(j))
        END DO
 
        IF (k.EQ.1) THEN
@@ -477,7 +477,7 @@ CONTAINS
 !!!$    ak!!!$Polak-Ribiere-Version
 !!$          beta = 0d0
 !!$          do j=1,manz
-!!$             beta = beta + dconjg(bvec(j))*rvec(j)
+!!$             beta = beta + CONJG(bvec(j))*rvec(j)
 !!$          end do
 !!$          beta = beta * -alpha/dr1
        END IF
@@ -485,7 +485,7 @@ CONTAINS
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
-       pvec = rvec + DCMPLX(beta) * pvec
+       pvec = rvec + CMPLX(beta) * pvec
 
        CALL bap
 
@@ -506,13 +506,13 @@ CONTAINS
 
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
+          dr1 = dr1 + REAL(CONJG(pvec(j)) * bvec(j))
        END DO
 
        alpha = dr/dr1
 
-       dpar = dpar + DCMPLX(alpha) * pvec
-       rvec = rvec - DCMPLX(alpha) * bvec
+       dpar = dpar + CMPLX(alpha) * pvec
+       rvec = rvec - CMPLX(alpha) * bvec
 
        dr1 = dr
 
@@ -541,7 +541,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -551,10 +551,10 @@ CONTAINS
     !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
     !$OMP DO
     DO i=1,nanz
-       ap(i) = dcmplx(0d0)
+       ap(i) = CMPLX(0d0)
 
        DO j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*CMPLX(cgfac(j))
        END DO
     END DO
     !$OMP END PARALLEL
@@ -573,23 +573,23 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       cdum = dcmplx(0d0)
+       cdum = CMPLX(0d0)
 
        IF (i.GT.1) &
-            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*cgfac(i-1))
+            cdum = pvec(i-1)*CMPLX(smatm(i-1,2)*cgfac(i-1))
        IF (i.LT.manz) &
-            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*cgfac(i+1))
+            cdum = cdum + pvec(i+1)*CMPLX(smatm(i,2)*cgfac(i+1))
        IF (i.GT.nx) &
-            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*cgfac(i-nx))
+            cdum = cdum + pvec(i-nx)*CMPLX(smatm(i-nx,3)*cgfac(i-nx))
        IF (i.LT.manz-nx+1) &
-            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
-       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
+            cdum = cdum + pvec(i+nx)*CMPLX(smatm(i,3)*cgfac(i+nx))
+       bvec(i) = cdum + pvec(i)*CMPLX(smatm(i,1)*cgfac(i))
     END DO
   END SUBROUTINE bp
 
@@ -610,19 +610,19 @@ CONTAINS
 !!!$     PROGRAMMINTERNE PARAMETER:
 !!!$
 !!!$     Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j,idum
 !!!.....................................................................
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
-       cdum = dcmplx(0d0)
+       cdum = CMPLX(0d0)
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
+               CMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
-       bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
+       bvec(i) = cdum + pvec(i) * CMPLX(smatm(i,smaxs+1)) * &
             cgfac(i) ! + main diagonal
 
     END DO
@@ -643,14 +643,14 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    coaa R^m * p  berechnen (skaliert)
 
-    bvec = pvec * DCMPLX(cgfac * smatm(:,1))
+    bvec = pvec * CMPLX(cgfac * smatm(:,1))
 !!$    do j=1,manz
-!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
+!!$       bvec(i)=pvec(i)*CMPLX(cgfac(i))*CMPLX(smatm(i,1))
 !!$    end do
 
   END SUBROUTINE bplma
@@ -675,16 +675,16 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
 
     !$OMP WORKSHARE
-    bvec = MATMUL(DCMPLX(smatm),pvec)
+    bvec = MATMUL(CMPLX(smatm),pvec)
     !$OMP END WORKSHARE
 
-    bvec = bvec * DCMPLX(cgfac)
+    bvec = bvec * CMPLX(cgfac)
   END SUBROUTINE bpsto
 
   SUBROUTINE bpref()
@@ -703,7 +703,7 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-    COMPLEX (KIND(0D0)) :: cdum
+    COMPLEX (prec) :: cdum
 !!!$....................................................................
 
 
@@ -712,10 +712,10 @@ CONTAINS
 
        IF (w_ref_re(i) <= EPSILON(w_ref_re(i)) .AND. &
             w_ref_im(i) <= EPSILON(w_ref_im(i))) CYCLE 
-!!$ scaling for real and imaginary part separately       
-       cdum = DCMPLX(DBLE(pvec(i))*w_ref_re(i), DIMAG(pvec(i))*w_ref_re(i))
+!!$ scaling for real and aimaginary part separately       
+       cdum = CMPLX(REAL(pvec(i))*w_ref_re(i), aimag(pvec(i))*w_ref_re(i))
 
-       bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
+       bvec(i) = bvec(i) + cdum * CMPLX(lam_ref * cgfac(i))
 
 !!!!$! according to damping stuff..
     END DO
@@ -734,7 +734,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -744,15 +744,15 @@ CONTAINS
     !$OMP DO
 
     DO j=1,manz
-       cdum = dcmplx(0d0)
+       cdum = CMPLX(0d0)
 
        DO i=1,nanz
-          cdum = cdum + dconjg(sens(i,j)) * &
-               dcmplx(wmatd(i)*DBLE(wdfak(i)))*ap(i)
+          cdum = cdum + CONJG(sens(i,j)) * &
+               CMPLX(wmatd(i)*REAL(wdfak(i)))*ap(i)
        END DO
 
-       bvec(j) = cdum + dcmplx(lam)*bvec(j)
-       bvec(j) = bvec(j)*dcmplx(cgfac(j))
+       bvec(j) = cdum + CMPLX(lam)*bvec(j)
+       bvec(j) = bvec(j)*CMPLX(cgfac(j))
     END DO
 
     !$OMP END PARALLEL

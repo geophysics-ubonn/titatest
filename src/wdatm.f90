@@ -8,7 +8,7 @@ subroutine wdatm(kanal,datei)
 !!!$     Letzte Aenderung   10-Mar-2007
 
 !!!$.....................................................................
-
+use alloci, only:prec
   USE datmod
   USE errmod
 
@@ -33,13 +33,13 @@ subroutine wdatm(kanal,datei)
   INTEGER (KIND=4) ::    i
 
 !!!$     Pi
-  REAL(KIND(0D0))  ::    pi
+  REAL(prec)  ::    pi
 
 !!!$     Hilfsvariablen
-  REAL(KIND(0D0))  ::   bet,pha,npi
+  REAL(prec)  ::   bet,pha,npi
   INTEGER (KIND=4) ::    ie1,ie2
 !!!$     Standartabweichung.-..
-  REAL(KIND(0D0))  ::    stab
+  REAL(prec)  ::    stab
 !!!$.....................................................................
 
 100 FORMAT(2(4X,I8),2(1x,G14.7))
@@ -58,13 +58,13 @@ subroutine wdatm(kanal,datei)
 !!!$     Widerstandswerte (Betrag und Phase (in mrad)) schreiben
   stab=5.0
   do i=1,nanz
-     bet = cdabs(sigmaa(i))
-     pha = datan2(dimag(sigmaa(i)),dble(sigmaa(i)))
+     bet = ABS(sigmaa(i))
+     pha = ATAN2(aimag(sigmaa(i)),REAL(sigmaa(i)))
 
 !!!$     ak
 !!!$     Ggf. Polaritaet vertauschen
-     npi = dnint(pha/pi)*pi
-     if (dabs(npi).gt.1d-12) then
+     npi = nint(pha/pi)*pi
+     if (ABS(npi).gt.1d-12) then
         pha    = pha-npi
         ie1    = mod(vnr(i),10000)
         ie2    = (vnr(i)-ie1)/10000

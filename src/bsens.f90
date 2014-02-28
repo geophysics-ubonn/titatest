@@ -36,21 +36,21 @@ subroutine bsens()
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Beitraege zur Superposition
-  COMPLEX (KIND(0D0)) ::     sup(4)
+  COMPLEX (prec) ::     sup(4)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
   INTEGER (KIND = 4)  ::     i,j,k
 
 !!!$     Hilfsfeld
-  COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
+  COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     nzp,nnp
-  COMPLEX (KIND(0D0)) ::     dum
+  COMPLEX (prec) ::     dum
 
 !!!$     Pi
-  REAL (KIND(0D0))    ::  pi
+  REAL (prec)    ::  pi
 
 !!!$ OMP zaehler
   INTEGER (KIND = 4) ::  icount
@@ -97,7 +97,7 @@ subroutine bsens()
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     sup = DCMPLX(0d0)
+     sup = CMPLX(0d0)
 
      do ityp=1,typanz
         ntyp = typ(ityp)
@@ -113,7 +113,7 @@ subroutine bsens()
 
 !!!$     SENSITIVITAETEN BERECHNEN
            do k=1,kwnanz
-              hsens(k) = dcmplx(0d0)
+              hsens(k) = CMPLX(0d0)
 
 !!!$     Knoten des aktuellen Elements hochzaehlen
               do mi=1,nkel
@@ -139,7 +139,7 @@ subroutine bsens()
 !!!$     -> mittels Compiler-Einstellung auf Null setzen!
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
-                    hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k)) * dum
+                    hsens(k) = hsens(k) + CMPLX(elbg(iel,imn,k)) * dum
                  end do
               end do
            end do
@@ -147,17 +147,17 @@ subroutine bsens()
 !!!$     GGF. RUECKTRANSFORMATION
            if (swrtr.eq.0) then
 
-              dum = hsens(1) * dcmplx(strom(i))
+              dum = hsens(1) * CMPLX(strom(i))
 
            else
 
-              dum = dcmplx(0d0)
+              dum = CMPLX(0d0)
 
               do k=1,kwnanz
-                 dum = dum + hsens(k)*dcmplx(kwnwi(k))
+                 dum = dum + hsens(k)*CMPLX(kwnwi(k))
               end do
 
-              dum = dum * dcmplx(strom(i)/pi)
+              dum = dum * CMPLX(strom(i)/pi)
 
            end if
 

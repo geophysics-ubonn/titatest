@@ -12,7 +12,7 @@ MODULE brough_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : smatm
+  USE alloci , ONLY : smatm,prec
   USE invmod , ONLY : lfpi,par,m0
   USE konvmod , ONLY : ltri,nx,nz,lprior,rough
   USE modelmod , ONLY : manz
@@ -66,7 +66,7 @@ CONTAINS
 
 !!!$   Hilfsvariablen
     INTEGER ::     i
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
 !!!$   cdum describes (R^TR)m
 !!!$.....................................................................
 
@@ -74,44 +74,44 @@ CONTAINS
     rough = 0d0
 
     do i=1,manz
-       cdum = dcmplx(0d0)
+       cdum = CMPLX(0d0)
 
 !!!$   diff+<
        if (.not.lprior) then
 !!!$   diff+>
           if (i.gt.1) &
-         cdum = dcmplx(smatm(i-1,2))*par(i-1)
+         cdum = CMPLX(smatm(i-1,2))*par(i-1)
           if (i.lt.manz) &
-         cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
+         cdum = cdum + CMPLX(smatm(i,2))*par(i+1)
           if (i.gt.nx) &
-               cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
+               cdum = cdum + CMPLX(smatm(i-nx,3))*par(i-nx)
           if (i.lt.manz-nx+1) &
-         cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
+         cdum = cdum + CMPLX(smatm(i,3))*par(i+nx)
 
-          cdum = cdum + dcmplx(smatm(i,1))*par(i)
+          cdum = cdum + CMPLX(smatm(i,1))*par(i)
 
           if (lfpi) then
-             rough = rough + dimag(cdum)*dimag(par(i))
+             rough = rough + aimag(cdum)*aimag(par(i))
           else
-             rough = rough + dble(cdum*dconjg(par(i)))
+             rough = rough + REAL(cdum*CONJG(par(i)))
           end if
 !!!$   diff+<
        else
           if (i.gt.1) &
-               cdum = dcmplx(smatm(i-1,2)) * (par(i-1) - m0(i-1))
+               cdum = CMPLX(smatm(i-1,2)) * (par(i-1) - m0(i-1))
           if (i.lt.manz) &
-               cdum = cdum + dcmplx(smatm(i,2)) * (par(i+1) - m0(i+1))
+               cdum = cdum + CMPLX(smatm(i,2)) * (par(i+1) - m0(i+1))
           if (i.gt.nx) &
-               cdum = cdum + dcmplx(smatm(i-nx,3)) * (par(i-nx) - m0(i-nx))
+               cdum = cdum + CMPLX(smatm(i-nx,3)) * (par(i-nx) - m0(i-nx))
           if (i.lt.manz-nx+1) &
-               cdum = cdum + dcmplx(smatm(i,3)) * (par(i+nx) - m0(i+nx))
+               cdum = cdum + CMPLX(smatm(i,3)) * (par(i+nx) - m0(i+nx))
           
-          cdum = cdum + dcmplx(smatm(i,1))*(par(i)-m0(i))
+          cdum = cdum + CMPLX(smatm(i,1))*(par(i)-m0(i))
           
           if (lfpi) then
-             rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
+             rough = rough + aimag(cdum) * aimag(par(i) - m0(i))
           else
-             rough = rough + dble(cdum*dconjg(par(i) - m0(i)))
+             rough = rough + REAL(cdum*CONJG(par(i) - m0(i)))
           end if
        end if
 !!!$   diff+>
@@ -132,38 +132,38 @@ CONTAINS
 !!!$  PROGRAMMINTERNE PARAMETER:
 !!!$  Hilfsvariablen
     INTEGER ::     i,j
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
 !!!$ cdum describes (R^TR)m
 !!!$.....................................................................
 !!!$  Roughness bestimmen
     rough = 0d0
     IF (.NOT. lprior) THEN
        DO i=1,manz
-          cdum = dcmplx(0d0)
+          cdum = CMPLX(0d0)
           DO j=1,smaxs
              IF (nachbar(i,j) /= 0) cdum = cdum + &
-                  DCMPLX(smatm(i,j)) * par(nachbar(i,j))
+                  CMPLX(smatm(i,j)) * par(nachbar(i,j))
           END DO
-          cdum = cdum + dcmplx(smatm(i,smaxs+1)) * par(i)
+          cdum = cdum + CMPLX(smatm(i,smaxs+1)) * par(i)
           IF (lfpi) THEN
-             rough = rough + dimag(cdum) * dimag(par(i))
+             rough = rough + aimag(cdum) * aimag(par(i))
           ELSE
-             rough = rough + dble(cdum * dconjg(par(i)))
+             rough = rough + REAL(cdum * CONJG(par(i)))
           END IF
        END DO
     ELSE 
        DO i=1,manz
-          cdum = dcmplx(0d0)
+          cdum = CMPLX(0d0)
           DO j=1,smaxs
              IF (nachbar(i,j) /= 0) cdum = cdum + &
-                  DCMPLX(smatm(i,j)) * &
+                  CMPLX(smatm(i,j)) * &
                   (par(nachbar(i,j)) - m0(nachbar(i,j)))
           END DO
-          cdum = cdum + dcmplx(smatm(i,smaxs+1)) * (par(i) - m0(i))
+          cdum = cdum + CMPLX(smatm(i,smaxs+1)) * (par(i) - m0(i))
           IF (lfpi) THEN
-             rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
+             rough = rough + aimag(cdum) * aimag(par(i) - m0(i))
           ELSE
-             rough = rough + dble(cdum * dconjg(par(i) - m0(i)))
+             rough = rough + REAL(cdum * CONJG(par(i) - m0(i)))
           END IF
        END DO
     END IF
@@ -185,7 +185,7 @@ CONTAINS
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen
     INTEGER ::     i,j
-    COMPLEX(KIND(0D0)) ::    cdum
+    COMPLEX(prec) ::    cdum
 !!!$.....................................................................
 !!!$   Roughness bestimmen
 
@@ -194,30 +194,30 @@ CONTAINS
     DO j=1,manz
        IF (.NOT. lprior) THEN
 
-          cdum = DCMPLX(smatm(j,1)) * par(j)
+          cdum = CMPLX(smatm(j,1)) * par(j)
 
           IF (lfpi) THEN
 
-             rough = DIMAG(cdum) * SUM(DIMAG(par))
+             rough = aimag(cdum) * SUM(aimag(par))
 
           ELSE
 
-             rough = DBLE(cdum) * SUM(DCONJG(par))
+             rough = REAL(cdum) * SUM(CONJG(par))
 
           END IF
 
        ELSE
 
-          cdum = DCMPLX(smatm(j,1)) * (par(j)-m0(j))
+          cdum = CMPLX(smatm(j,1)) * (par(j)-m0(j))
 
           IF (lfpi) THEN
 
              DO i=1,manz
-                rough = rough + dimag(cdum)*dimag(par(i)-m0(i))
+                rough = rough + aimag(cdum)*aimag(par(i)-m0(i))
              END DO
           ELSE
              DO i=1,manz
-                rough = rough + dble(cdum*dconjg(par(i)-m0(i)))
+                rough = rough + REAL(cdum*CONJG(par(i)-m0(i)))
              END DO
           END IF
        END IF
@@ -241,7 +241,7 @@ CONTAINS
 !!!$.....................................................................
 !!!$   PROGRAMMINTERNE PARAMETER:
 !!!$   Hilfsvariablen
-    COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: parh
+    COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: parh
 !!!$   parh: Parameter-Hilfsvektor (R^TR)m bzw (C_m^-1)m
 !!!$.....................................................................
 !!!$   Roughness bestimmen
@@ -257,25 +257,25 @@ CONTAINS
     IF (.NOT. lprior) THEN
 
        !$OMP WORKSHARE
-       parh = MATMUL(par,DCMPLX(smatm))
+       parh = MATMUL(par,CMPLX(smatm))
        !$OMP END WORKSHARE
 
        IF (lfpi) THEN
-          rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par))
+          rough = DOT_PRODUCT(aimag(parh),aimag(par))
        ELSE
-          rough = DOT_PRODUCT(DBLE(parh),DCONJG(par))
+          rough = DOT_PRODUCT(REAL(parh),CONJG(par))
        END IF
 
     ELSE
 
        !$OMP WORKSHARE
-       parh = MATMUL((par - m0),DCMPLX(smatm))
+       parh = MATMUL((par - m0),CMPLX(smatm))
        !$OMP END WORKSHARE
 
        IF (lfpi) THEN
-          rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par - m0))
+          rough = DOT_PRODUCT(aimag(parh),aimag(par - m0))
        ELSE
-          rough = DOT_PRODUCT(DBLE(parh),DCONJG(par - m0))
+          rough = DOT_PRODUCT(REAL(parh),CONJG(par - m0))
        END IF
 
     END IF
