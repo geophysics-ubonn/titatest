@@ -135,7 +135,6 @@ subroutine rwaven()
   do i=ganz+1,ganz+lanz
      kwnwi(i) = kwn0*kwnwi(i)*EXP(kwn(i))
      kwn(i)   = kwn0*(kwn(i)+1._prec)
-     print*,kwnwi(i),kwn(i)
   end do
 
   errnr = 0
