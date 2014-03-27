@@ -93,25 +93,23 @@ CONTAINS
        RETURN
     END IF
     
-    IF (it == 1) WRITE (*,'(/a)',ADVANCE='no')'Regularization::'
-
     IF (ltri == 0) THEN
        
-       WRITE (*,'(a)')' Rectangular smooth'
+       WRITE (*,'(a)')' rectangular smooth regularization'
        CALL bsmatmreg
        
     ELSE IF (ltri == 1.OR.ltri == 2) THEN
        
-       WRITE (*,'(a)')' Triangular smooth'
+       WRITE (*,'(a)')' triangular smooth regularization'
        CALL bsmatmtri
        
     ELSE IF (ltri == 3.OR.ltri==4) THEN
        
        IF (it == 1) THEN
           IF (ltri == 3) WRITE (*,'(a)') &
-               'Levenberg damping (LA)'
+               ' Levenberg damping (LA)'
           IF (ltri == 4) WRITE (*,'(a)') &
-               'Marquardt-Levenberg damping (LMA)'
+               ' Marquardt-Levenberg damping (LMA)'
        ELSE
           WRITE (*,'(a)')' Updating damping'
        END IF
@@ -157,7 +155,7 @@ CONTAINS
     
     IF (ALLOCATED(csens)) DEALLOCATE (csens)
 
-    fetxt = 'C_m^ calculation time'
+    fetxt = 'C_m calculation time'
     CALL TOC(c1,fetxt)
 
   END SUBROUTINE bsmatm

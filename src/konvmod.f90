@@ -33,7 +33,7 @@ use alloci
 
 !!!$Schrittweitenfaktor, maximale Anzahl der Schritte
   REAL(prec), PUBLIC ::     dlam,dlalt
-  INTEGER(KIND = 4),PUBLIC ::     nlam
+  INTEGER,PUBLIC ::     nlam
 
 !!!$Parameter "a", "initial/final step factor"
   REAL(prec), PUBLIC ::     alam
@@ -93,16 +93,16 @@ use alloci
   REAL(prec), PUBLIC ::     bMIN
 
 !!!$Felddimensionen in x- und z-Richtung
-  INTEGER(KIND = 4),PUBLIC ::     nx,nz
+  INTEGER,PUBLIC ::     nx,nz
 
 !!!$Maximale Anzahl der Iterationen
-  INTEGER(KIND = 4),PUBLIC ::     itmax
+  INTEGER,PUBLIC ::     itmax
 
 !!!$Iterationsindex
-  INTEGER(KIND = 4),PUBLIC ::     it
+  INTEGER,PUBLIC ::     it
 
 !!!$Index des Regularisierungsschritts
-  INTEGER(KIND = 4),PUBLIC ::     itr
+  INTEGER,PUBLIC ::     itr
 
 !!!$Parameter zur Glaettung in x- und z-Richtung
 !!!$(=0 bedeutet keine Glaettung in der jeweiligen Richtung)
@@ -125,7 +125,7 @@ use alloci
   LOGICAL,PUBLIC  ::     lffhom
 !!$c	triang>
 !!!$Schalter für die Triangularisierungsinversion
-  INTEGER(KIND = 4),PUBLIC :: ltri
+  INTEGER,PUBLIC :: ltri
 !!$c	triang<	
 !!!$Schalter ob prior model vorhanden
   LOGICAL,PUBLIC  :: lprior
@@ -145,7 +145,7 @@ use alloci
 !!!$Schalter fuer posterior cov
   LOGICAL,PUBLIC  :: lcov2
 !!!$Mega schalter, wird binaer getestet
-  INTEGER(KIND = 4),PUBLIC :: mswitch
+  INTEGER,PUBLIC :: mswitch
 !!!$Schalter für ols Loeser
   LOGICAL,PUBLIC  :: lgauss
 !!!$Schalter ob experimentelles variogram berechnet werden soll

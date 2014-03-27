@@ -22,23 +22,23 @@ CONTAINS
     INTEGER(KIND = 4), INTENT(IN) :: c1 ! first call -> tic
     CHARACTER (*),INTENT(INOUT)   :: csz
  
-110 FORMAT(a,I3,'d/',1X,I2,'h/',1X,I2,'m/',1X,I2,'s/',1X,I3,'ms')
+110 FORMAT(a,I3,' d ',I2,':',I2.2,'.',I2.2,'h')
     
     CALL SYSTEM_CLOCK (c2,i)
     
-    ms = c2-c1    ! Gesamt Millisekunden
+    ms = c2-c1    ! millisec
     ms = MODULO(ms,1000)
 
-    l = (c2-c1)/i ! Gesamt Sekunden
+    l = (c2-c1)/i ! sec
 
-    ta = INT(l/24/3600) ! Tage
+    ta = INT(l/24/3600) ! days
     l = l - ta*3600*24
-    st = INT(l/3600) ! Stunden
+    st = INT(l/3600) ! hours
     l = l - st*3600
-    mi = INT(l/60) ! Minuten
+    mi = INT(l/60) ! minutes
     se = l - mi*60
 
-    WRITE (csz,110)TRIM(csz),ta,st,mi,se,ms
+    WRITE (csz,110)TRIM(csz),ta,st,mi,se
     PRINT*,TRIM(csz)
 
   END SUBROUTINE toc

@@ -34,17 +34,17 @@ SUBROUTINE rdati(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
+  INTEGER  ::     i,ifp1,ifp2,ifp3
 
 !!!$  USED ONLY IF NOISE IS ADDED!!
 !!!$ Magnitude and Phase of new data
   REAL(prec)     ::     new_bet,new_pha
 !!!$ Counting signum mismatches of magnitude and phases
 !!!$    if noise is added
-  INTEGER (KIND = 4) ::     icount_pha,icount_mag
+  INTEGER  ::     icount_pha,icount_mag
 
 !!!$     Elektrodennummern
-  INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
+  INTEGER  ::     elec1,elec2,elec3,elec4
 
 !!!$     Betrag und Phase (in mrad) der Daten
   REAL(prec)     ::     bet,pha
@@ -62,7 +62,7 @@ SUBROUTINE rdati(kanal,datei)
 !!!$ check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
 !!!$.....................................................................
-  pi = dacos(-1d0)
+  pi = acos(-1d0)
 
 !!!$     'datei' oeffnen
   fetxt = datei
@@ -73,11 +73,11 @@ SUBROUTINE rdati(kanal,datei)
 !!!$     Anzahl der Messwerte lesen
 !!!$ also check if we may use individual errors or not
   READ(kanal,*,END=1001,err=11) nanz,lindiv
-  IF (lindiv) PRINT*,'+ Individual data error!'
+  IF (lindiv) write(*,*) 'using individual data errors'
   GOTO 12
-11 PRINT*,'+ Taking error model'
+11 write(*,*) 'no individual errors. using crtomo.cfg'
   BACKSPACE(kanal)
-!!!$c check if data file format is CRTOmo konform..
+!!!$c check if data file format is CRTomo konform..
 12 READ(kanal,*,END=1001,err=1000) elec1
   BACKSPACE(kanal)
 

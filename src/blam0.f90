@@ -155,7 +155,7 @@ SUBROUTINE blam0()
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
   lammax = lammax * 5d0
-  WRITE (*,'(a,t5,a,G12.4,t60)')ACHAR(13),'found lam_0 ',lammax
+  WRITE (*,'(F13.2)') lammax
 
 !!!$     ak Synthetic Example (JoH)
 !!!$     ak        lammax = lammax * 1d1

@@ -39,14 +39,11 @@ program inv
   use iso_fortran_env  
 
   implicit none
-  character(256)         :: ftext
-  integer                :: c1,i,count,mythreads,maxthreads
-  real(prec)             :: lamalt
-  logical                :: converged,l_bsmat
-  integer,parameter      :: clear_line_len=50
-  character(clear_line_len)   :: clear_line ! clear line
-
-  integer :: getpid,pid,myerr
+  character(256)        :: ftext
+  integer               :: c1,i,count,mythreads,maxthreads
+  real(prec)            :: lamalt
+  logical               :: converged,l_bsmat
+  integer               :: getpid,pid,myerr
 ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ! SETUP UND INPUT
@@ -60,9 +57,6 @@ program inv
   fpcjg = 14 
   fpeps = 15 
 
-  do i=1,clear_line_len-1
-     clear_line(i:i+1) = ' ' 
-  end do
   ! Say hi
   call welcome()
 
@@ -80,7 +74,7 @@ program inv
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
      if (errnr.ne.0) goto 999
 
-     call GET_THREADS(nthreads,kwnanz)
+     call get_threads(nthreads,kwnanz)
 
 !   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !   zur Berechnung der gemischten Randbedingung bestimmen
@@ -227,13 +221,14 @@ program inv
 !   diff+>
      if (errnr.ne.0) goto 999
 
-     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+!     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
      !$OMP PARALLEL
-     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
-          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
+!     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
+!          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
      !$OMP END PARALLEL
 
 !-------------
+  write(*,*) '------------------------------------------'
 !   get current time
      call tic(c1)
 !.................................................
@@ -242,11 +237,12 @@ program inv
      do while (.not.converged) ! optimization loop
 
 !   Control output
-        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')achar(13)//&
-             ' Iteration ',it,', ',itr,' : Calculating Potentials'
+!        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
+        write(*,'(a,a,i3,a,i3,a)',ADVANCE='no')achar(13),&
+             ' iteration',it,' update',itr,' '
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
+!        write(*,*) 'Iteration',it,'Update',itr,'.'
 
 !   MODELLING
         count = 0
@@ -367,6 +363,8 @@ program inv
 !   Gleichungssystem loesen
                  fetxt = 'vre'
                  call vre(a,b,pot)
+!                 pot = b
+!                 call ztrsv('U','N','U',sanz,a,pot)
 !   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !   analytische Loesung addieren
                  do j=1,sanz
@@ -417,34 +415,13 @@ program inv
 !   Daten-CHI berechnen
         call dmisft(lsetup.or.lsetip)
         if (errnr.ne.0) goto 999
-
-        if ((llam.and..not.lstep).or.lsetup) then
-           if (itmax == 0) then
-              write (*,'(t20,a,G14.4/)')'++ Calculated Fit',nrmsd
-           else
-              if (it == 0)  then
-                 write (*,'(a,G14.4/)')'++ Starting Fit',nrmsd
-              else
-                 write (*,'(t10,a,G14.4/)',ADVANCE='no')'++ Actual Fit',nrmsd
-              end if
-           end if
-        else
-           write (*,'(t10,a,G14.4)',ADVANCE='no')'-- Update Fit',nrmsd
-        end if
-
+           write(*,'(a,F8.2)') 'current chi**2:',nrmsd
 !   'nrmsd=0' ausschliessen
         if (nrmsd.lt.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 
-!   tst
-!   tst        if (lfphai) then
-!   tst            llam = .true.
-!   tst            if (.not.lfpi) nrmsd = 1d0
-!   tst        end if
-
 !.............................
         if (it == 0) then
-           write (*,'(/a,t100/)')achar(13)//&
-                'WRITING STARTING MODEL'
+           write(*,*) 'writing starting model'
            call wout(kanal,dsigma,dvolt)
         end if
 !   Kontrollvariablen ausgeben
@@ -462,33 +439,31 @@ program inv
               errnr2 = 92
               fetxt = 'repeated step length'
            end if
-           write (*,'(/a,G12.4,a/)')'+++ Convergence check (CHI (old/new)) ',&
-                100.0*(1d0-rmsalt/nrmsd),' %'
+           write (*,'(/a,G12.4,a/)')' convergence check (chi**2 (old/new)) ',&
+                100.0*(1d0-rmsalt/nrmsd),'%'
 !   Keine Verbesserung des Daten-CHI ?
            if (abs(1d0-rmsalt/nrmsd).le.mqrms) then
               errnr2 = 81
-              write (fetxt,*)'No further CHI approvement ',&
+              write (fetxt,*)'no CHI**2 improvement ',&
                    real(abs(1d0-rmsalt/nrmsd))
            end if
 !   Minimaler Daten-CHI erreicht ?
 !   tst            if (ABS(1d0-nrmsd/nrmsdm).le.mqrms) errnr2=80
            if (abs(1d0-nrmsd/nrmsdm).le.mqrms.and.ldlamf) then
               errnr2 = 80
-              write (fetxt,*)'Optimal RMS ',real(nrmsd),' reached'
+              write (fetxt,*)'optimal chi**2 ',real(nrmsd),' reached'
            end if
 
            if (llam) then
-              write (6,'(a)',ADVANCE='no')'convergence '
               if (abs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
               if (nrmsd < 1d0 ) errnr2 = 94
               if (nrmsd > rmsalt) errnr2 = 95
-              print*,errnr2        
            end if
 
 !   Maximale Anzahl an Iterationen ?
            if (it.ge.itmax) then
               errnr2 = 79
-              write (fetxt,*)'Reached max number of iterations ',itmax
+              write (fetxt,*)' reached max number of iterations ',itmax
            end if
 !   Minimal stepsize erreicht ?
            if (errnr2 == 0.and.bdpar <= bMIN) then
@@ -585,8 +560,7 @@ program inv
 ! << RM
 !   ak
 !   Widerstandsverteilung und modellierte Daten ausgeben
-              WRITE (*,'(a,t30,I4,t100,a)')ACHAR(13)//&
-                   'WRITING MODEL ITERATE',it,''
+  write(*,*) 'writing model iterate',it                   
               call wout(kanal,dsigma,dvolt)
               if (errnr.ne.0) goto 999
            end if
@@ -618,10 +592,9 @@ program inv
            if (lrobust) wmatd2 = wmatd
 
 !   Kontrollausgaben
-           write (*,'(a)',ADVANCE='no')achar(13)//clear_line
-           write (*,'(a,i3,a,i3,a)',ADVANCE='no') &
-                achar(13)//' Iteration ',it,', ',itr,&
-                ' : Calculating Sensitivities'
+!           write (*,'(a)',ADVANCE='no')achar(13)//clear_line
+           write (*,'(a,i3,a)') &
+                achar(13)//' iteration',it,' sensitivities'
 
            write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
                 ' : Calculating Sensitivities'
@@ -696,13 +669,13 @@ program inv
 
 !   Kontrollausgabe
                        write(*,'(a,i3,a,i3,a,t100,a)',ADVANCE='no')&
-                            achar(13)//' Iteration ',it,', ',itr,&
-                            ' : Calculating 1st regularization parameter',''
+                            achar(13)//' iteration',it,' update',itr,&
+                            ' lambda_0: '
                        write(fprun,'(a,i3,a,i3,a)',ADVANCE='no')&
-                            ' Iteration ',it,', ',itr,&
+                            ' Iteration ',it,' update',itr,&
                             ' : Calculating 1st regularization parameter'
                        call blam0()
-                       write (*,'(a,G10.2)',ADVANCE='no')'lam_0:: ',lammax
+!                       write (*,'(a,G10.2)',ADVANCE='no')'lam_0:: ',lammax
                        write (fprun,'(a,G10.2)')'lam_0 ',lammax
                        lam = lammax
                        lamalt = lammax
@@ -802,10 +775,10 @@ program inv
 
         end if
 !   Kontrollausgaben
-        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
-        write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
-             achar(13)//' Iteration ',it,', ',itr,&
-             ' : Updating'
+!        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
+!        write(*,'(a,i3,a,i3,a)',ADVANCE='no')&
+!             achar(13)//' Iteration ',it,', ',itr,&
+!             ' : Updating'
 
         write(fprun,*)' Iteration ',it,', ',itr,&
              ' : Updating'
@@ -851,8 +824,8 @@ program inv
 !.................................................
 
 !   OUTPUT
-     write (*,'(a,t25,I4,t35,a,t100,a)')achar(13)//&
-          'MODEL ESTIMATE AFTER',it,'ITERATIONS',''
+    write (*,*)&
+          'Model estimate after',it,'iterations'
 
 
 !   Kontrollausgaben
@@ -883,10 +856,10 @@ program inv
 
      case (93)
 
-        write(*,'(a22,a31)') ' Iteration terminated:',&
-             ' CHI decrease sufficiently'
-        write(fprun,'(a22,a31)',err=999) ' Iteration terminated:',&
-             ' CHI decreasse sufficiently'
+        write(*,'(a22,a25)') ' Iteration terminated:',&
+             ' CHI decrease sufficient'
+        write(fprun,'(a22,a25)',err=999) ' Iteration terminated:',&
+             ' CHI decrease sufficient'
 
      case (92)
 
@@ -929,7 +902,7 @@ program inv
 !   Kontrollausgaben
 
 !   Run-time abfragen und ausgeben
-     fetxt = ' CPU time: '
+     fetxt = 'CPU time: '
      call toc(c1,fetxt)
      PRINT*,''
      PRINT*,''
@@ -1042,7 +1015,6 @@ program inv
   open(fpinv,file=trim(fetxt),status='old',POSITION='append',err=999)
   write (fpinv,'(a)')'***finished***'
   close(fpinv)
-  print*,'Echt drin'
   stop '0'
 
 !.....................................................................

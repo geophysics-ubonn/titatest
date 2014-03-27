@@ -118,12 +118,11 @@ use alloci, only: prec
 
 !!!$ BETA MGS
   betamgs = 1d0
-  WRITE (*,'(/a)',ADVANCE='no')'OS identification:'
   IF (INDEX ( version(5), 'Msys') /= 0) THEN
-     PRINT*,' MS-OS'
+!      MS-OS
      slash = '\'  !' \ is escape char for syntax highlights
   ELSE
-     PRINT*,' Linux-OS'
+!  Linux-OS
      slash = '/'
   END IF
 
@@ -511,7 +510,7 @@ use alloci, only: prec
 
   lelerr = BTEST (mswitch,5).OR.lelerr ! +32 overwrites previous lelerr
 
-  IF (lelerr) PRINT*,'## using complex error ellipses ##'
+!  IF (lelerr) PRINT*,'## using complex error ellipses ##'
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
@@ -624,7 +623,7 @@ use alloci, only: prec
         errnr = 3
         GOTO 999
      END IF
-     WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',&
+     WRITE(*,'(/A,I5,2F12.3/)')' fictious sink at node ',&
           nsink,sx(snr(nsink)),sy(snr(nsink))
 !!!$         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
 !!!$     1        nsink,sx(snr(nsink)),sy(snr(nsink))
@@ -637,50 +636,49 @@ use alloci, only: prec
   INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
   IF (exi) THEN
 !!!$ Overwriting lamfix with crt.lamnull content
-     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
+     WRITE (*,*) 'overwriting lamfix with content of '//TRIM(fetxt)
      OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
      READ(kanal,*,END=1001,ERR=999)lamnull_cri
-     PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
+     PRINT*,'lambda_0(CRI) = ',REAL(lamnull_cri)
      READ(kanal,*,END=30,ERR=30)lamnull_fpi
-     PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
+     PRINT*,'lambda_0(FPI) = ',REAL(lamnull_fpi)
      GOTO 31
 30   lamnull_fpi = 0d0
      IF (BTEST(llamf,0)) lamnull_fpi = lamfix ! in case of llamf we possibly 
 !!!$ do not want lam0 search at the beginning of FPI
 31   CLOSE(kanal)
-     PRINT*
   ELSE IF (BTEST(llamf,0)) THEN
-     WRITE (*,'(/a,G12.4/)')'Presetting lamnull with lamfix ',REAL(lamfix)
+     WRITE (*,'(/a,G12.4/)')'setting lamnull with lamfix ',REAL(lamfix)
      lamnull_cri = lamfix
      lamnull_fpi = lamfix
   ELSE IF (nz == -1) THEN
      lamnull_cri = REAL(MAX(manz,nanz))
-     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     WRITE (*,'(/a,G12.4/)')'+++ lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE IF (nz < 0) THEN
      lamnull_cri = ABS(REAL(nz))
-     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
+     WRITE (*,'(/a,G12.4/)')'+++ lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE
      WRITE (*,'(/a/)')'+++ Found no presettings for lambda_0 (default)'
      lamnull_cri = 0d0
      lamnull_fpi = 0d0
   END IF
-  PRINT*,'Saving lamba presettings -> '//TRIM(fetxt)
+  write(*,*) 'saving lamba presets to '//TRIM(fetxt)
   OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
   WRITE (kanal,*)lamnull_cri
   WRITE (kanal,*)lamnull_fpi
   CLOSE (kanal)
 
   IF (ldc) THEN
-     WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
+     WRITE (*,'(/a/)')' DC setting magnitude error'
      wmatd = wmatdr
   ELSE
      IF (lelerr) THEN
-        WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
+        WRITE (*,*) 'CRI complex error ellipse'
         wmatd = wmatd_cri
      ELSE
-        WRITE (*,'(/a/)')'++ (CRI) Setting complex error of magnitude'
+        WRITE (*,*) 'CRI complex magnitude error'
         wmatd = wmatdr
      END IF
   END IF
