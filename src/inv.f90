@@ -43,7 +43,7 @@ program inv
   integer               :: c1,i,count,mythreads,maxthreads
   real(prec)            :: lamalt
   logical               :: converged,l_bsmat
-  integer               :: getpid,pid,myerr
+  integer               :: getpid,pid,myerr,info
 ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ! SETUP UND INPUT
@@ -74,8 +74,9 @@ program inv
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
      if (errnr.ne.0) goto 999
 
-     call get_threads(nthreads,kwnanz)
-
+!     call get_threads(nthreads,kwnanz)
+    nthreads = 2
+      CALL OMP_SET_NUM_THREADS ( NTHREADS )
 !   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
 !   zur Berechnung der gemischten Randbedingung bestimmen
      call precal()
@@ -320,6 +321,10 @@ program inv
 
            fetxt = 'allocation problem a'
            allocate (a((mb+1)*sanz),STAT=myerr)
+           allocate (a_mat(sanz,sanz),STAT=myerr)
+           allocate(a_mat_band(3*mb+1,sanz))
+           allocate(b_mat(sanz,eanz))
+           allocate (ipiv(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
            fetxt = 'allocation problem hpot'
            allocate (hpot(sanz,eanz),STAT=myerr) 
@@ -328,9 +333,10 @@ program inv
            allocate (b(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
            !$OMP PARALLEL DEFAULT (none) &
-           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
-           !$OMP PRIVATE (j,l,k) &
-           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,sanz,kpot,swrtr,hpot,count)
+           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt,a_mat,a_mat_band,b_mat) &
+           !$OMP PRIVATE (j,l,k,info,ipiv) &
+           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,mb,&
+           !$OMP sanz,kpot,swrtr,hpot,count,enr,nsink,lsink)
            !$OMP DO
 !   COMPLEX CASE
            do k=1,kwnanz
@@ -339,36 +345,28 @@ program inv
               fetxt = 'IP-Calculation wavenumber'
               if (lverb) write (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
                    achar(13)//trim(fetxt),count,''
+              call kompab(k,a_mat_band,b)
+              b_mat = cmplx(0.)
               do l=1,eanz
-                 if (lsr.or.lbeta.or.l.eq.1) then
-!   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-                    if (lsr) call potana(l,k,pota)
-!   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
-                    fetxt = 'kompab'
-                    call kompab(l,k,a,b)
-!   Ggf. Randbedingung beruecksichtigen
-                    if (lrandb) call randb(a,b)
-                    if (lrandb2) call randb2(a,b)
-!   Gleichungssystem skalieren
-                    fetxt = 'scalab'
-                    call scalab(a,b,fak)
-!   Cholesky-Zerlegung der Matrix
-                    fetxt = 'chol'
-                    call chol(a)
-                 else
-!   Stromvektor modifizieren
-                    fetxt = 'kompb'
-                    call kompb(l,b,fak)
-                 end if
-!   Gleichungssystem loesen
-                 fetxt = 'vre'
-                 call vre(a,b,pot)
-!                 pot = b
-!                 call ztrsv('U','N','U',sanz,a,pot)
+               b_mat(enr(l),l) = Cmplx(1.)
+                if (lsink.and.(enr(l).ne.nsink)) b_mat(nsink,l) = CMPLX(1d0)
+              end do
+
+!!   Ggf. Randbedingung beruecksichtigen
+!                    if (lrandb) call randb(a,b)
+!                    if (lrandb2) call randb2(a,b)
+
+! General Band matrix
+      call zgbsv(sanz,mb,mb, eanz, a_mat_band, 3*mb+1, ipiv, b_mat, sanz,info )
+      if (info.ne.0) print*,'LAPACK solution inaccurate. Info parameter:',info
+
 !   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !   analytische Loesung addieren
+do l=1,eanz
+!   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+                    if (lsr) call potana(l,k,pota)
                  do j=1,sanz
-                    kpot(j,l,k) = pot(j) * cmplx(fak(j))
+                    kpot(j,l,k) = b_mat(j,l)
                     if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
                     if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
                  end do
@@ -377,7 +375,7 @@ program inv
            !$OMP END DO
            !$OMP END PARALLEL
         end if
-
+errnr = 0
 !   Ggf. Ruecktransformation der Potentialwerte
         if (swrtr.eq.1) then
            call rtrafo(errnr)
@@ -397,7 +395,7 @@ program inv
         if (ldc) then
            deallocate(adc,hpotdc,bdc)
         else
-           deallocate(a,hpot,b)
+           deallocate(a,hpot,b,a_mat,b_mat,ipiv,a_mat_band)
         end if
 
         if (lsetup.or.lsetip) then

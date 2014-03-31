@@ -114,17 +114,17 @@ subroutine bsens()
 !!!$     SENSITIVITAETEN BERECHNEN
            do k=1,kwnanz
               hsens(k) = CMPLX(0d0)
-
+       imn = 0
 !!!$     Knoten des aktuellen Elements hochzaehlen
               do mi=1,nkel
                  nzp = nrel(iel,mi)
 
                  do mj=1,nkel
                     nnp  = nrel(iel,mj)
-                    imax = max0(mi,mj)
-                    imin = min0(mi,mj)
-                    imn  = imax*(imax-1)/2+imin
-
+!                    imax = max0(mi,mj)
+!                    imin = min0(mi,mj)
+!                    imn  = imax*(imax-1)/2+imin
+                  imn = imn+1
 !!!$     Beitraege nach "Reziprozitaetsmethode" gewichtet aufaddieren und
 !!!$     superponieren
 !!!$     (beachte: 'volt = pot(elec4) - pot(elec3)' ,

@@ -1,4 +1,4 @@
-subroutine kompab(nelec,ki,my_a,my_b)
+subroutine kompab(ki,my_a_mat_band,my_b)
 
 !!!$     Unterprogramm zur Kompilation der FE-Matrix 'a' in Bandform
 !!!$     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'b'
@@ -24,7 +24,7 @@ subroutine kompab(nelec,ki,my_a,my_b)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (prec),DIMENSION((mb+1)*sanz) ::     my_a
+  COMPLEX (prec),Dimension(3*mb+1,sanz) :: my_a_mat_band
   COMPLEX (prec),DIMENSION(sanz) ::     my_b
 
 !!!$     Aktuelle Elektrodennummer
@@ -56,42 +56,32 @@ subroutine kompab(nelec,ki,my_a,my_b)
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
 
 !!!$     Indexvariablen
-  INTEGER (KIND = 4) ::     i,j,k,l
+  INTEGER (KIND = 4) ::     i,j,k,l,index_i
 
 !!!$.....................................................................
 
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
-  my_a = CMPLX(0D0)
-
+  my_a_mat_band = CMPLX(0D0)
   my_b = CMPLX(0D0)
+!BAND STORAGE
+!An m-by-n band matrix with kl subdiagonals and ku superdiagonals may be stored compactly in a two-dimensional array with kl+ku+1 rows and n columns. Columns of the matrix are stored in corresponding columns of the array, and diagonals of the matrix are stored in rows of the array. This storage scheme should be used in practice only if $kl, ku \ll \min(m,n)$, although LAPACK routines work correctly for all values of kl and ku. In LAPACK, arrays that hold matrices in band storage have names ending in `B'.
+
+!To be precise, aij is stored in AB(ku+1+i-j,j) for $\max(1,j-ku) \leq i \leq \min(m,j+kl)$. For example, when m = n = 5, kl = 2 and ku = 1:
+!source: http://www.netlib.org/lapack/lug/node124.html
 
   iel = 0
-
   do i=1,typanz
      ntyp = typ(i)
      nkel = selanz(i)
-
      do j=1,nelanz(i)
         iel = iel + 1
         ikl = 0
-
         if (ntyp.gt.11) CYCLE
-
         do k=1,nkel
            nzp = nrel(iel,k)
-
-           do l=1,k
+           do l=1,nkel
               nnp  = nrel(iel,l)
               idif = iabs(nzp-nnp)
-
-!!!$     Ggf. Fehlermeldung
-              if (idif.gt.mb) then
-                 WRITE (fetxt,*)'kompab idif',idif,' iel ',iel
-                 fetxt = ' '
-                 errnr = 19
-                 goto 1000
-
-              else
 
 !!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
@@ -102,55 +92,20 @@ subroutine kompab(nelec,ki,my_a,my_b)
 
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
-                    dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
-!!!$ >> RM
+                    dum  = relbg(rel,ikl) * kg(rel,1,ki)! kg(rel,nelec,ki) !nelec UNSET!!!
                     dum2 = sigma(rnr(rel))
 
                  else
                     dum  = elbg(iel,ikl,ki)
                     dum2 = sigma(iel)
                  end if
-!!!$ GRIDBUG was causing some problems here
-!!!$ sigma index can be overaccessed due to some segementation
-!!!$ issue which will cause undefined sigma access..
-!!!$ FIXED this with grid consisitency check during read in
-
-                 my_a(im) = my_a(im) + CMPLX(dum) * dum2
-!!!$ << RM
-                 if (lsr) then
-                    dum2   = CMPLX(dum) * (dum2 - sigma0)
-                    my_b(nzp) = my_b(nzp) + dum2 * pota(nnp)
-                    if (nnp.ne.nzp) my_b(nnp) = my_b(nnp) + dum2 * pota(nzp)
-                 end if
-              end if
+                 ! band matrix index (see above)
+               index_i = mb+mb+1+nzp-nnp
+               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * dum2 
            end do
         end do
      END do
   end do
-
-!!!$     Ggf. Konstantenvektor belegen
-  if (.not.lsr) my_b(enr(nelec)) = CMPLX(-1d0)
-
-!!!$     akc BAW-Tank
-!!!$     ak        my_b(211) = CMPLX(1d0)
-!!!$     akc Model EGS2003
-!!!$     ak        my_b(1683) = CMPLX(1d0)
-!!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        my_b(129) = CMPLX(1d0)
-!!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        my_b(497) = CMPLX(1d0)
-!!!$     akc Simple Tucson Model
-!!!$     ak        my_b(431) = CMPLX(1d0)
-!!!$     akc TU Berlin Mesokosmos
-!!!$     ak        my_b(201) = CMPLX(1d0)
-!!!$     akc Andy
-!!!$     ak        my_b(2508) = CMPLX(1d0)
-!!!$     akc Sandra (ele?_anom)
-!!!$     ak        my_b(497) = CMPLX(1d0)
-!!!$     akc Adrian (Tank)
-!!!$     ak        my_b(1660) = CMPLX(1d0)
-
-  if (lsink) my_b(nsink) = CMPLX(1d0)
 
   errnr = 0
   return

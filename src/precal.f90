@@ -54,13 +54,13 @@ use alloci, only: prec
      errnr = 97 
      GOTO 1000
   END IF
-  ALLOCATE (elbg(elanz,(smaxs*(smaxs+1))/2,kwnanz),stat=errnr)
+  ALLOCATE (elbg(elanz,smaxs*smaxs,kwnanz),stat=errnr)
   IF (errnr /= 0) then
      fetxt = 'allocation problem elbg elbg'
      errnr = 97 
      GOTO 1000
   END IF
-  ALLOCATE (relbg(relanz,(smaxs*(smaxs+1))/2),stat=errnr)
+  ALLOCATE (relbg(relanz,smaxs*smaxs),stat=errnr)
   ALLOCATE (kg(relanz,eanz,kwnanz),stat=errnr)
   IF (errnr /= 0) then
      fetxt = 'allocation problem elbg relbg or kg'
@@ -110,7 +110,7 @@ use alloci, only: prec
            end if
 
            do m=1,nkel
-              do n=1,m
+              do n=1,nkel
                  imn = imn + 1
                  relbg(rel,imn) = elmam(m,n)
               end do
@@ -152,7 +152,7 @@ use alloci, only: prec
               imn = 0
 
               do m=1,nkel
-                 do n=1,m
+                 do n=1,nkel
                     imn = imn + 1
                     elbg(iel,imn,k) = elmas(m,n)
                  end do
@@ -185,7 +185,7 @@ use alloci, only: prec
               imn = 0
 
               do m=1,nkel
-                 do n=1,m
+                 do n=1,nkel
                     imn = imn + 1
                     elbg(iel,imn,k) = elmas(m,n) + elmam(m,n)*kwn(k)*kwn(k)
                  end do

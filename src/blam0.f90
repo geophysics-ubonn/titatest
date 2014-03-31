@@ -1,4 +1,4 @@
-SUBROUTINE blam0()
+subroutine blam0()
 
 !!!$     Unterprogramm zum Bestimmen des Start-Regularisierungsparameters.
 
@@ -7,14 +7,14 @@ SUBROUTINE blam0()
 
 !!!$.....................................................................
 
-  USE alloci
-  USE femmod
-  USE datmod
-  USE invmod
-  USE modelmod
-  USE konvmod
+  use alloci
+  use femmod
+  use datmod
+  use invmod
+  use modelmod
+  use konvmod
 
-  IMPLICIT NONE
+  implicit none
 
 
 !!!$.....................................................................
@@ -22,140 +22,128 @@ SUBROUTINE blam0()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
-  COMPLEX (prec) ::  cdum
-  REAL (prec)    ::  dum
-
-  REAL (prec),ALLOCATABLE , DIMENSION(:) :: jtj
+  complex (prec) ::  cdum,zlange
+  real (prec)    ::  dum
+  complex (prec),dimension(:,:),allocatable :: WDA,awdwda,wdah
+  complex(prec),dimension(:,:),allocatable:: tmp
+  real (prec),allocatable , dimension(:) :: jtj
 
 !!!$     Indexvariablen
-  INTEGER (KIND = 4)  ::  i,j,k,ic
+  integer (KIND = 4)  ::  i,j,k,ic
 
 !!!$.....................................................................
 
 !!!$     Start-Regularisierungsparameter bestimmen
 
 !!!$ for fixed lambda set the values according to preset fixed lamfix
-  IF (( BTEST(llamf,0) .OR. (lamnull_cri > EPSILON(lamnull_cri)) ) .AND..NOT. &
-       lfpi ) THEN
-     IF (nz==-1) THEN ! this is a special switch, but only taken for 
+  if (( btest(llamf,0) .or. (lamnull_cri > epsilon(lamnull_cri)) ) .and..not. &
+       lfpi ) then
+     if (nz==-1) then ! this is a special switch, but only taken for 
 !!!!$ CRI/DC
-        lammax = MAX(REAL(manz),REAL(nanz))
-        WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'taking easy lam_0 ',lammax
-     ELSE
-        lammax = REAL(lamnull_cri)
-        WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 CRI',lammax
-     END IF
-     RETURN
-  ELSE IF ( BTEST(llamf,0) .OR. (lamnull_fpi > EPSILON(lamnull_fpi)) ) THEN
-     lammax = REAL(lamnull_fpi)
-     WRITE (*,'(a,t5,a,G12.4)')ACHAR(13),'-> presetting lam0 FPI',lammax
-     RETURN
-  END IF
+        lammax = max(real(manz),real(nanz))
+        write (*,'(a,t5,a,G12.4)')achar(13),'taking easy lam_0 ',lammax
+     else
+        lammax = real(lamnull_cri)
+        write (*,'(a,t5,a,G12.4)')achar(13),'-> presetting lam0 CRI',lammax
+     end if
+     return
+  else if ( btest(llamf,0) .or. (lamnull_fpi > epsilon(lamnull_fpi)) ) then
+     lammax = real(lamnull_fpi)
+     write (*,'(a,t5,a,G12.4)')achar(13),'-> presetting lam0 FPI',lammax
+     return
+  end if
 
 
-  ALLOCATE (jtj(manz))
+  allocate (jtj(manz))
 
   jtj = 0d0;ic = 0
 
-  
-  IF (ldc) THEN
+
+  if (ldc) then
 
      !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
      !$OMP SHARED (manz,nanz,sensdc,wmatd,wdfak,jtj,lverb,ic)
      !$OMP DO SCHEDULE (GUIDED)
 
-     DO j=1,manz
-        IF (lverb) THEN
+     do j=1,manz
+        if (lverb) then
            !$OMP ATOMIC
            ic = ic + 1
-           
-           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-                'blam0/ ',REAL( ic * (100./manz)),'%'
-        END IF
+
+           write(*,'(a,t70,F6.2,A)',advance='no')achar(13)//&
+                'blam0/ ',real( ic * (100./manz)),'%'
+        end if
         dum = 0d0
 
-        DO i=1,nanz
-           DO k=1,manz
+        do i=1,nanz
+           do k=1,manz
               dum = dum + sensdc(i,j) * sensdc(i,k) * &
-                   wmatd(i)*REAL(wdfak(i))
-           END DO
+                   wmatd(i)*real(wdfak(i))
+           end do
 
-        END DO
+        end do
 
-        jtj(j) = ABS(dum)
-        
-     END DO
+        jtj(j) = abs(dum)
+
+     end do
 
      !$OMP END PARALLEL
 
-  ELSE IF (lfpi) THEN
+  else if (lfpi) then
 
      !$OMP PARALLEL DEFAULT(none) PRIVATE (dum) &
      !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,jtj,lverb,ic)
      !$OMP DO SCHEDULE (GUIDED)
-     DO j=1,manz
-        IF (lverb) THEN
+     do j=1,manz
+        if (lverb) then
            !$OMP ATOMIC
            ic = ic + 1
-           
-           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-                'blam0/ ',REAL( ic * (100./manz)),'%'
-        END IF
+
+           write(*,'(a,t70,F6.2,A)',advance='no')achar(13)//&
+                'blam0/ ',real( ic * (100./manz)),'%'
+        end if
 
         dum = 0d0
 
-        DO i=1,nanz
-           DO k=1,manz
-              dum = dum + REAL(sens(i,j)) * REAL(sens(i,k)) * &
-                   wmatd(i)*REAL(wdfak(i))
-           END DO
-        END DO
+        do i=1,nanz
+           do k=1,manz
+              dum = dum + real(sens(i,j)) * real(sens(i,k)) * &
+                   wmatd(i)*real(wdfak(i))
+           end do
+        end do
 
-        jtj(j) = ABS(dum)
+        jtj(j) = abs(dum)
 
-     END DO
+     end do
      !$OMP END PARALLEL
 
-  ELSE
+  else
+! Perform lambda_0 search. See Kemna (2000), page 67.
+! complex case  
+  
+     allocate(wda(nanz,manz), wdah(manz,nanz))
+     allocate(awdwda(manz,manz))
+     lammax = 0.
+     wdah = conjg( transpose( sens ) )
+     do i = 1,nanz
+        wda(i,:) = cmplx(wmatd(i)*real(wdfak(i)))*sens(i,:)
+     end do
+     call zgemm('n', 'n', manz, manz, nanz, 1D0, wdah, manz, wda, nanz, 0D0,&
+        awdwda,manz)
+     jtj  = abs(sum((awdwda),1))
+     lammax = sum((jtj),1)
+     
+     deallocate(wda,wdah,awdwda)
+  end if
+  
+  lammax = lammax/real(manz)
 
-     !$OMP PARALLEL DEFAULT(none) PRIVATE (cdum) &
-     !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,jtj,lverb,ic)
-     !$OMP DO SCHEDULE (GUIDED)
-     DO j=1,manz
-
-        
-        IF (lverb) THEN
-           !$OMP ATOMIC
-           ic = ic + 1
-           
-           WRITE(*,'(a,t70,F6.2,A)',advance='no')ACHAR(13)//&
-                'blam0/ ',REAL( ic * (100./manz)),'%'
-        END IF
-
-        cdum = CMPLX(0d0)
-
-        DO i=1,nanz
-           DO k=1,manz
-              cdum = cdum + CONJG(sens(i,j)) * sens(i,k) * &
-                   CMPLX(wmatd(i)*REAL(wdfak(i)))
-           END DO
-        END DO
-        
-        jtj(j) = ABS(cdum)
-
-     END DO
-     !$OMP END PARALLEL
-
-  END IF
-
-  lammax = SUM(jtj)/REAL(manz)
-
-  DEALLOCATE (jtj)
+  deallocate (jtj)
 
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
   lammax = lammax * 5d0
-  WRITE (*,'(F13.2)') lammax
+  write (*,'(F13.2)') lammax
 
 !!!$     ak Synthetic Example (JoH)
 !!!$     ak        lammax = lammax * 1d1
@@ -168,5 +156,5 @@ SUBROUTINE blam0()
 
 !!!$     ak AAC
 !!!$     ak        lammax = lammax * 5d0
-  RETURN
-END SUBROUTINE blam0
+  return
+end subroutine blam0

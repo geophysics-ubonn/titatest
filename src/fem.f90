@@ -59,7 +59,7 @@ program fem
   logical             lana
 
 !!!$   Indexvariablen
-  integer             j,k,l,c1
+  integer             j,k,l,c1,info
 
 !!!$ counting wavenumbers  
   INTEGER :: count
@@ -76,7 +76,6 @@ program fem
   OPEN (kanal,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (kanal,*)pid
   CLOSE (kanal)
-
   maxthreads = OMP_GET_MAX_THREADS()
   WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
@@ -204,6 +203,9 @@ program fem
      END IF
      NTHREADS = mythreads
   END IF
+  
+  nthreads = 2
+  
   CALL OMP_SET_NUM_THREADS ( NTHREADS )
   ! recheck ..
   k = OMP_GET_MAX_THREADS()
@@ -243,6 +245,10 @@ program fem
 !!!$   'a', 'hpot' und 'kpot' zuweisen
   ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),&
        kpot(sanz,eanz,kwnanz),b(sanz),stat=errnr)
+           allocate (a_mat(sanz,sanz),STAT=errnr)
+           allocate (a_mat_band(3*mb+1,sanz))
+           allocate(b_mat(sanz,eanz))
+           allocate (ipiv(sanz),STAT=errnr)       
   if (errnr.ne.0) then
      fetxt = 'allocation problem a and hpot'
      errnr = 97 
@@ -257,9 +263,9 @@ program fem
   count = 0
   !$OMP PARALLEL DEFAULT (none) &
   !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
-  !$OMP PRIVATE (j,l,k) &
-  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,&
-  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma)
+  !$OMP PRIVATE (j,l,k,a_mat,b_mat,a_mat_band,ipiv,info) &
+  !$OMP SHARED (kwnanz,lverb,eanz,lsr,enr,lbeta,lrandb,lrandb2,&
+  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma,mb)
   !$OMP DO
 !!!$   POTENTIALWERTE BERECHNEN
   do k=1,kwnanz
@@ -273,53 +279,35 @@ program fem
         WRITE (*,'(a,t45,I4,t100,a)',ADVANCE='no')&
              ACHAR(13)//' Calculating Potentials : Wavenumber ',count
      end if
-
-     do l=1,eanz
-
-!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-        if (lsr.OR.lana) call potana(l,k,pota)
-!!!$ is also needed by kompab for reference therfore it is placed here
-!!!$
-
-!!!$ for analytical only, the linear system is never solved
-        if ((lbeta.or.l.eq.1.OR.lsr).AND..NOT.lana) then
-
-!!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
-           call kompab(l,k,a,b)
-           !           if (errnr.ne.0) goto 999
-
-!!!$   Ggf. Randbedingung beruecksichtigen
-           if (lrandb) call randb(a,b)
-           if (lrandb2) call randb2(a,b)
-
-!!!$   Gleichungssystem skalieren
-           call scalab(a,b,fak)
-           !           if (errnr.ne.0) goto 999
-
-!!!$   Cholesky-Zerlegung der Matrix
-           call chol(a)
-           !           if (errnr.ne.0) goto 999
-        else if (.NOT. lana) THEN
-
-!!!$   Stromvektor modifizieren
-           call kompb(l,b,fak)
-        end if
+              call kompab(k,a_mat_band,b)
+              b_mat = cmplx(0.)
+              do l=1,eanz
+               b_mat(enr(l),l) = Cmplx(1.)
+              end do
+!!!!$   Ggf. Randbedingung beruecksichtigen
+!           if (lrandb) call randb(a,b)
+!           if (lrandb2) call randb2(a,b)
 
 !!!$   Gleichungssystem loesen only for 
 !!!$ non analytical
-        IF (.NOT. lana) call vre(a,b,pot)
+!        IF (.NOT. lana) call vre(a,b,pot)
+
+! General Band matrix
+      call zgbsv(sanz,mb,mb, eanz, a_mat_band, 3*mb+1, ipiv, b_mat, sanz,info )
+      if (info.ne.0) print*,'ZGBSV info:',info,'potential example',dble(b_mat(1,1))
+! GEneral matrix
+!      call zgesv(sanz, eanz, a_mat, sanz, ipiv, b_mat, sanz,info )
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
+     do l=1,eanz
         do j=1,sanz
            IF (lana) THEN
 
               kpot(j,l,k) = pota(j)
            ELSE
-              kpot(j,l,k) = pot(j) * CMPLX(fak(j))
+                    kpot(j,l,k) = b_mat(j,l)
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            END IF
-!!!$   ak (fuer Testzwecke)
-!!!$   ak                    kpot(j,l,k) = pota(j)
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
         end do
      end do
@@ -360,7 +348,7 @@ program fem
   end if
 
 !!!$   'a' und 'hpot' freigeben
-  DEALLOCATE(a,hpot,b)
+           deallocate(a,hpot,b,a_mat,b_mat,ipiv)
 
 !!!$   Ggf. Sensitivitaeten aller Messungen berechnen und ausgeben
   if (lsens) then

@@ -14,8 +14,8 @@ integer :: kwnanz
 ! Internal
 integer :: maxthreads, mythreads, i
 ############################################
-
-maxthreads = OMP_GET_MAX_THREADS()
+maxthreads = 1
+!maxthreads = OMP_GET_MAX_THREADS()
 NTHREADS = maxthreads
 ! now that we know nf and kwnanz, we can adjust the OMP environment..
 IF (maxthreads > 2) THEN 
@@ -32,8 +32,8 @@ IF (maxthreads > 2) THEN
   END IF
   NTHREADS = mythreads
 END IF
-CALL OMP_SET_NUM_THREADS ( NTHREADS )
+!CALL OMP_SET_NUM_THREADS ( NTHREADS )
 ! recheck ..
-i = OMP_GET_MAX_THREADS()
+!i = OMP_GET_MAX_THREADS()
 WRITE(6,'(2(a, i3),a)') " openMP threads: ",i,'(',maxthreads,' CPUs)'
 END SUBROUTINE GET_THREADS
