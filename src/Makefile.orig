@@ -41,7 +41,7 @@ main_subs = bbsens.f90 bessi0.f90 beta.f90 bessi1.f90 bessk0.f90 \
 		gammln.f90 gaulag.f90 gauleg.f90 get_error.f90 \
 		get_git_ver.f90 get_unit.f90 \
 		intcha.f90 \
-		kompab.f90 kompb.f90 \
+		pre_comp_ab.f90 comp_ab.f90 kompb.f90 \
 		make_noise.f90 \
 		potana.f90 precal.f90 \
 		randb.f90 randb2.f90 rdatm.f90 relectr.f90 relem.f90 \

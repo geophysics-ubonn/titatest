@@ -239,8 +239,8 @@ program inv
 
 !   Control output
 !        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
-        write(*,'(a,a,i3,a,i3,a)',ADVANCE='no')achar(13),&
-             ' iteration',it,' update',itr,' '
+!        write(*,'(a,a,i3,a,i3,a)',ADVANCE='no')achar(13),&
+!             ' iteration',it,' update',itr,' '
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
 !        write(*,*) 'Iteration',it,'Update',itr,'.'
@@ -323,6 +323,7 @@ program inv
            allocate (a((mb+1)*sanz),STAT=myerr)
            allocate (a_mat(sanz,sanz),STAT=myerr)
            allocate(a_mat_band(3*mb+1,sanz))
+           allocate(a_mat_band_elec(3*mb+1,sanz))
            allocate(b_mat(sanz,eanz))
            allocate (ipiv(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
@@ -332,48 +333,54 @@ program inv
            fetxt = 'allocation problem b'
            allocate (b(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
-           !$OMP PARALLEL DEFAULT (none) &
-           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt,a_mat,a_mat_band,b_mat) &
-           !$OMP PRIVATE (j,l,k,info,ipiv) &
-           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,mb,&
-           !$OMP sanz,kpot,swrtr,hpot,count,enr,nsink,lsink)
-           !$OMP DO
+!           !$OMP PARALLEL DEFAULT (none) &
+!           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt,a_mat,a_mat_band,b_mat,&
+!           !$OMP a_mat_band_elec) &
+!           !$OMP PRIVATE (j,l,k,info,ipiv) &
+!           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,mb,&
+!           !$OMP sanz,kpot,swrtr,hpot,count,enr,nsink,lsink)
+!           !$OMP DO
 !   COMPLEX CASE
-           do k=1,kwnanz
-              !$OMP ATOMIC
-              count = count + 1
-              fetxt = 'IP-Calculation wavenumber'
-              if (lverb) write (*,'(a,t35,I4,t100,a)',ADVANCE='no')&
-                   achar(13)//trim(fetxt),count,''
-              call kompab(k,a_mat_band,b)
-              b_mat = cmplx(0.)
-              do l=1,eanz
-               b_mat(enr(l),l) = Cmplx(1.)
-                if (lsink.and.(enr(l).ne.nsink)) b_mat(nsink,l) = CMPLX(1d0)
-              end do
+!!!$   POTENTIALWERTE BERECHNEN
+  do k=1,kwnanz
+!!!$   Kontrollausgabe
+!     !$OMP ATOMIC
+     count = count + 1
 
-!!   Ggf. Randbedingung beruecksichtigen
-!                    if (lrandb) call randb(a,b)
-!                    if (lrandb2) call randb2(a,b)
+     if (swrtr.eq.0) then
+        write(*,'(a)')' Calculating Potentials'
+     else
+        WRITE (*,'(a,I3,a,I3,a,I3)',ADVANCE='no')&
+             ACHAR(13)//' iteration',it,' update',itr,' wavenumver',count
+             
+     end if
+              call pre_comp_ab(k,a_mat_band)
+              do l=1,eanz
+              b = cmplx(0.)
+                a_mat_band_elec = a_mat_band
+!               b_mat(enr(l),l) = Cmplx(-1.)
+               b(enr(l)) = cmplx(1.)
+               call comp_ab(k,a_mat_band_elec,l)
+
+!!!!$   Ggf. Randbedingung beruecksichtigen
+!           if (lrandb) call randb(a,b)
+!           if (lrandb2) call randb2(a,b)
+
 
 ! General Band matrix
-      call zgbsv(sanz,mb,mb, eanz, a_mat_band, 3*mb+1, ipiv, b_mat, sanz,info )
-      if (info.ne.0) print*,'LAPACK solution inaccurate. Info parameter:',info
-
-!   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
-!   analytische Loesung addieren
-do l=1,eanz
-!   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-                    if (lsr) call potana(l,k,pota)
-                 do j=1,sanz
-                    kpot(j,l,k) = b_mat(j,l)
-                    if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
-                    if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
-                 end do
-              end do
-           end do
-           !$OMP END DO
-           !$OMP END PARALLEL
+      call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
+      if (info.ne.0) print*,'ZGBSV info:',info,'potential example',dble(b)
+!!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
+!!!$   analytische Loesung addieren
+        do j=1,sanz
+                    kpot(j,l,k) = b(j)
+              if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+           if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
+        end do
+     end do
+  end do           
+!           !$OMP END DO
+!           !$OMP END PARALLEL
         end if
 errnr = 0
 !   Ggf. Ruecktransformation der Potentialwerte
@@ -395,7 +402,7 @@ errnr = 0
         if (ldc) then
            deallocate(adc,hpotdc,bdc)
         else
-           deallocate(a,hpot,b,a_mat,b_mat,ipiv,a_mat_band)
+           deallocate(a,hpot,b,a_mat,b_mat,ipiv,a_mat_band,a_mat_band_elec)
         end if
 
         if (lsetup.or.lsetip) then
@@ -413,7 +420,7 @@ errnr = 0
 !   Daten-CHI berechnen
         call dmisft(lsetup.or.lsetip)
         if (errnr.ne.0) goto 999
-           write(*,'(a,F8.2)') 'current chi**2:',nrmsd
+           write(*,'(a,F8.2)') ' current chi**2:',nrmsd
 !   'nrmsd=0' ausschliessen
         if (nrmsd.lt.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
 

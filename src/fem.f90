@@ -263,7 +263,7 @@ program fem
   count = 0
   !$OMP PARALLEL DEFAULT (none) &
   !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
-  !$OMP PRIVATE (j,l,k,a_mat,b_mat,a_mat_band,ipiv,info) &
+  !$OMP PRIVATE (j,l,k,a_mat,b_mat,a_mat_band,ipiv,info,a_mat_band_elec) &
   !$OMP SHARED (kwnanz,lverb,eanz,lsr,enr,lbeta,lrandb,lrandb2,&
   !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma,mb)
   !$OMP DO
@@ -279,33 +279,33 @@ program fem
         WRITE (*,'(a,t45,I4,t100,a)',ADVANCE='no')&
              ACHAR(13)//' Calculating Potentials : Wavenumber ',count
      end if
-              call kompab(k,a_mat_band,b)
-              b_mat = cmplx(0.)
+              call pre_comp_ab(k,a_mat_band)
               do l=1,eanz
-               b_mat(enr(l),l) = Cmplx(1.)
-              end do
+              b = cmplx(0.)
+                a_mat_band_elec = a_mat_band
+!               b_mat(enr(l),l) = Cmplx(-1.)
+               b(enr(l)) = cmplx(1.)
+               call comp_ab(k,a_mat_band_elec,l)
+
 !!!!$   Ggf. Randbedingung beruecksichtigen
 !           if (lrandb) call randb(a,b)
 !           if (lrandb2) call randb2(a,b)
 
-!!!$   Gleichungssystem loesen only for 
-!!!$ non analytical
-!        IF (.NOT. lana) call vre(a,b,pot)
 
 ! General Band matrix
-      call zgbsv(sanz,mb,mb, eanz, a_mat_band, 3*mb+1, ipiv, b_mat, sanz,info )
-      if (info.ne.0) print*,'ZGBSV info:',info,'potential example',dble(b_mat(1,1))
-! GEneral matrix
-!      call zgesv(sanz, eanz, a_mat, sanz, ipiv, b_mat, sanz,info )
+      call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
+      if (info.ne.0) print*,'ZGBSV info:',info,'potential example',dble(b)
+!       call zpbtrf('L',sanz,mb,a_mat_band_elec,2*mb,info)
+!       if (info.ne.0) print*,'Zpbtrf info:',info   
+!       stop '10'
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
-     do l=1,eanz
         do j=1,sanz
            IF (lana) THEN
 
               kpot(j,l,k) = pota(j)
            ELSE
-                    kpot(j,l,k) = b_mat(j,l)
+                    kpot(j,l,k) = b(j)
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            END IF
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)

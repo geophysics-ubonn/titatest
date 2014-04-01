@@ -12,7 +12,7 @@ integer,parameter,public :: prec = real64
 ! Gesamtsteifigkeitsmatrix
   COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: a
   COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a_mat,b_mat,&
-      a_mat_band
+      a_mat_band,a_mat_band_elec
    
   INTEGER,dimension(:),allocatable, public ::          ipiv
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen

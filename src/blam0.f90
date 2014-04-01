@@ -23,10 +23,10 @@ subroutine blam0()
 
 !!!$     Hilfsvariablen
   complex (prec) ::  cdum,zlange
-  real (prec)    ::  dum
+  real (prec)    ::  dum,time,mflops
   complex (prec),dimension(:,:),allocatable :: WDA,awdwda,wdah
-  complex(prec),dimension(:,:),allocatable:: tmp
   real (prec),allocatable , dimension(:) :: jtj
+  integer(KIND=4):: tic,toc,rate
 
 !!!$     Indexvariablen
   integer (KIND = 4)  ::  i,j,k,ic
@@ -57,7 +57,7 @@ subroutine blam0()
   allocate (jtj(manz))
 
   jtj = 0d0;ic = 0
-
+call system_clock(tic,rate)
 
   if (ldc) then
 
@@ -139,22 +139,12 @@ subroutine blam0()
   lammax = lammax/real(manz)
 
   deallocate (jtj)
-
+  call system_clock(toc,rate)
+  time = (toc-tic) !milliseconds
   lammax = lammax * 2d0/(alfx+alfz)
 !!!$     ak Default
   lammax = lammax * 5d0
-  write (*,'(F13.2)') lammax
-
-!!!$     ak Synthetic Example (JoH)
-!!!$     ak        lammax = lammax * 1d1
-
-!!!$     ak MinFrac
-!!!$     ak        lammax = lammax * 5d1
-
-!!!$     ak Test
-!!!$     ak        lammax = lammax * 1d1
-
-!!!$     ak AAC
-!!!$     ak        lammax = lammax * 5d0
+  mflops = dble(manz*(2*nanz-1)*manz)/(dble(time)*10**6)
+  write (*,'(F13.2,a,F7.2,a)') lammax,' (',mflops,' GFLOPS)'
   return
 end subroutine blam0
