@@ -1,0 +1,41 @@
+#!/usr/bin/Rscript
+#Needs R.utils. Install with these R commands:
+#source("http://www.braju.com/R/hbLite.R")
+#hbLite("R.utils")
+#Needs latticeExtra. Install with the R command:
+#install.packages(latticeExtra)
+cmd_args <- commandArgs()
+if (length(cmd_args)==6) file <- cmd_args[6] else file <- "rho01.pha"
+library(R.utils)
+library(latticeExtra)
+a <- read.table(file,fill=TRUE,col.names=c("x","z","value"))
+a <- a[-1,]
+# PNG output
+png(filename=sprintf("test_%s.png",file),width=6000,height=4000,
+	res=1000,type="cairo")
+# or PDF
+#pdf(file=sprintf("test_%s.pdf",file),width=6,height=4)
+colors		<- 	23
+maxval 		<- 	max(max(a[c("value")]))
+minval 		<- 	min(min(a[c("value")]))
+scale 		<-	maxval-minval+1
+jet.colors 	<- 	colorRampPalette(c("#00007F", "blue", "#007FFF", 
+				"cyan", "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+levels 		<- 	seq(minval-0.1*scale,maxval+0.1*scale,length=colors)
+levels_short<-	seq(minval-0.1*scale,maxval+0.1*scale,length=12)
+trellis.par.set(cex.axes=3)
+# POTENTIAL PLOT
+levelplot	(value ~ x * z, a,
+				at=levels,col.regions=jet.colors(colors),
+				main=expression(paste("phase in [mrad]")),ylab="depth in [m]",
+				xlab="lateral coordinate in [m]",
+				aspect = "fill",
+				colorkey = list(space="right",tick.number=1,height=1,
+				width=1.5,
+				labels = list(at = levels_short,cex=1,rot=0,
+				lab = sprintf("%5.3f",levels_short))))
+
+
+
+dev.off()
+

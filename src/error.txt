@@ -331,3 +331,4 @@
 111 Mixed boundary condition  
 111 border to element connection
 111 failed (rnr)
+112 Stiffness matrix not positive definite

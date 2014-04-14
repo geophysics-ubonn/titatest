@@ -261,16 +261,16 @@ program fem
      goto 999
   end if
   count = 0
-  !$OMP PARALLEL DEFAULT (none) &
-  !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
-  !$OMP PRIVATE (j,l,k,a_mat,b_mat,a_mat_band,ipiv,info,a_mat_band_elec) &
-  !$OMP SHARED (kwnanz,lverb,eanz,lsr,enr,lbeta,lrandb,lrandb2,&
-  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma,mb)
-  !$OMP DO
+!  !$OMP PARALLEL DEFAULT (none) &
+!  !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
+!  !$OMP PRIVATE (j,l,k,a_mat,b_mat,a_mat_band,ipiv,info,a_mat_band_elec) &
+!  !$OMP SHARED (kwnanz,lverb,eanz,lsr,enr,lbeta,lrandb,lrandb2,&
+!  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma,mb)
+!  !$OMP DO
 !!!$   POTENTIALWERTE BERECHNEN
   do k=1,kwnanz
 !!!$   Kontrollausgabe
-     !$OMP ATOMIC
+!     !$OMP ATOMIC
      count = count + 1
 
      if (swrtr.eq.0) then
@@ -279,40 +279,33 @@ program fem
         WRITE (*,'(a,t45,I4,t100,a)',ADVANCE='no')&
              ACHAR(13)//' Calculating Potentials : Wavenumber ',count
      end if
-              call pre_comp_ab(k,a_mat_band)
-              do l=1,eanz
-              b = cmplx(0.)
-                a_mat_band_elec = a_mat_band
-!               b_mat(enr(l),l) = Cmplx(-1.)
-               b(enr(l)) = cmplx(1.)
-               call comp_ab(k,a_mat_band_elec,l)
-
+        call pre_comp_ab(k,a_mat_band)
+        do l=1,eanz
+           b = cmplx(0.)
+           a_mat_band_elec = a_mat_band
+           b(enr(l)) = cmplx(1.)
+           call comp_ab(k,a_mat_band_elec,l)
 !!!!$   Ggf. Randbedingung beruecksichtigen
 !           if (lrandb) call randb(a,b)
 !           if (lrandb2) call randb2(a,b)
 
-
 ! General Band matrix
-      call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
-      if (info.ne.0) print*,'ZGBSV info:',info,'potential example',dble(b)
-!       call zpbtrf('L',sanz,mb,a_mat_band_elec,2*mb,info)
-!       if (info.ne.0) print*,'Zpbtrf info:',info   
-!       stop '10'
+   call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
+      if (info.ne.0) print*,'ZGBSV info:',info
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
-        do j=1,sanz
-           IF (lana) THEN
-
-              kpot(j,l,k) = pota(j)
+           do j=1,sanz
+             IF (lana) THEN
+               kpot(j,l,k) = pota(j)
            ELSE
-                    kpot(j,l,k) = b(j)
-              if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+               kpot(j,l,k) = b(j)
+               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            END IF
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
         end do
      end do
   end do
-  !$OMP END PARALLEL
+!  !$OMP END PARALLEL
   print*,'done, now processing'
 !!!$   Ggf. Ruecktransformation der Potentialwerte
   if (swrtr.eq.1) call rtrafo()

@@ -35,5 +35,5 @@ END IF
 !CALL OMP_SET_NUM_THREADS ( NTHREADS )
 ! recheck ..
 !i = OMP_GET_MAX_THREADS()
-WRITE(6,'(2(a, i3),a)') " openMP threads: ",i,'(',maxthreads,' CPUs)'
+!WRITE(6,'(2(a, i3),a)') " openMP threads: ",i,'(',maxthreads,' CPUs)'
 END SUBROUTINE GET_THREADS

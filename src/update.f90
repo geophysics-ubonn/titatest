@@ -284,12 +284,11 @@ SUBROUTINE update()
 
      END DO
 
-!!$     DO i=1,nanz
-!!$        print*,i,wmatd(i),dat(i),sigmaa(i),wdfak(i)
-!!$     END Do
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
-
+!     DO i=1,nanz
+!        print*,'upd',i,bvec(i)
+!     END Do
 !!!$     Ggf. Verbesserung umspeichern
      IF (lfpi) THEN
         dpar = CMPLX(0D0,REAL(dpar))

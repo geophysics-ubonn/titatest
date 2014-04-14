@@ -5,7 +5,7 @@ MODULE alloci
 
 ! Set precision (dp=real64 or qp=real128)
 use iso_fortran_env
-integer,parameter,public :: prec = real64
+integer,parameter,public :: prec = Kind(0D0)
 
 ! COMPLEX CASE
 
