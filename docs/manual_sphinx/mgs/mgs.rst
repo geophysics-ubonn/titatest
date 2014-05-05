@@ -4,8 +4,9 @@ Minimum Gradient Support
 Available Versions
 ------------------
 
-*  (=5)	- MGS regularization (pure MGS after Zhdanov & Portniaguine): C_m^-1
-  \approx \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
+* (=5)	- MGS regularization (pure MGS after Zhdanov & Portniaguine):
+  :math:`C_m^-1 \approx \int
+  \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA`
 
 * (=6)	- MGS with sensitivity weighted beta: = beta / f_{ij} (from Blaschek
   2008) where f_{ij} = (1 + g(i) + g(k))^2 and g(i,k) = log_{10} coverage
@@ -19,3 +20,4 @@ Available Versions
   details please have a look into bsmatm_mod.f90 -> SUBROUTINE bsmamtmmgs
 
 * (=9)- Same as 8, but with mean coverage normalization
+
