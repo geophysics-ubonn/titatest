@@ -5,7 +5,6 @@ CRTomo*
 CutMcK*
 mini_*
 forfiles
-my_git_version.h
 *.mod
 cutmckee/Makefile.am
 ./error.txt
