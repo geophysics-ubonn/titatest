@@ -10,6 +10,7 @@ branch=$( git branch | awk '/\*/{print $2}' )
 mydate=$( date +%c | sed 's/\ /-/g' )
 compiler=$1
 myos=$( uname -o )
+echo 'Character(256) :: my_git_version(5)' > my_git_version.h
 echo 'my_git_version(1) = "'$branch'"' >> my_git_version.h
 echo 'my_git_version(2) = "'$commit'"' >> my_git_version.h
 echo 'my_git_version(3) = "'$mydate'"' >> my_git_version.h
