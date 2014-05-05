@@ -1,5 +1,0 @@
-my_git_version(1) = "dev"
-my_git_version(2) = "793f23dcc5c3bca9850ca4ea98ba5b35e5d7197c"
-my_git_version(3) = "Fr-28-Feb-2014-13:40:44-CET"
-my_git_version(4) = ""
-my_git_version(5) = "GNU/Linux"
