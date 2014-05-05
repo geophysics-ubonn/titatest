@@ -1,0 +1,7 @@
+      1       # Ensemble seed
+  1.00        # Relative error resistance A (noise) [%] von dR=AR+B
+  0.00        # Absolute errior resistance B (noise) [Ohm m]
+  0.00        # Phase error parameter A1 (noise) [mRad/Ohm/m] von dp=A1*R^B1+A2*p+p0
+  0.00        # Phase error parameter B1 (noise) []
+  0.00        # Relative phase error A2 (noise) [%]
+ 0.500        # Absolute phase error p0 (noise) [mRad]
