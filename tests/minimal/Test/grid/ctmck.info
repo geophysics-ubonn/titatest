@@ -1,0 +1,8 @@
+## Regular grid
+NX    20
+X0      -2.500
+DX       0.500
+NY    15
+Y0       0.000
+DY      -0.500
+NXY   300

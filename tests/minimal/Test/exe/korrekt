@@ -1,0 +1,110 @@
+ ######### CRTomo ############
+ Process_ID ::       24538
+ OpenMP max threads:     8
+ Version control of binary:
+ Git-Branch  dev
+ Commit-ID   072d20735fdbbcb31f5139c9e98758cab7e908e6
+ Created     Tue-Apr--1-16:20:02-2014
+ Compiler    gfortran
+ OS          GNU/Linux
+
+OS identification:  Linux-OS
+ writing inversion results into ../inv
+++ check 1++ check 2 done!
+ + Taking error model
+
+overwriting lamfix with content of crt.lamnull
+ ++ Lambda_0(CRI) =    300.000000    
+ ++ Lambda_0(FPI) =    0.00000000    
+
+ Saving lamba presettings -> crt.lamnull
+
+++ (CRI) Setting complex error of magnitude
+
+ Rescheduling..
+ perfect match
+ OpenMP threads:   8(  8)
+                                                   Iteration   0,   0 : Calculating Potentials++ Starting Fit     111.9    
+
+
+WRITING STARTING MODEL
+
+                                                   Iteration   1,   0 : Calculating Sensitivities
+Regularization:: Triangular smooth
+ C_m^ calculation time  0d/  0h/  0m/  0s/   0ms
+ Iteration   1,   1 : Calculating 1st regularization parameter                                       taking easy lam_0    300.0    
+lam_0::   0.30E+03                                                   Iteration   1,   1 : Updating                                                   Iteration   1,   1 : Calculating Potentials         -- Update Fit     9.006                                                       Iteration   1,   2 : Updating                                                   Iteration   1,   2 : Calculating Potentials         -- Update Fit     4.826     ddd   2.1978575133672242        4.8259055801657285        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.59078408332683308     
+                                                   Iteration   1,   3 : Updating                                                   Iteration   1,   3 : Calculating Potentials         -- Update Fit     3.153     ddd   2.1978575133672242        3.1534035736272039        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.66198904072291709     
+                                                   Iteration   1,   4 : Updating                                                   Iteration   1,   4 : Calculating Potentials         -- Update Fit     2.430     ddd   2.1978575133672242        2.4303187490170264        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.70974476544747866     
+                                                   Iteration   1,   5 : Updating                                                   Iteration   1,   5 : Calculating Potentials         -- Update Fit     2.037     ddd   2.1978575133672242        2.0366999293735790        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.74408788419118377     
+                                                   Iteration   1,   6 : Updating                                                   Iteration   1,   6 : Calculating Potentials         -- Update Fit     1.796     ddd   2.1978575133672242        1.7961957821938621        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.76951861395907362     
+                                                   Iteration   1,   7 : Updating                                                   Iteration   1,   7 : Calculating Potentials         -- Update Fit     1.619     ddd   2.1978575133672242        1.6194373012753458        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.79113565817602782     
+                                                   Iteration   1,   8 : Updating                                                   Iteration   1,   8 : Calculating Potentials         -- Update Fit     1.364     ddd   2.1978575133672242        1.3644382908397161        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.82822998855272367     
+                                                   Iteration   1,   9 : Updating                                                   Iteration   1,   9 : Calculating Potentials         -- Update Fit     1.433                                                       Iteration   1,  10 : Updating                                                   Iteration   1,  10 : Calculating Potentials         -- Update Fit     56.54                                                       Iteration   1,  10 : Updating                                                   Iteration   1,  10 : Calculating Potentials         ++ Actual Fit     1.364    
+
++++ Convergence check (CHI (old/new))   -8098.     %
+
+convergence            0
+                                                   Iteration   2,   0 : Calculating Sensitivities                                                   Iteration   2,   0 : Updating                                                   Iteration   2,   0 : Calculating Potentials         -- Update Fit    0.4044     ddd   2.1978575133672242       0.40436829650860601        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222   1.4155314722472039     
+                                                   Iteration   2,   1 : Updating                                                   Iteration   2,   1 : Calculating Potentials         -- Update Fit    0.5045     ddd   2.1978575133672242       0.50451498809221862        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222   1.3341962631122617     
+                                                   Iteration   2,   2 : Updating                                                   Iteration   2,   2 : Calculating Potentials         -- Update Fit    0.3548     ddd   2.1978575133672242       0.35480957814291292        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222   1.4659023086025076     
+                                                   Iteration   2,   3 : Updating                                                   Iteration   2,   3 : Calculating Potentials         -- Update Fit    0.5309     ddd   2.1978575133672242       0.53085127314171554        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222   1.3161630775504831     
+                                                   Iteration   2,   4 : Updating                                                   Iteration   2,   4 : Calculating Potentials         -- Update Fit    0.9788     ddd   2.1978575133672242       0.97880054177680476        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222   1.1174965681476206     
+                                                   Iteration   2,   5 : Updating                                                   Iteration   2,   5 : Calculating Potentials         -- Update Fit     1.013     ddd   2.1978575133672242        1.0134236021680283        1.0000000000000000       0.50000000000000000       0.90000000000000002     
+ dlam222  0.89679624778708988     
+                                                   Iteration   2,   6 : Updating                                                   Iteration   2,   6 : Calculating Potentials         -- Update Fit    0.9810                                                       Iteration   2,   7 : Updating                                                   Iteration   2,   7 : Calculating Potentials         -- Update Fit     1.125                                                       Iteration   2,   7 : Updating                                                   Iteration   2,   7 : Calculating Potentials         ++ Actual Fit     1.013    
+
++++ Convergence check (CHI (old/new))   -34.64     %
+
+convergence           80
+ CRI termination  Optimal RMS    1.01342356      reached          80
+
+**** Final phase improvement ****
+
+
+++ (FPI) setting phase error and saving lam_cri:    18.86    
+
+  ******* Restarting phase model ********
+                                                   Iteration   2,   7 : Calculating Potentials         ++ Actual Fit     0.000    
+                                                   Iteration   3,   0 : Calculating Sensitivities Iteration   3,   1 : Calculating 1st regularization parameter                                       found lam_0   0.2336E+06
+lam_0::   0.23E+06                                                   Iteration   3,   1 : Updating                                                   Iteration   3,   1 : Calculating Potentials         -- Update Fit     0.000                                                       Iteration   3,   2 : Updating                                                   Iteration   3,   2 : Calculating Potentials         -- Update Fit     0.000                                                       Iteration   3,   3 : Updating                                                   Iteration   3,   3 : Calculating Potentials         ++ Actual Fit     0.000    
+
++++ Convergence check (CHI (old/new))    0.000     %
+
+convergence           94
+MODEL ESTIMATE AFTER      3      ITERATIONS                                                       
+ Iteration terminated:                        CHI < 1
+  CPU time:  0d/  0h/  0m/  0s/ 346ms
+Calculating model uncertainty..
+ --> taking last good lambda
+
+take current lambda ? 0.234E+06	:	
+
+  Yes
+calculating MCM_1 = (A^TC_d^-1A + C_m^-1)^-1
+ ATA time  0d/  0h/  0m/  0s/   1ms
+ Max/Min:   3436764.5958189024      /   7.7519663116702832E-003
+ATC_d^-1A+reg/    0.33%ATC_d^-1A+reg/    0.67%ATC_d^-1A+reg/    1.00%ATC_d^-1A+reg/    1.33%ATC_d^-1A+reg/    1.67%ATC_d^-1A+reg/    2.00%ATC_d^-1A+reg/    2.33%ATC_d^-1A+reg/    2.67%ATC_d^-1A+reg/    3.00%ATC_d^-1A+reg/    3.33%ATC_d^-1A+reg/    3.67%ATC_d^-1A+reg/    4.00%ATC_d^-1A+reg/    4.33%ATC_d^-1A+reg/    4.67%ATC_d^-1A+reg/    5.00%ATC_d^-1A+reg/    5.33%ATC_d^-1A+reg/    5.67%ATC_d^-1A+reg/    6.00%ATC_d^-1A+reg/    6.33%ATC_d^-1A+reg/    6.67%ATC_d^-1A+reg/    7.00%ATC_d^-1A+reg/    7.33%ATC_d^-1A+reg/    7.67%ATC_d^-1A+reg/    8.00%ATC_d^-1A+reg/    8.33%ATC_d^-1A+reg/    8.67%ATC_d^-1A+reg/    9.00%ATC_d^-1A+reg/    9.33%ATC_d^-1A+reg/    9.67%ATC_d^-1A+reg/   10.00%ATC_d^-1A+reg/   10.33%ATC_d^-1A+reg/   10.67%ATC_d^-1A+reg/   11.00%ATC_d^-1A+reg/   11.33%ATC_d^-1A+reg/   11.67%ATC_d^-1A+reg/   12.00%ATC_d^-1A+reg/   12.33%ATC_d^-1A+reg/   12.67%ATC_d^-1A+reg/   13.00%ATC_d^-1A+reg/   13.33%ATC_d^-1A+reg/   13.67%ATC_d^-1A+reg/   14.00%ATC_d^-1A+reg/   14.33%ATC_d^-1A+reg/   14.67%ATC_d^-1A+reg/   15.00%ATC_d^-1A+reg/   15.33%ATC_d^-1A+reg/   15.67%ATC_d^-1A+reg/   16.00%ATC_d^-1A+reg/   16.33%ATC_d^-1A+reg/   16.67%ATC_d^-1A+reg/   17.00%ATC_d^-1A+reg/   17.33%ATC_d^-1A+reg/   17.67%ATC_d^-1A+reg/   18.00%ATC_d^-1A+reg/   18.33%ATC_d^-1A+reg/   18.67%ATC_d^-1A+reg/   19.00%ATC_d^-1A+reg/   19.33%ATC_d^-1A+reg/   19.67%ATC_d^-1A+reg/   20.00%ATC_d^-1A+reg/   20.33%ATC_d^-1A+reg/   20.67%ATC_d^-1A+reg/   21.00%ATC_d^-1A+reg/   21.33%ATC_d^-1A+reg/   21.67%ATC_d^-1A+reg/   22.00%ATC_d^-1A+reg/   22.33%ATC_d^-1A+reg/   22.67%ATC_d^-1A+reg/   23.00%ATC_d^-1A+reg/   23.33%ATC_d^-1A+reg/   23.67%ATC_d^-1A+reg/   24.00%ATC_d^-1A+reg/   24.33%ATC_d^-1A+reg/   24.67%ATC_d^-1A+reg/   25.00%ATC_d^-1A+reg/   25.33%ATC_d^-1A+reg/   25.67%ATC_d^-1A+reg/   26.00%ATC_d^-1A+reg/   26.33%ATC_d^-1A+reg/   26.67%ATC_d^-1A+reg/   27.00%ATC_d^-1A+reg/   27.33%ATC_d^-1A+reg/   27.67%ATC_d^-1A+reg/   28.00%ATC_d^-1A+reg/   28.33%ATC_d^-1A+reg/   28.67%ATC_d^-1A+reg/   29.00%ATC_d^-1A+reg/   29.33%ATC_d^-1A+reg/   29.67%ATC_d^-1A+reg/   30.00%ATC_d^-1A+reg/   30.33%ATC_d^-1A+reg/   30.67%ATC_d^-1A+reg/   31.00%ATC_d^-1A+reg/   31.33%ATC_d^-1A+reg/   31.67%ATC_d^-1A+reg/   32.00%ATC_d^-1A+reg/   32.33%ATC_d^-1A+reg/   32.67%ATC_d^-1A+reg/   33.00%ATC_d^-1A+reg/   33.33%ATC_d^-1A+reg/   33.67%ATC_d^-1A+reg/   34.00%ATC_d^-1A+reg/   34.33%ATC_d^-1A+reg/   34.67%ATC_d^-1A+reg/   35.00%ATC_d^-1A+reg/   35.33%ATC_d^-1A+reg/   35.67%ATC_d^-1A+reg/   36.00%ATC_d^-1A+reg/   36.33%ATC_d^-1A+reg/   36.67%ATC_d^-1A+reg/   37.00%ATC_d^-1A+reg/   37.33%ATC_d^-1A+reg/   37.67%ATC_d^-1A+reg/   38.00%ATC_d^-1A+reg/   38.33%ATC_d^-1A+reg/   38.67%ATC_d^-1A+reg/   39.00%ATC_d^-1A+reg/   39.33%ATC_d^-1A+reg/   39.67%ATC_d^-1A+reg/   40.00%ATC_d^-1A+reg/   40.33%ATC_d^-1A+reg/   40.67%ATC_d^-1A+reg/   41.00%ATC_d^-1A+reg/   41.33%ATC_d^-1A+reg/   41.67%ATC_d^-1A+reg/   42.00%ATC_d^-1A+reg/   42.33%ATC_d^-1A+reg/   42.67%ATC_d^-1A+reg/   43.00%ATC_d^-1A+reg/   43.33%ATC_d^-1A+reg/   43.67%ATC_d^-1A+reg/   44.00%ATC_d^-1A+reg/   44.33%ATC_d^-1A+reg/   44.67%ATC_d^-1A+reg/   45.00%ATC_d^-1A+reg/   45.33%ATC_d^-1A+reg/   45.67%ATC_d^-1A+reg/   46.00%ATC_d^-1A+reg/   46.33%ATC_d^-1A+reg/   46.67%ATC_d^-1A+reg/   47.00%ATC_d^-1A+reg/   47.33%ATC_d^-1A+reg/   47.67%ATC_d^-1A+reg/   48.00%ATC_d^-1A+reg/   48.33%ATC_d^-1A+reg/   48.67%ATC_d^-1A+reg/   49.00%ATC_d^-1A+reg/   49.33%ATC_d^-1A+reg/   49.67%ATC_d^-1A+reg/   50.00%ATC_d^-1A+reg/   50.33%ATC_d^-1A+reg/   50.67%ATC_d^-1A+reg/   51.00%ATC_d^-1A+reg/   51.33%ATC_d^-1A+reg/   51.67%ATC_d^-1A+reg/   52.00%ATC_d^-1A+reg/   52.33%ATC_d^-1A+reg/   52.67%ATC_d^-1A+reg/   53.00%ATC_d^-1A+reg/   53.33%ATC_d^-1A+reg/   53.67%ATC_d^-1A+reg/   54.00%ATC_d^-1A+reg/   54.33%ATC_d^-1A+reg/   54.67%ATC_d^-1A+reg/   55.00%ATC_d^-1A+reg/   55.33%ATC_d^-1A+reg/   55.67%ATC_d^-1A+reg/   56.00%ATC_d^-1A+reg/   56.33%ATC_d^-1A+reg/   56.67%ATC_d^-1A+reg/   57.00%ATC_d^-1A+reg/   57.33%ATC_d^-1A+reg/   57.67%ATC_d^-1A+reg/   58.00%ATC_d^-1A+reg/   58.33%ATC_d^-1A+reg/   58.67%ATC_d^-1A+reg/   59.00%ATC_d^-1A+reg/   59.33%ATC_d^-1A+reg/   59.67%ATC_d^-1A+reg/   60.00%ATC_d^-1A+reg/   60.33%ATC_d^-1A+reg/   60.67%ATC_d^-1A+reg/   61.00%ATC_d^-1A+reg/   61.33%ATC_d^-1A+reg/   61.67%ATC_d^-1A+reg/   62.00%ATC_d^-1A+reg/   62.33%ATC_d^-1A+reg/   62.67%ATC_d^-1A+reg/   63.00%ATC_d^-1A+reg/   63.33%ATC_d^-1A+reg/   63.67%ATC_d^-1A+reg/   64.00%ATC_d^-1A+reg/   64.33%ATC_d^-1A+reg/   64.67%ATC_d^-1A+reg/   65.00%ATC_d^-1A+reg/   65.33%ATC_d^-1A+reg/   65.67%ATC_d^-1A+reg/   66.00%ATC_d^-1A+reg/   66.33%ATC_d^-1A+reg/   66.67%ATC_d^-1A+reg/   67.00%ATC_d^-1A+reg/   67.33%ATC_d^-1A+reg/   67.67%ATC_d^-1A+reg/   68.00%ATC_d^-1A+reg/   68.33%ATC_d^-1A+reg/   68.67%ATC_d^-1A+reg/   69.00%ATC_d^-1A+reg/   69.33%ATC_d^-1A+reg/   69.67%ATC_d^-1A+reg/   70.00%ATC_d^-1A+reg/   70.33%ATC_d^-1A+reg/   70.67%ATC_d^-1A+reg/   71.00%ATC_d^-1A+reg/   71.33%ATC_d^-1A+reg/   71.67%ATC_d^-1A+reg/   72.00%ATC_d^-1A+reg/   72.33%ATC_d^-1A+reg/   72.67%ATC_d^-1A+reg/   73.00%ATC_d^-1A+reg/   73.33%ATC_d^-1A+reg/   73.67%ATC_d^-1A+reg/   74.00%ATC_d^-1A+reg/   74.33%ATC_d^-1A+reg/   74.67%ATC_d^-1A+reg/   75.00%ATC_d^-1A+reg/   75.33%ATC_d^-1A+reg/   75.67%ATC_d^-1A+reg/   76.00%ATC_d^-1A+reg/   76.33%ATC_d^-1A+reg/   76.67%ATC_d^-1A+reg/   77.00%ATC_d^-1A+reg/   77.33%ATC_d^-1A+reg/   77.67%ATC_d^-1A+reg/   78.00%ATC_d^-1A+reg/   78.33%ATC_d^-1A+reg/   78.67%ATC_d^-1A+reg/   79.00%ATC_d^-1A+reg/   79.33%ATC_d^-1A+reg/   79.67%ATC_d^-1A+reg/   80.00%ATC_d^-1A+reg/   80.33%ATC_d^-1A+reg/   80.67%ATC_d^-1A+reg/   81.00%ATC_d^-1A+reg/   81.33%ATC_d^-1A+reg/   81.67%ATC_d^-1A+reg/   82.00%ATC_d^-1A+reg/   82.33%ATC_d^-1A+reg/   82.67%ATC_d^-1A+reg/   83.00%ATC_d^-1A+reg/   83.33%ATC_d^-1A+reg/   83.67%ATC_d^-1A+reg/   84.00%ATC_d^-1A+reg/   84.33%ATC_d^-1A+reg/   84.67%ATC_d^-1A+reg/   85.00%ATC_d^-1A+reg/   85.33%ATC_d^-1A+reg/   85.67%ATC_d^-1A+reg/   86.00%ATC_d^-1A+reg/   86.33%ATC_d^-1A+reg/   86.67%ATC_d^-1A+reg/   87.00%ATC_d^-1A+reg/   87.33%ATC_d^-1A+reg/   87.67%ATC_d^-1A+reg/   88.00%ATC_d^-1A+reg/   88.33%ATC_d^-1A+reg/   88.67%ATC_d^-1A+reg/   89.00%ATC_d^-1A+reg/   89.33%ATC_d^-1A+reg/   89.67%ATC_d^-1A+reg/   90.00%ATC_d^-1A+reg/   90.33%ATC_d^-1A+reg/   90.67%ATC_d^-1A+reg/   91.00%ATC_d^-1A+reg/   91.33%ATC_d^-1A+reg/   91.67%ATC_d^-1A+reg/   92.00%ATC_d^-1A+reg/   92.33%ATC_d^-1A+reg/   92.67%ATC_d^-1A+reg/   93.00%ATC_d^-1A+reg/   93.33%ATC_d^-1A+reg/   93.67%ATC_d^-1A+reg/   94.00%ATC_d^-1A+reg/   94.33%ATC_d^-1A+reg/   94.67%ATC_d^-1A+reg/   95.00%ATC_d^-1A+reg/   95.33%ATC_d^-1A+reg/   95.67%ATC_d^-1A+reg/   96.00%ATC_d^-1A+reg/   96.33%ATC_d^-1A+reg/   96.67%ATC_d^-1A+reg/   97.00%ATC_d^-1A+reg/   97.33%ATC_d^-1A+reg/   97.67%ATC_d^-1A+reg/   98.00%ATC_d^-1A+reg/   98.33%ATC_d^-1A+reg/   98.67%ATC_d^-1A+reg/   99.00%ATC_d^-1A+reg/   99.33%ATC_d^-1A+reg/   99.67%ATC_d^-1A+reg/  100.00% ATA+RTR time  0d/  0h/  0m/  0s/   0ms
+ Max/Min:   8343291.9849652788      /   2570085.7922536810     
+Factorization... Factorization time  0d/  0h/  0m/  0s/   1ms
+Inverting...Filling lower Cov... Inversion time  0d/  0h/  0m/  0s/  14ms
+ Max/Min:   4.1155416016006754E-006 /   2.5870400700533640E-007
+calculating RES = (A^TC_d^-1A + C_m^-1)^-1A^TC_d^-1A
+ MATMUL time  0d/  0h/  0m/  0s/  14ms
+ Max/Min:  0.43805805026553946      /  -8.4972486550367890E-002
+calculating MCM_2 = (A^TC_d^-1A + C_m^-1)^-1 A^TC_d^-1A (A^TC_d^-1A + C_m^-1)^-1
+ MATMUL time  0d/  0h/  0m/  0s/  13ms
+ Max/Min:   1.0571657747125976E-007 /   2.8150376239017777E-008
+ uncertainty calculation time  0d/  0h/  0m/  0s/  76ms

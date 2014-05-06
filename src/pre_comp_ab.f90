@@ -25,7 +25,6 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$     EIN-/AUSGABEPARAMETER:
 
   COMPLEX (prec),Dimension(3*mb+1,sanz) :: my_a_mat_band
-!  COMPLEX (prec),DIMENSION(sanz) ::     my_b
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -75,14 +74,13 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
      nkel = selanz(i)
      do j=1,nelanz(i)
         iel = iel + 1
-!         print*,'precomp',sigma(iel),iel,ntyp
         ikl = 0
         if (ntyp.gt.8) CYCLE
         do k=1,nkel
            nzp = nrel(iel,k)
            do l=1,nkel
               nnp  = nrel(iel,l)
-              idif = iabs(nzp-nnp)
+              idif = iabs(nzp-nnp)  
 
 !!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
@@ -97,7 +95,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + dum * dum2
 !end if
          index_i = mb+mb+1+nzp-nnp
-               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * dum2 
+               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * CMPLX(dum2 )
            end do
         end do
      END do

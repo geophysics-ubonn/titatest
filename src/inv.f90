@@ -104,7 +104,7 @@ program inv
         if (swrtr.eq.0) then
            fetxt = ' '
            errnr = 106
-        end if
+        end if  
      end if
 
 
@@ -238,13 +238,8 @@ program inv
      do while (.not.converged) ! optimization loop
 
         !   Control output
-        !        write (*,'(a)',ADVANCE='no')achar(13)//clear_line
-        !        write(*,'(a,a,i3,a,i3,a)',ADVANCE='no')achar(13),&
-        !             ' iteration',it,' update',itr,' '
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
-        !        write(*,*) 'Iteration',it,'Update',itr,'.'
-
         !   MODELLING
         count = 0
         if (ldc) then
@@ -258,51 +253,33 @@ program inv
            fetxt = 'allocation problem adc'
            if (myerr /= 0) goto 999
 
-           !$OMP PARALLEL DEFAULT (none) &
-           !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
-           !$OMP PRIVATE (j,l) &
-           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,&
-           !$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)           
-           !$OMP DO 
-           !   DC CASE
-
            do k=1,kwnanz
-              !$OMP ATOMIC
               count = count + 1
               fetxt = 'DC-Calculation wavenumber'
               do l=1,eanz
                  if (lsr.or.lbeta.or.l.eq.1) then
                     !   Evtl calculation of analytical potentials
                     if (lsr) call potana(l,k,pota)
-
                     !   COMPilation of the linear system
                     fetxt = 'kompadc'
                     call kompadc(l,k,adc,bdc)
-                    !                    if (errnr.ne.0) goto 999
-
                     !   Evtl take Dirichlet boundary values into account
                     if (lrandb) call randdc(adc,bdc)
                     if (lrandb2) call randbdc2(adc,bdc)
-
                     !   Scale the linear system (preconditioning stores fak)
                     fetxt = 'scaldc'
                     call scaldc(adc,bdc,fak)
-                    !                    if (errnr.ne.0) goto 999
                     !   Cholesky-Factorization of the Matrix
                     fetxt = 'choldc'
                     call choldc(adc)
-                    !                    if (errnr.ne.0) goto 999
                  else
                     fetxt = 'kompbdc'
                     !   Modification of the current vector (Right Hand Side)
                     call kompbdc(l,bdc,fak)
                  end if
-
                  !   Solve linear system
                  fetxt = 'vredc'
-
                  call vredc(adc,bdc,pot)
-
                  !   Scale back the potentials, save them and 
                  !   eventually add the analytical response
                  do j=1,sanz
@@ -312,19 +289,11 @@ program inv
                     if (swrtr.eq.0) hpotdc(j,l) = kpotdc(j,l,k)
                  end do
               end do
-
            end do
-           !$OMP END DO
-           !$OMP END PARALLEL
-
         else
-
            fetxt = 'allocation problem a'
-!           allocate (a((mb+1)*sanz),STAT=myerr)
-!           allocate (a_mat(sanz,sanz),STAT=myerr)
            allocate(a_mat_band(3*mb+1,sanz))
            allocate(a_mat_band_elec(3*mb+1,sanz))
-!           allocate(b_mat(sanz,eanz))
            allocate (ipiv(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
            fetxt = 'allocation problem hpot'
@@ -333,18 +302,10 @@ program inv
            fetxt = 'allocation problem b'
            allocate (b(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
-           !           !$OMP PARALLEL DEFAULT (none) &
-           !           !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt,a_mat,a_mat_band,b_mat,&
-           !           !$OMP a_mat_band_elec) &
-           !           !$OMP PRIVATE (j,l,k,info,ipiv) &
-           !           !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,mb,&
-           !           !$OMP sanz,kpot,swrtr,hpot,count,enr,nsink,lsink)
-           !           !$OMP DO
            !   COMPLEX CASE
 !!!$   POTENTIALWERTE BERECHNEN
            do k=1,kwnanz
 !!!$   Kontrollausgabe
-              !     !$OMP ATOMIC
               count = count + 1
 
               if (swrtr.eq.0) then
@@ -362,21 +323,9 @@ program inv
                  if (lsink) b(nsink) = cmplx(-1D0)
                  call comp_ab(k,a_mat_band_elec,l)
 !!!!$   Ggf. Randbedingung beruecksichtigen
-                 !           if (lrandb) call randb(a,b)
-                 !           if (lrandb2) call randb2(a,b)
-
-
                  ! General Band matrix
                  call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
                  if (info.ne.0) print*,'ZGBSV info:',info
-                 ! Symmetric positive definite band matrix 
-!           call zpbsv('U', sanz, mb, 1, a_mat_band_elec, mb+1, b, sanz, info)
-!           if (info.ne.0) then
-!            print*,'Zpbtrf info:',info  
-!            errnr = 112 
-!            goto 999
-!           end if
-!           end
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
                  do j=1,sanz
@@ -386,8 +335,6 @@ program inv
                  end do
               end do
            end do
-           !           !$OMP END DO
-           !           !$OMP END PARALLEL
         end if
         errnr = 0
         !   Ggf. Ruecktransformation der Potentialwerte
@@ -400,19 +347,14 @@ program inv
         if (errnr.ne.0) then
            !   reset model and data
            sigma = sigma2
-
            sigmaa = sgmaa2
-
            exit
         end if
-        !  free some memory..
         if (ldc) then
            deallocate(adc,hpotdc,bdc)
         else
-!           deallocate(a,a_mat,ipiv,b_mat)
            deallocate(hpot,b,ipiv,a_mat_band,a_mat_band_elec)
         end if
-
         if (lsetup.or.lsetip) then
            !   Ggf. background auf ratio-Daten "multiplizieren"
            if (lratio) then
@@ -420,19 +362,15 @@ program inv
                  dat(j) = dat(j) + sigmaa(j)
               end do
            end if
-
            !   Polaritaeten checken
            call chkpol(lsetup.or.lsetip)
         end if
-
         !   Daten-CHI berechnen
         call dmisft(lsetup.or.lsetip)
         if (errnr.ne.0) goto 999
         write(*,'(a,F8.2)') ' current chi**2:',nrmsd
         !   'nrmsd=0' ausschliessen
         if (nrmsd.lt.1d-12) nrmsd=nrmsdm*(1d0-mqrms)
-
-        !.............................
         if (it == 0) then
            write(*,*) 'writing starting model'
            call wout(kanal,dsigma,dvolt)
@@ -440,13 +378,10 @@ program inv
         !   Kontrollvariablen ausgeben
         call kont2(lsetup.or.lsetip)
         if (errnr.ne.0) goto 999
-
         !   ABBRUCHBEDINGUNGEN
         if (llam.and..not.lstep) then
-
            !   Polaritaeten checken
            call chkpol(lsetup.or.lsetip)
-
            !   Wiederholt minimale step-length ?
            if (stpalt.eq.0d0) then
               errnr2 = 92
@@ -580,7 +515,6 @@ program inv
         end if
 
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
-
            !   Iterationsindex hochzaehlen
            it = it+1
 
@@ -623,7 +557,6 @@ program inv
            if (l_bsmat) call bsmatm(it,l_bsmat)
 
         else
-
            if (lverb) then
               call wout_up(kanal,it,itr,.false.)
               if (errnr.ne.0) goto 999
@@ -715,12 +648,12 @@ program inv
                        dlalt = dlam
                        if (ldlami) then ! initialize search
                           ldlami = .false. 
-                          alam   = int(max(abs(log(nrmsd/nrmsdm)),&
-                               log(1.+mqrms)))
+                          alam   = max(abs(log(nrmsd/nrmsdm)),&
+                               log(1.+mqrms))
                           ! alam = MAX(log(actual chi),log(1+0.02))
                           dlam   = fstart ! sets first dlam (0.5 default, which should be fine)
                        else
-                          alam = int(max(alam,abs(log(nrmsd/nrmsdm))) )
+                          alam = max(alam,abs(log(nrmsd/nrmsdm))) 
                           ! CHI dependend partial fraction of lam variation
                           ! alam = MAX(alam,log(actual chi))
                           dlam = log(fstop)*&
@@ -736,7 +669,6 @@ program inv
                           ! dlam = exp(-ln(0.9) + ln(0.5/0.9) * ln(0.98)/log(1.02)) = 2
                           !
                           dlam = exp(dlam)
-
                        end if
                        lam = lam*dlam
                        if (dlalt.gt.1d0.and.dlam.lt.1d0) ldlamf=.true.

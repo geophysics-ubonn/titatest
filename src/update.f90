@@ -283,9 +283,15 @@ SUBROUTINE update()
 !!$        print*,j,cdum,sens(1,j),sigma(j)
 
      END DO
-
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
+!       OPEN (88,FILE='sens.dat',STATUS='replace')
+!  do i=1,nanz
+!    do j=1,manz
+!     WRITE (88,*) sens(i,j)
+!    end do
+!  end do
+!  CLOSE (88)
 !     DO i=1,nanz
 !        print*,'upd',i,bvec(i)
 !     END Do

@@ -148,7 +148,7 @@ use alloci, only: prec
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bMIN = 1d-6
+  bMIN = 1d-3
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
