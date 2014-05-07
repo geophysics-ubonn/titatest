@@ -280,26 +280,17 @@ SUBROUTINE update()
 
         bvec(j) = bvec(j)*CMPLX(cgfac(j))
 
-!!$        print*,j,cdum,sens(1,j),sigma(j)
 
      END DO
+     IF (lfpi) THEN
+        bvec = cmplx(aimag(bvec),0.)
+     END IF
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
-!       OPEN (88,FILE='sens.dat',STATUS='replace')
-!  do i=1,nanz
-!    do j=1,manz
-!     WRITE (88,*) sens(i,j)
-!    end do
-!  end do
-!  CLOSE (88)
-!     DO i=1,nanz
-!        print*,'upd',i,bvec(i)
-!     END Do
 !!!$     Ggf. Verbesserung umspeichern
      IF (lfpi) THEN
         dpar = CMPLX(0D0,REAL(dpar))
      END IF
-
 !!!$     Verbesserung skalieren
      dpar = dpar * CMPLX(cgfac)
 !!$     do j=1,manz

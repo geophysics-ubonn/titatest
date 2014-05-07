@@ -120,7 +120,6 @@ call system_clock(tic,rate)
   else
 ! Perform lambda_0 search. See Kemna (2000), page 67.
 ! complex case  
-  
      allocate(wda(nanz,manz), wdah(manz,nanz))
      allocate(awdwda(manz,manz))
      lammax = 0.
@@ -131,11 +130,9 @@ call system_clock(tic,rate)
      call zgemm('n', 'n', manz, manz, nanz, 1D0, wdah, manz, wda, nanz, 0D0,&
         awdwda,manz)
      jtj  = abs(sum((awdwda),1))
-     lammax = sum((jtj),1)
-     
      deallocate(wda,wdah,awdwda)
   end if
-  
+  lammax = sum((jtj),1)
   lammax = lammax/real(manz)
 
   deallocate (jtj)
@@ -144,7 +141,8 @@ call system_clock(tic,rate)
   lammax = lammax * 5d0
   call system_clock(toc,rate)
   time = real(toc-tic)/real(rate)
-  mflops = real(manz*(2*nanz-1)*manz)/(time*1D9)
-  write (*,'(F13.2,a,F7.2,a)') lammax,' (',mflops,' GFLOPS)'
+  mflops = real(manz*(2*nanz-1)*manz)!/(time*1D9)
+  print*,time,mflops
+  write (*,'(F13.2,a,F7.2,a)') lammax,' (',time,' sec)'
   return
 end subroutine blam0

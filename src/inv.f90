@@ -660,6 +660,7 @@ program inv
                                sign(1._prec,log(nrmsd/nrmsdm))+&
                                log(fstart/fstop)*&
                                log(nrmsd/nrmsdm)/alam 
+
                           !
                           ! dlam = ln(0.9) * sign(1,ln(act chi)) + (ln(0.5/0.9)) * ln(act chi)/alam
                           ! this makes mostly the same and dlam = exp(ln(0.9) + ln(0.5/0.9)) = 0.5

@@ -76,7 +76,7 @@ CONTAINS
 !> cjg flow control subroutine is called from outside
 !! and checks for the different cases (DC,IP,FPI)
   SUBROUTINE cjg
-    IF (ldc.OR.lfpi) THEN
+    IF (ldc) THEN
        CALL con_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
        CALL cjggdc
@@ -125,7 +125,6 @@ CONTAINS
     pvecdc = 0D0
 
     fetxt = 'CG iteration'
-
     DO k=1,ncgmax
 
        ncg = k-1
@@ -141,7 +140,6 @@ CONTAINS
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
-
        IF (dr.LE.dr0) GOTO 10
 
        pvecdc= rvecdc + beta * pvecdc
@@ -471,7 +469,7 @@ CONTAINS
           dr0  = dr*eps
           beta = 0d0
        ELSE
-          IF (dr.LE.dr0) GOTO 10
+        
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
@@ -481,7 +479,7 @@ CONTAINS
 !!$          end do
 !!$          beta = beta * -alpha/dr1
        END IF
-
+  IF (dr.LE.dr0) GOTO 10
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
@@ -499,18 +497,15 @@ CONTAINS
        ELSE IF (ltri == 15) THEN
           CALL bpsto
        END IF
-
        IF (lw_ref) CALL bpref
 
        CALL bb
-
        dr1 = 0d0
        DO j=1,manz
           dr1 = dr1 + REAL(CONJG(pvec(j)) * bvec(j))
        END DO
 
        alpha = dr/dr1
-
        dpar = dpar + CMPLX(alpha) * pvec
        rvec = rvec - CMPLX(alpha) * bvec
 
