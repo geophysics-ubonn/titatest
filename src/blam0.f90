@@ -141,8 +141,7 @@ call system_clock(tic,rate)
   lammax = lammax * 5d0
   call system_clock(toc,rate)
   time = real(toc-tic)/real(rate)
-  mflops = real(manz*(2*nanz-1)*manz)!/(time*1D9)
-  print*,time,mflops
-  write (*,'(F13.2,a,F7.2,a)') lammax,' (',time,' sec)'
+  mflops = real(manz*(2.*nanz-1)*manz)/(time*1D9)
+  write (*,'(F13.2,a,F7.2,a)') lammax,' (',mflops,' GFLOPS)'
   return
 end subroutine blam0
