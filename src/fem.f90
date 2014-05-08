@@ -76,8 +76,8 @@ program fem
   OPEN (kanal,FILE=TRIM(fetxt),STATUS='replace',err=999)
   WRITE (kanal,*)pid
   CLOSE (kanal)
-  maxthreads = OMP_GET_MAX_THREADS()
-  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
+!  maxthreads = OMP_GET_MAX_THREADS()
+!  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
   CALL get_git_ver(version)
 
@@ -206,10 +206,10 @@ program fem
   
   nthreads = 2
   
-  CALL OMP_SET_NUM_THREADS ( NTHREADS )
+!  CALL OMP_SET_NUM_THREADS ( NTHREADS )
   ! recheck ..
-  k = OMP_GET_MAX_THREADS()
-  WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",k,'(',maxthreads,')'
+!  k = OMP_GET_MAX_THREADS()
+!  WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",k,'(',maxthreads,')'
   print*
 !!!$   Startmodell belegen
   ALLOCATE (sigma(elanz),stat=errnr)

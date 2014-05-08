@@ -3,7 +3,7 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS =	-O4 -g -llapack -lblas -fopenmp #\
+AM_FC_FLAGS =	-O4 -g -llapack -lblas #-fopenmp #\
 		 #-std=f2008ts -fall-intrinsics \
 		 #-Wall -fopenmp
 ## Only un-comment for debug purpose
@@ -11,7 +11,7 @@ AM_FC_FLAGS =	-O4 -g -llapack -lblas -fopenmp #\
 AM_DBG_FLAGS = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
 		-fdump-fortran-original  -fdump-fortran-optimized \
 		-fdump-core -fbacktrace -fdump-parse-tree \
-		-fimplicit-none -fno-signed-zeros -ffinite-math-only -O0 -fopenmp
+		-fimplicit-none -fno-signed-zeros -ffinite-math-only# -O0 # -fopenmp
 
 AM_LD_FLAGS =	-lm
 
