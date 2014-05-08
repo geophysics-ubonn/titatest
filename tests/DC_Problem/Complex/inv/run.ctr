@@ -1,0 +1,1617 @@
+ Iteration   0,   0 : Calculating Potentials
+1792 : change polarity
+2167 : change polarity
+2457 : change polarity
+2617 : change polarity
+2676 : change polarity
+2701 : change polarity
+2724 : change polarity
+2745 : change polarity
+2790 : change polarity
+2806 : change polarity
+1792 : excluded
+2167 : excluded
+2457 : excluded
+2617 : excluded
+2676 : excluded
+2701 : excluded
+2724 : excluded
+2745 : excluded
+2790 : excluded
+2806 : excluded
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Calculating 1st regularization parameterlam_0   0.28E+04
+  Iteration            1 ,            1  : Updating
+ Iteration   1,   1 : Calculating Potentials
+  Iteration            1 ,            2  : Updating
+ Iteration   1,   2 : Calculating Potentials
+  Iteration            1 ,            3  : Updating
+ Iteration   1,   3 : Calculating Potentials
+  Iteration            1 ,            3  : Updating
+ Iteration   1,   3 : Calculating Potentials
+ 906 : change polarity
+ 907 : change polarity
+ 908 : change polarity
+ 909 : change polarity
+ 910 : change polarity
+ 911 : change polarity
+ 912 : change polarity
+ 913 : change polarity
+ 914 : change polarity
+ 915 : change polarity
+ 916 : change polarity
+ 917 : change polarity
+ 918 : change polarity
+ 919 : change polarity
+ 920 : change polarity
+ 921 : change polarity
+ 922 : change polarity
+ 923 : change polarity
+ 924 : change polarity
+ 925 : change polarity
+ 926 : change polarity
+ 927 : change polarity
+ 928 : change polarity
+ 989 : change polarity
+ 990 : change polarity
+ 991 : change polarity
+ 992 : change polarity
+ 993 : change polarity
+ 994 : change polarity
+ 995 : change polarity
+ 996 : change polarity
+ 997 : change polarity
+ 998 : change polarity
+ 999 : change polarity
+1000 : change polarity
+1001 : change polarity
+1002 : change polarity
+1003 : change polarity
+1004 : change polarity
+1005 : change polarity
+1006 : change polarity
+1007 : change polarity
+1008 : change polarity
+1009 : change polarity
+1010 : change polarity
+1011 : change polarity
+1012 : change polarity
+1013 : change polarity
+1021 : change polarity
+1025 : change polarity
+1029 : change polarity
+1100 : change polarity
+1105 : change polarity
+1110 : change polarity
+1115 : change polarity
+1122 : change polarity
+1123 : change polarity
+1126 : change polarity
+1127 : change polarity
+1130 : change polarity
+1131 : change polarity
+1133 : change polarity
+1134 : change polarity
+1136 : change polarity
+1137 : change polarity
+1139 : change polarity
+1140 : change polarity
+1171 : change polarity
+1172 : change polarity
+1173 : change polarity
+1174 : change polarity
+1175 : change polarity
+1176 : change polarity
+1177 : change polarity
+1178 : change polarity
+1179 : change polarity
+1180 : change polarity
+1181 : change polarity
+1182 : change polarity
+1183 : change polarity
+1184 : change polarity
+1185 : change polarity
+1186 : change polarity
+1187 : change polarity
+1188 : change polarity
+1189 : change polarity
+1190 : change polarity
+1191 : change polarity
+1192 : change polarity
+1193 : change polarity
+1194 : change polarity
+1195 : change polarity
+1196 : change polarity
+1197 : change polarity
+1198 : change polarity
+1199 : change polarity
+1202 : change polarity
+1203 : change polarity
+1204 : change polarity
+1207 : change polarity
+1208 : change polarity
+1209 : change polarity
+1212 : change polarity
+1213 : change polarity
+1214 : change polarity
+1217 : change polarity
+1218 : change polarity
+1221 : change polarity
+1222 : change polarity
+1225 : change polarity
+1226 : change polarity
+1229 : change polarity
+1230 : change polarity
+1233 : change polarity
+1236 : change polarity
+1239 : change polarity
+1241 : change polarity
+1242 : change polarity
+1254 : change polarity
+1255 : change polarity
+1256 : change polarity
+1257 : change polarity
+1258 : change polarity
+1259 : change polarity
+1260 : change polarity
+1261 : change polarity
+1262 : change polarity
+1263 : change polarity
+1264 : change polarity
+1265 : change polarity
+1266 : change polarity
+1267 : change polarity
+1268 : change polarity
+1269 : change polarity
+1270 : change polarity
+1271 : change polarity
+1272 : change polarity
+1280 : change polarity
+1281 : change polarity
+1282 : change polarity
+1290 : change polarity
+1291 : change polarity
+1298 : change polarity
+1299 : change polarity
+1300 : change polarity
+1303 : change polarity
+1304 : change polarity
+1305 : change polarity
+1308 : change polarity
+1309 : change polarity
+1310 : change polarity
+1313 : change polarity
+1314 : change polarity
+1317 : change polarity
+1318 : change polarity
+1321 : change polarity
+1322 : change polarity
+1325 : change polarity
+1326 : change polarity
+1329 : change polarity
+1332 : change polarity
+1335 : change polarity
+1337 : change polarity
+1338 : change polarity
+1340 : change polarity
+1341 : change polarity
+1344 : change polarity
+1345 : change polarity
+1346 : change polarity
+1347 : change polarity
+1348 : change polarity
+1349 : change polarity
+1350 : change polarity
+1351 : change polarity
+1358 : change polarity
+1359 : change polarity
+1360 : change polarity
+1361 : change polarity
+1368 : change polarity
+1369 : change polarity
+1370 : change polarity
+1371 : change polarity
+1374 : change polarity
+1375 : change polarity
+1376 : change polarity
+1377 : change polarity
+1378 : change polarity
+1379 : change polarity
+1380 : change polarity
+1383 : change polarity
+1384 : change polarity
+1385 : change polarity
+1386 : change polarity
+1387 : change polarity
+1388 : change polarity
+1389 : change polarity
+1391 : change polarity
+1392 : change polarity
+1393 : change polarity
+1394 : change polarity
+1395 : change polarity
+1396 : change polarity
+1397 : change polarity
+1398 : change polarity
+1401 : change polarity
+1402 : change polarity
+1403 : change polarity
+1405 : change polarity
+1406 : change polarity
+1407 : change polarity
+1409 : change polarity
+1410 : change polarity
+1411 : change polarity
+1413 : change polarity
+1414 : change polarity
+1415 : change polarity
+1417 : change polarity
+1418 : change polarity
+1419 : change polarity
+1421 : change polarity
+1422 : change polarity
+1424 : change polarity
+1425 : change polarity
+1427 : change polarity
+1428 : change polarity
+1430 : change polarity
+1431 : change polarity
+1433 : change polarity
+1434 : change polarity
+1436 : change polarity
+1437 : change polarity
+1537 : change polarity
+1538 : change polarity
+1539 : change polarity
+1540 : change polarity
+1545 : change polarity
+1546 : change polarity
+1547 : change polarity
+1548 : change polarity
+1549 : change polarity
+1550 : change polarity
+1555 : change polarity
+1556 : change polarity
+1557 : change polarity
+1558 : change polarity
+1559 : change polarity
+1560 : change polarity
+1565 : change polarity
+1566 : change polarity
+1567 : change polarity
+1568 : change polarity
+1569 : change polarity
+1574 : change polarity
+1575 : change polarity
+1576 : change polarity
+1577 : change polarity
+1581 : change polarity
+1582 : change polarity
+1583 : change polarity
+1584 : change polarity
+1585 : change polarity
+2163 : change polarity
+2216 : change polarity
+2224 : change polarity
+2226 : change polarity
+2228 : change polarity
+2232 : change polarity
+2251 : change polarity
+2252 : change polarity
+2261 : change polarity
+2266 : change polarity
+2267 : change polarity
+2272 : change polarity
+2277 : change polarity
+2281 : change polarity
+2283 : change polarity
+2285 : change polarity
+2287 : change polarity
+2289 : change polarity
+2291 : change polarity
+2292 : change polarity
+2293 : change polarity
+2294 : change polarity
+2312 : change polarity
+2313 : change polarity
+2320 : change polarity
+2321 : change polarity
+2322 : change polarity
+2327 : change polarity
+2331 : change polarity
+2332 : change polarity
+2336 : change polarity
+2337 : change polarity
+2339 : change polarity
+2341 : change polarity
+2343 : change polarity
+2344 : change polarity
+2345 : change polarity
+2346 : change polarity
+2347 : change polarity
+2348 : change polarity
+2349 : change polarity
+2350 : change polarity
+2351 : change polarity
+2352 : change polarity
+2369 : change polarity
+2370 : change polarity
+2371 : change polarity
+2378 : change polarity
+2379 : change polarity
+2383 : change polarity
+2384 : change polarity
+2388 : change polarity
+2389 : change polarity
+2392 : change polarity
+2393 : change polarity
+2394 : change polarity
+2395 : change polarity
+2396 : change polarity
+2397 : change polarity
+2398 : change polarity
+2399 : change polarity
+2400 : change polarity
+2401 : change polarity
+2422 : change polarity
+2423 : change polarity
+2424 : change polarity
+2430 : change polarity
+2431 : change polarity
+2432 : change polarity
+2435 : change polarity
+2436 : change polarity
+2437 : change polarity
+2440 : change polarity
+2441 : change polarity
+2444 : change polarity
+2445 : change polarity
+2471 : change polarity
+2472 : change polarity
+2473 : change polarity
+2474 : change polarity
+2478 : change polarity
+2479 : change polarity
+2480 : change polarity
+2481 : change polarity
+2483 : change polarity
+2484 : change polarity
+2485 : change polarity
+2487 : change polarity
+2488 : change polarity
+2489 : change polarity
+2490 : change polarity
+2491 : change polarity
+2492 : change polarity
+2493 : change polarity
+2511 : change polarity
+2512 : change polarity
+2515 : change polarity
+2516 : change polarity
+2517 : change polarity
+2518 : change polarity
+2519 : change polarity
+2521 : change polarity
+2522 : change polarity
+2523 : change polarity
+2524 : change polarity
+2525 : change polarity
+2526 : change polarity
+2549 : change polarity
+2550 : change polarity
+2551 : change polarity
+2552 : change polarity
+2553 : change polarity
+2554 : change polarity
+2624 : change polarity
+2625 : change polarity
+2626 : change polarity
+2685 : change polarity
+2690 : change polarity
+ 906 : excluded
+ 907 : excluded
+ 908 : excluded
+ 909 : excluded
+ 910 : excluded
+ 911 : excluded
+ 912 : excluded
+ 913 : excluded
+ 914 : excluded
+ 915 : excluded
+ 916 : excluded
+ 917 : excluded
+ 918 : excluded
+ 919 : excluded
+ 920 : excluded
+ 921 : excluded
+ 922 : excluded
+ 923 : excluded
+ 924 : excluded
+ 925 : excluded
+ 926 : excluded
+ 927 : excluded
+ 928 : excluded
+ 989 : excluded
+ 990 : excluded
+ 991 : excluded
+ 992 : excluded
+ 993 : excluded
+ 994 : excluded
+ 995 : excluded
+ 996 : excluded
+ 997 : excluded
+ 998 : excluded
+ 999 : excluded
+1000 : excluded
+1001 : excluded
+1002 : excluded
+1003 : excluded
+1004 : excluded
+1005 : excluded
+1006 : excluded
+1007 : excluded
+1008 : excluded
+1009 : excluded
+1010 : excluded
+1011 : excluded
+1012 : excluded
+1013 : excluded
+1021 : excluded
+1025 : excluded
+1029 : excluded
+1100 : excluded
+1105 : excluded
+1110 : excluded
+1115 : excluded
+1122 : excluded
+1123 : excluded
+1126 : excluded
+1127 : excluded
+1130 : excluded
+1131 : excluded
+1133 : excluded
+1134 : excluded
+1136 : excluded
+1137 : excluded
+1139 : excluded
+1140 : excluded
+1171 : excluded
+1172 : excluded
+1173 : excluded
+1174 : excluded
+1175 : excluded
+1176 : excluded
+1177 : excluded
+1178 : excluded
+1179 : excluded
+1180 : excluded
+1181 : excluded
+1182 : excluded
+1183 : excluded
+1184 : excluded
+1185 : excluded
+1186 : excluded
+1187 : excluded
+1188 : excluded
+1189 : excluded
+1190 : excluded
+1191 : excluded
+1192 : excluded
+1193 : excluded
+1194 : excluded
+1195 : excluded
+1196 : excluded
+1197 : excluded
+1198 : excluded
+1199 : excluded
+1202 : excluded
+1203 : excluded
+1204 : excluded
+1207 : excluded
+1208 : excluded
+1209 : excluded
+1212 : excluded
+1213 : excluded
+1214 : excluded
+1217 : excluded
+1218 : excluded
+1221 : excluded
+1222 : excluded
+1225 : excluded
+1226 : excluded
+1229 : excluded
+1230 : excluded
+1233 : excluded
+1236 : excluded
+1239 : excluded
+1241 : excluded
+1242 : excluded
+1254 : excluded
+1255 : excluded
+1256 : excluded
+1257 : excluded
+1258 : excluded
+1259 : excluded
+1260 : excluded
+1261 : excluded
+1262 : excluded
+1263 : excluded
+1264 : excluded
+1265 : excluded
+1266 : excluded
+1267 : excluded
+1268 : excluded
+1269 : excluded
+1270 : excluded
+1271 : excluded
+1272 : excluded
+1280 : excluded
+1281 : excluded
+1282 : excluded
+1290 : excluded
+1291 : excluded
+1298 : excluded
+1299 : excluded
+1300 : excluded
+1303 : excluded
+1304 : excluded
+1305 : excluded
+1308 : excluded
+1309 : excluded
+1310 : excluded
+1313 : excluded
+1314 : excluded
+1317 : excluded
+1318 : excluded
+1321 : excluded
+1322 : excluded
+1325 : excluded
+1326 : excluded
+1329 : excluded
+1332 : excluded
+1335 : excluded
+1337 : excluded
+1338 : excluded
+1340 : excluded
+1341 : excluded
+1344 : excluded
+1345 : excluded
+1346 : excluded
+1347 : excluded
+1348 : excluded
+1349 : excluded
+1350 : excluded
+1351 : excluded
+1358 : excluded
+1359 : excluded
+1360 : excluded
+1361 : excluded
+1368 : excluded
+1369 : excluded
+1370 : excluded
+1371 : excluded
+1374 : excluded
+1375 : excluded
+1376 : excluded
+1377 : excluded
+1378 : excluded
+1379 : excluded
+1380 : excluded
+1383 : excluded
+1384 : excluded
+1385 : excluded
+1386 : excluded
+1387 : excluded
+1388 : excluded
+1389 : excluded
+1391 : excluded
+1392 : excluded
+1393 : excluded
+1394 : excluded
+1395 : excluded
+1396 : excluded
+1397 : excluded
+1398 : excluded
+1401 : excluded
+1402 : excluded
+1403 : excluded
+1405 : excluded
+1406 : excluded
+1407 : excluded
+1409 : excluded
+1410 : excluded
+1411 : excluded
+1413 : excluded
+1414 : excluded
+1415 : excluded
+1417 : excluded
+1418 : excluded
+1419 : excluded
+1421 : excluded
+1422 : excluded
+1424 : excluded
+1425 : excluded
+1427 : excluded
+1428 : excluded
+1430 : excluded
+1431 : excluded
+1433 : excluded
+1434 : excluded
+1436 : excluded
+1437 : excluded
+1537 : excluded
+1538 : excluded
+1539 : excluded
+1540 : excluded
+1545 : excluded
+1546 : excluded
+1547 : excluded
+1548 : excluded
+1549 : excluded
+1550 : excluded
+1555 : excluded
+1556 : excluded
+1557 : excluded
+1558 : excluded
+1559 : excluded
+1560 : excluded
+1565 : excluded
+1566 : excluded
+1567 : excluded
+1568 : excluded
+1569 : excluded
+1574 : excluded
+1575 : excluded
+1576 : excluded
+1577 : excluded
+1581 : excluded
+1582 : excluded
+1583 : excluded
+1584 : excluded
+1585 : excluded
+1792 : excluded
+2163 : excluded
+2167 : excluded
+2216 : excluded
+2224 : excluded
+2226 : excluded
+2228 : excluded
+2232 : excluded
+2251 : excluded
+2252 : excluded
+2261 : excluded
+2266 : excluded
+2267 : excluded
+2272 : excluded
+2277 : excluded
+2281 : excluded
+2283 : excluded
+2285 : excluded
+2287 : excluded
+2289 : excluded
+2291 : excluded
+2292 : excluded
+2293 : excluded
+2294 : excluded
+2312 : excluded
+2313 : excluded
+2320 : excluded
+2321 : excluded
+2322 : excluded
+2327 : excluded
+2331 : excluded
+2332 : excluded
+2336 : excluded
+2337 : excluded
+2339 : excluded
+2341 : excluded
+2343 : excluded
+2344 : excluded
+2345 : excluded
+2346 : excluded
+2347 : excluded
+2348 : excluded
+2349 : excluded
+2350 : excluded
+2351 : excluded
+2352 : excluded
+2369 : excluded
+2370 : excluded
+2371 : excluded
+2378 : excluded
+2379 : excluded
+2383 : excluded
+2384 : excluded
+2388 : excluded
+2389 : excluded
+2392 : excluded
+2393 : excluded
+2394 : excluded
+2395 : excluded
+2396 : excluded
+2397 : excluded
+2398 : excluded
+2399 : excluded
+2400 : excluded
+2401 : excluded
+2422 : excluded
+2423 : excluded
+2424 : excluded
+2430 : excluded
+2431 : excluded
+2432 : excluded
+2435 : excluded
+2436 : excluded
+2437 : excluded
+2440 : excluded
+2441 : excluded
+2444 : excluded
+2445 : excluded
+2457 : excluded
+2471 : excluded
+2472 : excluded
+2473 : excluded
+2474 : excluded
+2478 : excluded
+2479 : excluded
+2480 : excluded
+2481 : excluded
+2483 : excluded
+2484 : excluded
+2485 : excluded
+2487 : excluded
+2488 : excluded
+2489 : excluded
+2490 : excluded
+2491 : excluded
+2492 : excluded
+2493 : excluded
+2511 : excluded
+2512 : excluded
+2515 : excluded
+2516 : excluded
+2517 : excluded
+2518 : excluded
+2519 : excluded
+2521 : excluded
+2522 : excluded
+2523 : excluded
+2524 : excluded
+2525 : excluded
+2526 : excluded
+2549 : excluded
+2550 : excluded
+2551 : excluded
+2552 : excluded
+2553 : excluded
+2554 : excluded
+2617 : excluded
+2624 : excluded
+2625 : excluded
+2626 : excluded
+2676 : excluded
+2685 : excluded
+2690 : excluded
+2701 : excluded
+2724 : excluded
+2745 : excluded
+2790 : excluded
+2806 : excluded
+ Iteration   2,   0 : Calculating Sensitivities
+  Iteration            2 ,            0  : Updating
+ Iteration   2,   0 : Calculating Potentials
+  Iteration            2 ,            1  : Updating
+ Iteration   2,   1 : Calculating Potentials
+
+Rms increase:   6.087     %
+rel Stepsize :  0.2268    
+nrmsd/rmsreg :   11.02    
+
+  Iteration            2 ,            2  : Updating
+ Iteration   2,   2 : Calculating Potentials
+
+Rms increase: -0.3086E-01 %
+rel Stepsize :  0.2224    
+nrmsd/rmsreg :   8.665    
+
+  Iteration            2 ,            3  : Updating
+ Iteration   2,   3 : Calculating Potentials
+  Iteration            2 ,            4  : Updating
+ Iteration   2,   4 : Calculating Potentials
+  Iteration            2 ,            4  : Updating
+ Iteration   2,   4 : Calculating Potentials
+ 906 : change polarity
+ 907 : change polarity
+ 910 : change polarity
+ 911 : change polarity
+ 914 : change polarity
+ 915 : change polarity
+ 918 : change polarity
+ 922 : change polarity
+ 926 : change polarity
+ 989 : change polarity
+ 990 : change polarity
+ 994 : change polarity
+ 995 : change polarity
+ 999 : change polarity
+1000 : change polarity
+1004 : change polarity
+1005 : change polarity
+1009 : change polarity
+1010 : change polarity
+1021 : change polarity
+1025 : change polarity
+1029 : change polarity
+1100 : change polarity
+1105 : change polarity
+1110 : change polarity
+1115 : change polarity
+1133 : change polarity
+1136 : change polarity
+1171 : change polarity
+1172 : change polarity
+1173 : change polarity
+1174 : change polarity
+1175 : change polarity
+1181 : change polarity
+1182 : change polarity
+1183 : change polarity
+1184 : change polarity
+1191 : change polarity
+1192 : change polarity
+1193 : change polarity
+1194 : change polarity
+1202 : change polarity
+1207 : change polarity
+1225 : change polarity
+1229 : change polarity
+1241 : change polarity
+1254 : change polarity
+1255 : change polarity
+1256 : change polarity
+1257 : change polarity
+1258 : change polarity
+1263 : change polarity
+1264 : change polarity
+1265 : change polarity
+1266 : change polarity
+1267 : change polarity
+1268 : change polarity
+1280 : change polarity
+1290 : change polarity
+1298 : change polarity
+1299 : change polarity
+1303 : change polarity
+1308 : change polarity
+1313 : change polarity
+1325 : change polarity
+1329 : change polarity
+1332 : change polarity
+1335 : change polarity
+1337 : change polarity
+1338 : change polarity
+1340 : change polarity
+1342 : change polarity
+1343 : change polarity
+1352 : change polarity
+1353 : change polarity
+1354 : change polarity
+1355 : change polarity
+1356 : change polarity
+1357 : change polarity
+1362 : change polarity
+1363 : change polarity
+1364 : change polarity
+1365 : change polarity
+1366 : change polarity
+1367 : change polarity
+1372 : change polarity
+1373 : change polarity
+1381 : change polarity
+1382 : change polarity
+1390 : change polarity
+1399 : change polarity
+1400 : change polarity
+1404 : change polarity
+1408 : change polarity
+1412 : change polarity
+1416 : change polarity
+1420 : change polarity
+1423 : change polarity
+1426 : change polarity
+1429 : change polarity
+1432 : change polarity
+1435 : change polarity
+1545 : change polarity
+1565 : change polarity
+1566 : change polarity
+1567 : change polarity
+1574 : change polarity
+1575 : change polarity
+1576 : change polarity
+1581 : change polarity
+1582 : change polarity
+1583 : change polarity
+1584 : change polarity
+1926 : change polarity
+1929 : change polarity
+1932 : change polarity
+1935 : change polarity
+1938 : change polarity
+1940 : change polarity
+1942 : change polarity
+1944 : change polarity
+1946 : change polarity
+1948 : change polarity
+1950 : change polarity
+1985 : change polarity
+1986 : change polarity
+1987 : change polarity
+1992 : change polarity
+1993 : change polarity
+1994 : change polarity
+1998 : change polarity
+1999 : change polarity
+2000 : change polarity
+2002 : change polarity
+2003 : change polarity
+2005 : change polarity
+2006 : change polarity
+2008 : change polarity
+2009 : change polarity
+2011 : change polarity
+2012 : change polarity
+2014 : change polarity
+2016 : change polarity
+2018 : change polarity
+2020 : change polarity
+2022 : change polarity
+2023 : change polarity
+2024 : change polarity
+2025 : change polarity
+2041 : change polarity
+2042 : change polarity
+2043 : change polarity
+2044 : change polarity
+2045 : change polarity
+2051 : change polarity
+2052 : change polarity
+2053 : change polarity
+2054 : change polarity
+2055 : change polarity
+2059 : change polarity
+2060 : change polarity
+2061 : change polarity
+2062 : change polarity
+2066 : change polarity
+2067 : change polarity
+2068 : change polarity
+2071 : change polarity
+2072 : change polarity
+2073 : change polarity
+2074 : change polarity
+2076 : change polarity
+2077 : change polarity
+2079 : change polarity
+2080 : change polarity
+2082 : change polarity
+2083 : change polarity
+2085 : change polarity
+2087 : change polarity
+2089 : change polarity
+2091 : change polarity
+2093 : change polarity
+2095 : change polarity
+2096 : change polarity
+2097 : change polarity
+2113 : change polarity
+2114 : change polarity
+2115 : change polarity
+2116 : change polarity
+2117 : change polarity
+2122 : change polarity
+2123 : change polarity
+2124 : change polarity
+2125 : change polarity
+2126 : change polarity
+2127 : change polarity
+2131 : change polarity
+2132 : change polarity
+2133 : change polarity
+2137 : change polarity
+2138 : change polarity
+2139 : change polarity
+2142 : change polarity
+2143 : change polarity
+2144 : change polarity
+2145 : change polarity
+2148 : change polarity
+2150 : change polarity
+2151 : change polarity
+2153 : change polarity
+2155 : change polarity
+2157 : change polarity
+2159 : change polarity
+2161 : change polarity
+2165 : change polarity
+2166 : change polarity
+2182 : change polarity
+2183 : change polarity
+2184 : change polarity
+2185 : change polarity
+2186 : change polarity
+2191 : change polarity
+2192 : change polarity
+2193 : change polarity
+2194 : change polarity
+2195 : change polarity
+2196 : change polarity
+2200 : change polarity
+2201 : change polarity
+2202 : change polarity
+2206 : change polarity
+2207 : change polarity
+2208 : change polarity
+2211 : change polarity
+2212 : change polarity
+2213 : change polarity
+2218 : change polarity
+2220 : change polarity
+2222 : change polarity
+2230 : change polarity
+2231 : change polarity
+2248 : change polarity
+2249 : change polarity
+2250 : change polarity
+2258 : change polarity
+2259 : change polarity
+2260 : change polarity
+2265 : change polarity
+2271 : change polarity
+2276 : change polarity
+2279 : change polarity
+2288 : change polarity
+2290 : change polarity
+2311 : change polarity
+2319 : change polarity
+2326 : change polarity
+2340 : change polarity
+2342 : change polarity
+2347 : change polarity
+2348 : change polarity
+2349 : change polarity
+2350 : change polarity
+2351 : change polarity
+2352 : change polarity
+2377 : change polarity
+2387 : change polarity
+2394 : change polarity
+2395 : change polarity
+2396 : change polarity
+2397 : change polarity
+2398 : change polarity
+2399 : change polarity
+2400 : change polarity
+2401 : change polarity
+2421 : change polarity
+2429 : change polarity
+2434 : change polarity
+2439 : change polarity
+2443 : change polarity
+2466 : change polarity
+2469 : change polarity
+2470 : change polarity
+2477 : change polarity
+2483 : change polarity
+2484 : change polarity
+2485 : change polarity
+2487 : change polarity
+2488 : change polarity
+2489 : change polarity
+2490 : change polarity
+2491 : change polarity
+2492 : change polarity
+2493 : change polarity
+2508 : change polarity
+2509 : change polarity
+2510 : change polarity
+2515 : change polarity
+2516 : change polarity
+2517 : change polarity
+2518 : change polarity
+2519 : change polarity
+2521 : change polarity
+2522 : change polarity
+2523 : change polarity
+2524 : change polarity
+2525 : change polarity
+2526 : change polarity
+2549 : change polarity
+2550 : change polarity
+2551 : change polarity
+2552 : change polarity
+2553 : change polarity
+2554 : change polarity
+2589 : change polarity
+2590 : change polarity
+2591 : change polarity
+2592 : change polarity
+2596 : change polarity
+2597 : change polarity
+2598 : change polarity
+2601 : change polarity
+2602 : change polarity
+2603 : change polarity
+2604 : change polarity
+2624 : change polarity
+2625 : change polarity
+2684 : change polarity
+2694 : change polarity
+ 908 : excluded
+ 909 : excluded
+ 912 : excluded
+ 913 : excluded
+ 916 : excluded
+ 917 : excluded
+ 919 : excluded
+ 920 : excluded
+ 921 : excluded
+ 923 : excluded
+ 924 : excluded
+ 925 : excluded
+ 927 : excluded
+ 928 : excluded
+ 991 : excluded
+ 992 : excluded
+ 993 : excluded
+ 996 : excluded
+ 997 : excluded
+ 998 : excluded
+1001 : excluded
+1002 : excluded
+1003 : excluded
+1006 : excluded
+1007 : excluded
+1008 : excluded
+1011 : excluded
+1012 : excluded
+1013 : excluded
+1122 : excluded
+1123 : excluded
+1126 : excluded
+1127 : excluded
+1130 : excluded
+1131 : excluded
+1134 : excluded
+1137 : excluded
+1139 : excluded
+1140 : excluded
+1176 : excluded
+1177 : excluded
+1178 : excluded
+1179 : excluded
+1180 : excluded
+1185 : excluded
+1186 : excluded
+1187 : excluded
+1188 : excluded
+1189 : excluded
+1190 : excluded
+1195 : excluded
+1196 : excluded
+1197 : excluded
+1198 : excluded
+1199 : excluded
+1203 : excluded
+1204 : excluded
+1208 : excluded
+1209 : excluded
+1212 : excluded
+1213 : excluded
+1214 : excluded
+1217 : excluded
+1218 : excluded
+1221 : excluded
+1222 : excluded
+1226 : excluded
+1230 : excluded
+1233 : excluded
+1236 : excluded
+1239 : excluded
+1242 : excluded
+1259 : excluded
+1260 : excluded
+1261 : excluded
+1262 : excluded
+1269 : excluded
+1270 : excluded
+1271 : excluded
+1272 : excluded
+1281 : excluded
+1282 : excluded
+1291 : excluded
+1300 : excluded
+1304 : excluded
+1305 : excluded
+1309 : excluded
+1310 : excluded
+1314 : excluded
+1317 : excluded
+1318 : excluded
+1321 : excluded
+1322 : excluded
+1326 : excluded
+1341 : excluded
+1342 : excluded
+1343 : excluded
+1344 : excluded
+1345 : excluded
+1346 : excluded
+1347 : excluded
+1348 : excluded
+1349 : excluded
+1350 : excluded
+1351 : excluded
+1352 : excluded
+1353 : excluded
+1354 : excluded
+1355 : excluded
+1356 : excluded
+1357 : excluded
+1358 : excluded
+1359 : excluded
+1360 : excluded
+1361 : excluded
+1362 : excluded
+1363 : excluded
+1364 : excluded
+1365 : excluded
+1366 : excluded
+1367 : excluded
+1368 : excluded
+1369 : excluded
+1370 : excluded
+1371 : excluded
+1372 : excluded
+1373 : excluded
+1374 : excluded
+1375 : excluded
+1376 : excluded
+1377 : excluded
+1378 : excluded
+1379 : excluded
+1380 : excluded
+1381 : excluded
+1382 : excluded
+1383 : excluded
+1384 : excluded
+1385 : excluded
+1386 : excluded
+1387 : excluded
+1388 : excluded
+1389 : excluded
+1390 : excluded
+1391 : excluded
+1392 : excluded
+1393 : excluded
+1394 : excluded
+1395 : excluded
+1396 : excluded
+1397 : excluded
+1398 : excluded
+1399 : excluded
+1400 : excluded
+1401 : excluded
+1402 : excluded
+1403 : excluded
+1404 : excluded
+1405 : excluded
+1406 : excluded
+1407 : excluded
+1408 : excluded
+1409 : excluded
+1410 : excluded
+1411 : excluded
+1412 : excluded
+1413 : excluded
+1414 : excluded
+1415 : excluded
+1416 : excluded
+1417 : excluded
+1418 : excluded
+1419 : excluded
+1420 : excluded
+1421 : excluded
+1422 : excluded
+1423 : excluded
+1424 : excluded
+1425 : excluded
+1426 : excluded
+1427 : excluded
+1428 : excluded
+1429 : excluded
+1430 : excluded
+1431 : excluded
+1432 : excluded
+1433 : excluded
+1434 : excluded
+1435 : excluded
+1436 : excluded
+1437 : excluded
+1537 : excluded
+1538 : excluded
+1539 : excluded
+1540 : excluded
+1546 : excluded
+1547 : excluded
+1548 : excluded
+1549 : excluded
+1550 : excluded
+1555 : excluded
+1556 : excluded
+1557 : excluded
+1558 : excluded
+1559 : excluded
+1560 : excluded
+1568 : excluded
+1569 : excluded
+1577 : excluded
+1585 : excluded
+1792 : excluded
+1926 : excluded
+1929 : excluded
+1932 : excluded
+1935 : excluded
+1938 : excluded
+1940 : excluded
+1942 : excluded
+1944 : excluded
+1946 : excluded
+1948 : excluded
+1950 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2002 : excluded
+2003 : excluded
+2005 : excluded
+2006 : excluded
+2008 : excluded
+2009 : excluded
+2011 : excluded
+2012 : excluded
+2014 : excluded
+2016 : excluded
+2018 : excluded
+2020 : excluded
+2022 : excluded
+2023 : excluded
+2024 : excluded
+2025 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2059 : excluded
+2060 : excluded
+2061 : excluded
+2062 : excluded
+2066 : excluded
+2067 : excluded
+2068 : excluded
+2071 : excluded
+2072 : excluded
+2073 : excluded
+2074 : excluded
+2076 : excluded
+2077 : excluded
+2079 : excluded
+2080 : excluded
+2082 : excluded
+2083 : excluded
+2085 : excluded
+2087 : excluded
+2089 : excluded
+2091 : excluded
+2093 : excluded
+2095 : excluded
+2096 : excluded
+2097 : excluded
+2113 : excluded
+2114 : excluded
+2115 : excluded
+2116 : excluded
+2117 : excluded
+2122 : excluded
+2123 : excluded
+2124 : excluded
+2125 : excluded
+2126 : excluded
+2127 : excluded
+2131 : excluded
+2132 : excluded
+2133 : excluded
+2137 : excluded
+2138 : excluded
+2139 : excluded
+2142 : excluded
+2143 : excluded
+2144 : excluded
+2145 : excluded
+2148 : excluded
+2150 : excluded
+2151 : excluded
+2153 : excluded
+2155 : excluded
+2157 : excluded
+2159 : excluded
+2161 : excluded
+2163 : excluded
+2165 : excluded
+2166 : excluded
+2167 : excluded
+2182 : excluded
+2183 : excluded
+2184 : excluded
+2185 : excluded
+2186 : excluded
+2191 : excluded
+2192 : excluded
+2193 : excluded
+2194 : excluded
+2195 : excluded
+2196 : excluded
+2200 : excluded
+2201 : excluded
+2202 : excluded
+2206 : excluded
+2207 : excluded
+2208 : excluded
+2211 : excluded
+2212 : excluded
+2213 : excluded
+2216 : excluded
+2218 : excluded
+2220 : excluded
+2222 : excluded
+2224 : excluded
+2226 : excluded
+2228 : excluded
+2230 : excluded
+2231 : excluded
+2232 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2265 : excluded
+2266 : excluded
+2267 : excluded
+2271 : excluded
+2272 : excluded
+2276 : excluded
+2277 : excluded
+2279 : excluded
+2281 : excluded
+2283 : excluded
+2285 : excluded
+2287 : excluded
+2288 : excluded
+2289 : excluded
+2290 : excluded
+2291 : excluded
+2292 : excluded
+2293 : excluded
+2294 : excluded
+2311 : excluded
+2312 : excluded
+2313 : excluded
+2319 : excluded
+2320 : excluded
+2321 : excluded
+2322 : excluded
+2326 : excluded
+2327 : excluded
+2331 : excluded
+2332 : excluded
+2336 : excluded
+2337 : excluded
+2339 : excluded
+2340 : excluded
+2341 : excluded
+2342 : excluded
+2343 : excluded
+2344 : excluded
+2345 : excluded
+2346 : excluded
+2369 : excluded
+2370 : excluded
+2371 : excluded
+2377 : excluded
+2378 : excluded
+2379 : excluded
+2383 : excluded
+2384 : excluded
+2387 : excluded
+2388 : excluded
+2389 : excluded
+2392 : excluded
+2393 : excluded
+2421 : excluded
+2422 : excluded
+2423 : excluded
+2424 : excluded
+2429 : excluded
+2430 : excluded
+2431 : excluded
+2432 : excluded
+2434 : excluded
+2435 : excluded
+2436 : excluded
+2437 : excluded
+2439 : excluded
+2440 : excluded
+2441 : excluded
+2443 : excluded
+2444 : excluded
+2445 : excluded
+2457 : excluded
+2466 : excluded
+2469 : excluded
+2470 : excluded
+2471 : excluded
+2472 : excluded
+2473 : excluded
+2474 : excluded
+2477 : excluded
+2478 : excluded
+2479 : excluded
+2480 : excluded
+2481 : excluded
+2508 : excluded
+2509 : excluded
+2510 : excluded
+2511 : excluded
+2512 : excluded
+2589 : excluded
+2590 : excluded
+2591 : excluded
+2592 : excluded
+2596 : excluded
+2597 : excluded
+2598 : excluded
+2601 : excluded
+2602 : excluded
+2603 : excluded
+2604 : excluded
+2617 : excluded
+2626 : excluded
+2676 : excluded
+2684 : excluded
+2685 : excluded
+2690 : excluded
+2694 : excluded
+2701 : excluded
+2724 : excluded
+2745 : excluded
+2790 : excluded
+2806 : excluded
+ Iteration terminated: Min. rel. RMS decrease.
+ CPU time:  0d/  0h/  0m/ 16s/ 243ms

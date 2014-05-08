@@ -1,0 +1,25 @@
+ Iteration   0,   0 : Calculating Potentials
+1792 : change polarity
+2167 : change polarity
+2457 : change polarity
+2617 : change polarity
+2676 : change polarity
+2701 : change polarity
+2724 : change polarity
+2745 : change polarity
+2790 : change polarity
+2806 : change polarity
+1792 : excluded
+2167 : excluded
+2457 : excluded
+2617 : excluded
+2676 : excluded
+2701 : excluded
+2724 : excluded
+2745 : excluded
+2790 : excluded
+2806 : excluded
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Calculating 1st regularization parameterlam_0   0.28E+04
+  Iteration            1 ,            1  : Updating
+ Iteration   1,   1 : Calculating Potentials
