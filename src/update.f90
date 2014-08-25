@@ -283,13 +283,13 @@ SUBROUTINE update()
 
      END DO
      IF (lfpi) THEN
-        bvec = cmplx(aimag(bvec),0.)
+        bvec = dcmplx(aimag(bvec),0D0)
      END IF
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
 !!!$     Ggf. Verbesserung umspeichern
      IF (lfpi) THEN
-        dpar = CMPLX(0D0,REAL(dpar))
+        dpar = dCMPLX(0D0,REAL(dpar))
      END IF
 !!!$     Verbesserung skalieren
      dpar = dpar * CMPLX(cgfac)

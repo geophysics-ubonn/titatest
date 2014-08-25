@@ -80,13 +80,19 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
               idif = iabs(nzp-nnp)
 !!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
-                 if (ntyp.eq.11) then
+!                Mixed boundary condition
+                 if (ntyp.eq.11) then    
+!                   may only apply for 2.5D. Checking... "swrtr" variable
+                    if (swrtr.eq.0) then
+                        print*,'Error: No 2D mixed boundaries (BC). Replacing with Neumann BC'
+                    else
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki) 
                     dum2 = sigma(rnr(rel))
                  ! band matrix index (see above)
                index_i = mb+mb+1+nzp-nnp
                my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * dum2                     
+                end if
                  end if
            end do
         end do

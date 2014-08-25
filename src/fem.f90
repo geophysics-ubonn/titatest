@@ -292,7 +292,12 @@ program fem
 
             ! General Band matrix
             call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
-            if (info.ne.0) print*,'ZGBSV info:',info
+            if (info.ne.0) print*,'ZGBSV solver info var:',info
+            if (info.eq.3) then 
+                print*,'ZGBSV solver message: info > 0:  if INFO = i, U(i,i) is exactly zero.'
+                print*,'The factorization has been completed, but the factor U is exactly' 
+                print*,'singular, and the solution has not been computed.'
+            end if
             !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
             !!!$   analytische Loesung addieren
             do j=1,sanz
