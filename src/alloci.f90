@@ -45,4 +45,6 @@ integer,parameter,public :: prec = Kind(0D0)
   REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: ata_reg
 !!$inverse matrix (may be resolution matrix or the MCM)
   REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: cov_m
+    ! potential solution vector
+  complex(kind(0d0)),dimension(:,:),allocatable :: x
 END MODULE alloci

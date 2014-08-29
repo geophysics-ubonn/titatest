@@ -67,8 +67,8 @@ program fem
   character(len=256)    ftext
   integer  getpid,pid,maxthreads,mythreads
 
-  ! potential solution vector
-  complex(kind(0d0)),dimension(:,:),allocatable :: x
+!  ! potential solution vector
+!  complex(kind(0d0)),dimension(:,:),allocatable :: x
 
 
 !:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

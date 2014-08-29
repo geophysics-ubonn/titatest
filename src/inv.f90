@@ -44,9 +44,10 @@ program inv
   real(prec)            :: lamalt
   logical               :: converged,l_bsmat
   integer               :: getpid,pid,myerr,info
+  
   ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-  ! SETUP UND INPUT
+  ! SETUP and INPUT
   errnr = 1
   ! set file id's 
   fperr = 9 
@@ -74,9 +75,6 @@ program inv
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
      if (errnr.ne.0) goto 999
 
-     !     call get_threads(nthreads,kwnanz)
-     !    nthreads = 2
-     !      CALL OMP_SET_NUM_THREADS ( NTHREADS )
      !   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
      !   zur Berechnung der gemischten Randbedingung bestimmen
      call precal()
@@ -133,7 +131,7 @@ program inv
      fetxt = 'allocation problem pota'
      allocate (pota(sanz),STAT=myerr)
      if (myerr /= 0) goto 999
-     ! now the big array are coming.. 
+     ! now the big arrays are coming.. 
      fetxt = 'allocation problem fak'
      allocate (fak(sanz),STAT=myerr) ! fak for modeling
      if (myerr /= 0) goto 999
@@ -151,6 +149,8 @@ program inv
         allocate (kpot(sanz,eanz,kwnanz),STAT=myerr)
      end if
      if (myerr /= 0) goto 999
+     
+     if (.not.allocated(x)) allocate(x(sanz,1))
 
      ! get CG data storage of residuums and bvec, which is global
      call con_cjgmod (1,fetxt,myerr)
@@ -216,17 +216,9 @@ program inv
 
 
      !   Kontrolldateien initialisieren
-     !   diff-        call kont1(delem,delectr,dstrom,drandb)
-     !   diff+<
      call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
-     !   diff+>
      if (errnr.ne.0) goto 999
 
-     !     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
-     !$OMP PARALLEL
-     !     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
-     !          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
-     !$OMP END PARALLEL
 
      !-------------
      write(*,*) '------------------------------------------'
@@ -318,17 +310,19 @@ program inv
               do l=1,eanz
                  b = cmplx(0D0)
                  a_mat_band_elec = a_mat_band
-                 b(enr(l),1) = cmplx(1D0)
-                 if (lsink) b(nsink,l) = cmplx(-1D0)
+                 b(enr(l),1) = cmplx(1.)
+                 if (lsink) b(nsink,1) = cmplx(-1.)
                  call comp_ab(k,a_mat_band_elec,l)
-!!!!$   Ggf. Randbedingung beruecksichtigen
-                 ! General Band matrix
-!                 call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
-                 if (info.ne.0) print*,'ZGBSV info:',info
-!!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
-!!!$   analytische Loesung addieren
+! Incorporate special boundary conditions
+        !           if (lrandb) call randb(a,b)
+        !           if (lrandb2) call randb2(a,b)
+                 ! General Band matrix, expert solver
+        call solve_zgbsvx(a_mat_band_elec,x,b)
+
+! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
+! back-transform.
                  do j=1,sanz
-                    kpot(j,l,k) = b(j,1)
+                    kpot(j,l,k) = x(j,1)
                     if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
                     if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
                  end do
@@ -336,12 +330,12 @@ program inv
            end do
         end if
         errnr = 0
-        !   Ggf. Ruecktransformation der Potentialwerte
+! Fourier back-transform
         if (swrtr.eq.1) then
            call rtrafo(errnr)
            if (errnr.ne.0) goto 999
         end if
-        !   Spannungswerte berechnen
+! Compute voltages
         call bvolti()
         if (errnr.ne.0) then
            !   reset model and data
