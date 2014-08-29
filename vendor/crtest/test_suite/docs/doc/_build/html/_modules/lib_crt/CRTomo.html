@@ -1,0 +1,192 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lib_crt.CRTomo &mdash; crt_test 19052014 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/print.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '19052014',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/theme_extras.js"></script>
+    <link rel="top" title="crt_test 19052014 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+      <div class="header"><h1 class="heading"><a href="../../index.html">
+          <span>crt_test 19052014 documentation</span></a></h1>
+        <h2 class="heading"><span>lib_crt.CRTomo</span></h2>
+      </div>
+      <div class="topnav">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <h1>Source code for lib_crt.CRTomo</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+
+<div class="viewcode-block" id="config"><a class="viewcode-back" href="../../index.html#lib_crt.CRTomo.config">[docs]</a><span class="k">class</span> <span class="nc">config</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write CRTomo configuration files (crtomo.cfg).</span>
+
+<span class="sd">    This class is essentially a dict of CRTomo configurations with a few extra</span>
+<span class="sd">    functions that know how to write a proper crtomo.cfg file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">()</span>
+
+<div class="viewcode-block" id="config.set_defaults"><a class="viewcode-back" href="../../index.html#lib_crt.CRTomo.config.set_defaults">[docs]</a>    <span class="k">def</span> <span class="nf">set_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill the dictionary with all defaults</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;mswitch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;elem&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;../grid/elem.dat&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;elec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;../grid/elec.dat&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;volt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;../mod/volt.dat&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;inv_dir&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;../inv&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;diff_inv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;F ! difference inversion?&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;iseed_var&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;iseed variance&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;cells_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;0    ! # cells in x-direction&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;cells_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;0    ! # cells in z-direction&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ani_x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;1.000  ! smoothing parameter in x-direction&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;ani_z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;1.000  ! smoothing parameter in z-direction&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;max_it&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;20    ! max. nr of iterations&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;dc_inv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;F     ! DC inversion?&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;robust_inv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;F     ! robust inversion?&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;fpi_inv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;T     ! final phase improvement?&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;mag_rel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;5&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;mag_abs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;1e-4&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;pha_a1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;pha_b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;pha_rel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;pha_abs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;hom_bg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;T&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;hom_mag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;10.00&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;hom_pha&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;0.00&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;another_ds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;F&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;2-5d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;0&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;fic_sink&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;T&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;fic_sink_node&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;6467&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;boundaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;F&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;boundaries_file&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;boundary.dat&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;mswitch2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;1&#39;</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;lambda&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;lambda&#39;</span>
+</div>
+<div class="viewcode-block" id="config.write_to_file"><a class="viewcode-back" href="../../index.html#lib_crt.CRTomo.config.write_to_file">[docs]</a>    <span class="k">def</span> <span class="nf">write_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the configuration to a file. Use the correct order of values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fid</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;mswitch&#39;</span><span class="p">,</span> <span class="s">&#39;elem&#39;</span><span class="p">,</span> <span class="s">&#39;elec&#39;</span><span class="p">,</span> <span class="s">&#39;volt&#39;</span><span class="p">,</span> <span class="s">&#39;inv_dir&#39;</span><span class="p">,</span> <span class="s">&#39;diff_inv&#39;</span><span class="p">,</span>
+                    <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;iseed_var&#39;</span><span class="p">,</span> <span class="s">&#39;cells_x&#39;</span><span class="p">,</span> <span class="s">&#39;cells_z&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;ani_x&#39;</span><span class="p">,</span> <span class="s">&#39;ani_z&#39;</span><span class="p">,</span> <span class="s">&#39;max_it&#39;</span><span class="p">,</span> <span class="s">&#39;dc_inv&#39;</span><span class="p">,</span> <span class="s">&#39;robust_inv&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;fpi_inv&#39;</span><span class="p">,</span> <span class="s">&#39;mag_rel&#39;</span><span class="p">,</span> <span class="s">&#39;mag_abs&#39;</span><span class="p">,</span> <span class="s">&#39;pha_a1&#39;</span><span class="p">,</span> <span class="s">&#39;pha_b&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;pha_rel&#39;</span><span class="p">,</span> <span class="s">&#39;pha_abs&#39;</span><span class="p">,</span> <span class="s">&#39;hom_bg&#39;</span><span class="p">,</span> <span class="s">&#39;hom_mag&#39;</span><span class="p">,</span> <span class="s">&#39;hom_pha&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;another_ds&#39;</span><span class="p">,</span> <span class="s">&#39;2-5d&#39;</span><span class="p">,</span> <span class="s">&#39;fic_sink&#39;</span><span class="p">,</span> <span class="s">&#39;fic_sink_node&#39;</span><span class="p">,</span>
+                    <span class="s">&#39;boundaries&#39;</span><span class="p">,</span> <span class="s">&#39;boundaries_file&#39;</span><span class="p">,</span> <span class="s">&#39;mswitch2&#39;</span><span class="p">,</span> <span class="s">&#39;lambda&#39;</span><span class="p">):</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fid</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;{0}</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+
+        <span class="n">fid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+</div></div>
+<div class="viewcode-block" id="permutate_options"><a class="viewcode-back" href="../../index.html#lib_crt.CRTomo.permutate_options">[docs]</a><span class="k">def</span> <span class="nf">permutate_options</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">new_opts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Permutate configuration options</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    configs : list of initial CRTomo.config() instances</span>
+<span class="sd">    new_opts : dictionary of CRTomo options to permutate. The keys of this dict</span>
+<span class="sd">               correspond to keys in CRTomo.config, and the item holds the</span>
+<span class="sd">               content to be permutated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    configs : A list of CRTomo.config instances with the permutated options set</span>
+
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    To permutate various regularization types and correponding lambdas, use</span>
+
+<span class="sd">    new_opts = {}</span>
+<span class="sd">    new_opts[&#39;mswitch2&#39;] = (4, 5, 6)</span>
+<span class="sd">    new_opts[&#39;lambda&#39;] = (0.1, 0.5, 0.9)</span>
+
+<span class="sd">    crt_config = CRTomo.config()</span>
+<span class="sd">    init_list = [crt_config, ]</span>
+<span class="sd">    permutated_options = permutate_options(init_list, new_opts)</span>
+
+<span class="sd">    # write to files</span>
+<span class="sd">    for nr, i in enumerate(permutated_options):</span>
+<span class="sd">        i.write_to_file(&#39;{0:02}_crtomo.cfg&#39;.format(nr))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># parameter to loop through</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">new_opts</span><span class="o">.</span><span class="n">keys</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">new_opts</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">del</span><span class="p">(</span><span class="n">new_opts</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+    <span class="c"># loop through all configs in &#39;configs&#39; and permutate with options in</span>
+    <span class="c"># new_dict</span>
+    <span class="n">template_configs</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">configs</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="n">template_configs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">tmp_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="n">nr</span><span class="p">])</span>
+            <span class="n">tmp_config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="n">configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_config</span><span class="p">)</span>
+
+    <span class="c"># delete the templates</span>
+    <span class="k">for</span> <span class="n">nr</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">template_configs</span><span class="p">):</span>
+        <span class="k">del</span><span class="p">(</span><span class="n">configs</span><span class="p">[</span><span class="n">nr</span><span class="p">])</span>
+
+    <span class="c"># if new_opts is empty...</span>
+    <span class="k">if</span><span class="p">((</span><span class="n">new_opts</span> <span class="ow">and</span> <span class="bp">True</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">permutate_options</span><span class="p">(</span><span class="n">configs</span><span class="p">,</span> <span class="n">new_opts</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">configs</span></div>
+</pre></div>
+
+      </div>
+      <div class="bottomnav">
+      
+        <p>
+        <a class="uplink" href="../../index.html">Contents</a>
+        </p>
+
+      </div>
+
+    <div class="footer">
+        &copy; Copyright 2014, JF.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
