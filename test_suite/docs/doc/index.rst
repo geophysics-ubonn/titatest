@@ -18,6 +18,8 @@ mit permutierten Konfigurationseinstellungen der *crtomo.cfg* invertiert.
 Aufbau des Programmes
 ---------------------
 
+::
+
     |--- **crt_test**
         |--- bin
             |--- crt_test
@@ -27,30 +29,43 @@ Aufbau des Programmes
         |--- docs
             |--- doc
 
-**bin/crt_test** enthält ausführbare Dateien. **lib/crt_test** besteht aus allen nicht-ausführbaren Dateien, die die Skripte in **bin/crt_test** benötigen. Der Ordner **docs/doc** beinhaltet die Dokumentation des Programmes.
+**bin/crt_test** enthält ausführbare Dateien. **lib/crt_test** besteht aus
+allen nicht-ausführbaren Dateien, die die Skripte in **bin/crt_test**
+benötigen. Der Ordner **docs/doc** beinhaltet die Dokumentation des Programmes.
 
 Funktion des Programmes
 -----------------------
 
-Beim Ausführen des Programmes wird ein Hauptordner **Test** erstellt, der aus einer Vielzahl an Unterordnern besteht. Diese Unterordner werden automatisch generiert und richten sich nach den Hauptthemen, die untersucht werden sollen. Jeder Unterordner besteht entweder aus einer weiteren Ebene oder aus mehreren automatisch generierten Tomodir-Ordnern (Ordner die eine invertierbare Struktur aufweisen). Diese Ordnerstrukturen werden mithilfe des Skripts *init_sim.sh*. Man merkt, dass die Größe des Ordners **Test** gewaltig werden kann. 
-Nach der Generierung der Ordnerstrukur und der beinhalteten Dateien wird jeder Tomodir-Ordner invertiert und getestet.
+Beim Ausführen des Programmes wird ein Hauptordner **Test** erstellt, der aus
+einer Vielzahl an Unterordnern besteht. Diese Unterordner werden automatisch
+generiert und richten sich nach den Hauptthemen, die untersucht werden sollen.
+Jeder Unterordner besteht entweder aus einer weiteren Ebene oder aus mehreren
+automatisch generierten Tomodir-Ordnern (Ordner die eine invertierbare Struktur
+aufweisen). Diese Ordnerstrukturen werden mithilfe des Skripts *init_sim.sh*.
+Man merkt, dass die Größe des Ordners **Test** gewaltig werden kann. 
+
+Nach der Generierung der Ordnerstrukur und der beinhalteten Dateien wird jeder
+Tomodir-Ordner invertiert und getestet.
 
 Ziele
 -----
 
-Im ersten Schritt soll nur das Durchlaufen von CRTomo bei verschiedenen 
-Ausgangsbedingungen getestet werden. Hierdurch sollen Schwachstellen in der 
-Kombination der Parameter ersichtlich werden.
-Das Programm sollte so verständlich sein, sodass auch ein Laie verstehen würde wie sich CRTomo mit verschiedenen Parameter-Einstellungen verhält.
+Im ersten Schritt soll nur das Durchlaufen von CRTomo bei verschiedenen
+Ausgangsbedingungen getestet werden. Hierdurch sollen Schwachstellen in der
+Kombination der Parameter ersichtlich werden. Das Programm sollte so
+verständlich sein, sodass auch ein Laie verstehen würde wie sich CRTomo mit
+verschiedenen Parameter-Einstellungen verhält.
 
-crtomo.cfg Beispieldatei::
+crtomo.cfg Beispieldatei
+
+::
 
     *****
     ../grid/elem.dat
     ../grid/elec.dat 
     ../mod/volt.dat
     ../inv
-    F                
+    F
 
 
 
@@ -85,7 +100,11 @@ Testszenarien
 Reguläre vs. Irreguläre Gitter
 ------------------------------
 
-Durch diesen Test wird gewährleistet, dass CRTomo sowohl reguläre (rechteckige Zellen) als auch irreguläre Gitter (z.B. dreickige Zellen) problemlos invertieren kann. Könnte gut als erste Ebene in den Ordner **Test** passen:
+Durch diesen Test wird gewährleistet, dass CRTomo sowohl reguläre (rechteckige
+Zellen) als auch irreguläre Gitter (z.B. dreickige Zellen) problemlos
+invertieren kann. Könnte gut als erste Ebene in den Ordner **Test** passen:
+
+::
 
     |--- **Test**
         |--- regulär
@@ -95,31 +114,44 @@ Durch diesen Test wird gewährleistet, dass CRTomo sowohl reguläre (rechteckige
 Test des Fehlermodells (Magnitude)
 ----------------------------------
 
-Hierbei werden verschiedene relative und absolute Fehler miteinander kombiniert und invertiert. Der Magnitudenfehler wird folgendermaßen berechnet:
+Hierbei werden verschiedene relative und absolute Fehler miteinander kombiniert
+und invertiert. Der Magnitudenfehler wird folgendermaßen berechnet:
 
-    .. math::
-        \Delta R = A \cdot abs(R) + B,
+.. math::
 
-wobei :math:`A` den relativen Fehler in % und :math:`B` den absoluten Fehler in :math:`\Omega` darstellt. Ein kleiner Fehler in :math:`B` stabilisiert das Ergebnis. Gute Kombination von :math:`\Delta R` resultieren aus :math:`A = (3\%, 5\%, 10\%)` und :math:`B = (0.1\Omega, 0.01\Omega, 0.001\Omega)`.
+    \Delta R = A \cdot abs(R) + B,
+
+wobei :math:`A` den relativen Fehler in % und :math:`B` den absoluten Fehler in
+:math:`\Omega` darstellt. Ein kleiner Fehler in :math:`B` stabilisiert das
+Ergebnis. Gute Kombination von :math:`\Delta R` resultieren aus :math:`A =
+(3\%, 5\%, 10\%)` und :math:`B = (0.1\Omega, 0.01\Omega, 0.001\Omega)`.
 
 Test des Fehlermodells (Phase)
 ------------------------------
 
-Hierbei werden verschiedene Fehler mit einander kombiniert und invertiert. Der Phasenfehler wird nach Flores (2010) folgendermaßen berechnet:
+Hierbei werden verschiedene Fehler mit einander kombiniert und invertiert. Der
+Phasenfehler wird nach Flores (2010) folgendermaßen berechnet:
 
-    .. math::
-        \Delta \phi = A1 \cdot abs(R)^{B1} + A2 \cdot abs(pha) + p0, 
+.. math::
 
-wobei :math:`A1` den relativen Magnitudenfehler, :math:`B1` einen beliebigen Exponenten, :math:`A2` den relativen Phasenfehler und :math:`p0` den absoluten Phasenfehler darstellt
+    \Delta \phi = A1 \cdot abs(R)^{B1} + A2 \cdot abs(pha) + p0,
+
+wobei :math:`A1` den relativen Magnitudenfehler, :math:`B1` einen beliebigen
+Exponenten, :math:`A2` den relativen Phasenfehler und :math:`p0` den absoluten
+Phasenfehler darstellt
 
 TODO 
 
 Vergleiche Fehlermodell mit individuellem Fehlermodell
 ------------------------------------------------------
 
-Es ist möglich ein indiviuelles Fehlermodell über die Datei **crt.noisemod** zu erzeugen. Der Vergleich beider Fehlermodelle jeweils für Magnitude und Phase zeigt, ob es sich lohnt ein individuelles Fehlermodell zu generieren.
+Es ist möglich ein indiviuelles Fehlermodell über die Datei **crt.noisemod** zu
+erzeugen. Der Vergleich beider Fehlermodelle jeweils für Magnitude und Phase
+zeigt, ob es sich lohnt ein individuelles Fehlermodell zu generieren.
 
-crt.noisemod Beispieldatei::
+crt.noisemod Beispieldatei
+
+::
 
           1       # Ensemble seed
       30.0        # Relative error resistance A (noise) [%] von dR=AR+B
@@ -132,12 +164,15 @@ crt.noisemod Beispieldatei::
 Modellvergleich
 ---------------
 
-Es werden verschiedene Modelle erzeugt und getestet. Es soll bestimmt werden, wie die Inversion auf zwei Modelle mit derselben Struktur aber mit inversen Widerständen/Phasen reagiert.
+Es werden verschiedene Modelle erzeugt und getestet. Es soll bestimmt werden,
+wie die Inversion auf zwei Modelle mit derselben Struktur aber mit inversen
+Widerständen/Phasen reagiert.
 
 Randbedingungen
 ---------------
 
-Es könnten verschiedene Randbedingungen, wie Gemischte- und Neumann-Randbedingungen getestet werden.
+Es könnten verschiedene Randbedingungen, wie Gemischte- und
+Neumann-Randbedingungen getestet werden.
 
 Normale/ optimistische/ pessimistische Inversion
 ------------------------------------------------
@@ -167,17 +202,12 @@ Zur Vereinfachung können direkt diese drei Standard-Schemata invertiert werden:
 
 
 Module
-==============================
+======
 
 Nachfolgend werden alle benutzen Module des Ordners **crt_test** aufgelistet und beschrieben.
 
 lib
-------------------------------
-
-.. automodule:: lib_crt.CRTomo
-   :members:
-
-
+---
 
 Testkriterien
 =============
@@ -211,16 +241,6 @@ Anzahl an Iterationen
 ---------------------
 
 * inv.ctr
-
-
-
-
-
-
-
-
-
-
 
 Indices and tables
 ==================
