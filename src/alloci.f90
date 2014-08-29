@@ -14,7 +14,6 @@ integer,parameter,public :: prec = Kind(0D0)
   COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a_mat,b_mat,&
       a_mat_band,a_mat_band_elec
    
-  INTEGER,dimension(:),allocatable, public ::          ipiv
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen
 !!$(werden bei der Berechnung der Sensitivitaeten benoetigt)
   COMPLEX (prec), DIMENSION(:,:,:), ALLOCATABLE, PUBLIC :: kpot

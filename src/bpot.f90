@@ -43,16 +43,16 @@ subroutine bpot(kanal,datei)
 
   icount = 0
 
-  !$OMP PARALLEL DEFAULT(none) &
-  !$OMP SHARED (nanz,sanz,hpot,strom,strnr,datei,errnr,icount) &
-  !$OMP PRIVATE(elec1,elec2,pot)
-  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+!  !$OMP PARALLEL DEFAULT(none) &
+!  !$OMP SHARED (nanz,sanz,hpot,strom,strnr,datei,errnr,icount) &
+!  !$OMP PRIVATE(elec1,elec2,pot)
+!  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
   do i=1,nanz
 
-     !$OMP ATOMIC
+!     !$OMP ATOMIC
      icount = icount + 1
 
-     WRITE (*,'(a,F10.2,A)',ADVANCE='no')ACHAR(13)//'Potential :',REAL(icount)/REAL(nanz)*100.,' %'
+!     WRITE (*,'(a,F10.2,A)',ADVANCE='no')ACHAR(13)//'Potential :',REAL(icount)/REAL(nanz)*100.,' %'
 !!!$     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
@@ -73,8 +73,8 @@ subroutine bpot(kanal,datei)
 !!!$     Potentialwerte ausgeben
      call wpot(datei,i,pot)
   end do
-  !$OMP END DO
-  !$OMP END PARALLEL
+!  !$OMP END DO
+!  !$OMP END PARALLEL
 
   IF (errnr /= 0) THEN
      PRINT*,'something went wrong during potential output'

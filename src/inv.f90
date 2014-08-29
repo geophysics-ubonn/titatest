@@ -294,13 +294,12 @@ program inv
            fetxt = 'allocation problem a'
            allocate(a_mat_band(3*mb+1,sanz))
            allocate(a_mat_band_elec(3*mb+1,sanz))
-           allocate (ipiv(sanz),STAT=myerr)
            if (myerr /= 0) goto 999
            fetxt = 'allocation problem hpot'
            allocate (hpot(sanz,eanz),STAT=myerr) 
            if (myerr /= 0) goto 999
            fetxt = 'allocation problem b'
-           allocate (b(sanz),STAT=myerr)
+           allocate (b(sanz,1),STAT=myerr)
            if (myerr /= 0) goto 999
            !   COMPLEX CASE
 !!!$   POTENTIALWERTE BERECHNEN
@@ -319,17 +318,17 @@ program inv
               do l=1,eanz
                  b = cmplx(0D0)
                  a_mat_band_elec = a_mat_band
-                 b(enr(l)) = cmplx(1D0)
-                 if (lsink) b(nsink) = cmplx(-1D0)
+                 b(enr(l),1) = cmplx(1D0)
+                 if (lsink) b(nsink,l) = cmplx(-1D0)
                  call comp_ab(k,a_mat_band_elec,l)
 !!!!$   Ggf. Randbedingung beruecksichtigen
                  ! General Band matrix
-                 call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
+!                 call zgbsv(sanz,mb,mb, 1, a_mat_band_elec, 3*mb+1, ipiv, b, sanz,info )
                  if (info.ne.0) print*,'ZGBSV info:',info
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !!!$   analytische Loesung addieren
                  do j=1,sanz
-                    kpot(j,l,k) = b(j)
+                    kpot(j,l,k) = b(j,1)
                     if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
                     if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
                  end do
@@ -353,7 +352,7 @@ program inv
         if (ldc) then
            deallocate(adc,hpotdc,bdc)
         else
-           deallocate(hpot,b,ipiv,a_mat_band,a_mat_band_elec)
+           deallocate(hpot,b,a_mat_band,a_mat_band_elec)
         end if
         if (lsetup.or.lsetip) then
            !   Ggf. background auf ratio-Daten "multiplizieren"

@@ -3,12 +3,12 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS =	-O4 -g -llapack -lblas #-fopenmp #\
+AM_FC_FLAGS =	-O4 -fbounds-check -llapack -lblas #-fopenmp #\
 		 #-std=f2008ts -fall-intrinsics \
 		 #-Wall -fopenmp
 ## Only un-comment for debug purpose
 # TODO : figure out how to switch
-AM_DBG_FLAGS = -pg -fbounds-check -Wuninitialized -O -ftrapv -pedantic \
+AM_DBG_FLAGS = -pg -fbounds-check -llapack -Wuninitialized -O -ftrapv -pedantic \
 		-fdump-fortran-original  -fdump-fortran-optimized \
 		-fdump-core -fbacktrace -fdump-parse-tree \
 		-fimplicit-none -fno-signed-zeros -ffinite-math-only# -O0 # -fopenmp
@@ -33,7 +33,7 @@ main_mods = 	alloci.f90 \
 		wavenmod.f90
 
 
-main_subs = bbsens.f90 bessi0.f90 beta.f90 bessi1.f90 bessk0.f90 \
+main_subs = solve_zgbsvx.f90 assign_zgbsvx.f90 bbsens.f90 bessi0.f90 beta.f90 bessi1.f90 bessk0.f90 \
 		bessk1.f90 bkfak.f90 bsytop.f90 \
 		chareal.f90 chkpol.f90 chol.f90 \
 		elem1.f90 elem3.f90 elem4.f90 elem5.f90 elem8.f90 \

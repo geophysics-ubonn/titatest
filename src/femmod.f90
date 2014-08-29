@@ -15,7 +15,7 @@ use alloci
 !!$ Analytische berechnete Potentialwerte 
   COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: pota
 !!$ Konstanten-(bzw. Strom-) Vektor
-  COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: b
+  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: b
 !!$ included from FEM.FIN!!! REALs
   REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC        :: bdc
 !!$ Skalierungsfaktor

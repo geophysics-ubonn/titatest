@@ -24,7 +24,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (prec),Dimension(3*mb+1,sanz) :: my_a_mat_band
+  COMPLEX (prec),Dimension(2*mb+1,sanz) :: my_a_mat_band
   COMPLEX (prec),DIMENSION(sanz) ::     my_b
 
 !!!$     Aktuelle Elektrodennummer
@@ -54,6 +54,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
   COMPLEX(prec) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
+  INTEGER :: la_KL,la_KU,la_N,la_i,la_j
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4) ::     i,j,k,l,index_i
@@ -88,10 +89,11 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
                     else
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki) 
-                    dum2 = sigma(rnr(rel))
+                    dum2 = cmplx(dum)*sigma(rnr(rel))
                  ! band matrix index (see above)
-               index_i = mb+mb+1+nzp-nnp
-               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * dum2                     
+                 dum=real(sum(my_a_mat_band))
+                call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
+!                print*,dum-sum(my_a_mat_band)
                 end if
                  end if
            end do

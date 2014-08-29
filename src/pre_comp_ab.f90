@@ -8,7 +8,6 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$     Letzte Aenderung   15-Jul-2007
 
 !!!$.....................................................................
-
   USE alloci
   USE femmod
   USE sigmamod
@@ -24,7 +23,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (prec),Dimension(3*mb+1,sanz) :: my_a_mat_band
+  COMPLEX (prec),Dimension(2*mb+1,sanz) :: my_a_mat_band
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -53,6 +52,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
   COMPLEX(prec) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
+  INTEGER :: la_Kd,la_N,la_i,la_j
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4) ::     i,j,k,l,index_i
@@ -60,13 +60,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$.....................................................................
 
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
-  my_a_mat_band = CMPLX(0D0)
-
-!BAND STORAGE
-!An m-by-n band matrix with kl subdiagonals and ku superdiagonals may be stored compactly in a two-dimensional array with kl+ku+1 rows and n columns. Columns of the matrix are stored in corresponding columns of the array, and diagonals of the matrix are stored in rows of the array. This storage scheme should be used in practice only if $kl, ku \ll \min(m,n)$, although LAPACK routines work correctly for all values of kl and ku. In LAPACK, arrays that hold matrices in band storage have names ending in `B'.
-
-!To be precise, aij is stored in AB(ku+1+i-j,j) for $\max(1,j-ku) \leq i \leq \min(m,j+kl)$. For example, when m = n = 5, kl = 2 and ku = 1:
-!source: http://www.netlib.org/lapack/lug/node124.html
+  my_a_mat_band(:,:) = CMPLX(0D0)
 
   iel = 0
   do i=1,typanz
@@ -84,18 +78,10 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 
 !!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
-!if ((nzp.ge.max(1,nnp-mb)).and.(nzp.le.nnp)) then
-!                 imax = max0(nzp,nnp)
-!                 imin = min0(nzp,nnp)
-!                 im   = imax*mb + imin
                  dum  = elbg(iel,ikl,ki)
-                 dum2 = sigma(iel)
+                 dum2 = cmplx(dum)*sigma(iel)
                  ! band matrix index (see above)
-!               index_i = mb+1+nzp-nnp
-!               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + dum * dum2
-!end if
-         index_i = mb+mb+1+nzp-nnp
-               my_a_mat_band(index_i,nnp) = my_a_mat_band(index_i,nnp) + CMPLX(dum) * CMPLX(dum2 )
+                call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
            end do
         end do
      END do
