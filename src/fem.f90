@@ -138,7 +138,7 @@ program fem
   read(12,*,end=1001,err=999) lrandb2
   read(12,'(a80)',end=1001,err=999) drandb
   fetxt = 'reading mswitch'
-  read(12,'(I4)',end=101,err=100) mswitch
+read(12,'(I4)',end=101,err=100) mswitch
 
   goto 101
 
@@ -249,8 +249,10 @@ if (.not.allocated(fak))  allocate(fak(sanz))
         !           if (lrandb2) call randb2(a,b)
 
         ! General Band matrix, expert solver
-        call solve_zgbsvx(a_mat_band_elec,x,b)
+!        call solve_zgbsvx(a_mat_band_elec,x,b)
 
+        ! General Positive Band matrix, expert solver Cholesky
+        call solve_zpbsvx(a_mat_band_elec,x,b)
 ! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
 ! back-transform.
 ! Add analytical potentials (if available)

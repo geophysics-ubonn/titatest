@@ -93,6 +93,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
                  ! band matrix index (see above)
                  dum=real(sum(my_a_mat_band))
                 call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
+                call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
 !                print*,dum-sum(my_a_mat_band)
                 end if
                  end if

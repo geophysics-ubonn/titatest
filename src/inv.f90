@@ -317,7 +317,10 @@ program inv
         !           if (lrandb) call randb(a,b)
         !           if (lrandb2) call randb2(a,b)
                  ! General Band matrix, expert solver
-        call solve_zgbsvx(a_mat_band_elec,x,b)
+!        call solve_zgbsvx(a_mat_band_elec,x,b)
+
+                 ! General Positive Band matrix, expert solver Cholesky
+        call solve_zpbsvx(a_mat_band_elec,x,b)
 
 ! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
 ! back-transform.

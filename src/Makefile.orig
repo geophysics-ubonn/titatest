@@ -33,7 +33,7 @@ main_mods = 	alloci.f90 \
 		wavenmod.f90
 
 
-main_subs = solve_zgbsvx.f90 assign_zgbsvx.f90 bbsens.f90 bessi0.f90 beta.f90 bessi1.f90 bessk0.f90 \
+main_subs = solve_zgbsvx.f90 assign_zgbsvx.f90 solve_zpbsvx.f90 assign_zpbsvx.f90 bbsens.f90 bessi0.f90 beta.f90 bessi1.f90 bessk0.f90 \
 		bessk1.f90 bkfak.f90 bsytop.f90 \
 		chareal.f90 chkpol.f90 chol.f90 \
 		elem1.f90 elem3.f90 elem4.f90 elem5.f90 elem8.f90 \

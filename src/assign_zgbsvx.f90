@@ -6,6 +6,7 @@ subroutine assign_zgbsvx(ab,i,j,ku,n,value)
 !          array AB as follows:
 !          AB(KU+1+i-j,j) = A(i,j) for max(1,j-KU)<=i<=min(N,j+kl)
 complex(kind(0d0)),dimension(2*ku+1,n),intent(inout) :: ab
+
 integer :: i,j,ku,kl,n,index_i
 complex(kind(0d0)) :: value
 kl = ku
