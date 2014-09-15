@@ -298,7 +298,8 @@ program inv
            do k=1,kwnanz
 !!!$   Kontrollausgabe
               count = count + 1
-
+              ! calculation of analytical potentials
+              if (lsr) call potana(l,k,pota)
               if (swrtr.eq.0) then
                  write(*,'(a)')' Calculating Potentials'
               else
@@ -312,15 +313,15 @@ program inv
                  a_mat_band_elec = a_mat_band
                  b(enr(l),1) = cmplx(1.)
                  if (lsink) b(nsink,1) = cmplx(-1.)
-                 call comp_ab(k,a_mat_band_elec,l)
+                 call comp_ab(k,a_mat_band_elec,l,b)
 ! Incorporate special boundary conditions
         !           if (lrandb) call randb(a,b)
         !           if (lrandb2) call randb2(a,b)
                  ! General Band matrix, expert solver
-!        call solve_zgbsvx(a_mat_band_elec,x,b)
+        call solve_zgbsvx(a_mat_band_elec,x,b)
 
                  ! General Positive Band matrix, expert solver Cholesky
-        call solve_zpbsvx(a_mat_band_elec,x,b)
+!              call solve_zpbsvx(a_mat_band_elec,x,b)
 
 ! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
 ! back-transform.

@@ -32,7 +32,7 @@ character                           :: UPLO
 double precision, dimension(sanz)   :: S
 
 uplo = 'U'
-fact    = 'e'
+fact    = 'n'
 trans   = 'n'
 n       = sanz
 kd      = mb

@@ -238,21 +238,22 @@ if (.not.allocated(fak))  allocate(fak(sanz))
              achar(13)//' Computing Potentials : Wavenumber ',count
      end if
      call pre_comp_ab(k,a_mat_band)
+!                   lsr = .true.
      do l=1,eanz
         b = cmplx(0.)
         a_mat_band_elec = a_mat_band
         b(enr(l),1) = cmplx(1.)
         if (lsink) b(nsink,1) = cmplx(-1.)
-        call comp_ab(k,a_mat_band_elec,l)
+        call comp_ab(k,a_mat_band_elec,l,b)
 ! Incorporate special boundary conditions
         !           if (lrandb) call randb(a,b)
         !           if (lrandb2) call randb2(a,b)
 
         ! General Band matrix, expert solver
-!        call solve_zgbsvx(a_mat_band_elec,x,b)
+        call solve_zgbsvx(a_mat_band_elec,x,b)
 
         ! General Positive Band matrix, expert solver Cholesky
-        call solve_zpbsvx(a_mat_band_elec,x,b)
+!        call solve_zpbsvx(a_mat_band_elec,x,b)
 ! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
 ! back-transform.
 ! Add analytical potentials (if available)
@@ -262,6 +263,7 @@ if (.not.allocated(fak))  allocate(fak(sanz))
            else
               kpot(j,l,k) = x(j,1)
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
+!              if (lsr) print*,'yes it was used',pota(1)
            end if
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
         end do

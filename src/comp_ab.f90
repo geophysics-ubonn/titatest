@@ -1,4 +1,4 @@
-subroutine comp_ab(ki,my_a_mat_band,nelec)
+subroutine comp_ab(ki,my_a_mat_band,nelec,my_b)
 
 !!!$     Unterprogramm zur Kompilation der FE-Matrix 'a' in Bandform
 !!!$     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'b'
@@ -25,7 +25,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
 !!!$     EIN-/AUSGABEPARAMETER:
 
   COMPLEX (prec),Dimension(2*mb+1,sanz) :: my_a_mat_band
-  COMPLEX (prec),DIMENSION(sanz) ::     my_b
+  COMPLEX (prec),DIMENSION(sanz,1) ::     my_b
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -61,11 +61,11 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
 
 !!!$.....................................................................
 
-!BAND STORAGE
-!An m-by-n band matrix with kl subdiagonals and ku superdiagonals may be stored compactly in a two-dimensional array with kl+ku+1 rows and n columns. Columns of the matrix are stored in corresponding columns of the array, and diagonals of the matrix are stored in rows of the array. This storage scheme should be used in practice only if $kl, ku \ll \min(m,n)$, although LAPACK routines work correctly for all values of kl and ku. In LAPACK, arrays that hold matrices in band storage have names ending in `B'.
+  !BAND STORAGE
+  !An m-by-n band matrix with kl subdiagonals and ku superdiagonals may be stored compactly in a two-dimensional array with kl+ku+1 rows and n columns. Columns of the matrix are stored in corresponding columns of the array, and diagonals of the matrix are stored in rows of the array. This storage scheme should be used in practice only if $kl, ku \ll \min(m,n)$, although LAPACK routines work correctly for all values of kl and ku. In LAPACK, arrays that hold matrices in band storage have names ending in `B'.
 
-!To be precise, aij is stored in AB(ku+1+i-j,j) for $\max(1,j-ku) \leq i \leq \min(m,j+kl)$. For example, when m = n = 5, kl = 2 and ku = 1:
-!source: http://www.netlib.org/lapack/lug/node124.html
+  !To be precise, aij is stored in AB(ku+1+i-j,j) for $\max(1,j-ku) \leq i \leq \min(m,j+kl)$. For example, when m = n = 5, kl = 2 and ku = 1:
+  !source: http://www.netlib.org/lapack/lug/node124.html
   iel = 0
   do i=1,typanz
      ntyp = typ(i)
@@ -79,22 +79,28 @@ subroutine comp_ab(ki,my_a_mat_band,nelec)
            do l=1,nkel
               nnp  = nrel(iel,l)
               idif = iabs(nzp-nnp)
-!!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
-                 ikl = ikl + 1
-!                Mixed boundary condition
-                 if (ntyp.eq.11) then    
-!                   may only apply for 2.5D. Checking... "swrtr" variable
-                    if (swrtr.eq.0) then
-                        print*,'Error: No 2D mixed boundaries (BC). Replacing with Neumann BC'
-                    else
+              ! Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
+              ikl = ikl + 1
+              ! Mixed boundary condition
+              if (ntyp.eq.11) then    
+                 ! may only apply for 2.5D. Checking... "swrtr" variable
+                 if (swrtr.eq.0) then
+                    print*,'Error: No 2D mixed boundaries (BC). ',&
+                    'Replacing with Neumann BC'
+                 else
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki) 
                     dum2 = cmplx(dum)*sigma(rnr(rel))
-                 ! band matrix index (see above)
-!                call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
-                call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
-                end if
+                    ! band matrix index (see above)
+                    call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
+!                    call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
                  end if
+              end if
+!              if (lsr) then
+!                    dum2   = dcmplx(dum) * (dum2 - sigma0)
+!                    b(nzp,1) = b(nzp,1) + dum2 * pota(nnp)
+!                    if (nnp.ne.nzp) b(nnp,1) = b(nnp,1) + dum2 * pota(nzp)
+!              end if
            end do
         end do
      END do

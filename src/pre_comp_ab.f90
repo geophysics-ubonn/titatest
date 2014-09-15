@@ -81,8 +81,8 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
                  dum  = elbg(iel,ikl,ki)
                  dum2 = cmplx(dum)*sigma(iel)
                  ! band matrix index (see above)
-!                call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
-                call assign_zpbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
+                call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
+!                call assign_zpbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
            end do
         end do
      END do
