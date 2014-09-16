@@ -238,8 +238,10 @@ if (.not.allocated(fak))  allocate(fak(sanz))
              achar(13)//' Computing Potentials : Wavenumber ',count
      end if
      call pre_comp_ab(k,a_mat_band)
-!                   lsr = .true.
+     lsr = .true.
+
      do l=1,eanz
+        if (lsr) call potana(l,k,pota)
         b = cmplx(0.)
         a_mat_band_elec = a_mat_band
         b(enr(l),1) = cmplx(1.)
