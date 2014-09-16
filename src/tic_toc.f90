@@ -11,6 +11,7 @@ MODULE tic_toc
 CONTAINS
 
   SUBROUTINE tic(c1)
+  ! return time in millisec into c1
     INTEGER(KIND = 4), INTENT(OUT) :: c1 ! first call -> tic
     
     CALL SYSTEM_CLOCK (c1,i)
@@ -19,10 +20,11 @@ CONTAINS
   
   
   SUBROUTINE toc(c1,csz)
+  ! print elapsed time c1 to c2 in a pretty format
     INTEGER(KIND = 4), INTENT(IN) :: c1 ! first call -> tic
     CHARACTER (*),INTENT(INOUT)   :: csz
  
-110 FORMAT(a,I3,' d ',I2,':',I2.2,'.',I2.2,'h')
+110 FORMAT(a,I2,':',I2.2,'.',I2.2,'h')
     
     CALL SYSTEM_CLOCK (c2,i)
     
@@ -38,7 +40,7 @@ CONTAINS
     mi = INT(l/60) ! minutes
     se = l - mi*60
 
-    WRITE (csz,110)TRIM(csz),ta,st,mi,se
+    WRITE (csz,110) TRIM(csz), st, mi, se
     PRINT*,TRIM(csz)
 
   END SUBROUTINE toc

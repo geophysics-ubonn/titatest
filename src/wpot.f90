@@ -86,7 +86,7 @@ use alloci, only: prec
 !!!$     ak     1                real(ABS(mypot(i))),
 !!!$     ak     1                real(1d3*ATAN2(aimag(mypot(i)),REAL(mypot(i))))
   end do
-
+write(*,'(a,I7,a)') ' wrote',sanz,' potentials'
 !!!$     'datei' schliessen
   close(kanal)
 
