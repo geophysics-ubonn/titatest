@@ -1,11 +1,10 @@
-subroutine relectr(kanal,datei)
+subroutine relectr(iounit,filename)
+! read electrode node numbers from file
 
-!!!$     Unterprogramm zum Einlesen der Elektrodenverteilung aus 'datei'.
+! Andreas Kemna                                            11-Oct-1993
+! last change                                              24-Oct-1996
 
-!!!$     Andreas Kemna                                            11-Oct-1993
-!!!$     Letzte Aenderung   24-Oct-1996
-
-!!!$.....................................................................
+! ..............................................................................
 
   USE electrmod
   USE elemmod
@@ -13,53 +12,33 @@ subroutine relectr(kanal,datei)
 
   IMPLICIT none
 
-
-!!!$.....................................................................
-
-!!!$     EIN-/AUSGABEPARAMETER:
-
-!!!$     Kanalnummer
-  INTEGER (KIND = 4) ::     kanal
-
-!!!$     Datei
-  CHARACTER (80) ::    datei
-
-!!!$.....................................................................
-
-!!!$     PROGRAMMINTERNE PARAMETER:
-
-!!!$     Indexvariable
-  INTEGER (KIND =4) ::     i,ifp
-
-!!!$.....................................................................
-
-!!!$     'datei' oeffnen
-  fetxt = datei
+! ..............................................................................
+! IO unit
+  INTEGER           iounit
+! filename
+  CHARACTER (80)    filename
+! ..............................................................................
+! internals
+! index vars
+  INTEGER           i,ifp
+! ..............................................................................
+! open file
+  fetxt = filename
   errnr = 1
-  open(kanal,file=TRIM(fetxt),status='old',err=999)
-  CALL get_unit(ifp)
-
-  OPEN (ifp,FILE='inv.elecpositions',STATUS='replace')
-
+  open(iounit,file=TRIM(fetxt),status='old',err=999)
   errnr = 3
-
-!!!$     Anzahl der Elektroden einlesen
-  read(kanal,*,end=1001,err=1000) eanz
-!!!$ memory allocation
+! read number of electrodes
+  read(iounit,*,end=1001,err=1000) eanz
   ALLOCATE (enr(eanz),stat=errnr)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation enr'
      errnr = 94
      goto 1000
   END IF
-
-  WRITE (ifp,*)eanz
-
-!!!$     Knotennummern der Elektroden einlesen
+! read electrode node numbers
   do i=1,eanz
-     read(kanal,*,end=1001,err=1000) enr(i)
+     read(iounit,*,end=1001,err=1000) enr(i)
      WRITE (ifp,*)i,sx(snr(enr(i))),sy(snr(enr(i)))
-!!!$     Ggf. Fehlermeldung
      if (enr(i).gt.sanz) then
         fetxt = ' '
         errnr = 29
@@ -67,24 +46,25 @@ subroutine relectr(kanal,datei)
      end if
   end do
 
-!!!$     'datei' schliessen
-  CLOSE (ifp)
-  close(kanal)
+! write electrode positions to file
+  CALL get_unit(ifp)
+  OPEN (ifp,FILE='inv.elecpositions',STATUS='replace')
+  WRITE (ifp,*)eanz
+  do i=1,eanz
+     WRITE (ifp,*)i,sx(snr(enr(i))),sy(snr(enr(i)))
+  end do
 
+  write(*,'(a,I7,a)') ' read',eanz,' electrode positions'
+  CLOSE (ifp)
+  close(iounit)
   errnr = 0
   return
-
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-!!!$     Fehlermeldungen
-
+! ..............................................................................
+! error messages
 999 return
-
-1000 close(kanal)
+1000 close(iounit)
   return
-
-1001 close(kanal)
+1001 close(iounit)
   errnr = 2
   return
-
 end subroutine relectr

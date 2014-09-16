@@ -77,7 +77,7 @@ use alloci, only:prec
 !!!$     1                  strnr(i),vnr(i),real(bet),real(1d3*pha),
 !!!$     1                  real(kfak(i))
   end do
-
+write(*,'(a,I7,a)') ' wrote',nanz,' voltages'
 !!!$     'datei' schliessen
   close(kanal)
 

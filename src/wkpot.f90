@@ -106,7 +106,7 @@ subroutine wkpot(kanal,datei)
         write(kanal,*,err=1000) real(REAL(dum)),real(aimag(dum))
      end do
   end do
-
+write(*,'(a,I4,a,I7,a)') ' wrote',kwnanz,' K space potential files with',kanz,' potentials each'
 !!!$     'datei' schliessen
   close(kanal)
 
