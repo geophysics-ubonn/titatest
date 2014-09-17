@@ -62,7 +62,7 @@ subroutine potana(l,k,my_pota)
      rp   = SQRT(x21*x21+y21p*y21p)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
-     potmax  = INT(MAX(potmax,dum))
+     potmax  = (MAX(potmax,dum))
      my_pota(j) = CMPLX(dum)
   end do
 
@@ -76,7 +76,7 @@ subroutine potana(l,k,my_pota)
      rp   = SQRT(x21*x21+y21p*y21p)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
-     potmax  = INT(MAX(potmax,dum))
+     potmax  = (MAX(potmax,dum))
      my_pota(j) = CMPLX(dum)
   end do
 
@@ -89,5 +89,4 @@ subroutine potana(l,k,my_pota)
   dum2 = CMPLX(5d-1/pi) / sigma0
 
   my_pota = my_pota * dum2
-
 end subroutine potana

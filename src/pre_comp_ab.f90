@@ -49,7 +49,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 
 !!!$     Hilfsvariablen
   REAL (prec)   ::     dum
-  COMPLEX(prec) ::     dum2
+  COMPLEX(prec) ::     dum2,value
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
   INTEGER :: la_Kd,la_N,la_i,la_j
@@ -60,7 +60,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$.....................................................................
 
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
-  my_a_mat_band(:,:) = CMPLX(0D0)
+  my_a_mat_band = CMPLX(0D0)
 
   iel = 0
   do i=1,typanz
@@ -79,9 +79,10 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
                  dum  = elbg(iel,ikl,ki)
-                 dum2 = cmplx(dum)*sigma(iel)
+                 dum2 = sigma(iel)
+                 value = cmplx(dum)*dum2
                  ! band matrix index (see above)
-                call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
+                call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,value)
 !                call assign_zpbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)
            end do
         end do

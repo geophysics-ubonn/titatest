@@ -51,7 +51,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec,my_b)
 
 !!!$     Hilfsvariablen
   REAL (prec)   ::     dum
-  COMPLEX(prec) ::     dum2
+  COMPLEX(prec) ::     dum2,value
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
   INTEGER :: la_KL,la_KU,la_N,la_i,la_j
@@ -90,17 +90,24 @@ subroutine comp_ab(ki,my_a_mat_band,nelec,my_b)
                  else
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki) 
-                    dum2 = cmplx(dum)*sigma(rnr(rel))
+                    dum2 = sigma(rnr(rel))
+                    value = cmplx(dum)*dum2
                     ! band matrix index (see above)
-                    call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
-!                    call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,dum2)
+                    call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,value)
+!                    call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,value)
                  end if
               end if
-!              if (lsr) then
-!                    dum2   = dcmplx(dum) * (dum2 - sigma0)
-!                    b(nzp,1) = b(nzp,1) + dum2 * pota(nnp)
-!                    if (nnp.ne.nzp) b(nnp,1) = b(nnp,1) + dum2 * pota(nzp)
-!              end if
+              if (lsr) then
+                if (ntyp.le.11) then
+                    if (ntyp.eq.8) then
+                        dum = elbg(iel,ikl,ki)
+                        dum2 = sigma(iel)
+                    end if
+                    dum2   = dcmplx(dum) * (dum2 - sigma0)
+                    b(nzp,1) = b(nzp,1) + dum2 * pota(nnp)
+                    if (nnp.ne.nzp) b(nnp,1) = b(nnp,1) + dum2 * pota(nzp)
+                end if
+              end if
            end do
         end do
      END do

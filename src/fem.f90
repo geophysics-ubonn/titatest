@@ -170,7 +170,6 @@ program fem
      call rwaven()
      if (errnr.ne.0) goto 999
   end if
-  print*
 
   allocate (sigma(elanz),stat=errnr)
   if (errnr /= 0) then
@@ -195,8 +194,9 @@ program fem
   call refsig()
 
   ! print fictious sink node and position
-  if (lsink) write(6,'(/A,I5,2F12.3/)')&
-       'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
+  if (lsink) write(6,'(A,I6,A,F10.2,A,F10.2,A)')&
+        ' fictious sink at node',nsink,', x=',sx(snr(nsink)),&
+        'm, y=',sy(snr(nsink)),'m'
   ! pre-assemble stiffness matrices from area elements
   ! in case of mixed boundaries (ntyp.eq.8), compute beta value 
   call precal()
@@ -214,6 +214,7 @@ program fem
   if (.not.allocated(pota))  allocate(pota(sanz))
   if (.not.allocated(fak))  allocate(fak(sanz))
   count = 0
+  print*
   print*,'finite element modelling'
   ! compute potentials
   do k=1,kwnanz
