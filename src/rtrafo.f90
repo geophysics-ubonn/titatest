@@ -30,7 +30,7 @@ subroutine rtrafo()
   INTEGER (KIND=4)    ::j,k,l
 
 !!!$.....................................................................
-
+  print*,'inverse Fourier transform'
   pi = dacos(-1d0)
 
   if (ldc) then

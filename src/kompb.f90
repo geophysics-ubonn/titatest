@@ -1,4 +1,4 @@
-subroutine kompb(nelec,b_komp,fak_komp)
+subroutine kompb(nelec)
 
 !!!$     Unterprogramm zur Kompilation des Konstanten- bzw. Stromvektors 'b'
 !!!$     fuer Einheitsstrom.
@@ -18,31 +18,31 @@ subroutine kompb(nelec,b_komp,fak_komp)
 
 !!!$     EIN-/AUSGABEPARAMETER:
 !!$ Berechnete Potentialwerte (bzw. Loesungsverktor)
-  COMPLEX (prec),DIMENSION(*):: b_komp
+!  COMPLEX (prec),DIMENSION(*,*):: b_komp
 !!$ Skalirerungsfaktor
-  REAL (prec),DIMENSION(*)  :: fak_komp
+!  REAL (prec),DIMENSION(*)  :: fak_komp
 
 !!!$     Aktuelle Elektrodennummer
-  INTEGER (KIND = 4) ::     nelec
+  INTEGER  nelec
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i
+  INTEGER  i
 
 !!!$.....................................................................
 
 !!!$     Konstantenvektor auf Null setzen
 !!$  b_komp = 0.
   do i=1,sanz
-     b_komp(i) = CMPLX(0d0)
+     b(i,1) = CMPLX(0d0)
   end do
 
 !!!$     Aufbau des Konstanten- bzw. Stromvektors mit Skalierung
 !!!$     ( A * x + b = 0 )
-  b_komp(enr(nelec)) = CMPLX(-fak_komp(enr(nelec)))
+  b(enr(nelec),1) = CMPLX(-1_prec)
 
 !!!$     akc BAW-Tank
 !!!$     ak        b_komp(211) = CMPLX(fak(211))
@@ -63,7 +63,7 @@ subroutine kompb(nelec,b_komp,fak_komp)
 !!!$     akc Adrian (Tank)
 !!!$     ak        b_komp(1660) = CMPLX(fak(1660))
 
-  if (lsink) b_komp(nsink) = CMPLX(fak_komp(nsink))
+  if (lsink) b(nsink,1) = CMPLX(1_prec)
 
   return
 end subroutine kompb

@@ -10,7 +10,7 @@ integer,parameter,public :: prec = Kind(0D0)
 ! COMPLEX CASE
 
 ! Gesamtsteifigkeitsmatrix
-  COMPLEX (prec), DIMENSION(:), ALLOCATABLE, PUBLIC     :: a
+  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a
   COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a_mat,b_mat,&
       a_mat_band,a_mat_band_elec
    

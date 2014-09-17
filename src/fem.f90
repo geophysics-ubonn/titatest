@@ -195,8 +195,8 @@ program fem
 
   ! print fictious sink node and position
   if (lsink) write(6,'(A,I6,A,F10.2,A,F10.2,A)')&
-        ' fictious sink at node',nsink,', x=',sx(snr(nsink)),&
-        'm, y=',sy(snr(nsink)),'m'
+       ' fictious sink at node',nsink,', x=',sx(snr(nsink)),&
+       'm, y=',sy(snr(nsink)),'m'
   ! pre-assemble stiffness matrices from area elements
   ! in case of mixed boundaries (ntyp.eq.8), compute beta value 
   call precal()
@@ -207,49 +207,50 @@ program fem
   if (.not.allocated(hpot)) allocate(hpot(sanz,eanz))
   if (.not.allocated(kpot)) allocate(kpot(sanz,eanz,kwnanz))
   if (.not.allocated(b)) allocate(b(sanz,1))
-  if (.not.allocated(a_mat_band)) allocate(a_mat_band(2*mb+1,sanz))
+  if (.not.allocated(a)) allocate(a(2*mb+1,sanz))
+  !  if (.not.allocated(a_mat_band)) allocate(a_mat_band(2*mb+1,sanz))
   if (.not.allocated(x)) allocate(x(sanz,1))
-  if (.not.allocated(a_mat_band_elec)) allocate(a_mat_band_elec(mb+1,sanz))
+  !  if (.not.allocated(a_mat_band_elec)) allocate(a_mat_band_elec(mb+1,sanz))
   if (.not.allocated(pot))  allocate(pot(sanz))
   if (.not.allocated(pota))  allocate(pota(sanz))
   if (.not.allocated(fak))  allocate(fak(sanz))
-  count = 0
   print*
   print*,'finite element modelling'
   ! compute potentials
   do k=1,kwnanz
-     count = count + 1
      if (swrtr.eq.0) then
         write(*,'(a)')' computing potentials'
      else
         write (*,'(a,I4,a,I4)',ADVANCE='no')&
-             achar(13)//' computing potentials : wavenumber',count,' of',kwnanz
+             achar(13)//' computing potentials : wavenumber',k,' of',kwnanz
      end if
-     call pre_comp_ab(k,a_mat_band)
      do l=1,eanz
-        if (lsr) call potana(l,k,pota)
-        b = cmplx(0.)
-        a_mat_band_elec = a_mat_band
-        b(enr(l),1) = cmplx(1.)
-        if (lsink) b(nsink,1) = cmplx(-1.)
-        call comp_ab(k,a_mat_band_elec,l,b)
-        ! incorporate special boundary conditions
-        ! if (lrandb) call randb(a,b)
-        ! if (lrandb2) call randb2(a,b)
+        if (lsr.or.lbeta.or.l.eq.1) then
+!   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+           if (lsr) call potana(l,k,pota)
 
-        ! General Band matrix, expert solver
-        call solve_zgbsvx(a_mat_band_elec,x,b)
+!   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+           call kompab(l,k)
+           if (errnr.ne.0) goto 999
 
-        ! General Positive Band matrix, expert solver Cholesky
-        ! call solve_zpbsvx(a_mat_band_elec,x,b)
-        ! save potentials for each wavenumber (if swrtr.eq.true.) for 
-        ! Fourier back-transform.
-        ! add analytical potentials (if available)
+!   Ggf. Randbedingung beruecksichtigen
+           if (lrandb) call randb()
+           if (lrandb2) call randb2()
+
+        else
+!   Stromvektor modifizieren
+           call kompb(l)
+        end if
+
+!   Gleichungssystem loesen
+       IF (.NOT.lana) call solve_zgbsvx(a,x,b)
+!   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
+!   analytische Loesung addieren
         do j=1,sanz
            if (lana) then
               kpot(j,l,k) = pota(j)
            else
-              kpot(j,l,k) = x(j,1)
+              kpot(j,l,k) = x(j,1) !* dcmplx(fak(j))
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            end if
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
@@ -258,7 +259,6 @@ program fem
   end do
   print*,''
   ! inverse Fourier transform
-  print*,'inverse Fourier transform'
   if (swrtr.eq.1) call rtrafo()
   print*
   print*,'writing output files'
@@ -322,7 +322,7 @@ program fem
      deallocate(sens)
   end if
 
-  deallocate(kpot,pot,pota,fak,a_mat_band,a_mat_band_elec)
+  deallocate(kpot,pot,pota,fak,a)
 
   ! run program again
   if (lagain) goto 5
