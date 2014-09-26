@@ -78,7 +78,7 @@ subroutine wsens(kanal,datei)
 !!!$     Summe der Sensitivitaeten berechnen und ausgeben
 !!!$     (Betrag und Phase (in mrad))
 !!!$     ak            sensmax = 0d0
-     summe   = CMPLX(0d0)
+     summe   = dCMPLX(0d0)
 
      do j=1,manz
 !!!$     ak                sensmax = MAX1(sensmax,ABS(sens(i,j)))

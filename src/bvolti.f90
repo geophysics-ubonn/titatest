@@ -56,15 +56,15 @@ SUBROUTINE bvolti()
         dum4dc = real(min0(elec3,1)*min0(elec1,1)) &
              *hpotdc(enr(max0(elec3,1)),max0(elec1,1))
 
-        volt(i) = CMPLX((dum1dc-dum2dc) - (dum3dc-dum4dc))
+        volt(i) = dCMPLX((dum1dc-dum2dc) - (dum3dc-dum4dc))
      ELSE
-        dum1 = CMPLX(min0(elec4,1)*min0(elec2,1)) &
+        dum1 = dCMPLX(min0(elec4,1)*min0(elec2,1)) &
              *hpot(enr(max0(elec4,1)),max0(elec2,1))
-        dum2 = CMPLX(min0(elec4,1)*min0(elec1,1)) &
+        dum2 = dCMPLX(min0(elec4,1)*min0(elec1,1)) &
              *hpot(enr(max0(elec4,1)),max0(elec1,1))
-        dum3 = CMPLX(min0(elec3,1)*min0(elec2,1)) &
+        dum3 = dCMPLX(min0(elec3,1)*min0(elec2,1)) &
              *hpot(enr(max0(elec3,1)),max0(elec2,1))
-        dum4 = CMPLX(min0(elec3,1)*min0(elec1,1)) &
+        dum4 = dCMPLX(min0(elec3,1)*min0(elec1,1)) &
              *hpot(enr(max0(elec3,1)),max0(elec1,1))
 
         volt(i) = (dum1-dum2) - (dum3-dum4)
@@ -76,7 +76,6 @@ SUBROUTINE bvolti()
         errnr = 82
         GOTO 1000
      END IF
-
 !!!$     Werte logarithmieren
      sigmaa(i) = -LOG(volt(i))
   END DO

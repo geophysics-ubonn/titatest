@@ -91,7 +91,7 @@ subroutine comp_ab(ki,my_a_mat_band,nelec,my_b)
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki) 
                     dum2 = sigma(rnr(rel))
-                    value = cmplx(dum)*dum2
+                    value = dcmplx(dum)*dum2
                     ! band matrix index (see above)
                     call assign_zgbsvx(my_a_mat_band,nnp,nzp,mb,sanz,value)
 !                    call assign_zpbsvx(my_a_mat_band,nnp,nzp,mb,sanz,value)

@@ -68,7 +68,7 @@ SUBROUTINE bsensi(tictoc)
 
   IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
-  sens = CMPLX(0d0)
+  sens = dcmplx(0d0)
 
   icount = 0
   !$OMP PARALLEL DEFAULT (none) &
@@ -98,7 +98,7 @@ SUBROUTINE bsensi(tictoc)
 
 !!!$     Beitraege zur Superposition auf Null setzen
      DO j=1,4
-        sup(j) = CMPLX(0d0)
+        sup(j) = dcmplx(0d0)
      END DO
 
      DO ityp=1,typanz
@@ -115,7 +115,7 @@ SUBROUTINE bsensi(tictoc)
 
 !!!$     SENSITIVITAETEN BERECHNEN
            DO k=1,kwnanz
-              hsens(k) = CMPLX(0d0)
+              hsens(k) = dcmplx(0d0)
 
 !!!$     Knoten des aktuellen Elements hochzaehlen
 imn = 0
@@ -142,7 +142,7 @@ imn = imn+1
 !!!$     -> mittels Compiler-Einstellung auf Null setzen!
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
-                    hsens(k) = hsens(k) + CMPLX(elbg(iel,imn,k))* dum
+                    hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k))* dum
 
                  END DO
               END DO
@@ -154,13 +154,13 @@ imn = imn+1
 
            ELSE
 
-              dum = CMPLX(0d0)
+              dum = dcmplx(0d0)
 
               DO k=1,kwnanz
-                 dum = dum + hsens(k)*CMPLX(kwnwi(k))
+                 dum = dum + hsens(k)*dcmplx(kwnwi(k))
               END DO
 
-              dum = dum / CMPLX(pi)
+              dum = dum / dcmplx(pi)
 
            END IF
 !!!$     hier koennte auch eine mittelung passieren
@@ -171,7 +171,6 @@ imn = imn+1
   !$OMP END PARALLEL
   fetxt = 'bsensi::'
   IF (tictoc) CALL toc(c1,fetxt)
-
   DEALLOCATE (hsens)
 
 END SUBROUTINE bsensi

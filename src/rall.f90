@@ -765,8 +765,8 @@ use alloci, only: prec
      IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
 !!!$     nur falls jede Messkonfiguration nur einmal!
 !!!$     j0     = j
-        d0(i)  = CMPLX(-LOG(dum(j)),0d0)
-        fm0(i) = CMPLX(-LOG(dum2(j)),0d0)
+        d0(i)  = dCMPLX(-LOG(dum(j)),0d0)
+        fm0(i) = dCMPLX(-LOG(dum2(j)),0d0)
      ELSE IF (j.LT.nanz0) THEN
         GOTO 20
      ELSE
@@ -790,7 +790,7 @@ use alloci, only: prec
      READ(kanal,*)
      DO j=1,elanz
         READ(kanal,*) dum3,dum3,dum3
-        m0(mnr(j)) = CMPLX(-LOG(1d1)*dum3,0d0)
+        m0(mnr(j)) = dCMPLX(-LOG(1d1)*dum3,0d0)
      END DO
      CLOSE(kanal)
      DEALLOCATE (dum,dum2,idum,ic,ip)

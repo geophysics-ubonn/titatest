@@ -47,17 +47,17 @@ subroutine scalab(a_scal,b_scal,fak_scal)
         goto 1000
      end if
 
-     a_scal(idi) = a_scal(idi) / CMPLX(dum)
+     a_scal(idi) = a_scal(idi) / dCMPLX(dum)
      fak_scal(i) = 1d0 / SQRT(dum)
-     b_scal(i)   = b_scal(i) * CMPLX(fak_scal(i))
+     b_scal(i)   = b_scal(i) * dCMPLX(fak_scal(i))
 
      if (i.eq.1) CYCLE
 
      i0 = i*mb
-     ja = max0(1,i-mb)
+     ja = max(1,i-mb)
 
      do j=ja,i-1
-        a_scal(i0+j) = a_scal(i0+j) * CMPLX(fak_scal(i)*fak_scal(j))
+        a_scal(i0+j) = a_scal(i0+j) * dCMPLX(fak_scal(i)*fak_scal(j))
      END do
 
   END do

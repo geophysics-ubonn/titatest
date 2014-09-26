@@ -5,14 +5,12 @@ MODULE alloci
 
 ! Set precision (dp=real64 or qp=real128)
 use iso_fortran_env
-integer,parameter,public :: prec = Kind(0D0)
+integer,parameter,public :: prec = Kind(0d0)
 
 ! COMPLEX CASE
 
 ! Gesamtsteifigkeitsmatrix
   COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a
-  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a_mat,b_mat,&
-      a_mat_band,a_mat_band_elec
    
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen
 !!$(werden bei der Berechnung der Sensitivitaeten benoetigt)
@@ -47,4 +45,6 @@ integer,parameter,public :: prec = Kind(0D0)
   REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: cov_m
     ! potential solution vector
   complex(kind(0d0)),dimension(:,:),allocatable :: x
+
+logical :: lverbose
 END MODULE alloci

@@ -40,7 +40,7 @@ subroutine bsens()
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  ::     i,j,k
+  INTEGER (KIND = 4)  ::     i,k
 
 !!!$     Hilfsfeld
   COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: hsens
@@ -97,7 +97,7 @@ subroutine bsens()
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     sup = CMPLX(0d0)
+     sup = dCMPLX(0d0)
 
      do ityp=1,typanz
         ntyp = typ(ityp)
@@ -113,7 +113,7 @@ subroutine bsens()
 
 !!!$     SENSITIVITAETEN BERECHNEN
            do k=1,kwnanz
-              hsens(k) = CMPLX(0d0)
+              hsens(k) = dCMPLX(0d0)
        imn = 0
 !!!$     Knoten des aktuellen Elements hochzaehlen
               do mi=1,nkel
@@ -139,7 +139,7 @@ subroutine bsens()
 !!!$     -> mittels Compiler-Einstellung auf Null setzen!
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
-                    hsens(k) = hsens(k) + CMPLX(elbg(iel,imn,k)) * dum
+                    hsens(k) = hsens(k) + dCMPLX(elbg(iel,imn,k)) * dum
                  end do
               end do
            end do
@@ -147,17 +147,17 @@ subroutine bsens()
 !!!$     GGF. RUECKTRANSFORMATION
            if (swrtr.eq.0) then
 
-              dum = hsens(1) * CMPLX(strom(i))
+              dum = hsens(1) * dCMPLX(strom(i))
 
            else
 
-              dum = CMPLX(0d0)
+              dum = dCMPLX(0d0)
 
               do k=1,kwnanz
-                 dum = dum + hsens(k)*CMPLX(kwnwi(k))
+                 dum = dum + hsens(k)*dCMPLX(kwnwi(k))
               end do
 
-              dum = dum * CMPLX(strom(i)/pi)
+              dum = dum * dCMPLX(strom(i)/pi)
 
            end if
 

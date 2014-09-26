@@ -35,35 +35,31 @@ subroutine kompb(nelec)
 !!!$.....................................................................
 
 !!!$     Konstantenvektor auf Null setzen
-!!$  b_komp = 0.
-  do i=1,sanz
-     b(i,1) = CMPLX(0d0)
-  end do
-
+  b = 0.
 !!!$     Aufbau des Konstanten- bzw. Stromvektors mit Skalierung
 !!!$     ( A * x + b = 0 )
-  b(enr(nelec),1) = CMPLX(-1_prec)
+  b(enr(nelec),1) = dCMPLX(-1_prec)
 
 !!!$     akc BAW-Tank
-!!!$     ak        b_komp(211) = CMPLX(fak(211))
+!!!$     ak        b_komp(211) = dCMPLX(fak(211))
 !!!$     akc Model EGS2003
-!!!$     ak        b_komp(1683) = CMPLX(fak(1683))
+!!!$     ak        b_komp(1683) = dCMPLX(fak(1683))
 !!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        b_komp(129) = CMPLX(fak(129))
+!!!$     ak        b_komp(129) = dCMPLX(fak(129))
 !!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        b_komp(497) = CMPLX(fak(497))
+!!!$     ak        b_komp(497) = dCMPLX(fak(497))
 !!!$     akc Simple Tucson Model
-!!!$     ak        b_komp(431) = CMPLX(fak(431))
+!!!$     ak        b_komp(431) = dCMPLX(fak(431))
 !!!$     akc TU Berlin Mesokosmos
-!!!$     ak        b_komp(201) = CMPLX(fak(201))
+!!!$     ak        b_komp(201) = dCMPLX(fak(201))
 !!!$     akc Andy
-!!!$     ak        b_komp(2508) = CMPLX(fak(2508))
+!!!$     ak        b_komp(2508) = dCMPLX(fak(2508))
 !!!$     akc Sandra (ele?_anom)
-!!!$     ak        b_komp(497) = CMPLX(fak(497))
+!!!$     ak        b_komp(497) = dCMPLX(fak(497))
 !!!$     akc Adrian (Tank)
-!!!$     ak        b_komp(1660) = CMPLX(fak(1660))
+!!!$     ak        b_komp(1660) = dCMPLX(fak(1660))
 
-  if (lsink) b(nsink,1) = CMPLX(1_prec)
+  if (lsink) b(nsink,1) = dCMPLX(1_prec)
 
   return
 end subroutine kompb

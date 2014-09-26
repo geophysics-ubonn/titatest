@@ -3,9 +3,9 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS =	-pg -fbounds-check -llapack -lblas #-fopenmp #\
-		 #-std=f2008ts -fall-intrinsics \
-		 #-Wall -fopenmp
+AM_FC_FLAGS =	-pg -fbounds-check -llapack -lblas \
+		 -std=f2008ts -fall-intrinsics \
+		 -Wall -pedantic 
 ## Only un-comment for debug purpose
 # TODO : figure out how to switch
 AM_DBG_FLAGS = -pg -fbounds-check -llapack -Wuninitialized -O -ftrapv -pedantic \

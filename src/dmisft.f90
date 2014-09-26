@@ -38,7 +38,6 @@ SUBROUTINE dmisft(lsetup)
 
 !!!$.....................................................................
 
-!!!$     einfach mal oeffnen falls Ausgabe
   errnr = 1
   fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
   OPEN(fpeps,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
@@ -47,7 +46,7 @@ SUBROUTINE dmisft(lsetup)
   errnr = 4
 
 11 FORMAT (I6,G12.3,1x,F10.6,2x,I3,2X,4(1X,G15.7))
-
+    
   IF ((llam.AND..NOT.lstep).OR.lsetup) THEN
      IF (lfpi) THEN
         WRITE(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
@@ -94,6 +93,7 @@ SUBROUTINE dmisft(lsetup)
      IF (lfpi) THEN
         psi(i) = SQRT(wmatd(i))*ABS(aimag(cdum))
      ELSE
+!print*,'PSIMAKE',wmatd(i),cdum,cdat,csig,wdlok(i)
         psi(i) = SQRT(wmatd(i))*ABS(cdum)
      END IF
 
@@ -113,7 +113,7 @@ SUBROUTINE dmisft(lsetup)
 
   END DO
 
-!!!$     Ggf. Fehlermeldung
+! error message: all data excluded
   IF (idum.EQ.0) THEN
      fetxt = ' '
      errnr = 99
@@ -122,7 +122,9 @@ SUBROUTINE dmisft(lsetup)
 
   npol   = nanz-idum
   rmssum = nrmsd
+!  print*,'NRMSSSSS',nrmsd,idum,wdlok,psi
   nrmsd  = SQRT(nrmsd /REAL(idum))
+
   betrms = SQRT(betrms/REAL(idum))
   pharms = SQRT(pharms/REAL(idum))
 
@@ -239,7 +241,7 @@ use alloci, only: prec
   imdat = aimag(dati)
   resig = REAL(sigi)
   imsig = aimag(sigi)
-
+!  print*,'CHKPOL',redat,imdat,resig,imsig,sigi
 !!!$     Phasenbereich checken
   IF (imdat.GT.pi/2d0) THEN
      idat = -1
@@ -283,8 +285,8 @@ use alloci, only: prec
   END IF
 
 !!!$     'cdat' und 'csig' speichern
-  cdat = CMPLX(redat,imdat)
-  csig = CMPLX(resig,imsig)
+  cdat = dCMPLX(redat,imdat)
+  csig = dCMPLX(resig,imsig)
 
   RETURN
 END SUBROUTINE chkpo2

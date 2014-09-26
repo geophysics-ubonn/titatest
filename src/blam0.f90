@@ -125,7 +125,7 @@ call system_clock(tic,rate)
      lammax = 0.
      wdah = conjg( transpose( sens ) )
      do i = 1,nanz
-        wda(i,:) = cmplx(wmatd(i)*real(wdfak(i)))*sens(i,:)
+        wda(i,:) = dcmplx(wmatd(i)*real(wdfak(i)))*sens(i,:)
      end do
      call zgemm('n', 'n', manz, manz, nanz, 1D0, wdah, manz, wda, nanz, 0D0,&
         awdwda,manz)

@@ -51,11 +51,11 @@ program fem
   logical               lana
 
   ! index variables
-  integer               j, k, l, c1, info, count
+  integer               j, k, l, c1
 
   ! error message variable
   character(len = 256)  ftext
-  integer               getpid, pid, maxthreads, mythreads
+  integer               getpid, pid 
 
   ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -243,14 +243,14 @@ program fem
         end if
 
 !   Gleichungssystem loesen
-       IF (.NOT.lana) call solve_zgbsvx(a,x,b)
+       IF (.NOT.lana) call solve_zgbsvx(a,x,-b)
 !   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
 !   analytische Loesung addieren
         do j=1,sanz
            if (lana) then
               kpot(j,l,k) = pota(j)
            else
-              kpot(j,l,k) = x(j,1) !* dcmplx(fak(j))
+              kpot(j,l,k) = x(j,1) 
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
            end if
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)

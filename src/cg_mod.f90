@@ -12,7 +12,7 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : sens,sensdc,smatm,prec
+  USE alloci , ONLY : sens,sensdc,smatm,prec,lverbose
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
@@ -83,6 +83,7 @@ CONTAINS
        CALL des_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
     ELSE
+    if (lverbose) print*,'calling cjggra'
        CALL con_cjgmod (3,fetxt,errnr)
        IF (errnr /= 0) RETURN
        CALL cjggra
@@ -120,7 +121,7 @@ CONTAINS
        bvecdc = REAL(bvec)
     END IF
 
-    dpar = CMPLX(0D0)
+    dpar = dcmplx(0D0)
     rvecdc = bvecdc
     pvecdc = 0D0
 
@@ -169,7 +170,7 @@ CONTAINS
 
        alpha = dr/dr1
 
-       dpar = dpar + CMPLX(alpha) * CMPLX(pvecdc)
+       dpar = dpar + dcmplx(alpha) * dcmplx(pvecdc)
        rvecdc= rvecdc - alpha * bvecdc
 
 !!!$rm update speichern
@@ -450,9 +451,9 @@ CONTAINS
 !!!$....................................................................
 
 
-    dpar = CMPLX(0d0)
+    dpar = dcmplx(0d0)
     rvec = bvec
-    pvec = CMPLX(0d0)
+    pvec = dcmplx(0d0)
 
     fetxt = 'CG iteration'
 
@@ -462,7 +463,7 @@ CONTAINS
 
        dr = 0d0
        DO j=1,manz
-          dr = dr + REAL(CONJG(rvec(j)) * rvec(j))
+          dr = dr + REAL(dconjg(rvec(j)) * rvec(j))
        END DO
 
        IF (k.EQ.1) THEN
@@ -475,16 +476,15 @@ CONTAINS
 !!!$    ak!!!$Polak-Ribiere-Version
 !!$          beta = 0d0
 !!$          do j=1,manz
-!!$             beta = beta + CONJG(bvec(j))*rvec(j)
+!!$             beta = beta + dconjg(bvec(j))*rvec(j)
 !!$          end do
 !!$          beta = beta * -alpha/dr1
        END IF
-  IF (dr.LE.dr0) GOTO 10
+!  IF (dr.LE.dr0) GOTO 10
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
-       pvec = rvec + CMPLX(beta) * pvec
-
+       pvec = rvec + dcmplx(beta) * pvec
        CALL bap
 
        IF (ltri == 0) THEN
@@ -502,12 +502,12 @@ CONTAINS
        CALL bb
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + REAL(CONJG(pvec(j)) * bvec(j))
+          dr1 = dr1 + REAL(dconjg(pvec(j)) * bvec(j))
        END DO
 
        alpha = dr/dr1
-       dpar = dpar + CMPLX(alpha) * pvec
-       rvec = rvec - CMPLX(alpha) * bvec
+       dpar = dpar + dcmplx(alpha) * pvec
+       rvec = rvec - dcmplx(alpha) * bvec
 
        dr1 = dr
 
@@ -546,10 +546,10 @@ CONTAINS
     !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
     !$OMP DO
     DO i=1,nanz
-       ap(i) = CMPLX(0d0)
+       ap(i) = dcmplx(0d0)
 
        DO j=1,manz
-          ap(i) = ap(i) + pvec(j)*sens(i,j)*CMPLX(cgfac(j))
+          ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        END DO
     END DO
     !$OMP END PARALLEL
@@ -574,17 +574,17 @@ CONTAINS
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
     DO i=1,manz
-       cdum = CMPLX(0d0)
+       cdum = dcmplx(0d0)
 
        IF (i.GT.1) &
-            cdum = pvec(i-1)*CMPLX(smatm(i-1,2)*cgfac(i-1))
+            cdum = pvec(i-1)*dcmplx(smatm(i-1,2)*cgfac(i-1))
        IF (i.LT.manz) &
-            cdum = cdum + pvec(i+1)*CMPLX(smatm(i,2)*cgfac(i+1))
+            cdum = cdum + pvec(i+1)*dcmplx(smatm(i,2)*cgfac(i+1))
        IF (i.GT.nx) &
-            cdum = cdum + pvec(i-nx)*CMPLX(smatm(i-nx,3)*cgfac(i-nx))
+            cdum = cdum + pvec(i-nx)*dcmplx(smatm(i-nx,3)*cgfac(i-nx))
        IF (i.LT.manz-nx+1) &
-            cdum = cdum + pvec(i+nx)*CMPLX(smatm(i,3)*cgfac(i+nx))
-       bvec(i) = cdum + pvec(i)*CMPLX(smatm(i,1)*cgfac(i))
+            cdum = cdum + pvec(i+nx)*dcmplx(smatm(i,3)*cgfac(i+nx))
+       bvec(i) = cdum + pvec(i)*dcmplx(smatm(i,1)*cgfac(i))
     END DO
   END SUBROUTINE bp
 
@@ -610,14 +610,14 @@ CONTAINS
 !!!.....................................................................
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
-       cdum = CMPLX(0d0)
+       cdum = dcmplx(0d0)
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               CMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
+               dcmplx(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
-       bvec(i) = cdum + pvec(i) * CMPLX(smatm(i,smaxs+1)) * &
+       bvec(i) = cdum + pvec(i) * dcmplx(smatm(i,smaxs+1)) * &
             cgfac(i) ! + main diagonal
 
     END DO
@@ -643,9 +643,9 @@ CONTAINS
 !!!$....................................................................
 !!!$    coaa R^m * p  berechnen (skaliert)
 
-    bvec = pvec * CMPLX(cgfac * smatm(:,1))
+    bvec = pvec * dcmplx(cgfac * smatm(:,1))
 !!$    do j=1,manz
-!!$       bvec(i)=pvec(i)*CMPLX(cgfac(i))*CMPLX(smatm(i,1))
+!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*dcmplx(smatm(i,1))
 !!$    end do
 
   END SUBROUTINE bplma
@@ -676,10 +676,10 @@ CONTAINS
 !!!$    R^m * p  berechnen (skaliert)
 
     !$OMP WORKSHARE
-    bvec = MATMUL(CMPLX(smatm),pvec)
+    bvec = MATMUL(dcmplx(smatm),pvec)
     !$OMP END WORKSHARE
 
-    bvec = bvec * CMPLX(cgfac)
+    bvec = bvec * dcmplx(cgfac)
   END SUBROUTINE bpsto
 
   SUBROUTINE bpref()
@@ -708,9 +708,9 @@ CONTAINS
        IF (w_ref_re(i) <= EPSILON(w_ref_re(i)) .AND. &
             w_ref_im(i) <= EPSILON(w_ref_im(i))) CYCLE 
 !!$ scaling for real and aimaginary part separately       
-       cdum = CMPLX(REAL(pvec(i))*w_ref_re(i), aimag(pvec(i))*w_ref_re(i))
+       cdum = dcmplx(REAL(pvec(i))*w_ref_re(i), aimag(pvec(i))*w_ref_re(i))
 
-       bvec(i) = bvec(i) + cdum * CMPLX(lam_ref * cgfac(i))
+       bvec(i) = bvec(i) + cdum * dcmplx(lam_ref * cgfac(i))
 
 !!!!$! according to damping stuff..
     END DO
@@ -739,15 +739,15 @@ CONTAINS
     !$OMP DO
 
     DO j=1,manz
-       cdum = CMPLX(0d0)
+       cdum = dcmplx(0d0)
 
        DO i=1,nanz
-          cdum = cdum + CONJG(sens(i,j)) * &
-               CMPLX(wmatd(i)*REAL(wdfak(i)))*ap(i)
+          cdum = cdum + dconjg(sens(i,j)) * &
+               dcmplx(wmatd(i)*REAL(wdfak(i)))*ap(i)
        END DO
 
-       bvec(j) = cdum + CMPLX(lam)*bvec(j)
-       bvec(j) = bvec(j)*CMPLX(cgfac(j))
+       bvec(j) = cdum + dcmplx(lam)*bvec(j)
+       bvec(j) = bvec(j)*dcmplx(cgfac(j))
     END DO
 
     !$OMP END PARALLEL

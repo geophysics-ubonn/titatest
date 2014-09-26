@@ -74,44 +74,44 @@ CONTAINS
     rough = 0d0
 
     do i=1,manz
-       cdum = CMPLX(0d0)
+       cdum = dCMPLX(0d0)
 
 !!!$   diff+<
        if (.not.lprior) then
 !!!$   diff+>
           if (i.gt.1) &
-         cdum = CMPLX(smatm(i-1,2))*par(i-1)
+         cdum = dCMPLX(smatm(i-1,2))*par(i-1)
           if (i.lt.manz) &
-         cdum = cdum + CMPLX(smatm(i,2))*par(i+1)
+         cdum = cdum + dCMPLX(smatm(i,2))*par(i+1)
           if (i.gt.nx) &
-               cdum = cdum + CMPLX(smatm(i-nx,3))*par(i-nx)
+               cdum = cdum + dCMPLX(smatm(i-nx,3))*par(i-nx)
           if (i.lt.manz-nx+1) &
-         cdum = cdum + CMPLX(smatm(i,3))*par(i+nx)
+         cdum = cdum + dCMPLX(smatm(i,3))*par(i+nx)
 
-          cdum = cdum + CMPLX(smatm(i,1))*par(i)
+          cdum = cdum + dCMPLX(smatm(i,1))*par(i)
 
           if (lfpi) then
              rough = rough + aimag(cdum)*aimag(par(i))
           else
-             rough = rough + REAL(cdum*CONJG(par(i)))
+             rough = rough + dble(cdum*dCONJG(par(i)))
           end if
 !!!$   diff+<
        else
           if (i.gt.1) &
-               cdum = CMPLX(smatm(i-1,2)) * (par(i-1) - m0(i-1))
+               cdum = dCMPLX(smatm(i-1,2)) * (par(i-1) - m0(i-1))
           if (i.lt.manz) &
-               cdum = cdum + CMPLX(smatm(i,2)) * (par(i+1) - m0(i+1))
+               cdum = cdum + dCMPLX(smatm(i,2)) * (par(i+1) - m0(i+1))
           if (i.gt.nx) &
-               cdum = cdum + CMPLX(smatm(i-nx,3)) * (par(i-nx) - m0(i-nx))
+               cdum = cdum + dCMPLX(smatm(i-nx,3)) * (par(i-nx) - m0(i-nx))
           if (i.lt.manz-nx+1) &
-               cdum = cdum + CMPLX(smatm(i,3)) * (par(i+nx) - m0(i+nx))
+               cdum = cdum + dCMPLX(smatm(i,3)) * (par(i+nx) - m0(i+nx))
           
-          cdum = cdum + CMPLX(smatm(i,1))*(par(i)-m0(i))
+          cdum = cdum + dCMPLX(smatm(i,1))*(par(i)-m0(i))
           
           if (lfpi) then
              rough = rough + aimag(cdum) * aimag(par(i) - m0(i))
           else
-             rough = rough + REAL(cdum*CONJG(par(i) - m0(i)))
+             rough = rough + dble(cdum*dCONJG(par(i) - m0(i)))
           end if
        end if
 !!!$   diff+>
@@ -139,31 +139,31 @@ CONTAINS
     rough = 0d0
     IF (.NOT. lprior) THEN
        DO i=1,manz
-          cdum = CMPLX(0d0)
+          cdum = dCMPLX(0d0)
           DO j=1,smaxs
              IF (nachbar(i,j) /= 0) cdum = cdum + &
-                  CMPLX(smatm(i,j)) * par(nachbar(i,j))
+                  dCMPLX(smatm(i,j)) * par(nachbar(i,j))
           END DO
-          cdum = cdum + CMPLX(smatm(i,smaxs+1)) * par(i)
+          cdum = cdum + dCMPLX(smatm(i,smaxs+1)) * par(i)
           IF (lfpi) THEN
              rough = rough + aimag(cdum) * aimag(par(i))
           ELSE
-             rough = rough + REAL(cdum * CONJG(par(i)))
+             rough = rough + dble(cdum * dCONJG(par(i)))
           END IF
        END DO
     ELSE 
        DO i=1,manz
-          cdum = CMPLX(0d0)
+          cdum = dCMPLX(0d0)
           DO j=1,smaxs
              IF (nachbar(i,j) /= 0) cdum = cdum + &
-                  CMPLX(smatm(i,j)) * &
+                  dCMPLX(smatm(i,j)) * &
                   (par(nachbar(i,j)) - m0(nachbar(i,j)))
           END DO
-          cdum = cdum + CMPLX(smatm(i,smaxs+1)) * (par(i) - m0(i))
+          cdum = cdum + dCMPLX(smatm(i,smaxs+1)) * (par(i) - m0(i))
           IF (lfpi) THEN
              rough = rough + aimag(cdum) * aimag(par(i) - m0(i))
           ELSE
-             rough = rough + REAL(cdum * CONJG(par(i) - m0(i)))
+             rough = rough + dble(cdum * dCONJG(par(i) - m0(i)))
           END IF
        END DO
     END IF
@@ -194,7 +194,7 @@ CONTAINS
     DO j=1,manz
        IF (.NOT. lprior) THEN
 
-          cdum = CMPLX(smatm(j,1)) * par(j)
+          cdum = dCMPLX(smatm(j,1)) * par(j)
 
           IF (lfpi) THEN
 
@@ -202,13 +202,13 @@ CONTAINS
 
           ELSE
 
-             rough = REAL(cdum) * SUM(CONJG(par))
+             rough = dble(cdum) * SUM(dCONJG(par))
 
           END IF
 
        ELSE
 
-          cdum = CMPLX(smatm(j,1)) * (par(j)-m0(j))
+          cdum = dCMPLX(smatm(j,1)) * (par(j)-m0(j))
 
           IF (lfpi) THEN
 
@@ -217,7 +217,7 @@ CONTAINS
              END DO
           ELSE
              DO i=1,manz
-                rough = rough + REAL(cdum*CONJG(par(i)-m0(i)))
+                rough = rough + dble(cdum*dCONJG(par(i)-m0(i)))
              END DO
           END IF
        END IF
@@ -257,25 +257,25 @@ CONTAINS
     IF (.NOT. lprior) THEN
 
        !$OMP WORKSHARE
-       parh = MATMUL(par,CMPLX(smatm))
+       parh = MATMUL(par,dCMPLX(smatm))
        !$OMP END WORKSHARE
 
        IF (lfpi) THEN
           rough = DOT_PRODUCT(aimag(parh),aimag(par))
        ELSE
-          rough = DOT_PRODUCT(REAL(parh),CONJG(par))
+          rough = DOT_PRODUCT(dble(parh),dCONJG(par))
        END IF
 
     ELSE
 
        !$OMP WORKSHARE
-       parh = MATMUL((par - m0),CMPLX(smatm))
+       parh = MATMUL((par - m0),dCMPLX(smatm))
        !$OMP END WORKSHARE
 
        IF (lfpi) THEN
           rough = DOT_PRODUCT(aimag(parh),aimag(par - m0))
        ELSE
-          rough = DOT_PRODUCT(REAL(parh),CONJG(par - m0))
+          rough = DOT_PRODUCT(dble(parh),dCONJG(par - m0))
        END IF
 
     END IF

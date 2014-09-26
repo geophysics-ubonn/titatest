@@ -159,13 +159,13 @@ SUBROUTINE rsigma(kanal,datei)
                  WRITE(ifp2,'(G14.4)')pha
               END IF
            END IF
-           sigma(i) = CMPLX(COS(pha)/bet,-SIN(pha)/bet)
+           sigma(i) = dCMPLX(COS(pha)/bet,-SIN(pha)/bet)
 !!!$    hier koennte mittelung passieren
            m0(mnr(i)) = LOG(sigma(i))
         ELSE                
            !     or let it stay at zero and take background cond
-           sigma(i) = CMPLX( COS(pha0/1d3)/bet0 , -SIN(pha0/1d3)/bet0 )
-           m0(mnr(i)) = CMPLX(0d0)
+           sigma(i) = dCMPLX( COS(pha0/1d3)/bet0 , -SIN(pha0/1d3)/bet0 )
+           m0(mnr(i)) = dCMPLX(0d0)
         END IF
 
      ELSE
@@ -178,7 +178,7 @@ SUBROUTINE rsigma(kanal,datei)
         END IF
 
 !!!$     Komplexe Leitfaehigkeit bestimmen
-        sigma(i) = CMPLX(COS(pha)/bet,-SIN(pha)/bet)
+        sigma(i) = dCMPLX(COS(pha)/bet,-SIN(pha)/bet)
 
      END IF
 
@@ -194,7 +194,7 @@ SUBROUTINE rsigma(kanal,datei)
 !!!$              = - (\ln(|\rho|)+i\phi(\rho)
 !!!$ for \phi(z) = Im(z) / Re(z), z\inC
 
-        m_ref(mnr(i)) = -CMPLX(LOG(bet_ref),pha_ref)
+        m_ref(mnr(i)) = -dCMPLX(LOG(bet_ref),pha_ref)
         IF (w_ref_im(mnr(i)) > EPSILON(eps_p)) THEN
            w_ref_im(mnr(i)) = 1d0/w_ref_im(mnr(i))
         ELSE ! force zero
@@ -204,7 +204,7 @@ SUBROUTINE rsigma(kanal,datei)
         ind_ref_grad(i) = set_ind_ref_grad(i)
 
      ELSE
-        m_ref(mnr(i)) = CMPLX(0d0)
+        m_ref(mnr(i)) = dCMPLX(0d0)
 
      END IF
 !!!$ << RM ref model regu

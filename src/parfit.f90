@@ -182,8 +182,9 @@ use alloci, only: prec
   end if
 
 !!!$     Genzen einhalten (wegen Möglichkeit der linearen "Extrapolation")
-  step = int(MAX(smin,step))
-  step = int(MIN(c,step))
-
+!print*,'PAAAAAAAvv',step,smin,c
+  step = dmax1(smin,step)
+  step = dmin1(c,step)
+!print*,'PAAAAAAAnn',step,smin,c
   return
 end subroutine parfit

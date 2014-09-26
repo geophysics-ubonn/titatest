@@ -63,7 +63,7 @@ subroutine potana(l,k,my_pota)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
      potmax  = (MAX(potmax,dum))
-     my_pota(j) = CMPLX(dum)
+     my_pota(j) = dCMPLX(dum)
   end do
 
   do j=idum+1,sanz
@@ -77,16 +77,16 @@ subroutine potana(l,k,my_pota)
 
      dum     = bessk0(rm*kwn(k)) + bessk0(rp*kwn(k))
      potmax  = (MAX(potmax,dum))
-     my_pota(j) = CMPLX(dum)
+     my_pota(j) = dCMPLX(dum)
   end do
 
 !!!$     Endlichen Wert fuer Singularitaet vorgeben (beeinflusst nur
 !!!$     berechnete Potentialwerte in direkter Umgebung des Stromknotens !)
 !!!$     ak
-  my_pota(idum) = CMPLX(5d0*potmax)
+  my_pota(idum) = dCMPLX(5d0*potmax)
 
 !!!$     Potentialwerte skalieren (fuer Einheitsstrom !)
-  dum2 = CMPLX(5d-1/pi) / sigma0
+  dum2 = dCMPLX(5d-1/pi) / sigma0
 
   my_pota = my_pota * dum2
 end subroutine potana

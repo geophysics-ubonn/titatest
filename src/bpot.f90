@@ -62,11 +62,11 @@ subroutine bpot(kanal,datei)
 !!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
 !!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
         if (elec1.eq.0) then
-           pot(j) = hpot(j,elec2) * CMPLX(strom(i))
+           pot(j) = hpot(j,elec2) * dCMPLX(strom(i))
         else if (elec2.eq.0) then
-           pot(j) = -hpot(j,elec1) * CMPLX(strom(i))
+           pot(j) = -hpot(j,elec1) * dCMPLX(strom(i))
         else
-           pot(j) = (hpot(j,elec2)-hpot(j,elec1)) * CMPLX(strom(i))
+           pot(j) = (hpot(j,elec2)-hpot(j,elec1)) * dCMPLX(strom(i))
         end if
      end do
 

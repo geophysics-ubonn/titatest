@@ -47,32 +47,32 @@ use alloci, only: prec
      rwert  = rwd(ir)
      my_b(k)   = -rwert
      idk    = k*m1
-     my_a(idk) = CMPLX(1d0)
+     my_a(idk) = dCMPLX(1d0)
 
      IF (k /= 1) THEN
 
-        ia = max0(1,mb+2-k)
+        ia = max(1,mb+2-k)
 
         do i=ia,mb
            j  = k+i-m1
            ki = idk+i-m1
 
            my_b(j)  = my_b(j) + rwert * my_a(ki)
-           my_a(ki) = CMPLX(0d0)
+           my_a(ki) = dCMPLX(0d0)
 
         END do
      END IF
 
      if (k.eq.sanz) CYCLE
 
-     ia = max0(1,k-sanz+m1)
+     ia = max(1,k-sanz+m1)
 
      do i=ia,mb
         j  = k-i+m1
         ji = (j-1)*m1+i
 
         my_b(j)  = my_b(j) + rwert * my_a(ji)
-        my_a(ji) = CMPLX(0d0)
+        my_a(ji) = dCMPLX(0d0)
 
      END do
 

@@ -8,6 +8,7 @@ subroutine assign_zpbsvx(ab,i,j,kd,n,value)
 !          is stored in the j-th column of the array AB as follows:
 !          if UPLO = 'U', AB(KD+1+i-j,j) = A(i,j) for max(1,j-KD)<=i<=j;
 !          if UPLO = 'L', AB(1+i-j,j)    = A(i,j) for j<=i<=min(N,j+KD).
+use alloci, only: prec
 complex(kind(0d0)),dimension(kd+1,n),intent(inout) :: ab
 
 integer :: i,j,ku,kl,n,index_i

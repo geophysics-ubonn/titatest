@@ -78,7 +78,7 @@ use alloci, only: prec
      if (.not.ldiff.AND..NOT.lprior) then
 !!!$  if (.not.ldiff) then
 !!!$     diff+>
-        dum = CMPLX(1d0)/sigma(i)
+        dum = dCMPLX(1d0)/sigma(i)
 !!!$ak   write(kanal,*,err=1000) real(espx(i)),real(espy(i)),&
 !!!$ak         real(ABS(dum))
         write(kanal,*,err=1000) real(espx(i)),&
@@ -87,8 +87,8 @@ use alloci, only: prec
 !!!$ro      real(ABS(dum))
 !!!$     diff+<
      ELSE IF (lprior) THEN
-        dum3 = ABS(CMPLX(1d0)/sigma(i))
-        dum2 = ABS(CMPLX(1d0)/EXP(m0(mnr(i))))
+        dum3 = ABS(dCMPLX(1d0)/sigma(i))
+        dum2 = ABS(dCMPLX(1d0)/EXP(m0(mnr(i))))
         !     dum3 = REAL(LOG(sigma(i))/m0(mnr(i)))
         write(kanal,*,err=1000)REAL(espx(i)),&
              REAL(espy(i)),real(LOG10(dum3))
@@ -98,8 +98,8 @@ use alloci, only: prec
 !!$             real(LOG10(dum2)),real(1d2*(1d0-dum2/dum3)),&
 !!$             real(1d2*(1d0-dum3/dum2))
      else
-        dum3 = ABS(CMPLX(1d0)/sigma(i))
-        dum2 = ABS(CMPLX(1d0)/EXP(m0(mnr(i))))
+        dum3 = ABS(dCMPLX(1d0)/sigma(i))
+        dum2 = ABS(dCMPLX(1d0)/EXP(m0(mnr(i))))
         write(kanal,'(7(f10.4,2x))',err=1000)&
              real(espx(i)),real(espy(i)),&
              real(LOG10(dum3)),&
@@ -117,13 +117,13 @@ use alloci, only: prec
   WRITE (kanal,'(I7)',err=1000) elanz
   IF (.NOT.lprior) then
      DO i=1,elanz
-        dum = CMPLX(1d0)/sigma(i)
+        dum = dCMPLX(1d0)/sigma(i)
         dum2 = real(1d3*ATAN2(aimag(dum),real(dum)))
         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
      END DO
   ELSE
      DO i=1,elanz
-        dum = CMPLX(1d0)/sigma(i) ! - CMPLX(1d0)/EXP(m0(mnr(i)))
+        dum = dCMPLX(1d0)/sigma(i) ! - dCMPLX(1d0)/EXP(m0(mnr(i)))
         dum2 = real(1d3*ATAN2(aimag(dum),real(dum)))
         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
      END DO
@@ -138,7 +138,7 @@ use alloci, only: prec
      write(kanal,*,err=1000) elanz,ACHAR(9),pharms
 
      do i=1,elanz
-        dum = CMPLX(1d0)/sigma(i)
+        dum = dCMPLX(1d0)/sigma(i)
         write(kanal,*,err=1000)&
 !!!$     ak Default
              real(espx(i)),real(espy(i)),&

@@ -51,28 +51,28 @@ use alloci, only: prec
         
         do ir=1,nkel
            k    = nrel(iel,ir)
-           my_b(k) = CMPLX(0d0)
+           my_b(k) = dCMPLX(0d0)
 
            idk    = k*m1
-           my_a(idk) = CMPLX(1d0)
+           my_a(idk) = dCMPLX(1d0)
 
            if (k /= 1) THEN
 
-              ia = max0(1,mb+2-k)
+              ia = max(1,mb+2-k)
 
               do i=ia,mb
                  ki    = idk+i-m1
-                 my_a(ki) = CMPLX(0d0)
+                 my_a(ki) = dCMPLX(0d0)
               end do
            END IF
            if (k.eq.sanz) CYCLE ! next ir
 
-           ia = max0(1,k-sanz+m1)
+           ia = max(1,k-sanz+m1)
 
            do i=ia,mb
               j     = k-i+m1
               ji    = (j-1)*m1+i
-              my_a(ji) = CMPLX(0d0)
+              my_a(ji) = dCMPLX(0d0)
            end do
 
         END do ! ir

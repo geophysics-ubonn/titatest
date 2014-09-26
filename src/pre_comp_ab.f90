@@ -60,7 +60,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
 !!!$.....................................................................
 
 !!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
-  my_a_mat_band = CMPLX(0D0)
+  my_a_mat_band = dCMPLX(0D0)
 
   iel = 0
   do i=1,typanz
@@ -80,7 +80,7 @@ subroutine pre_comp_ab(ki,my_a_mat_band)
                  ikl = ikl + 1
                  dum  = elbg(iel,ikl,ki)
                  dum2 = sigma(iel)
-                 value = cmplx(dum)*dum2
+                 value = dcmplx(dum)*dum2
                  ! band matrix index (see above)
                 call assign_zgbsvx(my_a_mat_band,nzp,nnp,mb,sanz,value)
 !                call assign_zpbsvx(my_a_mat_band,nzp,nnp,mb,sanz,dum2)

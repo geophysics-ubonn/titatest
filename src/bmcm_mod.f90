@@ -220,7 +220,7 @@ CONTAINS
           DO j=k,manz ! fills upper triangle (k,j)
              DO i=1,nanz
                 ata(k,j) = ata(k,j) + sensdc(i,k) * & 
-                     sensdc(i,j) * wmatd(i) * REAL(wdfak(i))
+                     sensdc(i,j) * wmatd(i) * dble(wdfak(i))
              END DO
              ata(j,k) = ata(k,j) ! fills lower triangle (k,j)
           END DO
@@ -229,14 +229,14 @@ CONTAINS
     ELSE
        DO k=1,manz
           DO j=k,manz ! upper triangle
-             cdum = CMPLX(0d0)
+             cdum = dCMPLX(0d0)
              IF (j==k) dum = 0d0
              DO i=1,nanz
-                cdum = cdum + CONJG(sens(i,k)) * &
-                     sens(i,j) * wmatd(i) * REAL(wdfak(i))
+                cdum = cdum + dCONJG(sens(i,k)) * &
+                     sens(i,j) * wmatd(i) * dble(wdfak(i))
                 
-                IF (j==k) dum = dum + REAL(sens(i,k)) * REAL(sens(i,j)) * &
-                     wmatdp(i)*REAL(wdfak(i))
+                IF (j==k) dum = dum + dble(sens(i,k)) * dble(sens(i,j)) * &
+                     wmatdp(i)*dble(wdfak(i))
 
              END DO
              ata(k,j) = cdum ! fills upper triangle (k,j)

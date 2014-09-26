@@ -74,10 +74,10 @@ SUBROUTINE vredc(a_vre,b_vre,pot_vre)
      idi = idi - m1
   END DO
 
-  pot_vre = CMPLX(potdc)
+  pot_vre = dCMPLX(potdc)
 
 !!$  do i=1,sanz
-!!$     pot_vre(i) = CMPLX(potdc(i))
+!!$     pot_vre(i) = dCMPLX(potdc(i))
 !!$  end do
 
   DEALLOCATE (potdc)

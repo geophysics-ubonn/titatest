@@ -22,7 +22,7 @@ use alloci, only: prec
 
      IF (ABS(a(i,i)) < EPSILON(REAL(d))) RETURN
 
-     d = CMPLX(1.)/a(i,i)
+     d = dCMPLX(1.)/a(i,i)
      temp = a(:,i)
      DO j = 1, n
         c = a(i,j) * d

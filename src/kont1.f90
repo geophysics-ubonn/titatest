@@ -232,8 +232,8 @@ use alloci, only:prec
           ' -- Sytop [m] :',sytop
   END IF
   IF (.NOT.lrho0.AND..NOT.lstart) THEN
-     bet0 = ABS(CMPLX(1e0)/sigma0)
-     pha0 = 1e3*ATAN2(aimag(CMPLX(1.)/sigma0),REAL(CMPLX(1.)/sigma0))
+     bet0 = ABS(dCMPLX(1e0)/sigma0)
+     pha0 = 1e3*ATAN2(aimag(dCMPLX(1.)/sigma0),REAL(dCMPLX(1.)/sigma0))
      WRITE(fpinv,'(a,t50,g11.5,t62,a5)',err=999) &
           ' Background resistivity :',bet0,'ohm*m'
      WRITE(fpinv,'(t50,g11.5,t62,a4)',err=999)pha0,'mrad'

@@ -328,7 +328,7 @@ SUBROUTINE rdati(kanal,datei)
         END IF
      END IF
 
-     dat(i)   = CMPLX(-LOG(bet),-pha/1d3)
+     dat(i)   = dCMPLX(-LOG(bet),-pha/1d3)
 
      wmatdr(i) = 1d0/(stabw**2d0) !=C_d^{-1} !!!!
 

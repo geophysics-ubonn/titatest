@@ -46,7 +46,9 @@ program inv
   integer               :: getpid,pid,myerr,info
   
   ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+lverbose = .false.
 
+if (lverbose) print*,'verbose mode'
   ! SETUP and INPUT
   errnr = 1
   ! set file id's 
@@ -65,7 +67,7 @@ program inv
   open(fpcfg,file=trim(fetxt),status='old',err=999)
   ! Switch: perform another inversion?
   lagain=.true. ! is set afterwards by user input file to false
-
+if (lverbose) print*,'lagain',lagain
   ! Set common parameters
   do while ( lagain ) ! loop over individual inversions, see 'lagain'
 
@@ -74,13 +76,13 @@ program inv
      call rall(kanal,delem,delectr,dstrom,drandb,&
           dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
      if (errnr.ne.0) goto 999
-
+    if (lverbose) print*,'files',delem,delectr,dstrom,drandb,dsigma,dvolt,dsens,dstart
      !   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
      !   zur Berechnung der gemischten Randbedingung bestimmen
      call precal()
-
+     if (lverbose) print*,'precal example',real(elbg(1,1,1)),real(relbg(1,1))
      if (errnr.ne.0) goto 999
-
+    if (lverbose) print*,'lbeta',lbeta
      if (.not.lbeta) then
         lsr = .false.
 
@@ -149,7 +151,7 @@ program inv
         allocate (kpot(sanz,eanz,kwnanz),STAT=myerr)
      end if
      if (myerr /= 0) goto 999
-     
+     if (lverbose) print*,'allocation error #',myerr
      if (.not.allocated(x)) allocate(x(sanz,1))
 
      ! get CG data storage of residuums and bvec, which is global
@@ -160,7 +162,7 @@ program inv
      ! assign memory to global variables
      fetxt = 'allocation problem reference model'
      allocate (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=myerr)
-     w_ref_re = 0d0;m_ref = cmplx(0d0);w_ref_im = 0d0
+     w_ref_re = 0d0;m_ref = dcmplx(0d0);w_ref_im = 0d0
      if (myerr /= 0) goto 999
      ! << RM ref model regu
 
@@ -213,7 +215,7 @@ program inv
      ! set starting model 
      call bsigm0(kanal,dstart)
      if (errnr.ne.0) goto 999
-
+    if (lverbose) print*,'bsigm0 sigma0=',sigma0
 
      !   Kontrolldateien initialisieren
      call kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
@@ -224,16 +226,18 @@ program inv
      write(*,*) '------------------------------------------'
      !   get current time
      call tic(c1)
+     if (lverbose) print*,'starting time',c1
      !.................................................
      converged = .false.
 
      do while (.not.converged) ! optimization loop
-
+        if (lverbose) print*,'converged',converged
         !   Control output
         write(fprun,'(a,i3,a,i3,a)')' Iteration ',it,', ',itr,&
              ' : Calculating Potentials'
         !   MODELLING
         count = 0
+        if (lverbose) print*,'ldc',ldc
         if (ldc) then
            fetxt = 'allocation problem adc'
            allocate (adc((mb+1)*sanz),STAT=myerr)
@@ -283,48 +287,56 @@ program inv
               end do
            end do
         else
-           fetxt = 'allocation problem a'
-           allocate(a_mat_band(3*mb+1,sanz))
-           allocate(a_mat_band_elec(3*mb+1,sanz))
-           if (myerr /= 0) goto 999
-           fetxt = 'allocation problem hpot'
-           allocate (hpot(sanz,eanz),STAT=myerr) 
-           if (myerr /= 0) goto 999
-           fetxt = 'allocation problem b'
-           allocate (b(sanz,1),STAT=myerr)
-           if (myerr /= 0) goto 999
+            if (lverbose) print*,'complex modeling'
+           fetxt = ''
+           if (.not.allocated(a)) allocate(a(2*mb+1,sanz))
+           if (.not.allocated(hpot)) allocate (hpot(sanz,eanz),STAT=myerr) 
+           if (.not.allocated(b)) allocate (b(sanz,1),STAT=myerr)
            !   COMPLEX CASE
-!!!$   POTENTIALWERTE BERECHNEN
+        if (lverbose) print*,'swrtr',swrtr
+        if (lverbose) print*,'inv sigma_mean',real(sum(sigma)/elanz)
            do k=1,kwnanz
-!!!$   Kontrollausgabe
               count = count + 1
-              ! calculation of analytical potentials
-              if (lsr) call potana(l,k,pota)
+              if (.not.lverbose) then 
               if (swrtr.eq.0) then
                  write(*,'(a)')' Calculating Potentials'
               else
                  write (*,'(a,I3,a,I3,a,I3)',ADVANCE='no')&
                       achar(13)//' iteration',it,' update',itr,' wavenumver',count
               end if
-              call pre_comp_ab(k,a_mat_band)
+end if
+              DO l=1,eanz
+              if (lverbose) print*,'electrode #',l
+                if (lverbose) print*,'lsr, lbeta, l',lsr,lbeta,l
+                 IF (lsr.OR.lbeta.OR.l.EQ.1) THEN
 
-              do l=1,eanz
-                 b = cmplx(0D0)
-                 a_mat_band_elec = a_mat_band
-                 b(enr(l),1) = cmplx(1.)
-                 if (lsink) b(nsink,1) = cmplx(-1.)
-                 call comp_ab(k,a_mat_band_elec,l,b)
-! Incorporate special boundary conditions
-        !           if (lrandb) call randb(a,b)
-        !           if (lrandb2) call randb2(a,b)
-                 ! General Band matrix, expert solver
-        call solve_zgbsvx(a_mat_band_elec,x,b)
+! Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+                    IF (lsr) CALL potana(l,k,pota)
+if (lverbose) print*,'example pota',pota(1)
+! Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+                    fetxt = 'kompab'
+                    CALL kompab(l,k)
+                    if (lverbose) print*,'example sigma',real(sigma(1))
+                    if (lverbose) print*,'example a,b',real(a(1,1)),real(b(1,1))
+                    IF (errnr.NE.0) GOTO 999
 
-                 ! General Positive Band matrix, expert solver Cholesky
-!              call solve_zpbsvx(a_mat_band_elec,x,b)
+! Ggf. Randbedingung beruecksichtigen
+                    IF (lrandb) CALL randb()
+                    IF (lrandb2) CALL randb2()
 
-! Save potentials for each wavenumber (if necess. = if(swrtr)) for Fourier 
-! back-transform.
+                 ELSE
+if (lverbose) print*,'only kompb'
+!!!$   Stromvektor modifizieren
+                    fetxt = 'kompb'
+                    CALL kompb(l)
+                    if (lverbose) print*,'example b',b(1,1)
+                 END IF
+                
+                !!$   Gleichungssystem loesen
+                 fetxt = 'vre'
+                 CALL solve_zgbsvx(a,x,-b)
+! Save potentials for each wavenumber (if necess. = if(swrtr)) for inverse 
+! Fourier transform
                  do j=1,sanz
                     kpot(j,l,k) = x(j,1)
                     if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
@@ -333,8 +345,9 @@ program inv
               end do
            end do
         end if
+                 if (lverbose) print*,'inv kpot',kpot(1,1,1)
         errnr = 0
-! Fourier back-transform
+! inverse Fourier transform
         if (swrtr.eq.1) then
            call rtrafo(errnr)
            if (errnr.ne.0) goto 999
@@ -350,7 +363,7 @@ program inv
         if (ldc) then
            deallocate(adc,hpotdc,bdc)
         else
-           deallocate(hpot,b,a_mat_band,a_mat_band_elec)
+           deallocate(hpot,b,a)
         end if
         if (lsetup.or.lsetip) then
            !   Ggf. background auf ratio-Daten "multiplizieren"
@@ -475,7 +488,7 @@ program inv
                          ' ******* Resetting phase model ********'
                     close (fpinv)
                     do j=1,elanz
-                       sigma(j) = cmplx(&
+                       sigma(j) = dcmplx(&
                             cos(pha0/1d3)*abs(sigma(j)) ,&
                             -sin(pha0/1d3)*abs(sigma(j)) )
                     end do
@@ -510,7 +523,6 @@ program inv
               if (errnr.ne.0) goto 999
            end if
         end if
-
         if ((llam.and..not.lstep).or.lsetup.or.lsetip) then
            !   Iterationsindex hochzaehlen
            it = it+1
@@ -703,7 +715,6 @@ program inv
 
               !   Parabolische Interpolation zur Bestimmung der optimalen step-length
               call parfit(rmsalt,nrmsd,rmsreg,nrmsdm,stpmin)
-
               if (step.eq.stpmin.and.stpalt.eq.stpmin)then
 
                  !   Nach naechstem Modelling abbrechen
@@ -738,7 +749,6 @@ program inv
         ! Leitfaehigkeiten mit verbessertem Modell belegen
         call bsigma
         if (errnr.ne.0) goto 999
-
         if (lverb) then
            call wout_up(kanal,it,itr,.true.)
            if (errnr.ne.0) goto 999
@@ -752,7 +762,7 @@ program inv
         ! mixed boundary, since we like to set sigma0
         ! as reference sigma as "mean" boundary value
         ! <<< RM
-        if (lbeta) call refsig()
+        call refsig()
 
         if (btest(llamf,0)) then
            llam = .true.

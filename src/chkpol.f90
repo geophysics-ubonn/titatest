@@ -81,7 +81,7 @@ use alloci, only: prec
 !!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
         imsig     = imsig + real(isig)*pi
-        sigmaa(i) = CMPLX(resig,imsig)
+        sigmaa(i) = dCMPLX(resig,imsig)
         volt(i)   = EXP(-sigmaa(i))
 
         if (lpol) then
@@ -89,7 +89,7 @@ use alloci, only: prec
            if (.not.lsetup) wdfak(i)=0
         else
            imdat  = imdat - sign(pi,imdat)
-           dat(i) = CMPLX(redat,imdat)
+           dat(i) = dCMPLX(redat,imdat)
 
            write(fprun,'(i4,a18)')i,' : change polarity'
            wdfak(i) = 0
@@ -100,8 +100,8 @@ use alloci, only: prec
 !!!$     Falls lpol=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur
         if (lpol) then
-           imdat  = imdat + real(idat)*pi
-           dat(i) = CMPLX(redat,imdat)
+           imdat  = imdat + dble(idat)*pi
+           dat(i) = dCMPLX(redat,imdat)
 
            write(fprun,'(i4,a19)')i,' : correct polarity'
            if (.not.lsetup) wdfak(i)=0
@@ -114,10 +114,10 @@ use alloci, only: prec
 !!!$     Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
         imsig     = imsig + real(isig)*pi
-        sigmaa(i) = CMPLX(resig,imsig)
+        sigmaa(i) = dCMPLX(resig,imsig)
         volt(i)   = EXP(-sigmaa(i))
         imdat     = imdat + real(idat)*pi
-        dat(i)    = CMPLX(redat,imdat)
+        dat(i)    = dCMPLX(redat,imdat)
 
         write(fprun,'(i4,a18)')i,' : change polarity'
 

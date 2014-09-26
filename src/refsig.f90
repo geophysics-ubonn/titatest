@@ -27,7 +27,7 @@ use alloci, only: prec
 
   iel    = 0
   area   = 0d0
-  sigma0 = CMPLX(0d0)
+  sigma0 = dCMPLX(0d0)
 
   do i=1,typanz
      do j=1,nelanz(i)
@@ -56,13 +56,13 @@ use alloci, only: prec
            dum = (ABS(ax*by-ay*bx) + ABS(bx*cy-by*cx)) / 2d0
         end if
 
-        sigma0 = sigma0 + CMPLX(dum)*LOG(sigma(iel))
+        sigma0 = sigma0 + dCMPLX(dum)*LOG(sigma(iel))
         area   = area   + dum
 
      end do
   end do
 
-  sigma0 = EXP(sigma0/CMPLX(area))
+  sigma0 = EXP(sigma0/dCMPLX(area))
 
   return
 end subroutine refsig

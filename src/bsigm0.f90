@@ -69,7 +69,7 @@ use alloci, only:prec
 
 !!!$     'sigma' gemaess 'bet0', 'pha0' belegen
      do i=1,elanz
-        sigma(i) = CMPLX( COS(pha0/1d3)/bet0 , -SIN(pha0/1d3)/bet0 )
+        sigma(i) = dCMPLX( dCOS(pha0/1d3)/bet0 , -dSIN(pha0/1d3)/bet0 )
      end do
 
   else if (lbeta) then
@@ -78,7 +78,7 @@ use alloci, only:prec
      call bkfak()
      if (errnr.ne.0) goto 999
 
-     sigma0 = CMPLX(0d0)
+     sigma0 = dCMPLX(0d0)
      dum    = 0d0
 
      do i=1,nanz
@@ -95,16 +95,16 @@ use alloci, only:prec
         end if
 
         if (idat.ne.0) THEN
-           imdat=imdat+REAL(idat)*pi
+           imdat=imdat+dble(idat)*pi
            PRINT*,'swapping line',idat,i
         END if
         
 !!!$     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
-        redat = REAL(dat(i))-LOG(ABS(kfak(i)))
+        redat = real(dat(i))-LOG(ABS(kfak(i)))
 
 !!!$     Werte gewichtet mitteln
-        dum2   = SQRT(wmatd(i))*REAL(wdfak(i))
-        sigma0 = sigma0 + CMPLX(redat,imdat)*CMPLX(dum2)
+        dum2   = SQRT(wmatd(i))*real(wdfak(i))
+        sigma0 = sigma0 + dCMPLX(redat,imdat)*dCMPLX(dum2)
         dum    = dum + dum2
 !        print*,'Write:',REAL(REAL(sigma0)),REAL(REAL(dat(i))),REAL(redat),REAL(dum2)
 
@@ -121,7 +121,7 @@ use alloci, only:prec
 !!!$     'sigma' belegen
 !     print*,'Write:',sigma0
      do i=1,elanz
-        sigma(i) = EXP(sigma0/CMPLX(dum))
+        sigma(i) = EXP(sigma0/dCMPLX(dum))
      end do
 
   else
@@ -137,7 +137,7 @@ use alloci, only:prec
 !!$     Referenzleitfaehigkeit 'sigma0' bestimmen
 
 !!!$ >> RM This is now a must have for mixed boundaries
-  IF (lbeta) call refsig()
+  call refsig()
 !!!!$ << RM because the sigma0 is needed
   errnr = 0
   return

@@ -1,5 +1,6 @@
 subroutine solve_zpbsvx(ab,x,b)
 use elemmod, only:sanz,mb
+use alloci, only:prec
 implicit none
 ! Solve the linear system A*x = b in band storage mode using the LAPACK
 ! routine ZGBSVX.
@@ -10,22 +11,22 @@ character                           :: TRANS
 integer                             :: N
 integer                             :: KD
 integer                             :: NRHS
-complex*16, dimension(mb+1,sanz)  :: AB
+complex(prec), dimension(mb+1,sanz)  :: AB
 integer                             :: LDAB
-complex*16, dimension(mb+1,sanz)  :: AFB
+complex(prec), dimension(mb+1,sanz)  :: AFB
 integer                             :: LDAFB
 integer, dimension(sanz)            :: IPIV
 character                           :: EQUED
 double precision, dimension(sanz)   :: R
 double precision, dimension(sanz)   :: C
-complex*16, dimension(sanz,1)       :: B
+complex(prec), dimension(sanz,1)       :: B
 integer                             :: LDB
-complex*16, dimension(sanz,1)       :: X
+complex(prec), dimension(sanz,1)       :: X
 integer                             :: LDX
 double precision                    :: RCOND
 double precision, dimension(1)      :: FERR
 double precision, dimension(1)      :: BERR
-complex*16, dimension(2*sanz)       :: WORK
+complex(prec), dimension(2*sanz)       :: WORK
 double precision, dimension(sanz)   :: RWORK
 integer                             :: INFO 
 character                           :: UPLO

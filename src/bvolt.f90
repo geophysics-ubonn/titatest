@@ -45,13 +45,13 @@ subroutine bvolt()
 !!!$     Spannungswert berechnen (Superposition)
 !!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
 !!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
-     dum1 = CMPLX(min0(elec4,1)*min0(elec2,1)) &
+     dum1 = dCMPLX(min0(elec4,1)*min0(elec2,1)) &
           *hpot(enr(max0(elec4,1)),max0(elec2,1))
-     dum2 = CMPLX(min0(elec4,1)*min0(elec1,1)) &
+     dum2 = dCMPLX(min0(elec4,1)*min0(elec1,1)) &
           *hpot(enr(max0(elec4,1)),max0(elec1,1))
-     dum3 = CMPLX(min0(elec3,1)*min0(elec2,1)) &
+     dum3 = dCMPLX(min0(elec3,1)*min0(elec2,1)) &
           *hpot(enr(max0(elec3,1)),max0(elec2,1))
-     dum4 = CMPLX(min0(elec3,1)*min0(elec1,1)) &
+     dum4 = dCMPLX(min0(elec3,1)*min0(elec1,1)) &
           *hpot(enr(max0(elec3,1)),max0(elec1,1))
 
      volt(i) = (dum1-dum2) - (dum3-dum4)
@@ -67,9 +67,9 @@ subroutine bvolt()
      end if
 
 !!!$     Scheinbaren Widerstandswert berechnen
-!!!$     ak            sigmaa(i) = CMPLX(kfak(i)) * volt(i)
+!!!$     ak            sigmaa(i) = dCMPLX(kfak(i)) * volt(i)
      sigmaa(i) = volt(i)
-     sigmaa(i) = CMPLX(kfak(i)) * volt(i)
+     sigmaa(i) = dCMPLX(kfak(i)) * volt(i)
   end do
   IF (j/=0) WRITE (*,'(/A,I8,A)')' Vorsicht es wurde',j,&
        'mal keine Messpannung gemessen'

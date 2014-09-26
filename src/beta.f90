@@ -89,7 +89,6 @@ real(prec) beta
   end if
 
   beta = kwn(k) * beta
-
   errnr = 0
   return
 
