@@ -17,7 +17,7 @@ SUBROUTINE bvariogram_s
   USE elemmod        ! fuer grid_min,grid_max,etc
   USE errmod
   USE konvmod        ! fuer alfx/alfz
-  USE alloci, only:csens,prec
+  USE alloci, only:csens
 
   IMPLICIT none
 
@@ -26,30 +26,30 @@ SUBROUTINE bvariogram_s
 !!$c     Indexvariablen
   INTEGER :: i,j,ik,jk,ifp
 !!$c     th = Tail - Head; hx,hy,h distances in each direction
-  REAL(prec) :: th,tail,head,hx,hy,h,mid_par
+  REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
 !!$c     korrelation length for variogram models
-  REAL(prec) :: Ix,Iy
+  REAL(KIND(0D0)) :: Ix,Iy
 !!$c     smallest variogram distance and tolerance
-  REAL(prec) :: lag_unit,lag_tol
+  REAL(KIND(0D0)) :: lag_unit,lag_tol
 !!$c     smallest variogram distance and tolerance anisotrop
-  REAL(prec) :: lag_unit_x,lag_tol_x
-  REAL(prec) :: lag_unit_y,lag_tol_y
+  REAL(KIND(0D0)) :: lag_unit_x,lag_tol_x
+  REAL(KIND(0D0)) :: lag_unit_y,lag_tol_y
 !!$c     number of equidistant lags (nlag) = INT(grid_max / grid_min)
   INTEGER :: nlag,nlag_x,nlag_y
 !!$c     lag vector (nlag)
-  REAL(prec),DIMENSION(:),ALLOCATABLE :: lag,lag_x,lag_y
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: lag,lag_x,lag_y
 !!$c     number of headtail pairs for each semivariogram N(lag)(nlag)
   INTEGER,DIMENSION(:),ALLOCATABLE :: ngam_x,ngam_y,ngam
 !!$c     experimental semivariogram
 !!$c     gam(lag)=1/N(lag)/2 * sum_k^N(lag) (tail - head)**2.
-  REAL(prec),DIMENSION(:),ALLOCATABLE :: gam_x,gam_y,gam
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: gam_x,gam_y,gam
 !!$c     variogram model
-  REAL(prec),DIMENSION(:),ALLOCATABLE :: mgam_x,mgam_y,mgam
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: mgam_x,mgam_y,mgam
   CHARACTER(80) :: tmgam,tmgam_x,tmgam_y,mti,tgam,tcov
 !!$! mti stores a string for variogram statistics, like korrelation length
 !!$! tgam stores the output string of get_vario
 !!$c     variogram model
-  REAL(prec) :: csensmax
+  REAL(KIND(0D0)) :: csensmax
   CHARACTER (11) :: tg
   CHARACTER (256) :: my_buff
 !!$c-----------------------------------------------------------------------
@@ -110,17 +110,17 @@ SUBROUTINE bvariogram_s
      lag_x(i) = i*lag_unit_x
      h = lag_x(i)
      WRITE (tmgam_x,'(a)')tg//'(hx)'
-     mgam_x(i) = mvario(h,0._prec,par_vari)
+     mgam_x(i) = mvario(h,0D0,par_vari)
   END DO
   DO i=1,nlag_y
      lag_y(i) = i*lag_unit_y
      h = lag_y(i)
      WRITE (tmgam_y,'(a)')tg//'(hy)'
-     mgam_y(i) = mvario(real(0.,kind(h)),h,par_vari)
+     mgam_y(i) = mvario(0D0,h,par_vari)
   END DO
 
-  mid_par = SUM(LOG10(REAL(sigma))) / manz
-  mid_par = SUM(LOG10(REAL(sigma))) / manz
+  mid_par = SUM(LOG10(DBLE(sigma))) / manz
+  mid_par = SUM(LOG10(DBLE(sigma))) / manz
 
   par_vari=0d0
   csensmax = MAXVAL(csens)
@@ -131,9 +131,9 @@ SUBROUTINE bvariogram_s
      IF (lverb) WRITE (*,'(a,t70,F6.2,A)',ADVANCE='no')&
           ACHAR(13)//'Variogram/',REAL(i*(100./elanz)),'%'
 
-     tail = LOG10(REAL(sigma(i))) ! lin val
+     tail = LOG10(DBLE(sigma(i))) ! lin val
 
-     par_vari = par_vari + (tail - mid_par)**2.
+     par_vari = par_vari + (tail - mid_par)**2d0
 
      tail = tail / csens(j) / csensmax
 
@@ -141,15 +141,15 @@ SUBROUTINE bvariogram_s
 
         IF (i==j) CYCLE
 
-        head = LOG10(REAL(sigma(j))) / csens(j) / csensmax
+        head = LOG10(DBLE(sigma(j))) / csens(j) / csensmax
 
         hx = ABS(espx(i) - espx(j))
 !!!$ direction ?
         hy = ABS(espy(i) - espy(j))
 
-        h = SQRT(hx**2. + hy**2.)
+        h = SQRT(hx**2d0 + hy**2d0)
 
-        th = (tail - head)**2.
+        th = (tail - head)**2d0
 
         DO ik = 1,nlag
 !!$  lag - lag_tol < h < lag + lag_tol
@@ -194,11 +194,11 @@ SUBROUTINE bvariogram_s
   END DO
 
 !!$   sets parameter variance..
-  par_vari = MAX(par_vari / manz,1.e-5_prec)
+  par_vari = MAX(par_vari / manz,1.d-5)
   WRITE (*,'(2(a,G10.3,1x))')ACHAR(13)//'Conductivity Mean=',mid_par,&
        'Variance=',par_vari
   WRITE (*,'(3(a,G10.3,1x))')'Min=',MINVAL(REAL(sigma)),'Max=',&
-       MAXVAL(REAL(sigma)),'LOG',LOG10(MAXVAL(REAL(sigma))/&
+       MAXVAL(REAL(sigma)),'DLOG',LOG10(MAXVAL(REAL(sigma))/&
        MINVAL(REAL(sigma)))
 
   mgam = par_vari * mgam ! or we put it normalized to the sill ?

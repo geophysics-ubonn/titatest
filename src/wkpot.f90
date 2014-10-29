@@ -45,7 +45,7 @@ subroutine wkpot(kanal,datei)
   INTEGER (KIND=4) ::     i,k
 
 !!!$     Hilfsvariable
-  COMPLEX(prec) ::    dum
+  COMPLEX(KIND(0D0)) ::    dum
 
 !!!$.....................................................................
 
@@ -96,17 +96,17 @@ subroutine wkpot(kanal,datei)
   errnr = 4
 
 !!!$     Entsprechenden transformierten Potentialwerte schreiben
-!!!$     (Real- und aimaginaerteil)
+!!!$     (Real- und Imaginaerteil)
   do i=1,kanz
      write(kanal,*,err=1000)
      write(kanal,*,err=1000) knr(i)
 
      do k=1,kwnanz
         dum = kpot(knr(i),nelec,k)
-        write(kanal,*,err=1000) real(REAL(dum)),real(aimag(dum))
+        write(kanal,*,err=1000) real(dble(dum)),real(dimag(dum))
      end do
   end do
-write(*,'(a,I4,a,I7,a)') ' wrote',kwnanz,' K space potential files with',kanz,' potentials each'
+
 !!!$     'datei' schliessen
   close(kanal)
 

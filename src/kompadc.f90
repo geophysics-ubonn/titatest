@@ -23,8 +23,8 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
-  REAL (prec),DIMENSION((mb + 1)*sanz) ::     a_komp
-  REAL (prec),DIMENSION(sanz) ::     b_komp
+  REAL (KIND (0D0)),DIMENSION((mb + 1)*sanz) ::     a_komp
+  REAL (KIND (0D0)),DIMENSION(sanz) ::     b_komp
 
 !!!$     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
@@ -49,8 +49,8 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
   INTEGER (KIND = 4) ::     nkel
 
 !!!$     Hilfsvariablen
-  REAL (prec) ::     dum
-  REAL (prec) ::     dum2
+  REAL (KIND (0D0)) ::     dum
+  REAL (KIND (0D0)) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
 
@@ -104,12 +104,12 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
 !!!$ << RM
-                    dum2 = REAL(sigma(rnr(rel)))
-!!$                    dum2 = REAL(sigma0)
+                    dum2 = DBLE(sigma(rnr(rel)))
+!!$                    dum2 = DBLE(sigma0)
 !!$                    dum2 = 0d0 ! which removes the influence
                  else
                     dum  = elbg(iel,ikl,ki)
-                    dum2 = REAL(sigma(iel))
+                    dum2 = DBLE(sigma(iel))
                  end if
 
 !!!$ GRIDBUG was causing some problems here
@@ -122,10 +122,10 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
 !!!$ << RM
 
                  if (lsr) then
-                    dum2   = dum * REAL(dum2 - sigma0)
-                    b_komp(nzp) = b_komp(nzp) + dum2 * REAL(pota(nnp))
+                    dum2   = dum * DBLE(dum2 - sigma0)
+                    b_komp(nzp) = b_komp(nzp) + dum2 * dble(pota(nnp))
                     if (nnp.ne.nzp) b_komp(nnp) = b_komp(nnp) + dum2 * &
-                         REAL(pota(nzp))
+                         dble(pota(nzp))
                  end if
 
               end if

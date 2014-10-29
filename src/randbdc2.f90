@@ -2,7 +2,7 @@ subroutine randbdc2(my_a,my_b)
 
 !!!$     Unterprogramm modifiziert die Matrix 'a' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'b' zur Beruecksichtigung der Dirichletschen Rand-
-!!!$     bedingungen ('rwdanz' Randwerte 'rwd(rwMAX)' mit zugeh. Knotennummern
+!!!$     bedingungen ('rwdanz' Randwerte 'rwd(rwdmax)' mit zugeh. Knotennummern
 !!!$     'rwdnr(smax)').
 
 !!!$     ( Vgl. Subroutine 'RBSTBNDN' in Schwarz (1991) )
@@ -11,7 +11,6 @@ subroutine randbdc2(my_a,my_b)
 !!!$     Letzte Aenderung   15-Jul-2007
 
 !!!$.....................................................................
-use alloci, only: prec
   USE elemmod , ONLY : sanz, mb
   USE randbmod
 
@@ -20,8 +19,8 @@ use alloci, only: prec
 !!!$.....................................................................
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  REAL (prec),DIMENSION ((mb+1)*sanz) :: my_a
-  REAL (prec),DIMENSION (sanz)        :: my_b
+  REAL (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  REAL (KIND (0D0)),DIMENSION (sanz)        :: my_b
 
 !!!$.....................................................................
 
@@ -29,7 +28,7 @@ use alloci, only: prec
 
 !!!$     Hilfsvariablen
   INTEGER(KIND = 4)   ::     m1
-  REAL(prec)     ::     rwertdc
+  REAL(KIND(0D0))     ::     rwertdc
 
 !!!$     Indexvariablen
   INTEGER(KIND = 4)   ::     ir,i,j,k,idk,ia,ki,ji

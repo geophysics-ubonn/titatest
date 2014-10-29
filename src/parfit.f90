@@ -10,7 +10,7 @@ subroutine parfit(fa,fb,fc,fmin,smin)
 !!!$     Letzte Aenderung   22-Sep-1998
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE konvmod,ONLY:step
 
   IMPLICIT none
@@ -21,17 +21,17 @@ use alloci, only: prec
 !!!$     EIN-/AUSGABEPARAMETER:
 
 !!!$     Funktionswerte, Grenzwerte
-  REAL (prec)  :: fa,fb,fc,fmin,smin
+  REAL (KIND(0D0))  :: fa,fb,fc,fmin,smin
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     x-Werte
-  REAL (prec)  :: a,b,c
+  REAL (KIND(0D0))  :: a,b,c
 
 !!!$     Hilfsvariablen
-  REAL (prec)  :: bma,bmc,fbmfc,fbmfa,zaehler,nenner
+  REAL (KIND(0D0))  :: bma,bmc,fbmfc,fbmfa,zaehler,nenner
 
 !!!$.....................................................................
 
@@ -182,9 +182,8 @@ use alloci, only: prec
   end if
 
 !!!$     Genzen einhalten (wegen Möglichkeit der linearen "Extrapolation")
-!print*,'PAAAAAAAvv',step,smin,c
   step = dmax1(smin,step)
   step = dmin1(c,step)
-!print*,'PAAAAAAAnn',step,smin,c
+
   return
 end subroutine parfit

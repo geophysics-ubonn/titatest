@@ -6,17 +6,16 @@ MODULE sigmamod
 !!$c                                       Letzte Aenderung   20-Oct-1997
 !!$  
 !!$c.....................................................................
-use alloci
 !!$c Referenzleitfaehigkeit
-   COMPLEX(prec),PUBLIC                          :: sigma0
+   COMPLEX(KIND(0D0)),PUBLIC                          :: sigma0
 
 !!$c Leitfaehigkeit der Elemente
-   COMPLEX(prec),PUBLIC,ALLOCATABLE,DIMENSION(:) :: sigma
+   COMPLEX(KIND(0D0)),PUBLIC,ALLOCATABLE,DIMENSION(:) :: sigma
 !!$c save variable
-   COMPLEX(prec),PUBLIC,ALLOCATABLE,DIMENSION(:) :: sigma2
+   COMPLEX(KIND(0D0)),PUBLIC,ALLOCATABLE,DIMENSION(:) :: sigma2
 
 !!$c Background-Werte
-   REAL(prec),PUBLIC                             :: bet0,pha0
+   REAL(KIND(0D0)),PUBLIC                             :: bet0,pha0
 
 !!$c Schalter ob "background" Werte eingelesen werden sollen
    LOGICAL,PUBLIC                                     :: lrho0
@@ -26,7 +25,7 @@ use alloci
 !!$c initial seed fuers verrauschen vom startmodell
    INTEGER(KIND = 4),PUBLIC                           :: iseedpri 
 !!$c Rauschen fürs startmodell
-   REAL(prec),PUBLIC                             :: modl_stdn
+   REAL(KIND(0D0)),PUBLIC                             :: modl_stdn
 
 
 END MODULE sigmamod

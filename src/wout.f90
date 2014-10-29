@@ -7,7 +7,7 @@ subroutine wout(kanal,dsigma,dvolt)
 !!!$     Letzte Aenderung   10-Mar-2007
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE datmod
   USE femmod
   USE invmod
@@ -39,13 +39,13 @@ use alloci, only: prec
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::  idum,idum2
   CHARACTER (80)   ::  htxt
-  COMPLEX(prec)  ::  dum
+  COMPLEX(KIND(0D0))  ::  dum
 
 !!!$     Hilfsfunctions
   CHARACTER (80)   ::   filpat
 
 !!!$     diff+<
-  REAL(prec)  ::   dum2,dum3
+  REAL(KIND(0D0))  ::   dum2,dum3
 !!!$     diff+>
   CHARACTER (2)   ::   ci
 !!!$.....................................................................
@@ -78,31 +78,31 @@ use alloci, only: prec
      if (.not.ldiff.AND..NOT.lprior) then
 !!!$  if (.not.ldiff) then
 !!!$     diff+>
-        dum = dCMPLX(1d0)/sigma(i)
+        dum = dcmplx(1d0)/sigma(i)
 !!!$ak   write(kanal,*,err=1000) real(espx(i)),real(espy(i)),&
-!!!$ak         real(ABS(dum))
+!!!$ak         real(cdabs(dum))
         write(kanal,*,err=1000) real(espx(i)),&
-             real(espy(i)),real(LOG10(ABS(dum)))
+             real(espy(i)),real(dlog10(cdabs(dum)))
 !!!$ro   write(kanal,*,err=1000) real(espy(i)),real(espx(i)),&
-!!!$ro      real(ABS(dum))
+!!!$ro      real(cdabs(dum))
 !!!$     diff+<
      ELSE IF (lprior) THEN
-        dum3 = ABS(dCMPLX(1d0)/sigma(i))
-        dum2 = ABS(dCMPLX(1d0)/EXP(m0(mnr(i))))
-        !     dum3 = REAL(LOG(sigma(i))/m0(mnr(i)))
+        dum3 = CDABS(dcmplx(1d0)/sigma(i))
+        dum2 = CDABS(dcmplx(1d0)/cdexp(m0(mnr(i))))
+        !     dum3 = REAL(CDLOG(sigma(i))/m0(mnr(i)))
         write(kanal,*,err=1000)REAL(espx(i)),&
-             REAL(espy(i)),real(LOG10(dum3))
+             REAL(espy(i)),real(dlog10(dum3))
 !!$        write(kanal,'(7(f10.4,2x))',err=1000)REAL(espx(i)),&
-!!$             REAL(espy(i)),real(LOG10(dum3)),&
-!!$             (LOG10(dum3) - LOG10(dum2)),&
-!!$             real(LOG10(dum2)),real(1d2*(1d0-dum2/dum3)),&
+!!$             REAL(espy(i)),real(dlog10(dum3)),&
+!!$             (DLOG10(dum3) - DLOG10(dum2)),&
+!!$             real(dlog10(dum2)),real(1d2*(1d0-dum2/dum3)),&
 !!$             real(1d2*(1d0-dum3/dum2))
      else
-        dum3 = ABS(dCMPLX(1d0)/sigma(i))
-        dum2 = ABS(dCMPLX(1d0)/EXP(m0(mnr(i))))
+        dum3 = cdabs(dcmplx(1d0)/sigma(i))
+        dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
         write(kanal,'(7(f10.4,2x))',err=1000)&
              real(espx(i)),real(espy(i)),&
-             real(LOG10(dum3)),&
+             real(dlog10(dum3)),&
              real(1d2*(dum3/dum2-1d0)),&
              real(dum3-dum2),&
              real(1d2*(dum2/dum3-1d0)),&
@@ -117,14 +117,14 @@ use alloci, only: prec
   WRITE (kanal,'(I7)',err=1000) elanz
   IF (.NOT.lprior) then
      DO i=1,elanz
-        dum = dCMPLX(1d0)/sigma(i)
-        dum2 = real(1d3*ATAN2(aimag(dum),real(dum)))
+        dum = dcmplx(1d0)/sigma(i)
+        dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
      END DO
   ELSE
      DO i=1,elanz
-        dum = dCMPLX(1d0)/sigma(i) ! - dCMPLX(1d0)/EXP(m0(mnr(i)))
-        dum2 = real(1d3*ATAN2(aimag(dum),real(dum)))
+        dum = dcmplx(1d0)/sigma(i) ! - DCMPLX(1d0)/CDEXP(m0(mnr(i)))
+        dum2 = real(1d3*datan2(dimag(dum),dble(dum)))
         WRITE (kanal,'(2(1x,G12.4))')1./REAL(sigma(i)),dum2
      END DO
   END IF
@@ -138,14 +138,14 @@ use alloci, only: prec
      write(kanal,*,err=1000) elanz,ACHAR(9),pharms
 
      do i=1,elanz
-        dum = dCMPLX(1d0)/sigma(i)
+        dum = dcmplx(1d0)/sigma(i)
         write(kanal,*,err=1000)&
 !!!$     ak Default
              real(espx(i)),real(espy(i)),&
-             real(1d3*ATAN2(aimag(dum),real(dum)))
+             real(1d3*datan2(dimag(dum),dble(dum)))
 !!!$     ak MMAJ
 !!!$     ak     1                      real(espx(i)),real(espy(i)),
-!!!$     ak     1                      -real(1d3*ATAN2(aimag(dum),REAL(dum)))
+!!!$     ak     1                      -real(1d3*datan2(dimag(dum),dble(dum)))
      end do
      close(kanal)
 
@@ -155,7 +155,7 @@ use alloci, only: prec
      errnr = 4
      write(kanal,*,err=1000) elanz,betrms,pharms
      do i=1,elanz
-        write(kanal,*,err=1000)REAL(sigma(i)),aimag(sigma(i))
+        write(kanal,*,err=1000)REAL(sigma(i)),IMAG(sigma(i))
      end do
      close(kanal)
   end if
@@ -178,18 +178,18 @@ use alloci, only: prec
   if (ldc) then
      do i=1,nanz
         write(kanal,*,err=1000)strnr(i),vnr(i),&
-!!!$     diff-     1                      real(1d0/EXP(REAL(sigmaa(i))))
+!!!$     diff-     1                      real(1d0/dexp(dble(sigmaa(i))))
 !!!$     diff+<
-             real(1d0/EXP(REAL(sigmaa(i)))),wdfak(i)
+             real(1d0/dexp(dble(sigmaa(i)))),wdfak(i)
 !!!$     diff+>
      end do
   else
      do i=1,nanz
         write(kanal,*,err=1000)strnr(i),vnr(i),&
-             real(1d0/EXP(REAL(sigmaa(i)))),&
-!!!$     diff-     1                      real(-1d3*aimag(sigmaa(i)))
+             real(1d0/dexp(dble(sigmaa(i)))),&
+!!!$     diff-     1                      real(-1d3*dimag(sigmaa(i)))
 !!!$     diff+<
-             real(-1d3*aimag(sigmaa(i))),wdfak(i)
+             real(-1d3*dimag(sigmaa(i))),wdfak(i)
 !!!$     diff+>
      end do
   end if

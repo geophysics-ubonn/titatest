@@ -6,7 +6,7 @@ subroutine chkpol(lsetup)
 !!!$     Letzte Aenderung   07-Nov-1997
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE invmod
   USE datmod
   USE errmod
@@ -32,11 +32,11 @@ use alloci, only: prec
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::  i,idat,isig
 
-!!!$     Real-, aimaginaerteile
-  REAL (prec)    ::  redat,imdat,resig,imsig
+!!!$     Real-, Imaginaerteile
+  REAL (KIND(0D0))    ::  redat,imdat,resig,imsig
 
 !!!$     Pi
-  REAL (prec)    :: pi
+  REAL (KIND(0D0))    :: pi
 
 !!!$.....................................................................
 
@@ -52,11 +52,11 @@ use alloci, only: prec
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Logarithmierte Betraege in den Realteilen,
-!!!$     Phasen (in rad) in den aimaginaerteilen
-     redat = real(dat(i))
-     imdat = aimag(dat(i))
-     resig = real(sigmaa(i))
-     imsig = aimag(sigmaa(i))
+!!!$     Phasen (in rad) in den Imaginaerteilen
+     redat = dble(dat(i))
+     imdat = dimag(dat(i))
+     resig = dble(sigmaa(i))
+     imsig = dimag(sigmaa(i))
 
 !!!$     Phasenbereich checken
      if (imdat.gt.pi/2d0) then
@@ -80,16 +80,16 @@ use alloci, only: prec
 !!!$     Falls lpol=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
-        imsig     = imsig + real(isig)*pi
-        sigmaa(i) = dCMPLX(resig,imsig)
-        volt(i)   = EXP(-sigmaa(i))
+        imsig     = imsig + dble(isig)*pi
+        sigmaa(i) = dcmplx(resig,imsig)
+        volt(i)   = cdexp(-sigmaa(i))
 
         if (lpol) then
            write(fprun,'(i4,a30)')i,' : correct and change polarity'
            if (.not.lsetup) wdfak(i)=0
         else
-           imdat  = imdat - sign(pi,imdat)
-           dat(i) = dCMPLX(redat,imdat)
+           imdat  = imdat - dsign(pi,imdat)
+           dat(i) = dcmplx(redat,imdat)
 
            write(fprun,'(i4,a18)')i,' : change polarity'
            wdfak(i) = 0
@@ -101,7 +101,7 @@ use alloci, only: prec
 !!!$     ggf. Korrektur
         if (lpol) then
            imdat  = imdat + dble(idat)*pi
-           dat(i) = dCMPLX(redat,imdat)
+           dat(i) = dcmplx(redat,imdat)
 
            write(fprun,'(i4,a19)')i,' : correct polarity'
            if (.not.lsetup) wdfak(i)=0
@@ -113,11 +113,11 @@ use alloci, only: prec
 
 !!!$     Polaritaetswechsel
         vnr(i)    = elec3*10000 + elec4
-        imsig     = imsig + real(isig)*pi
-        sigmaa(i) = dCMPLX(resig,imsig)
-        volt(i)   = EXP(-sigmaa(i))
-        imdat     = imdat + real(idat)*pi
-        dat(i)    = dCMPLX(redat,imdat)
+        imsig     = imsig + dble(isig)*pi
+        sigmaa(i) = dcmplx(resig,imsig)
+        volt(i)   = cdexp(-sigmaa(i))
+        imdat     = imdat + dble(idat)*pi
+        dat(i)    = dcmplx(redat,imdat)
 
         write(fprun,'(i4,a18)')i,' : change polarity'
 

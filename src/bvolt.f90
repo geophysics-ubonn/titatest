@@ -28,7 +28,7 @@ subroutine bvolt()
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Hilfsvariablen
-  COMPLEX (prec) ::    dum1,dum2,dum3,dum4
+  COMPLEX (KIND(0D0)) ::    dum1,dum2,dum3,dum4
 
 !!!$.....................................................................
   j=0
@@ -45,18 +45,18 @@ subroutine bvolt()
 !!!$     Spannungswert berechnen (Superposition)
 !!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
 !!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
-     dum1 = dCMPLX(min0(elec4,1)*min0(elec2,1)) &
+     dum1 = dcmplx(min0(elec4,1)*min0(elec2,1)) &
           *hpot(enr(max0(elec4,1)),max0(elec2,1))
-     dum2 = dCMPLX(min0(elec4,1)*min0(elec1,1)) &
+     dum2 = dcmplx(min0(elec4,1)*min0(elec1,1)) &
           *hpot(enr(max0(elec4,1)),max0(elec1,1))
-     dum3 = dCMPLX(min0(elec3,1)*min0(elec2,1)) &
+     dum3 = dcmplx(min0(elec3,1)*min0(elec2,1)) &
           *hpot(enr(max0(elec3,1)),max0(elec2,1))
-     dum4 = dCMPLX(min0(elec3,1)*min0(elec1,1)) &
+     dum4 = dcmplx(min0(elec3,1)*min0(elec1,1)) &
           *hpot(enr(max0(elec3,1)),max0(elec1,1))
 
      volt(i) = (dum1-dum2) - (dum3-dum4)
 
-     if (ABS(volt(i)).eq.0d0) then
+     if (cdabs(volt(i)).eq.0d0) then
         j=j+1
 !!!$     ak
         write(*,'(A,I8,A,I8)',ADVANCE='no')ACHAR(13)// &
@@ -67,9 +67,9 @@ subroutine bvolt()
      end if
 
 !!!$     Scheinbaren Widerstandswert berechnen
-!!!$     ak            sigmaa(i) = dCMPLX(kfak(i)) * volt(i)
+!!!$     ak            sigmaa(i) = dcmplx(kfak(i)) * volt(i)
      sigmaa(i) = volt(i)
-     sigmaa(i) = dCMPLX(kfak(i)) * volt(i)
+     sigmaa(i) = dcmplx(kfak(i)) * volt(i)
   end do
   IF (j/=0) WRITE (*,'(/A,I8,A)')' Vorsicht es wurde',j,&
        'mal keine Messpannung gemessen'

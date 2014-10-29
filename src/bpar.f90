@@ -49,12 +49,12 @@ SUBROUTINE bpar
 !!!$      do i=1,elanz
 !!!$         if (.not.lfeld(j)) then
 !!!$            lfeld(j) = .true.
-!!!$            par(j)   = LOG(sigma(i))
+!!!$            par(j)   = CDLOG(sigma(i))
 !!!$         end if
 !!!$      end do
 
   do i=1,elanz
-     par(mnr(i))   = LOG(sigma(i))
+     par(mnr(i))   = CDLOG(sigma(i))
   end do
 
   errnr = 0

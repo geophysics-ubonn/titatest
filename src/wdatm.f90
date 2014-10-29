@@ -8,7 +8,7 @@ subroutine wdatm(kanal,datei)
 !!!$     Letzte Aenderung   10-Mar-2007
 
 !!!$.....................................................................
-use alloci, only:prec
+
   USE datmod
   USE errmod
 
@@ -33,15 +33,16 @@ use alloci, only:prec
   INTEGER (KIND=4) ::    i
 
 !!!$     Pi
-  REAL(prec)  ::    pi
+  REAL(KIND(0D0))  ::    pi
 
 !!!$     Hilfsvariablen
-  REAL(prec)  ::   bet,pha,npi
+  REAL(KIND(0D0))  ::   bet,pha,npi
   INTEGER (KIND=4) ::    ie1,ie2
 !!!$     Standartabweichung.-..
-  REAL(prec)  ::    stab
+  REAL(KIND(0D0))  ::    stab
 !!!$.....................................................................
 
+100 FORMAT(2(4X,I8),2(1x,G14.7))
   pi = dacos(-1d0)
 
 !!!$     'datei' oeffnen
@@ -57,13 +58,13 @@ use alloci, only:prec
 !!!$     Widerstandswerte (Betrag und Phase (in mrad)) schreiben
   stab=5.0
   do i=1,nanz
-     bet = ABS(sigmaa(i))
-     pha = ATAN2(aimag(sigmaa(i)),REAL(sigmaa(i)))
+     bet = cdabs(sigmaa(i))
+     pha = datan2(dimag(sigmaa(i)),dble(sigmaa(i)))
 
 !!!$     ak
 !!!$     Ggf. Polaritaet vertauschen
-     npi = nint(pha/pi)*pi
-     if (ABS(npi).gt.1d-12) then
+     npi = dnint(pha/pi)*pi
+     if (dabs(npi).gt.1d-12) then
         pha    = pha-npi
         ie1    = mod(vnr(i),10000)
         ie2    = (vnr(i)-ie1)/10000
@@ -76,7 +77,7 @@ use alloci, only:prec
 !!!$     1                  strnr(i),vnr(i),real(bet),real(1d3*pha),
 !!!$     1                  real(kfak(i))
   end do
-write(*,'(a,I7,a)') ' wrote',nanz,' voltages'
+
 !!!$     'datei' schliessen
   close(kanal)
 

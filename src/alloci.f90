@@ -1,50 +1,38 @@
 MODULE alloci
-! Andreas Kemna                                            24-Jan-1997
-!                                       Letzte Aenderung   13-Nov-1997
-
-
-! Set precision (dp=real64 or qp=real128)
-use iso_fortran_env
-integer,parameter,public :: prec = Kind(0d0)
-
-! COMPLEX CASE
-
-! Gesamtsteifigkeitsmatrix
-  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC     :: a
-   
+!!$Andreas Kemna                                            24-Jan-1997
+!!$                                      Letzte Aenderung   13-Nov-1997
+!!$COMPLEX CASE
+!!$Gesamtsteifigkeitsmatrix
+  COMPLEX (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC     :: a
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen
 !!$(werden bei der Berechnung der Sensitivitaeten benoetigt)
-  COMPLEX (prec), DIMENSION(:,:,:), ALLOCATABLE, PUBLIC :: kpot
+  COMPLEX (KIND(0D0)), DIMENSION(:,:,:), ALLOCATABLE, PUBLIC :: kpot
 !!$Potentialwerte aller Elektrodenlokationen nach Ruecktransformation
-  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: hpot
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: hpot
 !!$Sensitivitaeten
-  COMPLEX (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: sens
+  COMPLEX (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: sens
 !!$Coverage
-  REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC   :: csens
+  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC   :: csens
 !!$DC-CASE
 !!$Gesamtsteifigkeitsmatrix
-  REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC        :: adc
+  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: adc
 !!$Potentialwerte aller Elektrodenlokationen der einzelnen Wellenzahlen
 !!$(werden bei der Berechnung der Sensitivitaeten benoetigt)
-  REAL (prec), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: kpotdc
+  REAL (KIND(0D0)), DIMENSION(:,:,:),ALLOCATABLE, PUBLIC     :: kpotdc
 !!$Potentialwerte aller Elektrodenlokationen nach Ruecktransformation
-  REAL (prec), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: hpotdc
+  REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: hpotdc
 !!$Sensitivitaeten
-  REAL (prec), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: sensdc
+  REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: sensdc
 !!$real symmetric data covariance
-  REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC      :: cov_d
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC      :: cov_d
 !!$Regularisierungsmatrix
-  REAL (prec), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: smatm
+  REAL (KIND(0D0)), DIMENSION(:,:),ALLOCATABLE, PUBLIC       :: smatm
 !!$ PSR felder fuer widerstand (r) und phase (p)
-  REAL (prec), DIMENSION(:), ALLOCATABLE, PUBLIC        :: rnd_r,rnd_p
+  REAL (KIND(0D0)), DIMENSION(:), ALLOCATABLE, PUBLIC        :: rnd_r,rnd_p
 !!$real symmetric matrix to compute general inverse
-  REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: ata
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: ata
 !!$general symmetric transpose matrix (regularized) to compute general inverse
-  REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: ata_reg
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: ata_reg
 !!$inverse matrix (may be resolution matrix or the MCM)
-  REAL (prec), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: cov_m
-    ! potential solution vector
-  complex(kind(0d0)),dimension(:,:),allocatable :: x
-
-logical :: lverbose
+  REAL (KIND(0D0)), DIMENSION(:,:), ALLOCATABLE, PUBLIC   :: cov_m
 END MODULE alloci

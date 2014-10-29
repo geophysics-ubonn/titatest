@@ -1,9 +1,8 @@
 SUBROUTINE MDIAN1(X2,N,XMED)
-use alloci, only: prec
   IMPLICIT none
   INTEGER :: N,N2
-  REAL(prec),DIMENSION(N) :: X,X2
-  REAL(prec) :: XMED
+  REAL(KIND(0D0)),DIMENSION(N) :: X,X2
+  REAL(KIND(0D0)) :: XMED
 
   X = X2 ! save a copy
   CALL SORT(N,X)

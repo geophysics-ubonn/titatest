@@ -12,7 +12,7 @@ MODULE variomodel
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-use alloci, only: prec
+
   IMPLICIT none
 
   PUBLIC :: set_vario
@@ -37,23 +37,23 @@ use alloci, only: prec
   INTEGER(KIND = 4),PRIVATE,SAVE    :: c1,c2 ! switches are set on first call
 !!!$ the switches are needed internal to discriminate between the various 
 !!!$ variogram and covariance functions.
-  REAL(prec),PRIVATE,SAVE      :: omev,omec
+  REAL(KIND(0D0)),PRIVATE,SAVE      :: omev,omec
 !!$! power model exponent for variogram and covariance
-  REAL(prec),PRIVATE,SAVE      :: tfac
+  REAL(KIND(0D0)),PRIVATE,SAVE      :: tfac
 !!$! exponent factor for covariance function according to exp(-tfac(variogram))
   CHARACTER (30),PRIVATE,SAVE       :: cszv,cszc  
 !!$ strings of model type, cszv for variogram model
 !!$ cszc for covariance model (can be decoupeled)
-  REAL(prec),PRIVATE,SAVE      :: Ix_v,Iy_v
+  REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_v,Iy_v
 !!$ Correlation lengths (range) for variogram function
-  REAL(prec),PRIVATE,SAVE      :: Ix_c,Iy_c
+  REAL(KIND(0D0)),PRIVATE,SAVE      :: Ix_c,Iy_c
 !!$ Correlation lengths for covariance function.
 !!!$ It may look a littel strange but in fact there are some
 !!!$ variogram models (Exponential and Gauss) which need 
 !!!$ the Correlation length to be /3 (EXP) or /3^2 (GAU) of it. 
 !!!$ So, be careful to mistake these numbers wrong. 
 !!!$ See also the GSlib manual
-  REAL(prec),PRIVATE,SAVE      :: axs,ays
+  REAL(KIND(0D0)),PRIVATE,SAVE      :: axs,ays
 !!$ True correlation length from user..
 
   PRIVATE 
@@ -62,8 +62,8 @@ CONTAINS
   SUBROUTINE set_vario (type,ax,ay,esp_mit,esp_med) 
     ! is called at the beginning
     INTEGER,INTENT(IN)          :: type ! type of variogram model
-    REAL(prec),INTENT(IN)  :: ax,ay ! ax/ay anisotropy coefficients
-    REAL(prec),INTENT(IN)  :: esp_mit,esp_med ! aus (besp_elem.for)
+    REAL(KIND(0D0)),INTENT(IN)  :: ax,ay ! ax/ay anisotropy coefficients
+    REAL(KIND(0D0)),INTENT(IN)  :: esp_mit,esp_med ! aus (besp_elem.for)
 
     omev = 1.5d0 ! 0<ome<2
     omec = omev
@@ -134,7 +134,7 @@ CONTAINS
   SUBROUTINE get_vario (ax,ay,csz,type)
     INTEGER,INTENT(IN)              :: type 
 !!$! which info type=0 -> variogram type = 1->covariance
-    REAL (prec),INTENT (OUT) :: ax,ay
+    REAL (KIND(0D0)),INTENT (OUT) :: ax,ay
     CHARACTER (*)                   :: csz
     ! gives back the correlation length used for the variogram
     ax = axs
@@ -149,42 +149,40 @@ CONTAINS
 
   END SUBROUTINE get_vario
 
-  FUNCTION mvario (lagx,lagy,varianz)
+  REAL (KIND (0D0)) FUNCTION mvario (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag)
-    REAL(prec)  mvario
-    REAL (prec),INTENT (IN) :: lagx,lagy,varianz
-    REAL (prec)             :: r,r2 ! distances
+    REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
+    REAL (KIND (0D0))             :: r,r2 ! distances
 
-    mvario = 0.
+    mvario = 0d0
 
-    r = SQRT((lagx / Ix_v)**2. + (lagy / Iy_v)**2.)
+    r = DSQRT((lagx / Ix_v)**2d0 + (lagy / Iy_v)**2d0)
     r2 = r*r ! just to be sure to have less numerical issues
 
     SELECT CASE (c1)
     CASE (1)
-       mvario = varianz * (1. - EXP(-r2)) !from GSlib
+       mvario = varianz * (1d0 - DEXP(-r2)) !from GSlib
     CASE (2)
-       IF (r < 1.) THEN
-          mvario = varianz * (r * (1.5 - .5 * r2)) !from GSlib
+       IF (r < 1d0) THEN
+          mvario = varianz * (r * (1.5d0 - .5d0 * r2)) !from GSlib
        ELSE
           mvario = varianz
        END IF
     CASE (3)
        mvario = varianz * r**omec !from GSlib
     CASE DEFAULT
-       mvario = varianz*(1. - EXP(-r)) !from GSlib
+       mvario = varianz*(1d0 - DEXP(-r)) !from GSlib
     END SELECT
 
   END FUNCTION mvario
 
-  FUNCTION mcova (lagx,lagy,varianz)
+  REAL (KIND (0D0)) FUNCTION mcova (lagx,lagy,varianz)
     ! lag = distance/korrelation (lag) varianz = variance (sill)
-    REAL (prec) mcova
-    REAL (prec),INTENT (IN) :: lagx,lagy,varianz
-    REAL (prec)             :: r,r2 ! distances
-    mcova = 0.
+    REAL (KIND (0D0)),INTENT (IN) :: lagx,lagy,varianz
+    REAL (KIND (0D0))             :: r,r2 ! distances
+    mcova = 0d0
 
-    r = SQRT((lagx / Ix_c)**2. + (lagy / Iy_c)**2.)
+    r = DSQRT((lagx / Ix_c)**2d0 + (lagy / Iy_c)**2d0)
 
     r2 = r*r 
 
@@ -198,7 +196,7 @@ CONTAINS
 
     SELECT CASE (c2)
     CASE (1)
-       mcova = varianz * EXP(-r2) !from GSlib
+       mcova = varianz * DEXP(-r2) !from GSlib
     CASE (2)
        IF ( ABS(r) < 1d0 ) THEN
           mcova = varianz * (1d0 - r * (1.5d0 - .5d0 * r2) ) !from GSlib
@@ -207,11 +205,11 @@ CONTAINS
        END IF
     CASE (3)
        mcova = varianz * r**omec !from GSlib
-       mcova = EXP(-mcova) ! own interpretation
+       mcova = DEXP(-mcova) ! own interpretation
     CASE (4)
-       mcova = EXP(-tfac*mvario(lagx,lagy,varianz)) ! this is from a lemma
+       mcova = DEXP(-tfac*mvario(lagx,lagy,varianz)) ! this is from a lemma
     CASE DEFAULT
-       mcova = varianz * EXP(-r) !from GSlib
+       mcova = varianz * DEXP(-r) !from GSlib
     END SELECT
 
   END FUNCTION mcova

@@ -8,7 +8,7 @@ subroutine elem8(kelmas,kelve,kwert,smaxs)
 !!!$     Letzte Aenderung   26-Jan-1998
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE elemmod,only:xk,yk
   USE errmod
 
@@ -18,29 +18,29 @@ use alloci, only: prec
 !!!$.....................................................................
   INTEGER (KIND = 4)                     :: smaxs
 !!!$     Elementmatrix nach der Kondensation
-  REAL(prec),DIMENSION(smaxs,smaxs) :: kelmas
+  REAL(KIND(0D0)),DIMENSION(smaxs,smaxs) :: kelmas
 
 !!!$     Elementvektor nach der Kondensation
-  REAL(prec),DIMENSION(smaxs)       :: kelve
+  REAL(KIND(0D0)),DIMENSION(smaxs)       :: kelve
 
 !!!$     Wellenzahlwert
-  REAL(prec)                        :: kwert
+  REAL(KIND(0D0))                        :: kwert
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfskoordinaten
-  REAL (prec)    ::     xkdum(5),ykdum(5)
+  REAL (KIND(0D0))    ::     xkdum(5),ykdum(5)
 
 !!!$     Beteiligte Knoten des zusammengesetzten Elements am Teildreieck
   INTEGER (KIND = 4)  ::     ik(3)
 
 !!!$     Elementmatrizen vor der Kondensation
-  REAL (prec)    ::     elmas(5,5),elmam(5,5)
+  REAL (KIND(0D0))    ::     elmas(5,5),elmam(5,5)
 
 !!!$     Elementvektor vor der Kondensation
-  REAL (prec)    ::     elve(5)
+  REAL (KIND(0D0))    ::     elve(5)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j,k
@@ -52,7 +52,7 @@ use alloci, only: prec
   INTEGER (KIND = 4)  ::     sb(3)
 
 !!!$     Hilfsvariablen
-  REAL (prec)    ::     x21,x31,y21,y31,det,a,b,c,a1,a2
+  REAL (KIND(0D0))    ::     x21,x31,y21,y31,det,a,b,c,a1,a2
 
 !!!$.....................................................................
 
@@ -78,10 +78,10 @@ use alloci, only: prec
   a2 = xk(4)-xk(2)
 
 !!!$     Ggf. Fehlermeldung
-  if (ABS(a1).le.1d-12.or.ABS(a2).le.1d-12) then
+  if (dabs(a1).le.1d-12.or.dabs(a2).le.1d-12) then
      fetxt = ' '
-!!!$     ak            write(fetxt(1:20),'(g20.5)') ABS(a1)
-!!!$     ak            write(fetxt(26:45),'(g20.5)') ABS(a2)
+!!!$     ak            write(fetxt(1:20),'(g20.5)') dabs(a1)
+!!!$     ak            write(fetxt(26:45),'(g20.5)') dabs(a2)
      errnr = 26
      goto 1000
   end if
@@ -90,9 +90,9 @@ use alloci, only: prec
   a2 = (yk(4)-yk(2))/a2
 
 !!!$     Ggf. Fehlermeldung
-  if (ABS(a1-a2).le.1d-12) then
+  if (dabs(a1-a2).le.1d-12) then
      fetxt = ' '
-!!!$     ak            write(fetxt(1:20),'(g20.5)') ABS(a1-a2)
+!!!$     ak            write(fetxt(1:20),'(g20.5)') dabs(a1-a2)
      errnr = 26
      goto 1000
   end if
@@ -147,14 +147,14 @@ use alloci, only: prec
      c =   (x21*x21 + y21*y21) / det
 
      do i=1,3
-        elve(ik(i)) = elve(ik(i)) + det * REAL(sb(i)) / 6d0
+        elve(ik(i)) = elve(ik(i)) + det * dble(sb(i)) / 6d0
 
         do j=1,3
            elmas(ik(i),ik(j)) = elmas(ik(i),ik(j)) + &
-                (a*REAL(s1(i,j)) + b*REAL(s2(i,j)) + &
-                c*REAL(s3(i,j))) / 2d0
+                (a*dble(s1(i,j)) + b*dble(s2(i,j)) + &
+                c*dble(s3(i,j))) / 2d0
            elmam(ik(i),ik(j)) = elmam(ik(i),ik(j)) + &
-                det * REAL(s4(i,j)) / 2.4d1
+                det * dble(s4(i,j)) / 2.4d1
         end do
      end do
   end do

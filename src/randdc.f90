@@ -11,7 +11,7 @@ subroutine randdc(my_a,my_b)
 !!!$.....................................................................
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE elemmod , ONLY : sanz, mb, typanz, typ, selanz, nrel, nelanz
 
   IMPLICIT none
@@ -20,8 +20,8 @@ use alloci, only: prec
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  REAL (prec),DIMENSION ((mb+1)*sanz) :: my_a
-  REAL (prec),DIMENSION (sanz)        :: my_b
+  REAL (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  REAL (KIND (0D0)),DIMENSION (sanz)        :: my_b
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:

@@ -26,14 +26,13 @@ SUBROUTINE cholz(a,p,n,ierr,lverb)
 !!$c          is not positive definite
 !!$c NO EXTERNAL REFERENCES:
 !!$c------------------------------------------------------------
-  use alloci, only: prec
   IMPLICIT none
 
   INTEGER,INTENT (IN)                                :: n
-  COMPLEX (prec), DIMENSION (n,n),INTENT(INOUT) :: a
-  COMPLEX (prec), DIMENSION (n),INTENT(OUT)     :: p
+  COMPLEX (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  COMPLEX (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
   LOGICAL,INTENT(IN)                                 :: lverb
-  COMPLEX (prec)                                :: s
+  COMPLEX (KIND(0D0))                                :: s
   INTEGER, INTENT (OUT)                              :: ierr
   INTEGER                                            :: i,k,j,count
 
@@ -59,13 +58,13 @@ SUBROUTINE cholz(a,p,n,ierr,lverb)
 
         IF (i == j) THEN
 
-           IF (ABS(s) <= 0) THEN
+           IF (CDABS(s) <= 0) THEN
               PRINT*,'WARNING: cholz - not positive definite'
               ierr = -i
               RETURN
            END IF
 
-           p(i) = SQRT(s)
+           p(i) = CDSQRT(s)
 
         ELSE
 

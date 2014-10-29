@@ -1,287 +1,354 @@
 program fem
-  ! Complex Resistivity 2.5D Modelling Main Program
-  !
-  ! Andreas Kemna                                            15-Dec-1994
-  ! Letzte Aenderung   16-Sep-2014
-  !....................................................................
 
-  use alloci
-  use tic_toc
-  use femmod
-  use datmod
-  use sigmamod
-  use electrmod
-  use modelmod
-  use elemmod
-  use wavenmod
-  use randbmod
-  use errmod
-  use konvmod
-  use omp_lib
-  use ompmod
-  use get_ver
+!!!$   Hauptprogramm zum Complex-Resistivity-2.5D-Modelling.
 
-  implicit none
+!!!$   Belegte Kanaele:  9 - error.dat
+!!!$   11 - in-/output
+!!!$   12 - crmod.cfg
 
-  !....................................................................
+!!!$   Andreas Kemna                                            15-Dec-1994
+!!!$   Letzte Aenderung   02-May-2008
 
-  ! channel number
-  integer               kanal
+!!!$....................................................................
 
-  ! file names
-  character (len = 80)  delem,delectr,dsigma,dstrom,&
+  USE alloci
+  USE tic_toc
+  USE femmod
+  USE datmod
+  USE sigmamod
+  USE electrmod
+  USE modelmod
+  USE elemmod
+  USE wavenmod
+  USE randbmod
+  USE errmod
+  USE konvmod
+  USE omp_lib
+  USE ompmod
+  USE get_ver
+
+  IMPLICIT none
+
+
+!!!$....................................................................
+
+!!!$   Kanalnummer
+  integer         * 4     kanal
+
+
+!!!$   Dateinamen
+  character       * 80    delem,delectr,dsigma,dstrom,&
        dkpot,dpot,dvolt,dsens,drandb
 
-  ! switch write Fourier-space potentials
-  logical               lkpot
+!!!$   Schalter ob transformierte Potentialwerte ausgegeben werden sollen
+  logical         * 4     lkpot
 
-  ! switch write normal-space potentials
-  logical               lpot
+!!!$   Schalter ob Potentialwerte ausgegeben werden sollen
+  logical         * 4     lpot
 
-  ! switch write voltages/measurements
-  logical               lvolt
+!!!$   Schalter ob Spannungswerte ausgegeben werden sollen
+  logical         * 4     lvolt
 
-  ! switch run program again
-  logical               lagain
+!!!$   Schalter ob weiterer Datensatz modelliert werden soll
+  logical         * 4     lagain
 
-  ! switch modelling with K factor (default .false.)
-  logical               wkfak
+!!!$   Schalter ob mit K-Faktor modelliert werden soll (default ohne)
+  logical         * 4     wkfak
 
-  ! switch analytical modelling (default .false.)
-  logical               lana
+!!!$   Schalter ob nur analytisch modelliert werden soll (default ohne)
+  logical         * 4     lana
 
-  ! index variables
-  integer               j, k, l, c1
+!!!$   Indexvariablen
+  integer         * 4     j,k,l,c1
 
-  ! error message variable
-  character(len = 256)  ftext
-  integer               getpid, pid 
+!!!$ counting wavenumbers  
+  INTEGER :: count
 
-  ! :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+  character       *256    ftext
+  INTEGER :: getpid,pid,maxthreads,mythreads
+
+!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
   kanal = 11
   pid = getpid()
   fetxt = 'crmod.pid'
-  print*,'CRMOD complex resistivity modelling'
-  print*
-  print*,'program info'
-  print*,'crmod pid  ',pid
-  open (kanal, FILE = trim(fetxt), STATUS = 'replace', err = 999)
-  write (kanal,*) pid
-  close (kanal)
+  PRINT*,'CRMod Process_ID ::',pid
+  OPEN (kanal,FILE=TRIM(fetxt),STATUS='replace',err=999)
+  WRITE (kanal,*)pid
+  CLOSE (kanal)
 
-  call get_git_ver( version )
+  maxthreads = OMP_GET_MAX_THREADS()
+  WRITE(6,"(a, i3)") " OpenMP max threads: ", maxthreads
 
-  call tic( c1 )
-  ! open 'crmod.cfg' 
+  CALL get_git_ver
+
+  CALL tic(c1)
+!!!$   'crmod.cfg' oeffnen
   fetxt = 'crmod.cfg'
   errnr = 1
-  open (12, file = trim( fetxt ), status = 'old', err = 999)
+  open(12,file=TRIM(fetxt),status='old',err=999)
 
-  ! set general parameters
-  ! singularity removal
+!!!$   Allgemeine Parameter setzen
+
+
+!!!$   "singularity removal" ?
+!!!$   ak        lsr = .true.
   lsr = .false.
 
-  ! other
+!!!$   Art der Ruecktransformation
+!!!$   ak        swrtr = 1
+!!!$   ak        swrtr = 0
+
+!!!$   Sonstiges
   lkpot = .false.
   wkfak = .false.
-  lana = .false.
+  lana = .FALSE.
   lprior = .false. ! kann prior modell verrauschen
-  ldc = .false.
+  ldc = .FALSE.
   lnsepri = .false.
+!!!$   ak        lkpot = .true.
+!!!$   ak        dkpot = '..\tmp\kpot.ctr'
 
-  ! control output
-5 write (*,*)
-  write (*,'(a20)') ' reading input files'
+!!!$   Kontrollausgabe
+5 write(*,*)
+  write(*,'(a20)') ' Reading Input-Files'
 
-  ! read 'crmod.cfg'
+!!!$   'crmod.cfg' einlesen
   fetxt = 'crmod.cfg'
   errnr = 3
   mswitch = 0
-  read (12, *,       end = 1001, err = 999)
-  read (12, '(a80)', end = 1001, err = 999) delem
-  read (12, '(a80)', end = 1001, err = 999) delectr
-  read (12, '(a80)', end = 1001, err = 999) dsigma
-  read (12, '(a80)', end = 1001, err = 999) dstrom
-  read (12, *,       end = 1001, err = 999) lpot
-  read (12, '(a80)', end = 1001, err = 999) dpot
-  read (12, *,       end = 1001, err = 999) lvolt
-  read (12, '(a80)', end = 1001, err = 999) dvolt
-  read (12, *,       end = 1001, err = 999) lsens
-  read (12, '(a80)', end = 1001, err = 999) dsens
-  read (12, *,       end = 1001, err = 999) lagain
-  read (12, *,       end = 1001, err = 999) swrtr
-  read (12, *,       end = 1001, err = 999) lsink
-  read (12, *,       end = 1001, err = 999) nsink
-  read (12, *,       end = 1001, err = 999) lrandb2
-  read (12, '(a80)', end = 1001, err = 999) drandb
+  read(12,*,end=1001,err=999)
+  read(12,'(a80)',end=1001,err=999) delem
+  read(12,'(a80)',end=1001,err=999) delectr
+  read(12,'(a80)',end=1001,err=999) dsigma
+  read(12,'(a80)',end=1001,err=999) dstrom
+  read(12,*,end=1001,err=999) lpot
+  read(12,'(a80)',end=1001,err=999) dpot
+  read(12,*,end=1001,err=999) lvolt
+  read(12,'(a80)',end=1001,err=999) dvolt
+  read(12,*,end=1001,err=999) lsens
+  read(12,'(a80)',end=1001,err=999) dsens
+  read(12,*,end=1001,err=999) lagain
+  read(12,*,end=1001,err=999) swrtr
+  read(12,*,end=1001,err=999) lsink
+  read(12,*,end=1001,err=999) nsink
+  read(12,*,end=1001,err=999) lrandb2
+  read(12,'(a80)',end=1001,err=999) drandb
   fetxt = 'reading mswitch'
-  read (12, '(I4)',  end = 101,  err = 100) mswitch
+  read(12,'(I4)',end=101,err=100) mswitch
 
-  goto 101
+  GOTO 101
 
-100 backspace (12)
+100 BACKSPACE (12)
 
-101 lana = btest(mswitch,0)
-  wkfak = btest(mswitch,1)
-  lsr = btest(mswitch,2)
-  lverb = btest(mswitch,10)
+101 lana = BTEST(mswitch,0)
+  wkfak = BTEST(mswitch,1)
+  lsr = BTEST(mswitch,2)
+  lverb = BTEST(mswitch,10)
 
-  if (lana) print*,'analytical modelling'
-  if (wkfak) print*,'modelling with K factor'
-  if (lsr) then
-     print*,'modelling with sigularity removal'
-     lana = .false. ! analytical for singularity
-     ! is indeed controlled by lsr and not lana..
-     ! lana is only true for analytical solution only
-  end if
+  IF (lana) PRINT*,'ANALYTICAL SOLUTION'
+  IF (wkfak) PRINT*,'WITH K-FAKTOR'
+  IF (lsr) THEN
+     PRINT*,'WITH SINGULARITY REMOVAL'
+     lana = .FALSE. ! analytical for singularity 
+! is indeed controlled by lsr and not lana..
+! lana is only true for analytical solution only
+  END IF
 
-  if (lverb) print*,'verbose output'
+  IF (lverb) PRINT*,'VERBOSE OUTPUT'
 
-  ! read grid: element file
+!!!$   Alles einlesen
   call relem(kanal,delem)
   if (errnr.ne.0) goto 999
 
-  ! read grid: electrode positions
   call relectr(kanal,delectr)
   if (errnr.ne.0) goto 999
 
-  ! read grid: electrode configurations
   call rdatm(kanal,dstrom)
   if (errnr.ne.0) goto 999
 
-  ! 2D: swrtr.eq.0; 2.5D: swrtr.eq.1
+
   if (swrtr.eq.0) then
-     ! no analytical modelling and no singularity removal in 2D
-     lana = .false.
-     lsr = .false.
-     ! only one wavenumber with value 0. this transforms the 2.5D Helmholtz
-     ! equation into a 2D Poisson equation
+     lana = .FALSE.
+     lsr = .FALSE.
      kwnanz = 1
-     allocate (kwn(kwnanz),stat=errnr)
-     if (errnr /= 0) then
-        fetxt = 'error memory allocation kwn'
+     ALLOCATE (kwn(kwnanz),stat=errnr)
+     IF (errnr /= 0) THEN
+        fetxt = 'Error memory allocation kwn'
         errnr = 94
-        goto 999
-     end if
+        GOTO 999
+     END IF
      kwn(1) = 0d0
   else
-     ! compute wave numbers for 2.5D modelling
      call rwaven()
      if (errnr.ne.0) goto 999
   end if
-
-  allocate (sigma(elanz),stat=errnr)
-  if (errnr /= 0) then
-     fetxt = 'error memory allocation fem sigma'
+  print*,''
+  NTHREADS = maxthreads
+!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
+  IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
+     mythreads = MAX(kwnanz,2)
+     mythreads = kwnanz
+     PRINT*,'Rescheduling..'
+     IF ( mythreads <= maxthreads ) THEN ! best case,
+!!!$ the number of processors is greater or equal the assumed
+!!!$ workload
+        PRINT*,'perfect match'
+     ELSE 
+!!!$ is smaller than the minimum workload.. now we have to devide a bit..
+        PRINT*,'less nodes than wavenumbers'
+        DO k = 1, INT(kwnanz/2)
+           mythreads = INT(kwnanz / k) + 1
+           IF (mythreads < maxthreads) EXIT
+        END DO
+     END IF
+     NTHREADS = mythreads
+  END IF
+  CALL OMP_SET_NUM_THREADS ( NTHREADS )
+  ! recheck ..
+  k = OMP_GET_MAX_THREADS()
+  WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",k,'(',maxthreads,')'
+  print*
+!!!$   Startmodell belegen
+  ALLOCATE (sigma(elanz),stat=errnr)
+  IF (errnr /= 0) THEN
+     fetxt = 'Error memory allocation fem sigma'
      errnr = 94
      goto 999
-  end if
+  END IF
 
+!!$ manz = elanz      
   manz =elanz
 
-  ! read grid: cell parameters
   call rsigma(kanal,dsigma)
   if (errnr.ne.0) goto 999
 
-  ! read fixed boundary values
   if (lrandb2) then
      call rrandb(kanal,drandb)
      if (errnr.ne.0) goto 999
   end if
 
-  ! get grid-averaged conductivity
+!!!$   Ggf. Referenzleitfaehigkeit bestimmen
   call refsig()
 
-  ! print fictious sink node and position
-  if (lsink) write(6,'(A,I6,A,F10.2,A,F10.2,A)')&
-       ' fictious sink at node',nsink,', x=',sx(snr(nsink)),&
-       'm, y=',sy(snr(nsink)),'m'
-  ! pre-assemble stiffness matrices from area elements
-  ! in case of mixed boundaries (ntyp.eq.8), compute beta value 
+  IF (lsink) WRITE(6,'(/A,I5,2F12.3/)')&
+       'Fictious sink @ node ',nsink,sx(snr(nsink)),sy(snr(nsink))
+!!!$   Element- und Randelementbeitraege sowie Konfigurationsfaktoren zur
+!!!$   Berechnung der gemischten Randbedingung bestimmen
   call precal()
   if (errnr.ne.0) goto 999
 
   if (.not.lbeta) lsr=.false.
 
-  if (.not.allocated(hpot)) allocate(hpot(sanz,eanz))
-  if (.not.allocated(kpot)) allocate(kpot(sanz,eanz,kwnanz))
-  if (.not.allocated(b)) allocate(b(sanz,1))
-  if (.not.allocated(a)) allocate(a(2*mb+1,sanz))
-  !  if (.not.allocated(a_mat_band)) allocate(a_mat_band(2*mb+1,sanz))
-  if (.not.allocated(x)) allocate(x(sanz,1))
-  !  if (.not.allocated(a_mat_band_elec)) allocate(a_mat_band_elec(mb+1,sanz))
-  if (.not.allocated(pot))  allocate(pot(sanz))
-  if (.not.allocated(pota))  allocate(pota(sanz))
-  if (.not.allocated(fak))  allocate(fak(sanz))
-  print*
-  print*,'finite element modelling'
-  ! compute potentials
+!!!$   'a', 'hpot' und 'kpot' zuweisen
+  ALLOCATE(a((mb+1)*sanz),hpot(sanz,eanz),&
+       kpot(sanz,eanz,kwnanz),b(sanz),stat=errnr)
+  if (errnr.ne.0) then
+     fetxt = 'allocation problem a and hpot'
+     errnr = 97 
+     goto 999
+  end if
+  ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
+  if (errnr.ne.0) then
+     fetxt = 'allocation problem pot to fak'
+     errnr = 97 
+     goto 999
+  end if
+  count = 0
+  !$OMP PARALLEL DEFAULT (none) &
+  !$OMP FIRSTPRIVATE (pota,fak,pot,a,b,fetxt) &
+  !$OMP PRIVATE (j,l,k) &
+  !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,lrandb2,&
+  !$OMP  sanz,kpot,swrtr,hpot,count,lana,kg,elbg,relanz,sigma)
+  !$OMP DO
+!!!$   POTENTIALWERTE BERECHNEN
   do k=1,kwnanz
+!!!$   Kontrollausgabe
+     !$OMP ATOMIC
+     count = count + 1
+
      if (swrtr.eq.0) then
-        write(*,'(a)')' computing potentials'
+        write(*,'(a)')' Calculating Potentials'
      else
-        write (*,'(a,I4,a,I4)',ADVANCE='no')&
-             achar(13)//' computing potentials : wavenumber',k,' of',kwnanz
+        WRITE (*,'(a,t45,I4,t100,a)',ADVANCE='no')&
+             ACHAR(13)//' Calculating Potentials : Wavenumber ',count
      end if
+
      do l=1,eanz
-        if (lsr.or.lbeta.or.l.eq.1) then
-!   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
-           if (lsr) call potana(l,k,pota)
 
-!   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
-           call kompab(l,k)
-           if (errnr.ne.0) goto 999
+!!!$   Ggf. Potentialwerte fuer homogenen Fall analytisch berechnen
+        if (lsr.OR.lana) call potana(l,k,pota)
+!!!$ is also needed by kompab for reference therfore it is placed here
+!!!$
 
-!   Ggf. Randbedingung beruecksichtigen
-           if (lrandb) call randb()
-           if (lrandb2) call randb2()
+!!!$ for analytical only, the linear system is never solved
+        if ((lbeta.or.l.eq.1.OR.lsr).AND..NOT.lana) then
 
-        else
-!   Stromvektor modifizieren
-           call kompb(l)
+!!!$   Kompilation des Gleichungssystems (fuer Einheitsstrom !)
+           call kompab(l,k,a,b)
+           !           if (errnr.ne.0) goto 999
+
+!!!$   Ggf. Randbedingung beruecksichtigen
+           if (lrandb) call randb(a,b)
+           if (lrandb2) call randb2(a,b)
+
+!!!$   Gleichungssystem skalieren
+           call scalab(a,b,fak)
+           !           if (errnr.ne.0) goto 999
+
+!!!$   Cholesky-Zerlegung der Matrix
+           call chol(a)
+           !           if (errnr.ne.0) goto 999
+        else if (.NOT. lana) THEN
+
+!!!$   Stromvektor modifizieren
+           call kompb(l,b,fak)
         end if
 
-!   Gleichungssystem loesen
-       IF (.NOT.lana) call solve_zgbsvx(a,x,-b)
-!   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
-!   analytische Loesung addieren
+!!!$   Gleichungssystem loesen only for 
+!!!$ non analytical
+        IF (.NOT. lana) call vre(a,b,pot)
+!!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
+!!!$   analytische Loesung addieren
         do j=1,sanz
-           if (lana) then
+           IF (lana) THEN
+
               kpot(j,l,k) = pota(j)
-           else
-              kpot(j,l,k) = x(j,1) 
+           ELSE
+              kpot(j,l,k) = pot(j) * dcmplx(fak(j))
               if (lsr) kpot(j,l,k) = kpot(j,l,k) + pota(j)
-           end if
+           END IF
+!!!$   ak (fuer Testzwecke)
+!!!$   ak                    kpot(j,l,k) = pota(j)
            if (swrtr.eq.0) hpot(j,l) = kpot(j,l,k)
         end do
      end do
   end do
-  print*,''
-  ! inverse Fourier transform
+  !$OMP END PARALLEL
+  print*,'done, now processing'
+!!!$   Ggf. Ruecktransformation der Potentialwerte
   if (swrtr.eq.1) call rtrafo()
-  print*
-  print*,'writing output files'
-  ! write potentials in wavenumber space (if(lkpot))
+
+!!!$   Ggf. transformierte Potentialwerte ausgeben
   if (lkpot) then
      call wkpot(kanal,dkpot)
      if (errnr.ne.0) goto 999
   end if
 
-  ! compute potentials and write to file (if(lpot))
+!!!$   Ggf. Potentialwerte berechnen und ausgeben
   if (lpot) then
      call bpot(kanal,dpot)
      if (errnr.ne.0) goto 999
   end if
 
-  ! compute voltages and write to file (if(lvolt))
+!!!$   Ggf. Spannungswerte berechnen und ausgeben
+!!!$   (bzw. scheinbaren Widerstandswerte)
   if (lvolt) then
-     ! compute apparent resistivities (if(wkfak.and.lbeta)). Only possible for flat 
-     ! surfaces (configuration factor has to exist)
-     if (wkfak.and.lbeta) then
+     IF (wkfak.AND.lbeta) then
         call bkfak()
         if (errnr.ne.0) goto 999
      else
+!!!$   nur echte Spannungen ausgeben...
         kfak=1.0 
      end if
 
@@ -292,84 +359,102 @@ program fem
      if (errnr.ne.0) goto 999
   end if
 
-  ! compute sensitivities of all recordings (if(lsens))
+!!!$   'a' und 'hpot' freigeben
+  DEALLOCATE(a,hpot,b)
+
+!!!$   Ggf. Sensitivitaeten aller Messungen berechnen und ausgeben
   if (lsens) then
+
      if (manz.ne.elanz) then
         fetxt = 'manz /= elanz .. is not implemented yet'
         errnr = 50
         goto 999
      end if
-     allocate (mnr(elanz))
-     if (errnr /= 0) then
+     !     !$ get memory for mnr..
+     ALLOCATE (mnr(elanz),stat=errnr)
+     IF (errnr /= 0) THEN
         fetxt = 'Error memory allocation mnr failed'
         errnr = 94
         goto 999
-     end if
-     ! set parameter to grid cell relation
+     END IF
+!!!$   Modelleinteilung gemaess Elementeinteilung belegen
+
      do j=1,elanz
         mnr(j) = j
      end do
 
-     allocate(sens(nanz,manz),stat=errnr)
+!!!$   'sens' zuweisen
+     ALLOCATE(sens(nanz,manz),stat=errnr)
      if (errnr.ne.0) then
         errnr = 97 
         goto 999
      end if
-     ! compute and write sensitivities 
+
      call bsens()
+
      call wsens(kanal,dsens)
      if (errnr.ne.0) goto 999
-     deallocate(sens)
+
+!!!$   'sens' freigeben
+     DEALLOCATE(sens)
   end if
 
-  deallocate(kpot,pot,pota,fak,a)
+!!!$   'kpot' freigeben
+  DEALLOCATE(kpot,pot,pota,fak)
 
-  ! run program again
+!!!$   Ggf. weiteren Datensatz modellieren
   if (lagain) goto 5
 
-  ! close 'crmod.cfg'
+!!!$   'crmod.cfg' schliessen
   close(12)
 
-  ! control output
+!!!$   Kontrollausgabe
+
   fetxt = 'solution time'
-  call TOC(c1,fetxt)
+  CALL TOC(c1,fetxt)
 
   write(*,*)
-  if (allocated (snr))   deallocate (snr, sx, sy)
-  if (allocated (typ))   deallocate (typ, nelanz, selanz)
-  if (allocated (nrel))  deallocate (nrel, rnr)
-  if (allocated (strnr)) deallocate (strnr, strom, volt, sigmaa, kfak, vnr)
-  if (allocated (sigma)) deallocate (sigma)
-  if (allocated (enr))   deallocate (enr)
-  if (allocated (mnr))   deallocate (mnr)
-  if (allocated (kwn))   deallocate (kwn)
-  if (allocated (kwnwi)) deallocate (kwnwi)
-  if (allocated (rwddc)) deallocate (rwddc) 
-  if (allocated (rwndc)) deallocate (rwndc) 
-  if (allocated (rwd))   deallocate (rwd) 
-  if (allocated (rwn))   deallocate (rwn) 
-  if (allocated (rwdnr)) deallocate (rwdnr) 
-  write(*,'(a)',advance='no') ' '
-  stop 'modelling completed'
+  write(*,'(a)',ADVANCE='no')' Modelling completed'
 
-  !....................................................................
 
-  ! write error messages
-999 open(9,file = 'error.dat',status = 'replace')
+  IF (ALLOCATED (snr)) DEALLOCATE (snr,sx,sy)
+  IF (ALLOCATED (typ)) DEALLOCATE (typ,nelanz,selanz)
+  IF (ALLOCATED (nrel)) DEALLOCATE (nrel,rnr)
+
+  IF (ALLOCATED (strnr)) DEALLOCATE (strnr,strom,volt,sigmaa,&
+       kfak,vnr)
+  IF (ALLOCATED (sigma)) DEALLOCATE (sigma)
+  IF (ALLOCATED (enr)) DEALLOCATE (enr)
+  IF (ALLOCATED (mnr)) DEALLOCATE (mnr)
+  IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
+  IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
+
+  IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
+  IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
+  IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
+  IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
+  IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+
+  STOP '0'
+
+!!!$....................................................................
+
+!!!$   (Fehler-) Meldung schreiben
+999 open(9,file='error.dat',status='replace')
   errflag = 2
-  call get_error(ftext,errnr,errflag,fetxt)
+  CALL get_error(ftext,errnr,errflag,fetxt)
   write(9,'(a80,i3,i1)') fetxt,errnr,errflag
   write(9,*)ftext
   close(9)
-  stop 'error -1'
+  stop '-1'
 
-1001 open(9,file = 'error.dat',status = 'replace')
+1001 open(9,file='error.dat',status='replace')
   errnr   = 2
   errflag = 2
-  call get_error(ftext,errnr,errflag,fetxt)
+  CALL get_error(ftext,errnr,errflag,fetxt)
   write(9,'(a80,i3,i1)') fetxt,errnr,errflag
   write(9,*)ftext
   close(9)
-  stop 'error -2'
+  stop '-2'
 
 end program fem

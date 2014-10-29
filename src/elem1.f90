@@ -8,7 +8,7 @@ subroutine elem1()
 !!!$     Letzte Aenderung   22-Sep-1998
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE elemmod,only:xk,yk,elmam,elve
 
   IMPLICIT none
@@ -24,7 +24,7 @@ use alloci, only: prec
   INTEGER (KIND = 4)  ::     sb(2)
 
 !!!$     Hilfsvariablen
-  REAL (prec)    ::     x21,y21,l
+  REAL (KIND(0D0))    ::     x21,y21,l
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
@@ -37,13 +37,13 @@ use alloci, only: prec
   x21 = xk(2) - xk(1)
   y21 = yk(2) - yk(1)
 
-  l = SQRT(x21*x21 + y21*y21)
+  l = dsqrt(x21*x21 + y21*y21)
 
   do i=1,2
-     elve(i) = l * REAL(sb(i)) / 2d0
+     elve(i) = l * dble(sb(i)) / 2d0
 
      do j=1,2
-        elmam(i,j) = l * REAL(s4(i,j)) / 6d0
+        elmam(i,j) = l * dble(s4(i,j)) / 6d0
      end do
   end do
 

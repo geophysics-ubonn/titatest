@@ -1,14 +1,20 @@
-subroutine update()
+!>     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
+!!     mittels 'Smoothness Least Squares Method' und konjugierten
+!!     Gradienten.
+!<     Fuer beliebige Triangulierung und Stochastische Regularisierung.
 !!!$     
-!!!$     Unterprogramm zum Bestimmen und Anbringen der Modellverbesserung
-!!!$     mittels 'Smoothness Least Squares Method' und konjugierten
-!!!$     Gradienten.
-!!!$     Fuer beliebige Triangulierung und Stochastische Regularisierung
-!!!$     
-!!!$     Andreas Kemna                                            01-Mar-1996
-!!!$     
-!!!$     Letzte Aenderung                                         03-Aug-2009
-!!!$     
+!> @author Andreas Kemna
+!> @date 01-Mar-1996
+!> @author Roland Martin     
+!> @date 03-Aug-2009 until Sep. 2013
+!> - translation to Fortran 90
+!> - added general in code docu for specific parts     
+!> - added and tested triangular regularization (2009)
+!> - added and tested stochastic regularization (2010-2011)
+!> - added and tested reference model regularization (2012)
+!> - added doxy comments (2013)
+
+SUBROUTINE update()
 !!!$.....................................................................
 
   USE alloci
@@ -23,18 +29,18 @@ subroutine update()
   USE errmod
   USE konvmod
 
-  IMPLICIT none
+  IMPLICIT NONE
 
 
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsvariablen
-  COMPLEX (KIND(0D0)) ::   cdum
+!<     Hilfsvariablen
+  COMPLEX (KIND(0D0)) ::   cdum,cdum2
   REAL (KIND(0D0))    ::   dum,dum2
 
-!!!$     Indexvariablen
+!<     Indexvariablen
   INTEGER (KIND=4)    ::  i,j,ij,in
 !!!$.....................................................................
 
@@ -46,34 +52,35 @@ subroutine update()
 
 !!!$     Smoothnessvektor berechnen, bzw die RHS (Right Hand Side)
 !!!$       b_q = A_q^h*C_d^-1*A_q*(d-f(m_q))-\lam C_m^-1 m_q
-     if (ltri==0) then
-        do i=1,manz
+     IF (ltri==0) THEN
+        DO i=1,manz
            cdum = dcmplx(0d0)
 !!!$     diff+<
-           if (.not.lprior) then
+           IF (.NOT.lprior) THEN
 !!!$ C_m^-1 * m_q
 !!!$     diff+>
-              if (i.gt.1) cdum = dcmplx(smatm(i-1,2))*par(i-1)
-              if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
-              if (i.gt.nx) cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
-              if (i.lt.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
+              IF (i.GT.1) cdum = dcmplx(smatm(i-1,2))*par(i-1)
+              IF (i.LT.manz) cdum = cdum + dcmplx(smatm(i,2))*par(i+1)
+              IF (i.GT.nx) cdum = cdum + dcmplx(smatm(i-nx,3))*par(i-nx)
+              IF (i.LT.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3))*par(i+nx)
 
               bvec(i) = cdum + dcmplx(smatm(i,1))*par(i)
 !!!$     diff+<
-           else
+           ELSE
 !!!$ C_m^-1 * (m_q - m_0)
-              if (i.gt.1) cdum = dcmplx(smatm(i-1,2)) * (par(i-1)-m0(i-1))
-              if (i.lt.manz) cdum = cdum + dcmplx(smatm(i,2)) * &
+              IF (i.GT.1) cdum = dcmplx(smatm(i-1,2)) * (par(i-1)-m0(i-1))
+              IF (i.LT.manz) cdum = cdum + dcmplx(smatm(i,2)) * &
                    (par(i+1)-m0(i+1))
-              if (i.gt.nx) cdum = cdum + dcmplx(smatm(i-nx,3)) * &
+              IF (i.GT.nx) cdum = cdum + dcmplx(smatm(i-nx,3)) * &
                    (par(i-nx)-m0(i-nx))
-              if (i.lt.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3)) * &
+              IF (i.LT.manz-nx+1) cdum = cdum + dcmplx(smatm(i,3)) * &
                    (par(i+nx)-m0(i+nx))
 
               bvec(i)=cdum+dcmplx(smatm(i,1))*(par(i)-m0(i))
-           end if
+
+           END IF
 !!!$     diff+>
-        end do
+        END DO
 !!$c Damping--
      ELSE IF (ltri == 3.OR.ltri == 4) THEN
 
@@ -82,7 +89,7 @@ subroutine update()
 
 !!!$     triang>
      ELSE IF (ltri == 1.OR.ltri == 2.OR. &
-          (ltri > 4 .AND. ltri < 15)) then
+          (ltri > 4 .AND. ltri < 15)) THEN
 !!!$ C_m^-1 * m_q
 !!!$ C_m^-1 * (m_q - m_0)
         DO i=1,manz
@@ -106,34 +113,80 @@ subroutine update()
 
      ELSE IF (ltri == 15) THEN
         IF (.NOT. lprior) THEN
+
+          !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),par)
+           !$OMP END WORKSHARE
+
         ELSE
+
+           !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),( par - m0 ) )
+           !$OMP END WORKSHARE
+
         END IF
      END IF
+
+!!!$ >> RM ref model regu
+     IF (lw_ref) THEN
+        DO i=1,manz
+           IF ((w_ref_re(i) > EPSILON(w_ref_re(i)) ).OR.&
+                (w_ref_im(i) > EPSILON(w_ref_im(i))) ) THEN
+              cdum = (par(i) - m_ref(i))
+!!!$ ind ref grad
+              IF (lam_ref_sw > 0) THEN
+                 IF(ind_ref_grad(i) /= 0) THEN
+                    
+                    in = ind_ref_grad(i)
+                    cdum2 = (par(in) - m_ref(in))
+!!$
+!!$                    cdum = ABS(CDEXP(par(i)) - CDEXP(par(in)))
+!!$
+!!$                    cdum2 = ABS(CDEXP(m_ref(i)) - CDEXP(m_ref(in)))
+
+                    cdum =  (cdum - cdum2)
+
+                 ELSE
+
+                    cdum = 0d0 ! if the gradient is not there, we do not have a contribution on this side
+
+                 END IF
+              END IF
+
+!!!$ (a*va , b*vb)
+              cdum = DCMPLX(DBLE(cdum)*w_ref_re(i),DIMAG(cdum)*w_ref_im(i))
+
+              bvec(i) = bvec(i) + lam_ref * cdum
+
+           END IF
+        END DO
+     END IF
+!!!$ << RM ref model regu
+
 !!!$     triang<
+
 !!!$  Skalierungsfaktoren bestimmen
 !!!$ Preconditioning factors: 
 !!!$ cgfac = diag(A^h_q * C_d^-1 * A + \lam C_m^-1)^-1
-     do j=1,manz
+     DO j=1,manz
         dum = 0d0
 
-        if (ldc) then
-           do i=1,nanz
+        IF (ldc) THEN
+           DO i=1,nanz
               dum = dum + sensdc(i,j) * sensdc(i,j) * wmatd(i) * &
-                   dble(wdfak(i))
-           end do
-        else if (lfpi) then
-           do i=1,nanz
-              dum = dum + dble(sens(i,j)) * dble(sens(i,j)) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        else
-           do i=1,nanz
-              dum = dum + dble(dconjg(sens(i,j)) * sens(i,j)) * &
-                   wmatd(i)*dble(wdfak(i))
-           end do
-        end if
+                   DBLE(wdfak(i))
+           END DO
+        ELSE IF (lfpi) THEN
+           DO i=1,nanz
+              dum = dum + DBLE(sens(i,j)) * DBLE(sens(i,j)) * &
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        ELSE
+           DO i=1,nanz
+              dum = dum + DBLE(dconjg(sens(i,j)) * sens(i,j)) * &
+                   wmatd(i)*DBLE(wdfak(i))
+           END DO
+        END IF
         dum2 = dum
 
         IF (ltri==0) THEN
@@ -154,76 +207,93 @@ subroutine update()
            dum    = dum + lam * smatm(j,j)
 
         END IF
+
+!!!$ >> RM ref model regu
+        
+        IF (lw_ref .AND. ( &
+             (w_ref_re(i) > EPSILON(w_ref_re(i))) .OR. &
+             (w_ref_im(i) > EPSILON(w_ref_im(i))) ) ) THEN
+           dum = dum + lam * lam_ref*(w_ref_re(i) + w_ref_im(i))
+!!!$ adding variances.. 
+!!$ TODO: checking for exactness
+        END IF
+!!!!$<< RM
+
         cgfac(j) = 1d0/dsqrt(dum)
-     end do
+     END DO
 
 !!!$     Konstantenvektor berechen und skalieren (RHS)
 !!!$ the other part of the RHS system...
 !!!$ A_q^h * C_d^-1 * (d-f(m_q)) + \lam C_m^-1 (m_q,(m_q-m_0))
-    do j=1,manz
+    DO j=1,manz
 
         cdum = dcmplx(0d0)
 
 !!!$     diff+<
-        if (.not.ldiff) then
+        IF (.NOT.ldiff) THEN
 !!!$     diff+>
-           if (ldc) then
-              do i=1,nanz
+           IF (ldc) THEN
+              DO i=1,nanz
                  cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           else if (lfpi) then
-              do i=1,nanz
-                 cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           else
-              do i=1,nanz
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           ELSE IF (lfpi) THEN
+              DO i=1,nanz
+                 cdum = cdum + dcmplx(DBLE(sens(i,j))*wmatd(i)* &
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           ELSE
+              DO i=1,nanz
                  cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i))
-              end do
-           end if
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i))
+              END DO
+           END IF
 !!!$     diff+<
-        else
-           if (ldc) then
-              do i=1,nanz
+        ELSE
+           IF (ldc) THEN
+              DO i=1,nanz
                  cdum = cdum + dcmplx(sensdc(i,j)*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           else if (lfpi) then
-              do i=1,nanz
-                 cdum = cdum + dcmplx(dble(sens(i,j))*wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           else
-              do i=1,nanz
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           ELSE IF (lfpi) THEN
+              DO i=1,nanz
+                 cdum = cdum + dcmplx(DBLE(sens(i,j))*wmatd(i)* &
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           ELSE
+              DO i=1,nanz
                  cdum = cdum + dconjg(sens(i,j))*dcmplx(wmatd(i)* &
-                      dble(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
-              end do
-           end if
-        end if
+                      DBLE(wdfak(i)))*(dat(i)-sigmaa(i)-(d0(i)-fm0(i)))
+              END DO
+           END IF
+        END IF
 !!!$     diff+>
         IF (ltri == 3.OR.ltri == 4) THEN
 
            bvec(j) = cdum
 
         ELSE
+!!!$ RM ref model regu: reference model regu is already included in bvec (see above)..
+           bvec(j) = cdum - dcmplx(lam)*bvec(j) 
 
-           bvec(j) = cdum - dcmplx(lam)*bvec(j)
         END IF
 
         bvec(j) = bvec(j)*dcmplx(cgfac(j))
 
-     end do
-         if (lverbose) print*,'update sens example',sens(1,1)
-          if (lverbose) print*,'update bvec example',bvec(1)
+!!$        print*,j,cdum,sens(1,j),sigma(j)
+
+     END DO
+
+!!$     DO i=1,nanz
+!!$        print*,i,wmatd(i),dat(i),sigmaa(i),wdfak(i)
+!!$     END Do
 !!!$     Modellverbesserung mittels konjugierter Gradienten bestimmen
      CALL cjg
-    if (lverbose) print*,'update cjg example',dpar(1),cgfac(1)
+
 !!!$     Ggf. Verbesserung umspeichern
-     if (lfpi) then
+     IF (lfpi) THEN
         dpar = DCMPLX(0D0,DBLE(dpar))
-     end if
+     END IF
 
 !!!$     Verbesserung skalieren
      dpar = dpar * DCMPLX(cgfac)
@@ -231,17 +301,17 @@ subroutine update()
 !!$        dpar(j) = dpar(j)*dcmplx(cgfac(j))
 !!$     end do
 
-  else                      ! (llam==.TRUE.)
+  ELSE                      ! (llam==.TRUE.)
 
 
 !!!$     Felder zuruecksetzen
      dpar = dpar2
 
-     i = int(cgres2(1))+1
+     i = INT(cgres2(1))+1
 
      cgres(1:i) = cgres2(1:i)
 
-  end if
+  END IF
 
 !!!$     Ggf. (Leitfaehigkeits-)Phasen < 0 mrad korrigieren
 !!!$     if (lphi0.and.dimag(par(j)).lt.0d0)
@@ -254,7 +324,7 @@ subroutine update()
   bdpar = 0d0
 
   in = 0
-  do j=1,manz
+  DO j=1,manz
 
      par(j) = par(j) + DCMPLX(step) * dpar(j) ! model update
 
@@ -264,11 +334,12 @@ subroutine update()
         in = in + 1 
      END IF
 
-     bdpar = bdpar + dble(dpar(j)*dconjg(dpar(j)))
+     bdpar = bdpar + DBLE(dpar(j)*dconjg(dpar(j)))
 
-  end do
+  END DO
 
   IF (in > 0) WRITE (*,'(/a,I9,a/)',ADVANCE = 'no')' forcing zero ',in&
        ,' times'
   bdpar = bdpar * step
-end subroutine update
+
+END SUBROUTINE update

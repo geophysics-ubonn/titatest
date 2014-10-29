@@ -7,35 +7,34 @@ MODULE datmod
 !!$c Modified F90 module by Roland Martin
 !!$c                                       Letzte Aenderung   27-07-2010
 !!$c.....................................................................
-use alloci
 !!$c Anzahl der Messwerte
   INTEGER (KIND = 4),PUBLIC                             :: nanz
 !!$c Nummern der Stromelektroden
   INTEGER (KIND = 4), DIMENSION(:),ALLOCATABLE, PUBLIC  :: strnr
 !!$c Stromwerte
-  REAL (prec), DIMENSION(:),ALLOCATABLE, PUBLIC    :: strom
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: strom
 !!$c Nummern der Spannungselektroden
   INTEGER (KIND = 4), DIMENSION(:),ALLOCATABLE, PUBLIC  :: vnr
 !!$c Spannungswerte
-  COMPLEX (prec), DIMENSION(:),ALLOCATABLE, PUBLIC :: volt
+  COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: volt
 !!$c Scheinbare Leitfaehigkeiten
-  COMPLEX (prec), DIMENSION(:),ALLOCATABLE, PUBLIC :: sigmaa
+  COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: sigmaa
 !!$c storage
-  COMPLEX (prec), DIMENSION(:),ALLOCATABLE, PUBLIC :: sgmaa2
+  COMPLEX (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC :: sgmaa2
 !!$c Konfigurationsfaktoren
-  REAL (prec), DIMENSION(:),ALLOCATABLE, PUBLIC    :: kfak
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: kfak
 !!$c Wichtungsvektor der Phasen
-  REAL (prec), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdp
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdp
 !!$c Wichtungsvektor der Widerstaende
-  REAL (prec), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdr
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatdr
 !!$c Wichtungsvektor der Komplexen Fehlerellipsen
-  REAL (prec), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatd_cri
+  REAL (KIND(0D0)), DIMENSION(:),ALLOCATABLE, PUBLIC    :: wmatd_cri
 !!$c parameters of resistance error model (dR=stabw0*R+stabm0)
-  REAL (prec), PUBLIC                              :: stabw0,stabm0
+  REAL (KIND(0D0)), PUBLIC                              :: stabw0,stabm0
 !!$c parameters of phase error model
 !!$c (dp=stabA1*R^stabpB+stabpA2*|P|+stabpA3)
-  REAL (prec), PUBLIC                              :: stabp0,stabpA1
-  REAL (prec), PUBLIC                              :: stabpB,stabpA2
+  REAL (KIND(0D0)), PUBLIC                              :: stabp0,stabpA1
+  REAL (KIND(0D0)), PUBLIC                              :: stabpB,stabpA2
 !!$c Schalter ob 'individual error' (.true.) oder 'uniform weighting'
 !!$c (.false.)
   LOGICAL, PUBLIC                                       :: lindiv
@@ -49,11 +48,11 @@ use alloci
   INTEGER (KIND = 4), PUBLIC                            :: iseed
 !!$c Noise error model ...
 !!$c ... of resistance error model (dnR=nstabw0*nR+nstabm0)
-  REAL (prec), PUBLIC                              :: nstabw0,nstabm0
+  REAL (KIND(0D0)), PUBLIC                              :: nstabw0,nstabm0
 !!$c ... of phase error model 
 !!$c (dnp=nstabA1*dnR^nstabpB+nstabpA2*nP+nstabp0)
-  REAL (prec), PUBLIC                              :: nstabpB,nstabpA1
-  REAL (prec), PUBLIC                              :: nstabpA2,nstabp0
+  REAL (KIND(0D0)), PUBLIC                              :: nstabpB,nstabpA1
+  REAL (KIND(0D0)), PUBLIC                              :: nstabpA2,nstabp0
 !!$c Anzahl der nicht beruecksichtigten Messwerte
   INTEGER (KIND = 4), PUBLIC                            :: npol
 

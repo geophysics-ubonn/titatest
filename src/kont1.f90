@@ -9,7 +9,7 @@ SUBROUTINE kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
 !!!$     Letzte Aenderung   16-Jul-2007
 
 !!!$.....................................................................
-use alloci, only:prec
+
   USE variomodel
   USE femmod
   USE datmod
@@ -32,7 +32,7 @@ use alloci, only:prec
 !!!$     Dateinamen
   CHARACTER (80)  :: delem,delectr,dstrom,dd0,dm0,dfm0,drandb
   LOGICAL :: lagain
-  REAL(prec) :: Ix,Iy
+  REAL(KIND(0D0)) :: Ix,Iy
 
   fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
   OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
@@ -232,8 +232,8 @@ use alloci, only:prec
           ' -- Sytop [m] :',sytop
   END IF
   IF (.NOT.lrho0.AND..NOT.lstart) THEN
-     bet0 = ABS(dCMPLX(1e0)/sigma0)
-     pha0 = 1e3*ATAN2(aimag(dCMPLX(1.)/sigma0),REAL(dCMPLX(1.)/sigma0))
+     bet0 = cdabs(dcmplx(1d0)/sigma0)
+     pha0 = 1d3*datan2(dimag(dcmplx(1d0)/sigma0),DBLE(dcmplx(1d0)/sigma0))
      WRITE(fpinv,'(a,t50,g11.5,t62,a5)',err=999) &
           ' Background resistivity :',bet0,'ohm*m'
      WRITE(fpinv,'(t50,g11.5,t62,a4)',err=999)pha0,'mrad'
@@ -247,7 +247,7 @@ use alloci, only:prec
   WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. steplength              :',stpmin
   WRITE(fpinv,'(a,t50,g11.5)',err=999)&
-       ' Min. stepsize (||\delta m||) :',bMIN
+       ' Min. stepsize (||\delta m||) :',bdmin
   WRITE(fpinv,'(a,t50,g11.5)',err=999)&
        ' Min. error in relaxation :',eps
   WRITE(fpinv,'(a,t50,i5)',err=999)&

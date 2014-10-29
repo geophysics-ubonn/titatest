@@ -22,12 +22,12 @@ subroutine chol(a_chol)
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
-  COMPLEX (prec),DIMENSION(*) :: a_chol
+  COMPLEX (KIND(0D0)),DIMENSION(*) :: a_chol
   
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idi,i0,ij,j0
   INTEGER (KIND = 4)  ::     m1,fi
-  COMPLEX (prec) ::  s
+  COMPLEX (KIND(0D0)) ::  s
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j,k
@@ -57,13 +57,13 @@ subroutine chol(a_chol)
 
         else
 
-           if (ABS(s).le.0d0) then
+           if (cdabs(s).le.0d0) then
               fetxt = ' '
               errnr = 28
               GOTO 1000
            end if
 
-           a_chol(idi) = SQRT(s)
+           a_chol(idi) = cdsqrt(s)
 
         end if
 

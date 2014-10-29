@@ -2,7 +2,7 @@ subroutine randb2(my_a,my_b)
 
 !!!$     Unterprogramm modifiziert die Matrix 'a' (Bandbreite 'mb') und den
 !!!$     Konstantenvektor 'b' zur Beruecksichtigung der Dirichletschen Rand-
-!!!$     bedingungen ('rwdanz' Randwerte 'rwd(rwMAX)' mit zugeh. Knotennummern
+!!!$     bedingungen ('rwdanz' Randwerte 'rwd(rwdmax)' mit zugeh. Knotennummern
 !!!$     'rwdnr(smax)').
 
 !!!$     ( Vgl. Subroutine 'RBSTBNDN' in Schwarz (1991) )
@@ -11,7 +11,7 @@ subroutine randb2(my_a,my_b)
 !!!$     Letzte Aenderung   15-Jul-2007
 
 !!!$.....................................................................
-use alloci, only: prec
+
   USE elemmod , ONLY : sanz, mb
   USE randbmod
 
@@ -20,8 +20,8 @@ use alloci, only: prec
 !!!$.....................................................................
 !!!$     EIN-/AUSGABEPARAMETER:
 
-  COMPLEX (prec),DIMENSION ((mb+1)*sanz) :: my_a
-  COMPLEX (prec),DIMENSION (sanz)        :: my_b
+  COMPLEX (KIND (0D0)),DIMENSION ((mb+1)*sanz) :: my_a
+  COMPLEX (KIND (0D0)),DIMENSION (sanz)        :: my_b
 
 !!!$.....................................................................
 
@@ -29,7 +29,7 @@ use alloci, only: prec
 
 !!!$     Hilfsvariablen
   INTEGER(KIND = 4)   ::     m1
-  COMPLEX(prec)  ::     rwert
+  COMPLEX(KIND(0D0))  ::     rwert
 
 !!!$     Indexvariablen
   INTEGER(KIND = 4)   ::     ir,i,j,k,idk,ia,ki,ji
@@ -47,32 +47,32 @@ use alloci, only: prec
      rwert  = rwd(ir)
      my_b(k)   = -rwert
      idk    = k*m1
-     my_a(idk) = dCMPLX(1d0)
+     my_a(idk) = dcmplx(1d0)
 
      IF (k /= 1) THEN
 
-        ia = max(1,mb+2-k)
+        ia = max0(1,mb+2-k)
 
         do i=ia,mb
            j  = k+i-m1
            ki = idk+i-m1
 
            my_b(j)  = my_b(j) + rwert * my_a(ki)
-           my_a(ki) = dCMPLX(0d0)
+           my_a(ki) = dcmplx(0d0)
 
         END do
      END IF
 
      if (k.eq.sanz) CYCLE
 
-     ia = max(1,k-sanz+m1)
+     ia = max0(1,k-sanz+m1)
 
      do i=ia,mb
         j  = k-i+m1
         ji = (j-1)*m1+i
 
         my_b(j)  = my_b(j) + rwert * my_a(ji)
-        my_a(ji) = dCMPLX(0d0)
+        my_a(ji) = dcmplx(0d0)
 
      END do
 

@@ -41,21 +41,21 @@ SUBROUTINE bsendc(tictoc)
   INTEGER (KIND = 4)  :: elec1,elec2,elec3,elec4
 
 !!!$     Beitraege zur Superposition
-  REAL (prec)    ::    sup(4)
+  REAL (KIND(0D0))    ::    sup(4)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  :: ityp,jnel,mi,mj,imn,imax,imin
   INTEGER (KIND = 4)  :: i,j,k,icount
 
 !!!$     Hilfsfeld
-  REAL(prec),DIMENSION(:),ALLOCATABLE :: hsens
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  :: nzp,nnp,c1
-  REAL (prec)    :: dum
+  REAL (KIND(0D0))    :: dum
 
 !!!$     Pi
-  REAL (prec)    :: pi
+  REAL (KIND(0D0))    :: pi
 
 !!!$.....................................................................
 
@@ -169,7 +169,7 @@ SUBROUTINE bsendc(tictoc)
            END IF
 
            sensdc(i,mnr(iel)) = sensdc(i,mnr(iel)) + dum * &
-                REAL(sigma(iel)/volt(i))
+                DBLE(sigma(iel)/volt(i))
 
 !!!$     ak BAW-Tank
 !!!$     ak                if (mnr(iel).le.14*58) sensdc(i,mnr(iel))=0d0

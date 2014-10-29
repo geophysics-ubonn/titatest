@@ -1,15 +1,14 @@
 MODULE get_ver
-! get git version information from file 'my_git_version.h' which is created
-! at each ./autogen.sh run
 
   IMPLICIT none
 
-  CHARACTER (256)  ::   version(5)
+  CHARACTER (256),PUBLIC  ::   version(5)
 
+  PUBLIC :: get_git_ver
+  
 CONTAINS
 
-  SUBROUTINE get_git_ver(version)
-  CHARACTER (256)  ::   version(5)
+  SUBROUTINE get_git_ver
 
   INCLUDE 'my_git_version.h'
   
@@ -19,11 +18,11 @@ CONTAINS
   version(4)=TRIM(ADJUSTL(my_git_version(4)))
   version(5)=TRIM(ADJUSTL(my_git_version(5)))
   
-  PRINT*,'git branch        ',TRIM(version(1))
-  PRINT*,'commit ID         ',TRIM(version(2))
-  PRINT*,'created on        ',TRIM(version(3))
-  PRINT*,'compiler          ',TRIM(version(4))
-  PRINT*,'opertating system ',TRIM(version(5))
+  PRINT*,'Git-Branch  ',TRIM(version(1))
+  PRINT*,'Commit-ID   ',TRIM(version(2))
+  PRINT*,'Created     ',TRIM(version(3))
+  PRINT*,'Compiler    ',TRIM(version(4))
+  PRINT*,'OS          ',TRIM(version(5))
   
 END SUBROUTINE get_git_ver
 END MODULE get_ver

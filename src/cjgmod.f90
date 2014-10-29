@@ -6,38 +6,37 @@ MODULE cjgmod
 !!$ -------------------------------------------------------------------
   USE datmod,ONLY:nanz
   USE modelmod,ONLY:manz
-  use alloci
 
   IMPLICIT none
 !!!!$ COMPLEX CASE
 !!!$ auxiliary vector stores product of A*(Ap)
-  COMPLEX(prec),ALLOCATABLE,DIMENSION(:),PUBLIC  :: ap
+  COMPLEX(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC  :: ap
 !!$ Right hand side (RHS) vector
-  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE  :: bvec
+  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: bvec
 !!$ residual vector
-  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE  :: rvec
+  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: rvec
 !!$ intermediate vector (stores Ap)
-  COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE  :: pvec
+  COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: pvec
 
 !!!!$ DC CASE
 !!$c assist vectors
-  REAL(prec),ALLOCATABLE,DIMENSION(:),PUBLIC     :: apdc
+  REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC     :: apdc
 !!$ dc real valued version ov RHS
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: bvecdc
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: bvecdc
 !!$ residual vector dc
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: rvecdc
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: rvecdc
 !!$ intermediate vector (stores Ap) dc
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: pvecdc
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: pvecdc
 
 !!!$ variables for every case
 !!$ CG residuals
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
 !!$ storage
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
 !!$ preconditioning factors
-  REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
+  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
 !!$ CG Epsilon
-  REAL(prec),PUBLIC                              :: eps
+  REAL(KIND(0D0)),PUBLIC                              :: eps
 !!$ maximum number of CG steps
   INTEGER (KIND = 4),PUBLIC                           :: ncgmax
 !!$ actual number of CG steps..

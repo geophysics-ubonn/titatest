@@ -36,21 +36,21 @@ subroutine bsens()
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Beitraege zur Superposition
-  COMPLEX (prec) ::     sup(4)
+  COMPLEX (KIND(0D0)) ::     sup(4)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  ::     i,k
+  INTEGER (KIND = 4)  ::     i,j,k
 
 !!!$     Hilfsfeld
-  COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: hsens
+  COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     nzp,nnp
-  COMPLEX (prec) ::     dum
+  COMPLEX (KIND(0D0)) ::     dum
 
 !!!$     Pi
-  REAL (prec)    ::  pi
+  REAL (KIND(0D0))    ::  pi
 
 !!!$ OMP zaehler
   INTEGER (KIND = 4) ::  icount
@@ -97,7 +97,7 @@ subroutine bsens()
      elec4 = (vnr(i)-elec3)/10000
 
 !!!$     Beitraege zur Superposition auf Null setzen
-     sup = dCMPLX(0d0)
+     sup = DCMPLX(0d0)
 
      do ityp=1,typanz
         ntyp = typ(ityp)
@@ -113,18 +113,18 @@ subroutine bsens()
 
 !!!$     SENSITIVITAETEN BERECHNEN
            do k=1,kwnanz
-              hsens(k) = dCMPLX(0d0)
-       imn = 0
+              hsens(k) = dcmplx(0d0)
+
 !!!$     Knoten des aktuellen Elements hochzaehlen
               do mi=1,nkel
                  nzp = nrel(iel,mi)
 
                  do mj=1,nkel
                     nnp  = nrel(iel,mj)
-!                    imax = max0(mi,mj)
-!                    imin = min0(mi,mj)
-!                    imn  = imax*(imax-1)/2+imin
-                  imn = imn+1
+                    imax = max0(mi,mj)
+                    imin = min0(mi,mj)
+                    imn  = imax*(imax-1)/2+imin
+
 !!!$     Beitraege nach "Reziprozitaetsmethode" gewichtet aufaddieren und
 !!!$     superponieren
 !!!$     (beachte: 'volt = pot(elec4) - pot(elec3)' ,
@@ -139,7 +139,7 @@ subroutine bsens()
 !!!$     -> mittels Compiler-Einstellung auf Null setzen!
 !!!$     MsDev5.0: "/fpe:3 /check:underflow" -> "/fpe:0"
                     dum      = (sup(2)-sup(1)) * (sup(4)-sup(3))
-                    hsens(k) = hsens(k) + dCMPLX(elbg(iel,imn,k)) * dum
+                    hsens(k) = hsens(k) + dcmplx(elbg(iel,imn,k)) * dum
                  end do
               end do
            end do
@@ -147,17 +147,17 @@ subroutine bsens()
 !!!$     GGF. RUECKTRANSFORMATION
            if (swrtr.eq.0) then
 
-              dum = hsens(1) * dCMPLX(strom(i))
+              dum = hsens(1) * dcmplx(strom(i))
 
            else
 
-              dum = dCMPLX(0d0)
+              dum = dcmplx(0d0)
 
               do k=1,kwnanz
-                 dum = dum + hsens(k)*dCMPLX(kwnwi(k))
+                 dum = dum + hsens(k)*dcmplx(kwnwi(k))
               end do
 
-              dum = dum * dCMPLX(strom(i)/pi)
+              dum = dum * dcmplx(strom(i)/pi)
 
            end if
 

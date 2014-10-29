@@ -8,7 +8,7 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!$.....................................................................
   USE make_noise
-  USE alloci, ONLY:rnd_r,rnd_p,prec
+  USE alloci, ONLY:rnd_r,rnd_p
   USE femmod
   USE datmod
   USE invmod
@@ -34,35 +34,37 @@ SUBROUTINE rdati(kanal,datei)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Indexvariable
-  INTEGER  ::     i,ifp1,ifp2,ifp3
+  INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
+!!! >> RM
 !!!$  USED ONLY IF NOISE IS ADDED!!
 !!!$ Magnitude and Phase of new data
-  REAL(prec)     ::     new_bet,new_pha
-!!!$ Counting signum mismatches of magnitude and phases
+  REAL(KIND(0D0))     ::     new_bet,new_pha
+!!!$ Counting signum mismatches of magnitude and phases 
 !!!$    if noise is added
-  INTEGER  ::     icount_pha,icount_mag
+  INTEGER (KIND = 4) ::     icount_pha,icount_mag
+!!!$ << RM
 
 !!!$     Elektrodennummern
-  INTEGER  ::     elec1,elec2,elec3,elec4
+  INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
 !!!$     Betrag und Phase (in mrad) der Daten
-  REAL(prec)     ::     bet,pha
+  REAL(KIND(0D0))     ::     bet,pha
 
 !!!$     Standardabweichung eines logarithmierten (!) Datums
-  REAL(prec)      ::     stabw
+  REAL(KIND(0D0))      ::     stabw
 !!!$     Error of the resistance
-  REAL(prec)     ::     eps_r
+  REAL(KIND(0D0))     ::     eps_r
 !!!$     Standardabweichung der Phase
-  REAL(prec)     ::     stabwp,stabwb
+  REAL(KIND(0D0))     ::     stabwp,stabwb
 !!!$     Error of the phase
-  REAL(prec)     ::     eps_p
+  REAL(KIND(0D0))     ::     eps_p
 !!!$     Pi
-  REAL(prec)     ::     pi
+  REAL(KIND(0D0))     ::     pi
 !!!$ check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
 !!!$.....................................................................
-  pi = acos(-1d0)
+  pi = dacos(-1d0)
 
 !!!$     'datei' oeffnen
   fetxt = datei
@@ -73,11 +75,11 @@ SUBROUTINE rdati(kanal,datei)
 !!!$     Anzahl der Messwerte lesen
 !!!$ also check if we may use individual errors or not
   READ(kanal,*,END=1001,err=11) nanz,lindiv
-  IF (lindiv) write(*,*) 'using individual data errors'
+  IF (lindiv) PRINT*,'+ Individual data error!'
   GOTO 12
-11 write(*,*) 'no individual errors. using crtomo.cfg'
+11 PRINT*,'+ Taking error model'
   BACKSPACE(kanal)
-!!!$c check if data file format is CRTomo konform..
+!!!$c check if data file format is CRTOmo konform..
 12 READ(kanal,*,END=1001,err=1000) elec1
   BACKSPACE(kanal)
 
@@ -237,7 +239,7 @@ SUBROUTINE rdati(kanal,datei)
 
 !!!!!!!!!!!!!!!!!!! PHASE ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!
            stabwp = ( stabpA1*bet**stabpB &
-                + 1d-2*stabpA2*ABS(pha) + stabp0 ) * 1d-3
+                + 1d-2*stabpA2*dabs(pha) + stabp0 ) * 1d-3
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
         END IF
@@ -266,10 +268,10 @@ SUBROUTINE rdati(kanal,datei)
 
            IF (.NOT. ldc) THEN
 
-              eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*ABS(pha) &
+              eps_p = (nstabpA1*eps_r**nstabpB + 1d-2*nstabpA2*dabs(pha) &
                    + nstabp0)
 
-!!$                  eps_p = (nstabpA1*bet**nstabpB + 1d-2*nstabpA2*ABS(pha) + nstabp0)
+!!$                  eps_p = (nstabpA1*bet**nstabpB + 1d-2*nstabpA2*dabs(pha) + nstabp0)
 
               WRITE(ifp2,'(3(G14.4,1X))',ADVANCE='no')rnd_p(i),eps_p,pha
 
@@ -321,18 +323,18 @@ SUBROUTINE rdati(kanal,datei)
      ELSE
 
 !!!$     Ggf. Fehlermeldung
-        IF (ABS(pha).GT.1d3*pi) THEN
+        IF (dabs(pha).GT.1d3*pi) THEN
            fetxt = ' '
            errnr = 95
            GOTO 1000
         END IF
      END IF
 
-     dat(i)   = dCMPLX(-LOG(bet),-pha/1d3)
+     dat(i)   = dcmplx(-dlog(bet),-pha/1d3)
 
      wmatdr(i) = 1d0/(stabw**2d0) !=C_d^{-1} !!!!
 
-!!!$     ak            if (lfphai) wmatd(i)=1d0/SQRT(stabw*stabw+stabwp*stabwp)
+!!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
         wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)
@@ -359,6 +361,27 @@ SUBROUTINE rdati(kanal,datei)
         GOTO 1000
      END IF
   END DO ! i=1,nanz
+!!!$     ak
+  if (lindiv) then
+     IF (ldc) THEN
+        read(kanal,*,end=1001,err=1000) stabw
+        if (stabw.le.0d0) then
+           fetxt = ' '
+           errnr = 88
+           goto 1000
+        end if
+        wmatdr = wmatdr * stabw * stabw
+     ELSE
+        read(kanal,*,end=1001,err=1000) stabw,stabwp
+        if (stabw.le.0d0.OR.stabwp <= 0d0) then
+           fetxt = ' '
+           errnr = 88
+           goto 1000
+        end if
+        wmatdr = wmatdr * stabw * stabw
+        wmatdp = wmatdp * stabwp * stabwp
+     END IF
+  end if
 
 !!!$     'datei' schliessen
   CLOSE(kanal)

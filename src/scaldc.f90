@@ -19,14 +19,14 @@ SUBROUTINE scaldc(a_scal,b_scal,fak_scal)
 
 
 !!!$.....................................................................
-  REAL(prec),DIMENSION((mb+1)*sanz)  ::  a_scal
-  REAL(prec),DIMENSION(sanz)  ::  b_scal
-  REAL(prec),DIMENSION(sanz)  ::  fak_scal
+  REAL(KIND(0D0)),DIMENSION((mb+1)*sanz)  ::  a_scal
+  REAL(KIND(0D0)),DIMENSION(sanz)  ::  b_scal
+  REAL(KIND(0D0)),DIMENSION(sanz)  ::  fak_scal
 
 !!!$     Hilfsvariablen
   INTEGER (KIND=4) ::     idi,i0
   INTEGER (KIND=4) ::     ja
-  REAL(prec)  ::     dum
+  REAL(KIND(0D0))  ::     dum
 
 !!!$     Indexvariablen
   INTEGER (KIND=4) ::     i,j
@@ -45,7 +45,7 @@ SUBROUTINE scaldc(a_scal,b_scal,fak_scal)
      END IF
 
      a_scal(idi) = 1d0
-     fak_scal(i)   = 1d0 / SQRT(dum)
+     fak_scal(i)   = 1d0 / dsqrt(dum)
      b_scal(i)   = b_scal(i) * fak_scal(i)
 
      IF (i == 1) CYCLE

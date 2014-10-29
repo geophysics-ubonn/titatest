@@ -5,7 +5,7 @@ MODULE randbmod
 !!$c                                       Letzte Aenderung   15-Jul-2007
 !!$
 !!$c.....................................................................
-use alloci
+
 !!!$Anzahl der vorgegebenen Potentialwerte (Dirichletsche Randbedingung)
   INTEGER(KIND = 4),PUBLIC                             :: rwdanz
 
@@ -13,8 +13,8 @@ use alloci
   INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE    :: rwdnr
 
 !!!$Randwerte (Dirichletsche Randbedingung)
-    REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE    :: rwddc
-    COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE :: rwd
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE    :: rwddc
+    COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: rwd
 
 !!!$Zeiger ab wann Potentialwerte automatisch belegt werden sollen
     INTEGER(KIND = 4),PUBLIC                           :: rwdbnr
@@ -24,8 +24,8 @@ use alloci
     
 !!!$Randwerte (Neumannsche Randbedingung)
 !!!$(fuer 'beta' belegt mit den Widerstandswerten der Randelemente)
-    REAL(prec),PUBLIC,DIMENSION(:),ALLOCATABLE    :: rwndc
-    COMPLEX(prec),PUBLIC,DIMENSION(:),ALLOCATABLE :: rwn
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE    :: rwndc
+    COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE :: rwn
   
 
 END MODULE randbmod

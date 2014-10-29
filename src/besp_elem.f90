@@ -20,9 +20,9 @@ SUBROUTINE besp_elem
 !!!$     Indexvariablen
   INTEGER :: i,j,ifp
 !!!$     Abstaende d. Schwerpunktskoordinaten der Flaechenelemente
-  REAL(prec) :: ax,ay,ar
+  REAL(KIND(0D0)) :: ax,ay,ar
 !!!$     ESP Abstaende
-  REAL(prec),DIMENSION(:),ALLOCATABLE :: abst
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: abst
 !!!$-----------------------------------------------------------------------
 
   IF (.NOT.ALLOCATED(abst)) ALLOCATE (abst(elanz))

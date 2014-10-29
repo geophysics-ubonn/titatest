@@ -19,14 +19,14 @@ SUBROUTINE choldc(a_chol)
 
 
 !!!$.....................................................................
-  REAL (prec),DIMENSION(*)    ::  a_chol
+  REAL (KIND(0D0)),DIMENSION(*)    ::  a_chol
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idi,i0,ij,j0
   INTEGER (KIND = 4)  ::     m1,fi
-  REAL (prec)    ::     s
+  REAL (KIND(0D0))    ::     s
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j,k
@@ -63,7 +63,7 @@ SUBROUTINE choldc(a_chol)
               RETURN
            END IF
 
-           a_chol(idi) = SQRT(s)
+           a_chol(idi) = dsqrt(s)
 
         END IF
 

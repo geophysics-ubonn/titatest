@@ -20,17 +20,17 @@ subroutine rtrafo()
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Pi
-  REAL (prec)  ::   pi
+  REAL (KIND(0D0))  ::   pi
 
 !!!$     Hilfsvariablen
-  COMPLEX (prec)  ::    summe
-  REAL (prec)    ::     summdc
+  COMPLEX (KIND(0D0))  ::    summe
+  REAL (KIND(0D0))    ::     summdc
 
 !!!$     Indexvariablen
   INTEGER (KIND=4)    ::j,k,l
 
 !!!$.....................................................................
-  print*,'inverse Fourier transform'
+
   pi = dacos(-1d0)
 
   if (ldc) then
@@ -64,13 +64,13 @@ subroutine rtrafo()
      !$OMP DO COLLAPSE (2) PRIVATE (l,j,k,summe)
      do l=1,eanz
         do j=1,sanz
-           summe = dCMPLX(0d0)
+           summe = dcmplx(0d0)
 
            do k=1,kwnanz
-              summe = summe + kpot(j,l,k)*dCMPLX(kwnwi(k))
+              summe = summe + kpot(j,l,k)*dcmplx(kwnwi(k))
            end do
 
-           hpot(j,l) = summe / dCMPLX(pi)
+           hpot(j,l) = summe / dcmplx(pi)
         end do
      end do
      !$OMP END PARALLEL

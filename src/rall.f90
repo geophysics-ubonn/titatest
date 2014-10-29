@@ -10,7 +10,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 !!!$     Letzte Aenderung   20-Aug-2007
 !!!$     
 !!!$.....................................................................
-use alloci, only: prec
+
   USE make_noise
   USE variomodel
   USE femmod
@@ -58,11 +58,11 @@ use alloci, only: prec
   INTEGER (KIND = 4) ::     i
 
 !!!$     Pi
-  REAL(prec)   ::     pi
+  REAL(KIND(0D0))   ::     pi
 
 !!!$     diff+<
-  REAL(prec),DIMENSION(:),ALLOCATABLE   :: dum,dum2
-  REAL(prec)                            :: dum3
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
+  REAL(KIND(0D0))                            :: dum3
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
   INTEGER (KIND = 4) ::  nanz0,j,j0
 !!!$     diff+>
@@ -118,11 +118,12 @@ use alloci, only: prec
 
 !!!$ BETA MGS
   betamgs = 1d0
+  WRITE (*,'(/a)',ADVANCE='no')'OS identification:'
   IF (INDEX ( version(5), 'Msys') /= 0) THEN
-!      MS-OS
+     PRINT*,' MS-OS'
      slash = '\'  !' \ is escape char for syntax highlights
   ELSE
-!  Linux-OS
+     PRINT*,' Linux-OS'
      slash = '/'
   END IF
 
@@ -148,7 +149,7 @@ use alloci, only: prec
 !!!$     Mindest-step-length
   stpmin = 1d-3
 !!!$     Minimale stepsize (bdpar)
-  bMIN = 1d-3
+  bdmin = 1d-6
 !!!$     Regularisierungsparameter
 !!!$     ak Default
   nlam   = 30
@@ -482,7 +483,7 @@ use alloci, only: prec
      errnr = 105
      GOTO 999
   ELSE IF (lrho0.AND.(bet0.LE.0d0.OR.&
-       (.NOT.ldc.AND.ABS(pha0).GT.1d3*pi))) THEN
+       (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi))) THEN
      fetxt = ' '
      errnr = 91
      GOTO 999
@@ -510,7 +511,7 @@ use alloci, only: prec
 
   lelerr = BTEST (mswitch,5).OR.lelerr ! +32 overwrites previous lelerr
 
-!  IF (lelerr) PRINT*,'## using complex error ellipses ##'
+  IF (lelerr) PRINT*,'## using complex error ellipses ##'
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
@@ -537,14 +538,18 @@ use alloci, only: prec
      lphi0  = .FALSE.
      lpol   = .FALSE.
   END IF
+!!!$     diff-        if (lstart) lrho0=.false.
 
   IF (lstart.OR.ldiff) lrho0=.FALSE.
-
+!!!$     ak
   IF (ldiff) THEN
      ldc  = .TRUE.
      lpol = .FALSE.
   END IF
+!!!$     diff+>
+!!!$     ak        if (ldc.or.stabp0.ge.stabw0) lfphai=.false.
   IF (ldc) lfphai=.FALSE.
+!!!$ << RM
 
 !!!$ append path string (saved in ramd) and prepare
 !!!$ output file names
@@ -623,7 +628,7 @@ use alloci, only: prec
         errnr = 3
         GOTO 999
      END IF
-     WRITE(*,'(/A,I5,2F12.3/)')' fictious sink at node ',&
+     WRITE(*,'(/A,I5,2F12.3/)')'Fictious sink @ node ',&
           nsink,sx(snr(nsink)),sy(snr(nsink))
 !!!$         WRITE(fpinv,'(A,I5,2F12.3)')'Fictious sink @ node ',
 !!!$     1        nsink,sx(snr(nsink)),sy(snr(nsink))
@@ -632,53 +637,61 @@ use alloci, only: prec
   CALL rdati (kanal,dstrom)
   IF (errnr.NE.0) GOTO 999
 
+
+
+!!$>> RM
   fetxt = 'crt.lamnull'
   INQUIRE(FILE=TRIM(fetxt),EXIST=exi)
   IF (exi) THEN
 !!!$ Overwriting lamfix with crt.lamnull content
-     WRITE (*,*) 'overwriting lamfix with content of '//TRIM(fetxt)
+     WRITE (*,'(/a)')'overwriting lamfix with content of '//TRIM(fetxt)
      OPEN(kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='old')
      READ(kanal,*,END=1001,ERR=999)lamnull_cri
-     PRINT*,'lambda_0(CRI) = ',REAL(lamnull_cri)
+     PRINT*,'++ Lambda_0(CRI) = ',REAL(lamnull_cri)
      READ(kanal,*,END=30,ERR=30)lamnull_fpi
-     PRINT*,'lambda_0(FPI) = ',REAL(lamnull_fpi)
+     PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
      GOTO 31
 30   lamnull_fpi = 0d0
      IF (BTEST(llamf,0)) lamnull_fpi = lamfix ! in case of llamf we possibly 
 !!!$ do not want lam0 search at the beginning of FPI
 31   CLOSE(kanal)
+     PRINT*
   ELSE IF (BTEST(llamf,0)) THEN
-     WRITE (*,'(/a,G12.4/)')'setting lamnull with lamfix ',REAL(lamfix)
+     WRITE (*,'(/a,G12.4/)')'Presetting lamnull with lamfix ',REAL(lamfix)
      lamnull_cri = lamfix
      lamnull_fpi = lamfix
   ELSE IF (nz == -1) THEN
-     lamnull_cri = REAL(MAX(manz,nanz))
-     WRITE (*,'(/a,G12.4/)')'+++ lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_cri = DBLE(MAX(manz,nanz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE IF (nz < 0) THEN
-     lamnull_cri = ABS(REAL(nz))
-     WRITE (*,'(/a,G12.4/)')'+++ lambda_0(CRI) =',REAL(lamnull_cri)
+     lamnull_cri = ABS(DBLE(nz))
+     WRITE (*,'(/a,G12.4/)')'+++ Lambda_0(CRI) =',REAL(lamnull_cri)
      lamnull_fpi = 0d0
   ELSE
      WRITE (*,'(/a/)')'+++ Found no presettings for lambda_0 (default)'
      lamnull_cri = 0d0
      lamnull_fpi = 0d0
   END IF
-  write(*,*) 'saving lamba presets to '//TRIM(fetxt)
+  PRINT*,'Saving lamba presettings -> '//TRIM(fetxt)
   OPEN (kanal,FILE=TRIM(fetxt),ACCESS='sequential',STATUS='replace')
   WRITE (kanal,*)lamnull_cri
   WRITE (kanal,*)lamnull_fpi
   CLOSE (kanal)
 
+!!$<< RM
+
+
   IF (ldc) THEN
-     WRITE (*,'(/a/)')' DC setting magnitude error'
+     WRITE (*,'(/a/)')'++ (DC) Setting magnitude error'
      wmatd = wmatdr
   ELSE
+
      IF (lelerr) THEN
-        WRITE (*,*) 'CRI complex error ellipse'
+        WRITE (*,'(/a/)')'++ (CRI) Setting complex error ellipse'
         wmatd = wmatd_cri
      ELSE
-        WRITE (*,*) 'CRI complex magnitude error'
+        WRITE (*,'(/a/)')'++ (CRI) Setting complex error of magnitude'
         wmatd = wmatdr
      END IF
   END IF
@@ -765,8 +778,8 @@ use alloci, only: prec
      IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
 !!!$     nur falls jede Messkonfiguration nur einmal!
 !!!$     j0     = j
-        d0(i)  = dCMPLX(-LOG(dum(j)),0d0)
-        fm0(i) = dCMPLX(-LOG(dum2(j)),0d0)
+        d0(i)  = dcmplx(-dlog(dum(j)),0d0)
+        fm0(i) = dcmplx(-dlog(dum2(j)),0d0)
      ELSE IF (j.LT.nanz0) THEN
         GOTO 20
      ELSE
@@ -790,7 +803,7 @@ use alloci, only: prec
      READ(kanal,*)
      DO j=1,elanz
         READ(kanal,*) dum3,dum3,dum3
-        m0(mnr(j)) = dCMPLX(-LOG(1d1)*dum3,0d0)
+        m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
      END DO
      CLOSE(kanal)
      DEALLOCATE (dum,dum2,idum,ic,ip)

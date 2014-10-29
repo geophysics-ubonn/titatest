@@ -12,7 +12,7 @@ MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  USE alloci , ONLY : sens,sensdc,smatm,prec,lverbose
+  USE alloci , ONLY : sens,sensdc,smatm
   USE femmod , ONLY : fak,ldc
   USE elemmod, ONLY : smaxs,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
@@ -76,14 +76,13 @@ CONTAINS
 !> cjg flow control subroutine is called from outside
 !! and checks for the different cases (DC,IP,FPI)
   SUBROUTINE cjg
-    IF (ldc) THEN
+    IF (ldc.OR.lfpi) THEN
        CALL con_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
        CALL cjggdc
        CALL des_cjgmod (2,fetxt,errnr)
        IF (errnr /= 0) RETURN
     ELSE
-    if (lverbose) print*,'calling cjggra'
        CALL con_cjgmod (3,fetxt,errnr)
        IF (errnr /= 0) RETURN
        CALL cjggra
@@ -108,7 +107,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$
 !!!$    Skalare
-    REAL(prec) :: beta,alpha,dr,dr0,dr1
+    REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
 !!!$
 !!!$    Hilfsvariablen
     INTEGER         :: k
@@ -116,16 +115,17 @@ CONTAINS
 !!!$....................................................................
 
     IF (lfpi) THEN
-       bvecdc = aimag(bvec)
+       bvecdc = dimag(bvec)
     ELSE
-       bvecdc = REAL(bvec)
+       bvecdc = DBLE(bvec)
     END IF
 
-    dpar = dcmplx(0D0)
+    dpar = DCMPLX(0D0)
     rvecdc = bvecdc
     pvecdc = 0D0
 
     fetxt = 'CG iteration'
+
     DO k=1,ncgmax
 
        ncg = k-1
@@ -141,6 +141,7 @@ CONTAINS
 
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
+
        IF (dr.LE.dr0) GOTO 10
 
        pvecdc= rvecdc + beta * pvecdc
@@ -170,7 +171,7 @@ CONTAINS
 
        alpha = dr/dr1
 
-       dpar = dpar + dcmplx(alpha) * dcmplx(pvecdc)
+       dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
        rvecdc= rvecdc - alpha * bvecdc
 
 !!!$rm update speichern
@@ -222,7 +223,7 @@ CONTAINS
           END DO
        ELSE IF (lfpi) THEN
           DO j=1,manz
-             apdc(i) = apdc(i) + pvecdc(j)*REAL(sens(i,j))*cgfac(j)
+             apdc(i) = apdc(i) + pvecdc(j)*DBLE(sens(i,j))*cgfac(j)
           END DO
        END IF
     END DO
@@ -240,7 +241,7 @@ CONTAINS
 !!!$...................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(prec)    ::     dum
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -280,7 +281,7 @@ CONTAINS
 !!!$!     PROGRAMMINTERNE PARAMETER:
 
 !!!$!     Hilfsvariablen
-    REAL(prec)    ::     dum
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 !!!$!.....................................................................
 
@@ -314,7 +315,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    REAL(prec)    ::     dum
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -342,7 +343,7 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(prec)    ::     dum
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
@@ -371,7 +372,7 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-    REAL (prec) :: rdum
+    REAL (KIND(0D0)) :: rdum
 !!!$....................................................................
 
 
@@ -399,7 +400,7 @@ CONTAINS
 !!!$...................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    REAL(prec)    ::     dum
+    REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -413,12 +414,12 @@ CONTAINS
        IF (ldc) THEN
           DO i=1,nanz
              dum = dum + sensdc(i,j) * &
-                  wmatd(i)*REAL(wdfak(i))*apdc(i)
+                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
           END DO
        ELSE IF (lfpi) THEN
           DO i=1,nanz
-             dum = dum + REAL(sens(i,j)) * &
-                  wmatd(i)*REAL(wdfak(i))*apdc(i)
+             dum = dum + DBLE(sens(i,j)) * &
+                  wmatd(i)*DBLE(wdfak(i))*apdc(i)
           END DO
        END IF
 
@@ -443,8 +444,8 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Skalare
-!!$!!    COMPLEX(prec) :: beta
-    REAL(prec)    :: alpha,dr,dr0,dr1,beta
+!!$!!    COMPLEX(KIND(0D0)) :: beta
+    REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
 !!!$    Hilfsvariablen
     INTEGER            :: k,j
@@ -463,14 +464,14 @@ CONTAINS
 
        dr = 0d0
        DO j=1,manz
-          dr = dr + REAL(dconjg(rvec(j)) * rvec(j))
+          dr = dr + DBLE(DCONJG(rvec(j)) * rvec(j))
        END DO
 
        IF (k.EQ.1) THEN
           dr0  = dr*eps
           beta = 0d0
        ELSE
-        
+          IF (dr.LE.dr0) GOTO 10
 !!!$    Fletcher-Reeves-Version
           beta = dr/dr1
 !!!$    ak!!!$Polak-Ribiere-Version
@@ -480,11 +481,12 @@ CONTAINS
 !!$          end do
 !!$          beta = beta * -alpha/dr1
        END IF
-!  IF (dr.LE.dr0) GOTO 10
+
        IF (lverb) WRITE (*,'(a,t40,I5,t55,G10.4,t70,G10.4)',&
             ADVANCE='no')ACHAR(13)//TRIM(fetxt),k,dr,dr0
 
-       pvec = rvec + dcmplx(beta) * pvec
+       pvec = rvec + DCMPLX(beta) * pvec
+
        CALL bap
 
        IF (ltri == 0) THEN
@@ -497,17 +499,20 @@ CONTAINS
        ELSE IF (ltri == 15) THEN
           CALL bpsto
        END IF
+
        IF (lw_ref) CALL bpref
 
        CALL bb
+
        dr1 = 0d0
        DO j=1,manz
-          dr1 = dr1 + REAL(dconjg(pvec(j)) * bvec(j))
+          dr1 = dr1 + DBLE(DCONJG(pvec(j)) * bvec(j))
        END DO
 
        alpha = dr/dr1
-       dpar = dpar + dcmplx(alpha) * pvec
-       rvec = rvec - dcmplx(alpha) * bvec
+
+       dpar = dpar + DCMPLX(alpha) * pvec
+       rvec = rvec - DCMPLX(alpha) * bvec
 
        dr1 = dr
 
@@ -536,7 +541,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -568,7 +573,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -605,7 +610,7 @@ CONTAINS
 !!!$     PROGRAMMINTERNE PARAMETER:
 !!!$
 !!!$     Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j,idum
 !!!.....................................................................
     !     R^m * p  berechnen (skaliert)
@@ -614,10 +619,10 @@ CONTAINS
        DO j=1,smaxs
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
-               dcmplx(smatm(i,j)) * cgfac(idum) ! off diagonals
+               DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
-       bvec(i) = cdum + pvec(i) * dcmplx(smatm(i,smaxs+1)) * &
+       bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
             cgfac(i) ! + main diagonal
 
     END DO
@@ -638,14 +643,14 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    coaa R^m * p  berechnen (skaliert)
 
-    bvec = pvec * dcmplx(cgfac * smatm(:,1))
+    bvec = pvec * DCMPLX(cgfac * smatm(:,1))
 !!$    do j=1,manz
-!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*dcmplx(smatm(i,1))
+!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
 !!$    end do
 
   END SUBROUTINE bplma
@@ -670,16 +675,16 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
 
     !$OMP WORKSHARE
-    bvec = MATMUL(dcmplx(smatm),pvec)
+    bvec = MATMUL(DCMPLX(smatm),pvec)
     !$OMP END WORKSHARE
 
-    bvec = bvec * dcmplx(cgfac)
+    bvec = bvec * DCMPLX(cgfac)
   END SUBROUTINE bpsto
 
   SUBROUTINE bpref()
@@ -698,7 +703,7 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     INTEGER         ::     i
-    COMPLEX (prec) :: cdum
+    COMPLEX (KIND(0D0)) :: cdum
 !!!$....................................................................
 
 
@@ -707,10 +712,10 @@ CONTAINS
 
        IF (w_ref_re(i) <= EPSILON(w_ref_re(i)) .AND. &
             w_ref_im(i) <= EPSILON(w_ref_im(i))) CYCLE 
-!!$ scaling for real and aimaginary part separately       
-       cdum = dcmplx(REAL(pvec(i))*w_ref_re(i), aimag(pvec(i))*w_ref_re(i))
+!!$ scaling for real and imaginary part separately       
+       cdum = DCMPLX(DBLE(pvec(i))*w_ref_re(i), DIMAG(pvec(i))*w_ref_re(i))
 
-       bvec(i) = bvec(i) + cdum * dcmplx(lam_ref * cgfac(i))
+       bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
 
 !!!!$! according to damping stuff..
     END DO
@@ -729,7 +734,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(prec) ::    cdum
+    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -743,7 +748,7 @@ CONTAINS
 
        DO i=1,nanz
           cdum = cdum + dconjg(sens(i,j)) * &
-               dcmplx(wmatd(i)*REAL(wdfak(i)))*ap(i)
+               dcmplx(wmatd(i)*DBLE(wdfak(i)))*ap(i)
        END DO
 
        bvec(j) = cdum + dcmplx(lam)*bvec(j)

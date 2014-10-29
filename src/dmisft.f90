@@ -6,7 +6,7 @@ SUBROUTINE dmisft(lsetup)
 !!!$     Letzte Aenderung   15-Jan-2001
 
 !!!$.....................................................................
-  use alloci, only: prec
+
   USE invmod
   USE datmod
   USE errmod
@@ -28,16 +28,17 @@ SUBROUTINE dmisft(lsetup)
 !!!$     PROGRAMMINTERNE PARAMETER:
 
 !!!$     Hilfsfelder
-  REAL(prec),DIMENSION(:),ALLOCATABLE   :: psi,eps2
+  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: psi,eps2
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     i,idum
-  COMPLEX (prec) ::    cdum,cdat,csig
-  REAL(prec)     ::     dum,norm,norm2
+  COMPLEX (KIND(0D0)) ::    cdum,cdat,csig
+  REAL(KIND(0D0))     ::     dum,norm,norm2
 
 !!!$.....................................................................
 
+!!!$     einfach mal oeffnen falls Ausgabe
   errnr = 1
   fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
   OPEN(fpeps,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
@@ -46,7 +47,7 @@ SUBROUTINE dmisft(lsetup)
   errnr = 4
 
 11 FORMAT (I6,G12.3,1x,F10.6,2x,I3,2X,4(1X,G15.7))
-    
+
   IF ((llam.AND..NOT.lstep).OR.lsetup) THEN
      IF (lfpi) THEN
         WRITE(fpeps,'(/a,t7,I4)',err=1000)'PIT#',it
@@ -79,7 +80,7 @@ SUBROUTINE dmisft(lsetup)
 
 !!!$     ak Ggf. Daten mit Phase betraglich groesser 200 mrad nicht beruecksichtigen
 !!!$     ak (Standardabweichung auf 1d4 hochsetzen)
-!!!$     ak           if (ABS(1d3*aimag(csig)).gt.200d0) wmatd(i)=1d-8
+!!!$     ak           if (dabs(1d3*dimag(csig)).gt.200d0) wmatd(i)=1d-8
 
 !!!$     diff-            cdum = cdat - csig
 !!!$     diff+<
@@ -91,29 +92,28 @@ SUBROUTINE dmisft(lsetup)
 !!!$     diff+>
 
      IF (lfpi) THEN
-        psi(i) = SQRT(wmatd(i))*ABS(aimag(cdum))
+        psi(i) = dsqrt(wmatd(i))*dabs(dimag(cdum))
      ELSE
-!print*,'PSIMAKE',wmatd(i),cdum,cdat,csig,wdlok(i)
-        psi(i) = SQRT(wmatd(i))*ABS(cdum)
+        psi(i) = dsqrt(wmatd(i))*cdabs(cdum)
      END IF
 
 !!!$     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
      IF ((llam.AND..NOT.lstep).OR.lsetup) WRITE(fpeps,11,err=1000) &
-          i, REAL(1d0/SQRT(wmatd(i))),REAL(psi(i)),wdlok(i),&
-          REAL(csig),REAL(cdat),aimag(cdat),aimag(csig)
+          i, REAL(1d0/dsqrt(wmatd(i))),REAL(psi(i)),wdlok(i),&
+          REAL(csig),REAL(cdat),AIMAG(cdat),AIMAG(csig)
 
      idum   = idum   + wdlok(i)
-     nrmsd  = nrmsd  + psi(i)*psi(i)*REAL(wdlok(i))
+     nrmsd  = nrmsd  + psi(i)*psi(i)*DBLE(wdlok(i))
 
-     betrms = betrms + wmatdr(i)*REAL(wdlok(i)) * &
-          REAL(cdum)*REAL(cdum)
+     betrms = betrms + wmatdr(i)*DBLE(wdlok(i)) * &
+          DBLE(cdum)*DBLE(cdum)
 
-     pharms = pharms + wmatdp(i)*REAL(wdlok(i)) * &
-          aimag(cdum)*aimag(cdum)
+     pharms = pharms + wmatdp(i)*DBLE(wdlok(i)) * &
+          dimag(cdum)*dimag(cdum)
 
   END DO
 
-! error message: all data excluded
+!!!$     Ggf. Fehlermeldung
   IF (idum.EQ.0) THEN
      fetxt = ' '
      errnr = 99
@@ -122,11 +122,9 @@ SUBROUTINE dmisft(lsetup)
 
   npol   = nanz-idum
   rmssum = nrmsd
-!  print*,'NRMSSSSS',nrmsd,idum,wdlok,psi
-  nrmsd  = SQRT(nrmsd /REAL(idum))
-
-  betrms = SQRT(betrms/REAL(idum))
-  pharms = SQRT(pharms/REAL(idum))
+  nrmsd  = dsqrt(nrmsd /DBLE(idum))
+  betrms = dsqrt(betrms/DBLE(idum))
+  pharms = dsqrt(pharms/DBLE(idum))
 
 !!!$     Ggf. ROBUST INVERSION (nach Doug' LaBrecque)
   IF (lrobust) THEN
@@ -203,16 +201,16 @@ END SUBROUTINE dmisft
 !!!$*********************************************************************
 
 SUBROUTINE chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
-use alloci, only: prec
+
 !!!$.....................................................................
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
 !!!$     Eingabe
-  COMPLEX (prec) ::    dati,sigi
+  COMPLEX (KIND(0D0)) ::    dati,sigi
 
 !!!$     Ausgabe
-  COMPLEX (prec) ::    cdat,csig
+  COMPLEX (KIND(0D0)) ::    cdat,csig
 
 !!!$     Schalter
   INTEGER (KIND = 4)  ::     wdlok
@@ -225,23 +223,23 @@ use alloci, only: prec
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idat,isig
 
-!!!$     Real-, aimaginaerteile
-  REAL (prec)    ::     redat,imdat,resig,imsig
+!!!$     Real-, Imaginaerteile
+  REAL (KIND(0D0))    ::     redat,imdat,resig,imsig
 
 !!!$     Pi
-  REAL (prec)    ::     pi
+  REAL (KIND(0D0))    ::     pi
 
 !!!$.....................................................................
 
   pi = dacos(-1d0)
 
 !!!$     Logarithmierte Betraege in den Realteilen,
-!!!$     Phasen (in rad) in den aimaginaerteilen
-  redat = REAL(dati)
-  imdat = aimag(dati)
-  resig = REAL(sigi)
-  imsig = aimag(sigi)
-!  print*,'CHKPOL',redat,imdat,resig,imsig,sigi
+!!!$     Phasen (in rad) in den Imaginaerteilen
+  redat = DBLE(dati)
+  imdat = dimag(dati)
+  resig = DBLE(sigi)
+  imsig = dimag(sigi)
+
 !!!$     Phasenbereich checken
   IF (imdat.GT.pi/2d0) THEN
      idat = -1
@@ -263,8 +261,8 @@ use alloci, only: prec
 
 !!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
-     imsig = imsig + REAL(isig)*pi
-     IF (.NOT.ldum) imdat=imdat-sign(pi,imdat)
+     imsig = imsig + DBLE(isig)*pi
+     IF (.NOT.ldum) imdat=imdat-dsign(pi,imdat)
 
      wdlok = 0
 
@@ -272,21 +270,21 @@ use alloci, only: prec
 
 !!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
 !!!$     ggf. Korrektur
-     IF (ldum) imdat=imdat+REAL(idat)*pi
+     IF (ldum) imdat=imdat+DBLE(idat)*pi
 
      wdlok = 0
 
   ELSE IF (idat.NE.0.AND.isig.NE.0) THEN
 
 !!!$     Polaritaetswechsel
-     imsig = imsig + REAL(isig)*pi
-     imdat = imdat + REAL(idat)*pi
+     imsig = imsig + DBLE(isig)*pi
+     imdat = imdat + DBLE(idat)*pi
 
   END IF
 
 !!!$     'cdat' und 'csig' speichern
-  cdat = dCMPLX(redat,imdat)
-  csig = dCMPLX(resig,imsig)
+  cdat = dcmplx(redat,imdat)
+  csig = dcmplx(resig,imsig)
 
   RETURN
 END SUBROUTINE chkpo2

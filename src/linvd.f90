@@ -23,14 +23,13 @@ SUBROUTINE linvd(a,p,n,lverb)
 !!$c   p(n)    Eigenvalues of former A
 !!$c   n       leading dimension 
 !!$c-----------------------------------------------------------------
-use alloci, only: prec
   IMPLICIT none
   
   INTEGER,INTENT (IN)                             :: n
-  REAL (prec), DIMENSION (n,n),INTENT(INOUT) :: a
-  REAL (prec), DIMENSION (n),INTENT(IN)      :: p
+  REAL (KIND(0D0)), DIMENSION (n,n),INTENT(INOUT) :: a
+  REAL (KIND(0D0)), DIMENSION (n),INTENT(IN)      :: p
   LOGICAL,INTENT(IN)                              :: lverb
-  REAL (prec)                                :: s
+  REAL (KIND(0D0))                                :: s
   INTEGER                                         :: k,i,j
   
   DO i= 1 , n

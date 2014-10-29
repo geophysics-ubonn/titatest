@@ -39,21 +39,21 @@ SUBROUTINE bsensi(tictoc)
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Beitraege zur Superposition
-  COMPLEX (prec) ::    sup(4)
+  COMPLEX (KIND(0D0)) ::    sup(4)
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
   INTEGER (KIND = 4)  ::     i,j,k,icount
 
 !!!$     Hilfsfeld
-  COMPLEX(prec),DIMENSION(:),ALLOCATABLE :: hsens
+  COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::     nzp,nnp,c1
-  COMPLEX (prec) ::    dum
+  COMPLEX (KIND(0D0)) ::    dum
 
 !!!$     Pi
-  REAL (prec)    ::     pi
+  REAL (KIND(0D0))    ::     pi
 
 !!!$.....................................................................
 
@@ -68,7 +68,7 @@ SUBROUTINE bsensi(tictoc)
 
   IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
-  sens = dcmplx(0d0)
+  sens = DCMPLX(0d0)
 
   icount = 0
   !$OMP PARALLEL DEFAULT (none) &
@@ -118,16 +118,15 @@ SUBROUTINE bsensi(tictoc)
               hsens(k) = dcmplx(0d0)
 
 !!!$     Knoten des aktuellen Elements hochzaehlen
-imn = 0
               DO mi=1,nkel
                  nzp = nrel(iel,mi)
 
                  DO mj=1,nkel
                     nnp  = nrel(iel,mj)
-!                    imax = max0(mi,mj)
-!                    imin = min0(mi,mj)
-!                    imn  = imax*(imax-1)/2+imin
-imn = imn+1
+                    imax = max0(mi,mj)
+                    imin = min0(mi,mj)
+                    imn  = imax*(imax-1)/2+imin
+
 !!!$     Beitraege nach "Reziprozitaetsmethode" gewichtet aufaddieren und
 !!!$     superponieren
 !!!$     (beachte: 'volt = pot(elec4) - pot(elec3)' ,
@@ -171,6 +170,7 @@ imn = imn+1
   !$OMP END PARALLEL
   fetxt = 'bsensi::'
   IF (tictoc) CALL toc(c1,fetxt)
+
   DEALLOCATE (hsens)
 
 END SUBROUTINE bsensi

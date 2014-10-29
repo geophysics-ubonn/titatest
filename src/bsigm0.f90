@@ -6,7 +6,7 @@ subroutine bsigm0(kanal,dstart)
 !!!$     Letzte Aenderung   15-Jan-2001
 
 !!!$.....................................................................
-use alloci, only:prec
+
   USE femmod
   USE datmod
   USE invmod
@@ -40,13 +40,13 @@ use alloci, only:prec
 
 !!!$     Hilfsvariablen
   INTEGER (KIND = 4)  ::   idat
-  REAL (prec)    ::   dum,dum2
+  REAL (KIND(0D0))    ::   dum,dum2
 
-!!!$     Real-, aimaginaerteil
-  REAL (prec)    ::   redat,imdat
+!!!$     Real-, Imaginaerteil
+  REAL (KIND(0D0))    ::   redat,imdat
 
 !!!$     Pi
-  REAL (prec)    ::   pi
+  REAL (KIND(0D0))    ::   pi
 
 !!!$.....................................................................
 
@@ -57,7 +57,7 @@ use alloci, only:prec
   if (ldiff) then ! m0 was set within rall for this case 
 !!!!$ (absolute difference inversion)
      do i=1,elanz
-        sigma(i) = EXP(m0(mnr(i)))
+        sigma(i) = cdexp(m0(mnr(i)))
      end do
   else if (lstart) then
 !!!$     diff+>
@@ -69,7 +69,7 @@ use alloci, only:prec
 
 !!!$     'sigma' gemaess 'bet0', 'pha0' belegen
      do i=1,elanz
-        sigma(i) = dCMPLX( dCOS(pha0/1d3)/bet0 , -dSIN(pha0/1d3)/bet0 )
+        sigma(i) = dcmplx( dcos(pha0/1d3)/bet0 , -dsin(pha0/1d3)/bet0 )
      end do
 
   else if (lbeta) then
@@ -78,13 +78,13 @@ use alloci, only:prec
      call bkfak()
      if (errnr.ne.0) goto 999
 
-     sigma0 = dCMPLX(0d0)
+     sigma0 = dcmplx(0d0)
      dum    = 0d0
 
      do i=1,nanz
 !!!$     Phase lokal korrigieren
 !!!$     (entspricht hier "lpol=.true.", aber anders nicht moeglich)
-        imdat = aimag(dat(i))
+        imdat = dimag(dat(i))
 
         if (imdat.gt.pi/2d0) then
            idat = -1
@@ -100,19 +100,19 @@ use alloci, only:prec
         END if
         
 !!!$     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
-        redat = real(dat(i))-LOG(ABS(kfak(i)))
+        redat = dble(dat(i))-dlog(dabs(kfak(i)))
 
 !!!$     Werte gewichtet mitteln
-        dum2   = SQRT(wmatd(i))*real(wdfak(i))
-        sigma0 = sigma0 + dCMPLX(redat,imdat)*dCMPLX(dum2)
+        dum2   = dsqrt(wmatd(i))*dble(wdfak(i))
+        sigma0 = sigma0 + dcmplx(redat,imdat)*dcmplx(dum2)
         dum    = dum + dum2
-!        print*,'Write:',REAL(REAL(sigma0)),REAL(REAL(dat(i))),REAL(redat),REAL(dum2)
+!        print*,'Write:',REAL(DBLE(sigma0)),REAL(DBLE(dat(i))),REAL(redat),REAL(dum2)
 
 
      end do
 
 !!!$     Ggf. Fehlermeldung
-     if (ABS(dum).eq.0d0) then
+     if (dabs(dum).eq.0d0) then
         fetxt = 'unable to find starting value sigma0'
         errnr = 99
         goto 999
@@ -121,7 +121,7 @@ use alloci, only:prec
 !!!$     'sigma' belegen
 !     print*,'Write:',sigma0
      do i=1,elanz
-        sigma(i) = EXP(sigma0/dCMPLX(dum))
+        sigma(i) = cdexp(sigma0/dcmplx(dum))
      end do
 
   else
@@ -137,7 +137,7 @@ use alloci, only:prec
 !!$     Referenzleitfaehigkeit 'sigma0' bestimmen
 
 !!!$ >> RM This is now a must have for mixed boundaries
-  call refsig()
+  IF (lbeta) call refsig()
 !!!!$ << RM because the sigma0 is needed
   errnr = 0
   return

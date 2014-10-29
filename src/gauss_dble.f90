@@ -1,10 +1,10 @@
-SUBROUTINE Gauss_REAL (a,n,e_flag)    ! Invert matrix by Gauss method
-use alloci, only: prec
+SUBROUTINE Gauss_dble (a,n,e_flag)    ! Invert matrix by Gauss method
+
   IMPLICIT NONE
   INTEGER(KIND(4))                             :: n
-  REAL(prec),DIMENSION(n,n),INTENT(INOUT) :: a
-  REAL(prec),DIMENSION(:), ALLOCATABLE    :: temp
-  REAL(prec)                              :: c,d 
+  REAL(KIND(0D0)),DIMENSION(n,n),INTENT(INOUT) :: a
+  REAL(KIND(0D0)),DIMENSION(:), ALLOCATABLE    :: temp
+  REAL(KIND(0D0))                              :: c,d 
   INTEGER(KIND(4))                             :: i,j,e_flag
   
 
@@ -35,4 +35,4 @@ use alloci, only: prec
 
   e_flag=0
   
-END SUBROUTINE Gauss_REAL
+END SUBROUTINE Gauss_dble
