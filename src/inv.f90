@@ -44,7 +44,7 @@ PROGRAM inv
 
   CHARACTER(256)         :: ftext
   INTEGER                :: c1,i,count,mythreads,maxthreads
-  REAL(KIND(0D0))        :: lamalt
+  REAL(KIND(0D0))        :: lamalt,bdalt
   LOGICAL                :: converged,l_bsmat
   INTEGER,PARAMETER      :: clrln_len=50
   CHARACTER(clrln_len)   :: clrln ! clear line
@@ -549,9 +549,9 @@ PROGRAM inv
               WRITE (fetxt,*)'Reached max number of iterations ',itmax
            END IF
 !!!$   Minimal stepsize erreicht ?
-           IF (errnr2 == 0.AND.bdpar <= bdmin) THEN
+           IF (dabs(1d0-bdpar/bdalt) < bdmin) THEN
               errnr2 = 109
-              WRITE (fetxt,*)' Stepsize ',bdpar,' < Min stepsize ',bdmin
+              WRITE (fetxt,*)' Min model update reached ',dabs(1d0-bdpar/bdalt)
            END IF
 
 !!!$   Ggf. abbrechen oder "final phase improvement"
@@ -661,6 +661,8 @@ PROGRAM inv
            dlam   = 1d0
            dlalt  = 1d0
            ldlamf = .FALSE.
+           bdpar = 1d0
+           bdalt = 1d0           
 
 !!!$   Daten-CHI speichern
            rmsalt = nrmsd
@@ -739,7 +741,7 @@ PROGRAM inv
                  IF ((((nrmsd.LT.rmsreg.AND.itr.LE.nlam).OR. &
                       (dlam.GT.1d0.AND.itr.LE.nlam)).AND.&
                       (.NOT.ldlamf.OR.dlalt.LE.1d0).AND.&
-                      (bdpar > bdmin).AND.&
+                   (dabs(1d0-bdpar/bdalt) > bdmin).AND.&
                       (dabs(1d0-rmsreg/nrmsdm).GT.mqrms)).OR.&
                       (rmsreg.EQ.0d0)) THEN
 
@@ -874,6 +876,7 @@ PROGRAM inv
         IF (errnr.NE.0) GOTO 999
 
 !!!$   UPDATE anbringen
+        bdalt = bdpar
         CALL update
         IF (errnr.NE.0) GOTO 999
 
