@@ -145,7 +145,6 @@ CONTAINS
        IF (dr.LE.dr0) GOTO 10
 
        pvecdc= rvecdc + beta * pvecdc
-
        CALL bapdc
 
        IF (ltri == 0) THEN
@@ -209,12 +208,9 @@ CONTAINS
 !!!$....................................................................
 
     
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
-    !$OMP SHARED (nanz,apdc,ldc,lfpi,manz,pvecdc,sensdc,cgfac,sens)
 
     apdc = 0D0
 
-    !$OMP DO
 !!!$    A * p  berechnen (skaliert)
     DO i=1,nanz
        IF (ldc) THEN
@@ -227,7 +223,6 @@ CONTAINS
           END DO
        END IF
     END DO
-    !$OMP END PARALLEL
   END SUBROUTINE bapdc
 
   SUBROUTINE bpdc()
@@ -348,9 +343,7 @@ CONTAINS
 
 !!!$    R^m * p  berechnen (skaliert)
 
-!    !$OMP WORKSHARE
     bvecdc = MATMUL(smatm,pvecdc)
-!    !$OMP END WORKSHARE
 
     bvecdc = bvecdc * cgfac
 
@@ -404,13 +397,8 @@ CONTAINS
     INTEGER         ::     i,j
 
 !!!$....................................................................
-
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (dum) &
-    !$OMP SHARED (manz,ldc,lfpi,nanz,sensdc,wmatd,wdfak,apdc,sens,bvecdc,lam,cgfac)
-    !$OMP DO
     DO j=1,manz
        dum = 0d0
-
        IF (ldc) THEN
           DO i=1,nanz
              dum = dum + sensdc(i,j) * &
@@ -426,7 +414,6 @@ CONTAINS
        bvecdc(j) = dum + lam*bvecdc(j)
        bvecdc(j) = bvecdc(j)*cgfac(j)
     END DO
-    !$OMP END PARALLEL
 
   END SUBROUTINE bbdc
 
@@ -547,9 +534,6 @@ CONTAINS
 !!!$....................................................................
 
 !!!$    A * p  berechnen (skaliert)
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) &
-    !$OMP SHARED (nanz,ap,manz,pvec,sens,cgfac)
-    !$OMP DO
     DO i=1,nanz
        ap(i) = dcmplx(0d0)
 
@@ -557,7 +541,6 @@ CONTAINS
           ap(i) = ap(i) + pvec(j)*sens(i,j)*dcmplx(cgfac(j))
        END DO
     END DO
-    !$OMP END PARALLEL
 
   END SUBROUTINE bap
 
@@ -648,10 +631,10 @@ CONTAINS
 !!!$....................................................................
 !!!$    coaa R^m * p  berechnen (skaliert)
 
-    bvec = pvec * DCMPLX(cgfac * smatm(:,1))
-!!$    do j=1,manz
-!!$       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
-!!$    end do
+!     bvec = pvec * DCMPLX(cgfac * smatm(:,1))
+    do j=1,manz
+       bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
+    end do
 
   END SUBROUTINE bplma
 
@@ -679,10 +662,7 @@ CONTAINS
     INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
-
-    !$OMP WORKSHARE
     bvec = MATMUL(DCMPLX(smatm),pvec)
-    !$OMP END WORKSHARE
 
     bvec = bvec * DCMPLX(cgfac)
   END SUBROUTINE bpsto
@@ -738,11 +718,6 @@ CONTAINS
     INTEGER         ::     i,j
 
 !!!$....................................................................
-!!!$    
-    !$OMP PARALLEL NUM_THREADS (ntd) DEFAULT(none) PRIVATE (cdum) &
-    !$OMP SHARED (manz,nanz,sens,wmatd,wdfak,ap,bvec,lam,cgfac)
-    !$OMP DO
-
     DO j=1,manz
        cdum = dcmplx(0d0)
 
@@ -754,9 +729,6 @@ CONTAINS
        bvec(j) = cdum + dcmplx(lam)*bvec(j)
        bvec(j) = bvec(j)*dcmplx(cgfac(j))
     END DO
-
-    !$OMP END PARALLEL
-
   END SUBROUTINE bb
 
 

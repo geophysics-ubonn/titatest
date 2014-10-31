@@ -75,19 +75,19 @@ SUBROUTINE bsendc(tictoc)
   sensdc = 0D0
   icount  = 0
 
-  !$OMP PARALLEL DEFAULT (none) &
-  !$OMP FIRSTPRIVATE (hsens) &
-  !$OMP SHARED (icount,strnr,vnr,typanz,typ,selanz,kwnanz,lverb,sigma,&
-  !$OMP nrel,kpotdc,elbg,strom,kwnwi,pi,mnr,nanz,swrtr,nelanz,sensdc,volt) &
-  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,imin,imn,&
-  !$OMP ntyp,jnel,nkel,nzp,nnp,imax,dum)
-  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
+!  !$OMP PARALLEL DEFAULT (none) &
+!  !$OMP FIRSTPRIVATE (hsens) &
+!  !$OMP SHARED (icount,strnr,vnr,typanz,typ,selanz,kwnanz,lverb,sigma,&
+!  !$OMP nrel,kpotdc,elbg,strom,kwnwi,pi,mnr,nanz,swrtr,nelanz,sensdc,volt) &
+!  !$OMP PRIVATE(iel,elec1,elec2,elec3,elec4,sup,imin,imn,&
+!  !$OMP ntyp,jnel,nkel,nzp,nnp,imax,dum)
+!  !$OMP DO SCHEDULE (GUIDED,CHUNK_0)
 !!!$     Messwert hochzaehlen
   DO i=1,nanz
 
      iel = 0
 
-     !$OMP ATOMIC
+!     !$OMP ATOMIC
      icount = icount + 1
 
      IF (lverb) WRITE(*,'(a,t50,F6.2,A)',advance='no')ACHAR(13)//&
@@ -177,7 +177,7 @@ SUBROUTINE bsendc(tictoc)
         END DO ! jnel=1,nelanz(i)
      END DO ! ityp=1,typanz
   END DO ! i=1,nanz
-  !$OMP END PARALLEL
+!  !$OMP END PARALLEL
 
   fetxt = 'bsendc::'
   IF (tictoc) CALL toc(c1,fetxt)

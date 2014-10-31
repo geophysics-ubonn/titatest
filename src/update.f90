@@ -114,15 +114,15 @@ SUBROUTINE update()
      ELSE IF (ltri == 15) THEN
         IF (.NOT. lprior) THEN
 
-          !$OMP WORKSHARE
+!          !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),par)
-           !$OMP END WORKSHARE
+!           !$OMP END WORKSHARE
 
         ELSE
 
-           !$OMP WORKSHARE
+!           !$OMP WORKSHARE
            bvec = MATMUL( DCMPLX(smatm),( par - m0 ) )
-           !$OMP END WORKSHARE
+!           !$OMP END WORKSHARE
 
         END IF
      END IF
