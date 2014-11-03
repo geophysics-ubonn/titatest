@@ -41,7 +41,7 @@ REAL (KIND(0D0)) function beta(nelec,k)
        x4,y4,r2,bk0m,bk0p,bk1m,bk1p
 
 !!!$.....................................................................
-
+  beta = 0D0
 !!!$     Koordinaten der Stromelektrode bestimmen
   xs = sx(snr(enr(nelec)))
   ys = sy(snr(enr(nelec)))

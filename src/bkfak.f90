@@ -27,7 +27,7 @@ subroutine bkfak()
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
 !!!$     Koordinaten
-  REAL (KIND(0D0))    ::     xk(4),yk(4)
+  REAL (KIND(0D0))    ::     xk(4)= 0D0,yk(4) = 0D0
 
 !!!$     Pi
   REAL (KIND(0D0))    ::     pi
@@ -38,7 +38,8 @@ subroutine bkfak()
 !!!$.....................................................................
 
   pi = dacos(-1d0)
-
+  xk = 0D0
+  yk = 0D0
   CALL get_unit(fp)
   OPEN (fp,FILE='tmp.kfak',STATUS='replace')
 

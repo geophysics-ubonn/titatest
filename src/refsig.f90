@@ -24,11 +24,10 @@ subroutine refsig()
   REAL (KIND(0D0))   ::     xk,yk,ax,ay,bx,by,cx,cy,dum,area
 
 !!!$.....................................................................
-
+  dum    = 0D0
   iel    = 0
   area   = 0d0
   sigma0 = dcmplx(0d0)
-
   do i=1,typanz
      do j=1,nelanz(i)
         iel = iel + 1

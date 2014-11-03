@@ -52,7 +52,7 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
   REAL (KIND (0D0)) ::     dum
   REAL (KIND (0D0)) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
-  INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl,idum
+  INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4) ::     i,j,k,l

@@ -51,13 +51,8 @@ SUBROUTINE bbsens(kanal,datei)
   IF (errnr /= 0) RETURN
 !!!$     Werte berechnen
   csens = 0D0
-
-  IF (lfpi) THEN
-     ALLOCATE (csens_fpi(manz),STAT=errnr)
-     IF (errnr /= 0) RETURN
-!!!$     Werte berechnen
+ ALLOCATE (csens_fpi(manz),STAT=errnr)
      csens_fpi = 0D0
-  END IF
 
   DO j=1,manz
      DO i=1,nanz
@@ -142,10 +137,9 @@ SUBROUTINE bbsens(kanal,datei)
      WRITE(kanal,*,err=1000)'Max:',csensmax
 !!!$     'datei' schliessen
      CLOSE(kanal)
-
-     DEALLOCATE (csens_fpi)
   END IF
-
+  DEALLOCATE (csens_fpi)
+     
   errnr = 0
   RETURN
 

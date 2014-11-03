@@ -42,7 +42,7 @@ subroutine wdatm(kanal,datei)
   REAL(KIND(0D0))  ::    stab
 !!!$.....................................................................
 
-100 FORMAT(2(4X,I8),2(1x,G14.7))
+!100 FORMAT(2(4X,I8),2(1x,G14.7))
   pi = dacos(-1d0)
 
 !!!$     'datei' oeffnen

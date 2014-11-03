@@ -59,12 +59,6 @@ SUBROUTINE bsensi(tictoc)
 
   pi = dacos(-1d0)
   !     get memory for hsens
-  ALLOCATE (hsens(kwnanz),stat=errnr)
-  IF (errnr /= 0) THEN
-     fetxt = 'Error memory allocation hsens'
-     errnr = 94
-     RETURN
-  END IF
 
   IF (tictoc) CALL tic(c1)
 !!!$     Sensitivitaetenfeld auf Null setzen
@@ -114,6 +108,7 @@ SUBROUTINE bsensi(tictoc)
            iel = iel + 1
 
 !!!$     SENSITIVITAETEN BERECHNEN
+          ALLOCATE (hsens(kwnanz))
            DO k=1,kwnanz
               hsens(k) = dcmplx(0d0)
 
@@ -162,6 +157,7 @@ SUBROUTINE bsensi(tictoc)
               dum = dum / dcmplx(pi)
 
            END IF
+         DEALLOCATE (hsens)
 !!!$     hier koennte auch eine mittelung passieren
            sens(i,mnr(iel)) = sens(i,mnr(iel)) + dum * sigma(iel)/volt(i)
         END DO
@@ -171,6 +167,6 @@ SUBROUTINE bsensi(tictoc)
   fetxt = 'bsensi::'
   IF (tictoc) CALL toc(c1,fetxt)
 
-  DEALLOCATE (hsens)
+
 
 END SUBROUTINE bsensi

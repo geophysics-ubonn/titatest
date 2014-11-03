@@ -23,7 +23,7 @@ SUBROUTINE bvariogram
 
 !!$c     PROGRAMMINTERNE PARAMETER:-------------------------------------------
 !!$c     Indexvariablen
-  INTEGER :: i,j,ik,jk,ifp
+  INTEGER :: i,j,ik,ifp
 !!$c     th = Tail - Head; hx,hy,h distances in each direction
   REAL(KIND(0D0)) :: th,tail,head,hx,hy,h,mid_par
 !!$c     korrelation length for variogram models
@@ -48,20 +48,19 @@ SUBROUTINE bvariogram
 !!$! mti stores a string for variogram statistics, like korrelation length
 !!$! tgam stores the output string of get_vario
   CHARACTER (11) :: tg
-  CHARACTER (256) :: my_buff
 !!$c-----------------------------------------------------------------------
   WRITE (*,'(/a)',ADVANCE='no')'Calculating VARIOGRAM'
   errnr = 4
-!!$
+!!
 !!$c     define linear equidistant lag vector
 
   lag_unit = grid_min
   lag_unit_x = grid_minx
   lag_unit_y = grid_miny
 
-  nlag = ANINT(grid_max / lag_unit) / 2
-  nlag_x = ANINT(grid_maxx / lag_unit_x) / 2
-  nlag_y = ANINT(grid_maxy / lag_unit_y) / 2
+  nlag = NINT(grid_max / lag_unit) / 2
+  nlag_x = NINT(grid_maxx / lag_unit_x) / 2
+  nlag_y = NINT(grid_maxy / lag_unit_y) / 2
 
   lag_tol = lag_unit * .5
   lag_tol_x = lag_unit_x * .5
@@ -71,6 +70,17 @@ SUBROUTINE bvariogram
   ALLOCATE (lag(nlag),gam(nlag),ngam(nlag),lag_x(nlag_x),gam_x(nlag_x),&
        ngam_x(nlag),lag_y(nlag_y),gam_y(nlag_y),ngam_y(nlag),mgam(nlag),&
        mgam_x(nlag_x),mgam_y(nlag_y),STAT=errnr)
+  lag = 0D0
+  ngam = 0
+  ngam_x = 0
+  ngam_y = 0
+  mgam_x = 0D0
+  mgam_y = 0D0
+  lag_x = 0D0
+  lag_y = 0D0
+  gam = 0D0
+  gam_x = 0D0
+  gam_y = 0D0
 
   IF (errnr/=0) THEN
      fetxt = 'Allocation problem in bvariogram'
@@ -266,7 +276,7 @@ SUBROUTINE bvariogram
 !!$  my_buff = TRIM(ADJUSTL(fetxt))//' < variogram.gnu >& /dev/null'
 !!$  IF (fetxt /= '') CALL SYSTEM (TRIM(my_buff))
   
-100 DEALLOCATE (gam_x,gam_y,gam)
+  DEALLOCATE (gam_x,gam_y,gam)
   DEALLOCATE (ngam_x,ngam_y,ngam)
   DEALLOCATE (lag,lag_x,lag_y)
 

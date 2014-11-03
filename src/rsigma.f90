@@ -40,7 +40,6 @@ SUBROUTINE rsigma(kanal,datei)
   REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p,bet_ref,pha_ref
 !!!$ Pi
   REAL (KIND(0D0)) ::    pi
-  CHARACTER (100)  :: cbuff
 !!!$.....................................................................
   pi = dacos(-1d0)
 

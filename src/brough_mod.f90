@@ -202,7 +202,7 @@ CONTAINS
 
           ELSE
 
-             rough = DBLE(cdum) * SUM(DCONJG(par))
+             rough = DBLE(cdum) * REAL(SUM(DCONJG(par)))
 
           END IF
 
@@ -263,7 +263,7 @@ CONTAINS
        IF (lfpi) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par))
        ELSE
-          rough = DOT_PRODUCT(DBLE(parh),DCONJG(par))
+          rough = DOT_PRODUCT(DBLE(parh),REAL(DCONJG(par)))
        END IF
 
     ELSE
@@ -275,7 +275,7 @@ CONTAINS
        IF (lfpi) THEN
           rough = DOT_PRODUCT(DIMAG(parh),DIMAG(par - m0))
        ELSE
-          rough = DOT_PRODUCT(DBLE(parh),DCONJG(par - m0))
+          rough = DOT_PRODUCT(DBLE(parh),REAL(DCONJG(par - m0)))
        END IF
 
     END IF

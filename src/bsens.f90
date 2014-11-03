@@ -40,7 +40,7 @@ subroutine bsens()
 
 !!!$     Indexvariablen
   INTEGER (KIND = 4)  ::     ityp,jnel,mi,mj,imn,imax,imin
-  INTEGER (KIND = 4)  ::     i,j,k
+  INTEGER (KIND = 4)  ::     i,k
 
 !!!$     Hilfsfeld
   COMPLEX(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: hsens

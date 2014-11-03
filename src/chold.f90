@@ -34,7 +34,6 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
   REAL (KIND(0D0)), DIMENSION (n),INTENT(OUT)     :: p
   LOGICAL,INTENT(IN)                              :: lverb
   INTEGER, INTENT (OUT)                           :: ierr
-  REAL (KIND(0D0))                                :: s
   INTEGER                                         :: i,k,j,count
 
   ierr = 0
@@ -54,7 +53,7 @@ SUBROUTINE chold(a,p,n,ierr,lverb)
 
      IF (a(j,j) <= 0) THEN
         PRINT*,'CHOLD:: - not positive definite', j,a(j,j)
-        ierr = -i
+        ierr = -j
         STOP
      END IF
      

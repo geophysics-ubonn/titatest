@@ -213,6 +213,7 @@ PROGRAM inv
 
 !!!!$ INITIALIZE
 !!!$   Startparameter setzen
+     bdalt = 1d0          
      it     = 0;itr    = 0
      rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
      !     IF (lamnull_cri > 0d0) llamalt = lamnull_cri

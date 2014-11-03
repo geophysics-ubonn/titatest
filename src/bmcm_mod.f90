@@ -55,7 +55,6 @@ CONTAINS
     REAL (KIND(0D0)),INTENT(IN)    :: lamalt ! lambda of the last iteration
 !!! for tic_toc
     INTEGER (KIND = 4 )            :: c1
-    INTEGER (KIND = 4)             :: i
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!$    get time
@@ -189,7 +188,7 @@ CONTAINS
     INTEGER                                  :: kanal
     INTEGER                                  :: i,j,k
     COMPLEX (KIND(0D0))                      :: cdum
-    REAL (KIND(0D0))                         :: dum
+    REAL (KIND(0D0))                         :: dum = 0D0
     REAL(KIND(0d0)),DIMENSION(:),ALLOCATABLE :: dig,dig_fpi    ! contains diagonal of ATA
     REAL (KIND(0D0))                         :: dig_min,dig_max ! MINMAX(diag{ATA})
     INTEGER                                  :: c1
@@ -239,8 +238,8 @@ CONTAINS
                      wmatdp(i)*DBLE(wdfak(i))
 
              END DO
-             ata(k,j) = cdum ! fills upper triangle (k,j)
-             ata(j,k) = cdum ! fills lower triangle (j,k)
+             ata(k,j) = real(cdum) ! fills upper triangle (k,j)
+             ata(j,k) = real(cdum) ! fills lower triangle (j,k)
           END DO
           dig(k) = ata(k,k)
           dig_fpi(k) = dum
@@ -323,8 +322,8 @@ CONTAINS
     IF (ltri == 0) THEN
 
        ata_reg = ata
-
        DO j=1,manz
+        DO i=1,manz
 
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
@@ -339,7 +338,7 @@ CONTAINS
              ata_reg(i+nx,j) = ata(i+nx,j) + lam * smatm(i+nx,3) ! nebendiagonale in z richtung
              ata_reg(j,i+nx) = ata_reg(i+nx,j) ! lower triangle
           END IF
-
+        END DO
           dig(j) = ata_reg(j,j)
           
        END DO
@@ -429,10 +428,9 @@ CONTAINS
 !!!$   Hilfsvariablen 
     INTEGER                                    :: i,kanal,j,c1
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: work
-    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig,dig2
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dig
     REAL(KIND(0D0))                            :: dig_min,dig_max
-    REAL (KIND(0D0))                           :: dre,dim,dre2,dim2
-    REAL(KIND(0D0))                            :: dum
+    REAL (KIND(0D0))                           :: dre,dim
     COMPLEX(KIND(0D0))                         :: dsi
     LOGICAL,INTENT(IN),OPTIONAL                :: ols
     CHARACTER(80)                              :: csz
@@ -633,7 +631,7 @@ CONTAINS
 !!!$   Hilfsvariablen 
     INTEGER                                      :: i,j,kanal
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE     :: dig
-    REAL(KIND(0D0))                              :: dig_min,dig_max,dum
+    REAL(KIND(0D0))                              :: dig_min,dig_max
     INTEGER                                      :: c1
     CHARACTER(80)                                :: csz
 !!!$.....................................................................

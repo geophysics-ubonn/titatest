@@ -237,7 +237,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
     REAL(KIND(0D0))    ::     dum
-    INTEGER         ::     i,j
+    INTEGER         ::     i
 
 !!!$....................................................................
 
@@ -310,8 +310,7 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
-    INTEGER         ::     i,j
+    INTEGER         ::     i
 
 !!!$....................................................................
 
@@ -336,10 +335,6 @@ CONTAINS
 !!!$    Last changes        RM                                Jul-2010
 !!!$
 !!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
-    REAL(KIND(0D0))    ::     dum
-    INTEGER         ::     i,j
 
 !!!$    R^m * p  berechnen (skaliert)
 
@@ -528,7 +523,6 @@ CONTAINS
 !!!$    PROGRAMMINTERNE PARAMETER:
 
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 
 !!!$....................................................................
@@ -557,7 +551,7 @@ CONTAINS
 
 !!!$    Hilfsvariablen
     COMPLEX(KIND(0D0)) ::    cdum
-    INTEGER         ::     i,j
+    INTEGER         ::     i
 
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
@@ -626,13 +620,12 @@ CONTAINS
 !!!$....................................................................
 !!!$    PROGRAMMINTERNE PARAMETER:
 !!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
-    INTEGER         ::     i,j
+    INTEGER         ::     i
 !!!$....................................................................
 !!!$    coaa R^m * p  berechnen (skaliert)
 
 !     bvec = pvec * DCMPLX(cgfac * smatm(:,1))
-    do j=1,manz
+    do i=1,manz
        bvec(i)=pvec(i)*dcmplx(cgfac(i))*DCMPLX(smatm(i,1))
     end do
 
@@ -655,11 +648,6 @@ CONTAINS
 !!!$
 !!!$    Last changes   RM                                     Jul-2010
 !!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
-    COMPLEX(KIND(0D0)) ::    cdum
-    INTEGER         ::     i,j
 !!!$....................................................................
 !!!$    R^m * p  berechnen (skaliert)
     bvec = MATMUL(DCMPLX(smatm),pvec)

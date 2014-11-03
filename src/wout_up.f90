@@ -8,12 +8,11 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
 
 !!!$.....................................................................
   USE datmod, ONLY : nanz, strnr, vnr, sigmaa
-  USE invmod, ONLY : m0, wdfak
+  USE invmod, ONLY : wdfak
   USE sigmamod, ONLY : sigma
-  USE modelmod, ONLY : mnr
   USE elemmod, ONLY : elanz, espx, espy 
-  USE errmod, ONLY : errnr, fetxt
-  USE konvmod, ONLY: pharms, betrms, lverb, nrmsd, lam
+  USE errmod, ONLY : errnr
+  USE konvmod, ONLY: pharms, betrms, nrmsd, lam
   USE pathmod, ONLY : ramd, lnramd, slash, mkdir, rmdir
   USE femmod, ONLY : ldc
   IMPLICIT NONE
@@ -33,16 +32,11 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
 
 !!!$     PROGRAMMINTERNE PARAMETER:
 !!!$     Indexvariablen
-  INTEGER (KIND=4) ::  i,i_f
+  INTEGER (KIND=4) ::  i
   INTEGER          :: ifp
 !!!$     Hilfsvariablen
-  INTEGER (KIND=4) ::  idum,idum2
   CHARACTER (256)   ::  file,itdir
-  COMPLEX(KIND(0D0))  ::  dum
 
-!!!$     diff+<
-  REAL(KIND(0D0))  ::   dum2,dum3
-!!!$     diff+>
   CHARACTER (12)   ::   c_i ! iteration number as string for directory like
 !!!$ IT_<number> with number in two digits (compatible with old CRTomo versions..)
   CHARACTER(2)    ::   ci ! iteration number as string
@@ -161,8 +155,6 @@ SUBROUTINE wout_up(kanal,it,itr,switch)
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 !!!$     Fehlermeldungen
-
-999 RETURN
 
 1000 CLOSE(kanal)
   RETURN

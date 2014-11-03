@@ -189,8 +189,8 @@ CONTAINS
                   sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
 !!!$ wechselt automatisch wmatdp bei lfpi
           ELSE
-             csens(j) = csens(j) + DCONJG(sens(i,j)) * &
-                  sens(i,j) * wmatd(i)*DBLE(wdfak(i)) 
+             csens(j) = csens(j) + REAL(DCONJG(sens(i,j)) * &
+                  sens(i,j)) * wmatd(i)*DBLE(wdfak(i)) 
           ENDIF
        END DO
     END DO
@@ -527,7 +527,7 @@ CONTAINS
 !!!$.....................................................................
 
     errnr = 4
-    
+    dum = 0D0
     CALL bcsens(csensmax,csensavg)
 
     IF (csensmax > 1d-12) THEN
