@@ -1,14 +1,20 @@
+!> \file cg_mod.f90
+!> \brief modules for solving the inversion update equation (<I>Normal equation</I>)
+!> \details Collection of routines for computing the iterative model update as a solution of the <I>Normal equations</I> with the conjugate gradient (CG) method.
+!> @author Andreas Kemna, Roland Martin
+!> @date 07/30/2010
+
 MODULE cg_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!> This MODULE should deliver the interface for the Conjugate Gradient  
-!! Method routines which are utilized to solve the normal equations   
+! This MODULE should deliver the interface for the Conjugate Gradient  
+! Method routines which are utilized to solve the normal equations   
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!!!$ Copyright by Andreas Kemna 2010
-!!!$
-!!!$ Edited by Roland Martin               30-Jul-2010
-!!!$
-!!!$ Last changed       RM                  Feb-2011
+! Copyright by Andreas Kemna 2010
+!
+! Edited by Roland Martin               30-Jul-2010
+!
+! Last changed       RM                  Feb-2011
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -52,24 +58,24 @@ MODULE cg_mod
 
 !!$ IP subroutines
   PRIVATE :: cjggra
-!!!$ Subroutine calculates model update for COMPLEX case
-!!!$ with preconditioned conjugate gradient method
+! Subroutine calculates model update for COMPLEX case
+! with preconditioned conjugate gradient method
 
   PRIVATE :: bap
-!!!$  sub calculates A * p (skaliert)
+!  sub calculates A * p (skaliert)
   PRIVATE :: bp
-!!!$  subroutine calculates b = B * p (RHS) smooth regularization
+!  subroutine calculates b = B * p (RHS) smooth regularization
   PRIVATE :: bptri
 !!! same but for unstructured grids
   PRIVATE :: bplma
-!!!$ for Levenberg and Levemnberg-Marquardt damping
+! for Levenberg and Levemnberg-Marquardt damping
   PRIVATE :: bpsto
 !!$ for stochastical regularization, MATMUL is 
 !!$ now explicitly formed because of conjugate complex
 !!$ adds additional parts to b = B * p (RHS) for reference model regularization
   PRIVATE :: bpref
   PRIVATE :: bb
-!!!$ calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
+! calculates  A^h * R^d * A * p + l * R^m * p  (skaliert)
 
 
 CONTAINS
@@ -98,21 +104,21 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   SUBROUTINE cjggdc()
-!!!$    Unterprogramm berechnet Modellverbesserung mittels konjugierter
-!!!$    Gradienten.
-!!!$
-!!!$    Andreas Kemna                                        01-Mar-1996
-!!!$    Letzte Aenderung                                     29-Jul-2009
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$
-!!!$    Skalare
+!    Unterprogramm berechnet Modellverbesserung mittels konjugierter
+!    Gradienten.
+!
+!    Andreas Kemna                                        01-Mar-1996
+!    Letzte Aenderung                                     29-Jul-2009
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!
+!    Skalare
     REAL(KIND(0D0)) :: beta,alpha,dr,dr0,dr1
-!!!$
-!!!$    Hilfsvariablen
+!
+!    Hilfsvariablen
     INTEGER         :: k
-!!!$
-!!!$....................................................................
+!
+!....................................................................
 
     IF (lfpi) THEN
        bvecdc = dimag(bvec)
@@ -173,17 +179,17 @@ CONTAINS
        dpar = dpar + DCMPLX(alpha) * DCMPLX(pvecdc)
        rvecdc= rvecdc - alpha * bvecdc
 
-!!!$rm update speichern
+!rm update speichern
        dr1 = dr
 
-!!!$    Residuum speichern
+!    Residuum speichern
        cgres(k+1) = REAL(eps*dr/dr0)
 
     END DO
 
     ncg = ncgmax
 
-!!!$    Anzahl an CG-steps speichern
+!    Anzahl an CG-steps speichern
 10  cgres(1) = REAL(ncg)
 
     !    DEALLOCATE (pvecdc,rvecdc,apdc,bvecdc)
@@ -194,24 +200,24 @@ CONTAINS
 
   SUBROUTINE bapdc
 !!$
-!!!$    Unterprogramm berechnet Hilfsvektor A * p (skaliert).
-!!!$
-!!!$    Andreas Kemna                                      29-Feb-1996
+!    Unterprogramm berechnet Hilfsvektor A * p (skaliert).
+!
+!    Andreas Kemna                                      29-Feb-1996
 !!$
-!!!$    Last changes   RM                                  Mar-2011
+!    Last changes   RM                                  Mar-2011
 !!$
-!!!$...................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
+!...................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!    Hilfsvariablen
     INTEGER         ::     i,j
 
-!!!$....................................................................
+!....................................................................
 
     
 
     apdc = 0D0
 
-!!!$    A * p  berechnen (skaliert)
+!    A * p  berechnen (skaliert)
     DO i=1,nanz
        IF (ldc) THEN
           DO j=1,manz
@@ -227,21 +233,21 @@ CONTAINS
 
   SUBROUTINE bpdc()
 !!$
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$
-!!!$    Andreas Kemna                                      29-Feb-1996
+!    Unterprogramm berechnet b = B * p .
+!
+!    Andreas Kemna                                      29-Feb-1996
 !!$
-!!!$    Last changes   RM                                  Jul-2010
+!    Last changes   RM                                  Jul-2010
 !!$
-!!!$...................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
+!...................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!    Hilfsvariablen
     REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i
 
-!!!$....................................................................
+!....................................................................
 
-!!!$    R^m * p  berechnen (skaliert)
+!    R^m * p  berechnen (skaliert)
     DO i=1,manz
        dum = 0d0
 
@@ -260,25 +266,25 @@ CONTAINS
   END SUBROUTINE bpdc
 
   SUBROUTINE bpdctri()
-!!!$    
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$    Fuer beliebige Triangulierung
-!!!$    
-!!!$    Copyright by Andreas Kemna         2009
-!!!$
-!!!$    Created by Roland Martin                            29-Jul-2009
-!!!$     
-!!!$    Last changes      RM                                   Jul-2010
-!!!$    
-!!!$....................................................................
-!!!$.....................................................................
-!!!$
-!!!$!     PROGRAMMINTERNE PARAMETER:
+!    
+!    Unterprogramm berechnet b = B * p .
+!    Fuer beliebige Triangulierung
+!    
+!    Copyright by Andreas Kemna         2009
+!
+!    Created by Roland Martin                            29-Jul-2009
+!     
+!    Last changes      RM                                   Jul-2010
+!    
+!....................................................................
+!.....................................................................
+!
+!!     PROGRAMMINTERNE PARAMETER:
 
-!!!$!     Hilfsvariablen
+!!     Hilfsvariablen
     REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
-!!!$!.....................................................................
+!!.....................................................................
 
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
@@ -296,26 +302,26 @@ CONTAINS
 
 
   SUBROUTINE bpdclma()
-!!!$    
-!!!$    Unterprogramm berechnet b = B * p . 
-!!!$    Angepasst an Levenberg-Marquardt-Daempfung
-!!!$   
-!!!$    Copyright by Andreas Kemna 2010
-!!!$    
-!!!$    Created by Roland Martin                            24-Feb-2010
-!!!$    
-!!!$    Last changes        RM                                Jul-2010
-!!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!    
+!    Unterprogramm berechnet b = B * p . 
+!    Angepasst an Levenberg-Marquardt-Daempfung
+!   
+!    Copyright by Andreas Kemna 2010
+!    
+!    Created by Roland Martin                            24-Feb-2010
+!    
+!    Last changes        RM                                Jul-2010
+!
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER         ::     i
 
-!!!$....................................................................
+!....................................................................
 
 
-!!!$    R^m * p  berechnen (skaliert)
+!    R^m * p  berechnen (skaliert)
     DO i=1,manz
        bvecdc(i)=pvecdc(i)*cgfac(i)*smatm(i,1) ! damping stuff..
     END DO
@@ -323,20 +329,20 @@ CONTAINS
   END SUBROUTINE bpdclma
 
   SUBROUTINE bpdcsto()
-!!!$
-!!!$    Unterprogramm berechnet b = B * p . 
-!!!$    Angepasst an die neue Regularisierungsmatrix
-!!!$    (stoch. Kovarianzmatrix)
-!!!$
-!!!$    Copyright by Andreas Kemna 2009
-!!!$    
-!!!$    Created by Roland Martin                             10-Jun-2009
-!!!$
-!!!$    Last changes        RM                                Jul-2010
-!!!$
-!!!$....................................................................
+!
+!    Unterprogramm berechnet b = B * p . 
+!    Angepasst an die neue Regularisierungsmatrix
+!    (stoch. Kovarianzmatrix)
+!
+!    Copyright by Andreas Kemna 2009
+!    
+!    Created by Roland Martin                             10-Jun-2009
+!
+!    Last changes        RM                                Jul-2010
+!
+!....................................................................
 
-!!!$    R^m * p  berechnen (skaliert)
+!    R^m * p  berechnen (skaliert)
 
     bvecdc = MATMUL(smatm,pvecdc)
 
@@ -345,26 +351,26 @@ CONTAINS
   END SUBROUTINE bpdcsto
 
   SUBROUTINE bpdcref()
-!!!$    
-!!!$    additional entries due to b = B*p
-!!!$    for reference model regu
-!!!$   
-!!!$    Copyright by Andreas Kemna 2010
-!!!$    
-!!!$    Created by Roland Martin                            05-Sep-2012
-!!!$    
-!!!$    Last changes        RM                                Sep-2012
-!!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!    
+!    additional entries due to b = B*p
+!    for reference model regu
+!   
+!    Copyright by Andreas Kemna 2010
+!    
+!    Created by Roland Martin                            05-Sep-2012
+!    
+!    Last changes        RM                                Sep-2012
+!
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER         ::     i
     REAL (KIND(0D0)) :: rdum
-!!!$....................................................................
+!....................................................................
 
 
-!!!$    R^m * p  berechnen (skaliert)
+!    R^m * p  berechnen (skaliert)
     DO i=1,manz
 
        IF (w_ref_re(i) <= EPSILON(rdum)) CYCLE 
@@ -372,26 +378,26 @@ CONTAINS
        rdum = pvecdc(i)*w_ref_re(i)
 
        bvecdc(i) = bvecdc(i) + rdum * lam_ref * cgfac(i)
-!!!!$! according to damping stuff..
+!!! according to damping stuff..
     END DO
 
   END SUBROUTINE bpdcref
 
   SUBROUTINE bbdc
 !!$
-!!!$    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-!!!$
-!!!$    Andreas Kemna                                      29-Feb-1996
+!    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+!
+!    Andreas Kemna                                      29-Feb-1996
 !!$
-!!!$    Last changes   RM                                  Mar-2011
+!    Last changes   RM                                  Mar-2011
 !!$
-!!!$...................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
+!...................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!    Hilfsvariablen
     REAL(KIND(0D0))    ::     dum
     INTEGER         ::     i,j
 
-!!!$....................................................................
+!....................................................................
     DO j=1,manz
        dum = 0d0
        IF (ldc) THEN
@@ -418,20 +424,20 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   SUBROUTINE cjggra()
-!!!$    Unterprogramm berechnet Modellverbesserung mittels konjugierter
-!!!$    Gradienten.
-!!!$
-!!!$    Andreas Kemna                                        01-Mar-1996
-!!!$    Last changes   RM                                    Jul-2010
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Skalare
+!    Unterprogramm berechnet Modellverbesserung mittels konjugierter
+!    Gradienten.
+!
+!    Andreas Kemna                                        01-Mar-1996
+!    Last changes   RM                                    Jul-2010
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!    Skalare
 !!$!!    COMPLEX(KIND(0D0)) :: beta
     REAL(KIND(0D0))    :: alpha,dr,dr0,dr1,beta
 !!$
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER            :: k,j
-!!!$....................................................................
+!....................................................................
 
 
     dpar = dcmplx(0d0)
@@ -454,9 +460,9 @@ CONTAINS
           beta = 0d0
        ELSE
           IF (dr.LE.dr0) GOTO 10
-!!!$    Fletcher-Reeves-Version
+!    Fletcher-Reeves-Version
           beta = dr/dr1
-!!!$    ak!!!$Polak-Ribiere-Version
+!    ak!Polak-Ribiere-Version
 !!$          beta = 0d0
 !!$          do j=1,manz
 !!$             beta = beta + dconjg(bvec(j))*rvec(j)
@@ -498,36 +504,36 @@ CONTAINS
 
        dr1 = dr
 
-!!!$    Residuum speichern
+!    Residuum speichern
        cgres(k+1) = REAL(eps*dr/dr0)
 
     END DO
 
     ncg = ncgmax
 
-!!!$    Anzahl an CG-steps speichern
+!    Anzahl an CG-steps speichern
 10  cgres(1) = REAL(ncg)
 
 
   END SUBROUTINE cjggra
 
   SUBROUTINE bap
-!!!$
-!!!$    Unterprogramm berechnet A * p  berechnen (skaliert)
-!!!$
-!!!$    Andreas Kemna                                        29-Feb-1996
-!!!$     
-!!!$    Last changes      RM                                   Mar-2011
-!!!$    
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!
+!    Unterprogramm berechnet A * p  berechnen (skaliert)
+!
+!    Andreas Kemna                                        29-Feb-1996
+!     
+!    Last changes      RM                                   Mar-2011
+!    
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER         ::     i,j
 
-!!!$....................................................................
+!....................................................................
 
-!!!$    A * p  berechnen (skaliert)
+!    A * p  berechnen (skaliert)
     DO i=1,nanz
        ap(i) = dcmplx(0d0)
 
@@ -539,22 +545,22 @@ CONTAINS
   END SUBROUTINE bap
 
   SUBROUTINE bp()
-!!!$
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$
-!!!$    Andreas Kemna                                        29-Feb-1996
-!!!$     
-!!!$    Last changes      RM                                   Jul-2010
-!!!$    
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!
+!    Unterprogramm berechnet b = B * p .
+!
+!    Andreas Kemna                                        29-Feb-1996
+!     
+!    Last changes      RM                                   Jul-2010
+!    
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i
 
-!!!$....................................................................
-!!!$    R^m * p  berechnen (skaliert)
+!....................................................................
+!    R^m * p  berechnen (skaliert)
     DO i=1,manz
        cdum = dcmplx(0d0)
 
@@ -571,22 +577,22 @@ CONTAINS
   END SUBROUTINE bp
 
   SUBROUTINE bptri()
-!!!$    
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$    Fuer beliebige Triangulierung
-!!!$    
-!!!$    Copyright by Andreas Kemna         2009
-!!!$
-!!!$    Created by Roland Martin                           29-Jul-2009
-!!!$    
-!!!$    Last changes      RM                                  Jul-2010
-!!!$    
-!!!$..................................................................
-!!!$.....................................................................
-!!!$
-!!!$     PROGRAMMINTERNE PARAMETER:
-!!!$
-!!!$     Hilfsvariablen
+!    
+!    Unterprogramm berechnet b = B * p .
+!    Fuer beliebige Triangulierung
+!    
+!    Copyright by Andreas Kemna         2009
+!
+!    Created by Roland Martin                           29-Jul-2009
+!    
+!    Last changes      RM                                  Jul-2010
+!    
+!..................................................................
+!.....................................................................
+!
+!     PROGRAMMINTERNE PARAMETER:
+!
+!     Hilfsvariablen
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j,idum
 !!!.....................................................................
@@ -607,22 +613,22 @@ CONTAINS
   END SUBROUTINE bptri
 
   SUBROUTINE bplma()
-!!!$
-!!!$    Unterprogramm berechnet b = B * p . 
-!!!$    Angepasst an Levenberg-Marquardt-Daempfung
-!!!$
-!!!$    Copyright by Andreas Kemna       2010
-!!!$    
-!!!$    Created by Roland Martin                              24-Feb-2010
-!!!$
-!!!$    Last changes        RM                                Jul-2010
-!!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$    Hilfsvariablen
+!
+!    Unterprogramm berechnet b = B * p . 
+!    Angepasst an Levenberg-Marquardt-Daempfung
+!
+!    Copyright by Andreas Kemna       2010
+!    
+!    Created by Roland Martin                              24-Feb-2010
+!
+!    Last changes        RM                                Jul-2010
+!
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!    Hilfsvariablen
     INTEGER         ::     i
-!!!$....................................................................
-!!!$    coaa R^m * p  berechnen (skaliert)
+!....................................................................
+!    coaa R^m * p  berechnen (skaliert)
 
 !     bvec = pvec * DCMPLX(cgfac * smatm(:,1))
     do i=1,manz
@@ -633,49 +639,49 @@ CONTAINS
 
 
   SUBROUTINE bpsto()
-!!!$
-!!!$    Unterprogramm berechnet b = B * p .
-!!!$    Angepasst an die neue Regularisierungsmatrix 
-!!!$    (stoch. Kovarianzmatrix) fuer komplexes Modell
-!!!$
-!!!$   TODO:
-!!!$      since smatm is symmetric, it would be good to 
-!!!$      exploit this..
-!!!$
-!!!$    Copyright by Andreas Kemna 2009
-!!!$    
-!!!$    Created by Roland Martin                              10-Jun-2009
-!!!$
-!!!$    Last changes   RM                                     Jul-2010
-!!!$
-!!!$....................................................................
-!!!$    R^m * p  berechnen (skaliert)
+!
+!    Unterprogramm berechnet b = B * p .
+!    Angepasst an die neue Regularisierungsmatrix 
+!    (stoch. Kovarianzmatrix) fuer komplexes Modell
+!
+!   TODO:
+!      since smatm is symmetric, it would be good to 
+!      exploit this..
+!
+!    Copyright by Andreas Kemna 2009
+!    
+!    Created by Roland Martin                              10-Jun-2009
+!
+!    Last changes   RM                                     Jul-2010
+!
+!....................................................................
+!    R^m * p  berechnen (skaliert)
     bvec = MATMUL(DCMPLX(smatm),pvec)
 
     bvec = bvec * DCMPLX(cgfac)
   END SUBROUTINE bpsto
 
   SUBROUTINE bpref()
-!!!$    
-!!!$    additional entries due to b = B*p
-!!!$    for reference model regu
-!!!$   
-!!!$    Copyright by Andreas Kemna 2010
-!!!$    
-!!!$    Created by Roland Martin                            05-Sep-2012
-!!!$    
-!!!$    Last changes        RM                                Sep-2012
-!!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!    
+!    additional entries due to b = B*p
+!    for reference model regu
+!   
+!    Copyright by Andreas Kemna 2010
+!    
+!    Created by Roland Martin                            05-Sep-2012
+!    
+!    Last changes        RM                                Sep-2012
+!
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER         ::     i
     COMPLEX (KIND(0D0)) :: cdum
-!!!$....................................................................
+!....................................................................
 
 
-!!!$    R^m * p  berechnen (skaliert)
+!    R^m * p  berechnen (skaliert)
     DO i=1,manz
 
        IF (w_ref_re(i) <= EPSILON(w_ref_re(i)) .AND. &
@@ -685,27 +691,27 @@ CONTAINS
 
        bvec(i) = bvec(i) + cdum * DCMPLX(lam_ref * cgfac(i))
 
-!!!!$! according to damping stuff..
+!!! according to damping stuff..
     END DO
 
   END SUBROUTINE bpref
 
   SUBROUTINE bb
-!!!$
-!!!$    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
-!!!$
-!!!$    Andreas Kemna                                        29-Feb-1996
-!!!$     
-!!!$    Last changes      RM                                   Mar-2011
-!!!$    
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!
+!    Unterprogramm berechnet A^h * R^d * A * p + l * R^m * p  berechnen (skaliert)
+!
+!    Andreas Kemna                                        29-Feb-1996
+!     
+!    Last changes      RM                                   Mar-2011
+!    
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     COMPLEX(KIND(0D0)) ::    cdum
     INTEGER         ::     i,j
 
-!!!$....................................................................
+!....................................................................
     DO j=1,manz
        cdum = dcmplx(0d0)
 

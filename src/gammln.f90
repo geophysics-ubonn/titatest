@@ -1,3 +1,8 @@
+!> \file gammln.f90
+!> \brief compute Gamma function \f$ \Gamma(x) \f$
+!> \details Details can be found in Press et al. <I> Numerical Resipes in Fortran 77 and 90 (second edition) </I> (2001), pp. 207
+!> @author William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery
+!> @date 2001
 REAL (KIND(0D0))  FUNCTION gammln(xx)
   REAL (KIND(0D0))  :: xx
   INTEGER (KIND=4)  :: j

@@ -1,16 +1,22 @@
+!> \file bsigma.f90
+!> \brief set the forward model parameters \f$ \sigma_j \f$ from the inversion model parameters in ln-space, \f$ m_j \f$.
+
+!> @author Roland Martin
+!> @date 03/19/2010, last change 03/23/2010
+
 SUBROUTINE bsigma
-!!!$     
-!!!$     Unterprogramm zur Belegung des Modell vektors (sigma)
-!!!$     mit dem verbesserten Modell aus par
-!!!$     im Moment noch unspektakulaer, da elanz = manz 
-!!!$     
-!!!$     Copyright by Andreas Kemna
-!!!$     
-!!!$     Erste Version von Roland Martin                          19-Mar-2010
-!!!$     
-!!!$     Letzte Aenderung                                         23-Mar-2010
-!!!$     
-!!!$.....................................................................
+!     
+!     Unterprogramm zur Belegung des Modell vektors (sigma)
+!     mit dem verbesserten Modell aus par
+!     im Moment noch unspektakulaer, da elanz = manz 
+!     
+!     Copyright by Andreas Kemna
+!     
+!     Erste Version von Roland Martin                          19-Mar-2010
+!     
+!     Letzte Aenderung                                         23-Mar-2010
+!     
+!.....................................................................
 
   USE invmod   ! fuer par
   USE sigmamod ! fuer sigma
@@ -20,17 +26,17 @@ SUBROUTINE bsigma
 
   IMPLICIT none
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsfeld
-!!!$      LOGICAL,DIMENSION(:),ALLOCATABLE :: lfeld
-!!!$     Indexvariablen
+!     Hilfsfeld
+!      LOGICAL,DIMENSION(:),ALLOCATABLE :: lfeld
+!     Indexvariablen
   INTEGER (KIND = 4) :: i
-!!!$.....................................................................
+!.....................................................................
 
 
   errnr = 4

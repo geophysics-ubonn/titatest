@@ -1,8 +1,46 @@
+!> \file rall.f90
+!> \brief Read all parameters for the inversion. 
+!> \details The file formats are as follows (comments after the vertical bar):
+!>      - grid file (delem):
+!>          \verbatim 
+!>      1209           3          49  | nr of nodes, nr of element types, bandwidth of FE matrix) 
+!>         8        1140           4  | element type description, nr of elements, nr of nodes per element:)
+!>        12          30           2  | ... element 5: triangles, 8: quadrilaterals (e.g., rectangles!))
+!>        11         106           2  | ...        11: mixed boundary, 12: von Neumann boundary )
+!>         1      -5.000       0.000  | node nr, x value, z value
+!>         2      -3.596       0.000  | ...
+!>         3      -2.465       0.000  | ...
+!>         :           :           :  | ... 1206 more
+!>        50   51    2    1           | edge node numbers of first element of type 8 (rectangle)
+!>        51   52    3    2           | counter-clockwise notation starting at bottom left
+!>         :    :    :    :           | ... 1138 more
+!>         2    1                     | edge node numbers of first element of type 12 (line boundary)
+!>         :    :                     | ... 29 more
+!>         1   50                     | edge node numbers of first element of type 11 (line boundary)
+!>         :    :                     | ... 105 more
+!>         1                          | boundary element numbers to build a closed surface
+!>         :                          | ... 135 more
+!>          \endverbatim
+!>      - electrode file (delectr):
+!>          \verbatim
+!>         31    | total number of electrodes
+!>        564    | node number of 1st electrodes
+!>          :    | ... 30 more
+!>          \endverbatim
+!>       These are the nicely ordered version of the grid and electrode file. They can be transformed into the corresponding high speed versions with the <I> CutMcK </I> command.
+!>      - measurement file (dstrom):
+!>          \verbatim
+!>          812                       | nr of measurements
+!>        10002 40003   283.1  0.00   | encoded current electr, encoded volt electr,... 
+!>        10002 50004   61.42  0.00   | recorded voltages and phase.
+!>        10002 60005   6.364  0.00   | encoding: C1*10000+C2 same with P1 P2
+!>          \endverbatim
+!>
+!> @author Andreas Kemna
+!> @date 03/01/1995, last change 08/20/2007
+
 SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
-!!!$     diff-     1                  dsigma,dvolt,dsens,dstart,lsens,lagain)
-!!!$     diff+<
      dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
-!!!$     diff+>
 
 !!!$     Unterprogramm zum Einlesen der benoetigten Variablen.
 
@@ -34,16 +72,29 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
 !!!$     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> FID number
   INTEGER (KIND = 4) ::     kanal
 
-!!!$     Dateinamen
-  CHARACTER (80) :: delem,delectr,dstrom,dsigma,dvolt,dsens,dstart, &
-!!!$     diff+<
-       dd0,dm0,dfm0,drandb
-!!!$     diff+>
+!> grid file
+  CHARACTER (80) :: delem
+!> electrodes file
+  CHARACTER (80) :: delectr
+!> configurations file
+  CHARACTER (80) :: dstrom
+!> complex resistivity model file
+  CHARACTER (80) :: dsigma
+!> measurements file
+  CHARACTER (80) :: dvolt
+!> sensitivities file
+  CHARACTER (80) :: dsens
+!> starting model file
+  CHARACTER (80) :: dstart
+  CHARACTER (80) :: dd0
+  CHARACTER (80) :: dm0
+  CHARACTER (80) :: dfm0
+  CHARACTER (80) :: drandb
 
-!!!$     Schalter ob weiterer Datensatz invertiert werden soll
+!> run another inversion?
   LOGICAL ::     lagain
   LOGICAL ::     lsto
 !!!$     check whether the file format is crtomo konform or not..

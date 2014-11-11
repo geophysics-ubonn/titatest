@@ -1,7 +1,8 @@
-!!!$ Gauss-Laguerre "Integration": Computation of abcissas
-!!!$ and weights for the numerical integration of the k-integral
-!!!$ for the back-transformation to the y-space. From
-!!!$ Numerical Recipies, 1992, p. 146
+!> \file gaulag.f90
+!> \brief Gauss-Laguerre integration
+!> \details Gauss-Laguerre integration: Computation of abcissas and weights for the numerical integration of the k integral for the backward transformation to the y space. Details can be found in Press et al. <I> Numerical Resipes in Fortran 77 and 90 (second edition) </I> (2001), pp. 146
+!> @author William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery
+!> @date 2001
 SUBROUTINE gaulag(x,w,n,alf)
   IMPLICIT none
   INTEGER (KIND = 4) ::n,MAXIT

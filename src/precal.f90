@@ -1,3 +1,15 @@
+!> \file precal.f90
+!> \brief pre-compute element contributions
+!>
+!> \details This module computes the element contributions of all element types in a <I> bare </I> structure. When used to compile the FE stiffness matrix, the corresponding conductivities and wavenumbers are applied. When referring to Schwarz (1991) or Kemna (1995, 2000), these bare contributions are named form functions. More information on form functions of specific element types can be found in:
+!> - elem3.f90:  triangular area element 
+!> - elem8.f90:  quadrilateral (rectangle) area element
+!> - elem11.f90: mixed boundary element 
+!> - elem12 doesn't exist because von Neumann boundary conditions don't contribute anything
+!>
+!> @author Andreas Kemna
+!> @date 12/21/1995, last change 11/22/1998
+
 subroutine precal()
 
 !!!$     Unterprogramm zur Berechnung der Element- und Randelementbeitraege

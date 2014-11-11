@@ -1,14 +1,20 @@
+!> \file bsmatm_mod.f90
+!> \brief compute the model weighting matrices \f$ W_m \f$
+
+!> @author Roland Martin
+!> @date 07/30/2010
+
 MODULE bsmatm_mod
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!$ Collection of subroutines to set the Regularization matrix 
-!!!$ (smatm) on different purposes.
-!!!$ 
+! Collection of subroutines to set the Regularization matrix 
+! (smatm) on different purposes.
+! 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!$ Copyright by Andreas Kemna 2010
-!!!$
-!!!$ Created by Roland Martin               30-Jul-2010
-!!!$
-!!!$ Last changed       RM                  Jul-2010
+! Copyright by Andreas Kemna 2010
+!
+! Created by Roland Martin               30-Jul-2010
+!
+! Last changed       RM                  Jul-2010
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -32,31 +38,31 @@ MODULE bsmatm_mod
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PRIVATE :: csens 
 
   PUBLIC :: bsmatm 
-!!!$ controls which regularization is to apply
+! controls which regularization is to apply
 
 
   PRIVATE :: bcsens
 !!$ calculates daigonal of A^TC_d^{-1}A
 
   PRIVATE :: bsmatmreg
-!!!$ sets smatm for smooth regularization on regular grids  
+! sets smatm for smooth regularization on regular grids  
   PRIVATE :: bsmatmtri
-!!!$ .. same but for unstructured grids (recommended)
+! .. same but for unstructured grids (recommended)
   PRIVATE :: bsmatmlma
-!!!$ Levenberg and Levenber-Marquardt Regularization
+! Levenberg and Levenber-Marquardt Regularization
   PRIVATE :: bsmatmmgs
-!!!$ Minimum gradient support regu
+! Minimum gradient support regu
   PRIVATE :: bsmatmtv
-!!!$ Total variance regu (alpha)
+! Total variance regu (alpha)
   PRIVATE :: bsmatmsto
-!!!$ Stochastical regularization
+! Stochastical regularization
 
 CONTAINS  
 
   SUBROUTINE bsmatm(it,l_bsmat)
-!!!$
-!!!$ This sub is the control unit of the smatm calculation
-!!!$
+!
+! This sub is the control unit of the smatm calculation
+!
     INTEGER (KIND = 4 ),INTENT(IN) :: it
     INTEGER (KIND = 4 )   :: c1
     LOGICAL            ,INTENT (INOUT) :: l_bsmat
@@ -64,7 +70,7 @@ CONTAINS
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     errnr = 2
 
-!!!$ pre query if smatm is  ever to be recalculated again..
+! pre query if smatm is  ever to be recalculated again..
 
     IF (ltri > 4 .AND. ltri < 10) THEN
        
@@ -83,7 +89,7 @@ CONTAINS
        l_bsmat = .FALSE. ! calculate just once
     END IF
 
-!!!$    get time
+!    get time
     CALL TIC(c1)
 
     IF (.NOT.ALLOCATED(csens)) ALLOCATE (csens(manz),STAT=errnr)
@@ -166,7 +172,7 @@ CONTAINS
 !!! 
   SUBROUTINE bcsens (csensmax,csensavg)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!$ This subroutine calculates the squared coverage or diag{A^TC_d^{-1}A}!
+! This subroutine calculates the squared coverage or diag{A^TC_d^{-1}A}!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     INTEGER :: i,j
     REAL(KIND(0D0)) :: csensmax ! maximum
@@ -187,7 +193,7 @@ CONTAINS
           ELSE IF (ldc) THEN
              csens(j) = csens(j) + sensdc(i,j) * &
                   sensdc(i,j) * wmatd(i)*DBLE(wdfak(i))
-!!!$ wechselt automatisch wmatdp bei lfpi
+! wechselt automatisch wmatdp bei lfpi
           ELSE
              csens(j) = csens(j) + REAL(DCONJG(sens(i,j)) * &
                   sens(i,j)) * wmatd(i)*DBLE(wdfak(i)) 
@@ -196,7 +202,7 @@ CONTAINS
     END DO
     !$OMP END PARALLEL
 
-!!!$ for normalization
+! for normalization
     csensmax = MAXVAL(csens)
 
     csensavg = SUM (csens) / DBLE(manz)
@@ -205,57 +211,57 @@ CONTAINS
 
   SUBROUTINE bsmatmreg
 
-!!!$     Unterprogramm belegt die Rauhigkeitsmatrix.
-!!!$
-!!!$    Andreas Kemna                                        29-Feb-1996
-!!!$    Letzte Aenderung   RM                                Jul-2010
-!!!$
-!!!$....................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$
-!!!$    Variablen zur Beruecksichtigung von Diskontinuitaeten (keine
-!!!$    Glaettung in x bzw. z-Richtung)
+!     Unterprogramm belegt die Rauhigkeitsmatrix.
+!
+!    Andreas Kemna                                        29-Feb-1996
+!    Letzte Aenderung   RM                                Jul-2010
+!
+!....................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!
+!    Variablen zur Beruecksichtigung von Diskontinuitaeten (keine
+!    Glaettung in x bzw. z-Richtung)
     INTEGER(KIND = 4) ::   ndis_z,idis_z(3),m,ndis_x,idis_x(4)
     LOGICAL ::     lup,ldown,lleft,lright
     REAL(KIND(0D0)) ::     alfdis
 
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     REAL(KIND(0D0)) ::     dum,dzleft,dzright,xleft,xmean,xright,&
          dxup,dxdown,zup,zmean,zdown
 
     INTEGER(KIND = 4) ::     i,j,l
 
-!!!$    Hilfsfunction
+!    Hilfsfunction
     INTEGER(KIND = 4) ::     k
 
     k(i,j) = (i-1) * nx + j
 
-!!!$....................................................................
+!....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,3))
     ndis_z = 0
-!!!$    ak BAW
-!!!$    ak        ndis_z    = 2
+!    ak BAW
+!    ak        ndis_z    = 2
     idis_z(1) = 15
     idis_z(2) = 18
 
     ndis_x = 0
-!!!$    ak Bohrloch-Effekt
-!!!$    ak        ndis_x    = 4
+!    ak Bohrloch-Effekt
+!    ak        ndis_x    = 4
     idis_x(1) = 4
     idis_x(2) = 6
     idis_x(3) = nx-4
     idis_x(4) = nx-2
 
-!!!$    ak fuer Christoph (Wald)
-!!!$    ak        ndis_z    = 3
+!    ak fuer Christoph (Wald)
+!    ak        ndis_z    = 3
     idis_z(1) = 6
     idis_z(2) = 12
     idis_z(3) = 19
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,3))
 
-!!!$    Rauhigkeitsmatrix auf Null setzen
+!    Rauhigkeitsmatrix auf Null setzen
     smatm = 0d0
 
     DO i=1,nz
@@ -276,7 +282,7 @@ CONTAINS
              IF (j+1.EQ.idis_x(m)) lright=.FALSE.
           END DO
 
-!!!$    Beitrag von Wx^t*Wx zur Rauhigkeitsmatrix
+!    Beitrag von Wx^t*Wx zur Rauhigkeitsmatrix
           dzleft  = dabs( sy(snr(nrel(k(i,j),4))) &
                -sy(snr(nrel(k(i,j),1))))
           dzright = dabs( sy(snr(nrel(k(i,j),3))) &
@@ -293,7 +299,7 @@ CONTAINS
              IF (lleft) THEN
                 alfdis = 1d0
              ELSE
-!!!$    ak
+!    ak
                 alfdis = 1d-3
              END IF
 
@@ -311,7 +317,7 @@ CONTAINS
              IF (lright) THEN
                 alfdis = 1d0
              ELSE
-!!!$    ak
+!    ak
                 alfdis = 1d-3
              END IF
 
@@ -327,7 +333,7 @@ CONTAINS
              smatm(k(i,j),2) = -dum
           END IF
 
-!!!$    Beitrag von Wz^t*Wz zur Rauhigkeitsmatrix
+!    Beitrag von Wz^t*Wz zur Rauhigkeitsmatrix
           dxup   = dabs( sx(snr(nrel(k(i,j),3))) &
                -sx(snr(nrel(k(i,j),4))))
           dxdown = dabs( sx(snr(nrel(k(i,j),2))) &
@@ -381,29 +387,29 @@ CONTAINS
   END SUBROUTINE bsmatmreg
 
   SUBROUTINE bsmatmtri      !tri
-!!!$
-!!!$    Unterprogramm belegt die Rauhigkeitsmatrix....
-!!!$    fuer beliebige Triangulierung 
-!!!$    Angelehnt an R. Blaschek (2008)
-!!!$
-!!!$    Copyright by Andreas Kemna 2009
-!!!$    
-!!!$    Created by Roland Martin                            23-Jun-2009
-!!!$    
-!!!$    Letzte Aenderung   RM                                    Jul-2010
-!!!$
-!!!$........................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
-!!!$
-!!!$    Hilfsvariablen 
-    REAL(KIND(0D0)) :: dum    !!!$dummy stores numbers
+!
+!    Unterprogramm belegt die Rauhigkeitsmatrix....
+!    fuer beliebige Triangulierung 
+!    Angelehnt an R. Blaschek (2008)
+!
+!    Copyright by Andreas Kemna 2009
+!    
+!    Created by Roland Martin                            23-Jun-2009
+!    
+!    Letzte Aenderung   RM                                    Jul-2010
+!
+!........................................................................
+!    PROGRAMMINTERNE PARAMETER:
+!
+!    Hilfsvariablen 
+    REAL(KIND(0D0)) :: dum    !dummy stores numbers
     INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
-    REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
+    REAL(KIND(0D0)) :: edglen !Kantenlaenge
+    REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
+    REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
     REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
     REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
-!!!$.....................................................................
+!.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
     IF (errnr/=0) THEN
@@ -412,7 +418,7 @@ CONTAINS
        RETURN
     END IF
 
-    smatm = 0D0               !!!$initialize smatm
+    smatm = 0D0               !initialize smatm
 
     IF (elanz/=manz)PRINT*,'elanz/=manzSMATMTRI may be wrong'
 
@@ -421,18 +427,18 @@ CONTAINS
        sp1(1) = espx(i)
        sp1(2) = espy(i)
 
-       DO k=1,smaxs           !!!$jedes flaechenele hat mind einen nachbarn
+       DO k=1,smaxs           !jedes flaechenele hat mind einen nachbarn
 
           ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
-               (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2d0) !!!$edge
+               (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2d0) !edge
 
           IF (nachbar(i,k)>0) THEN !nachbar an der Kante existiert 
 
-             sp2(1) = espx(nachbar(i,k)) !!!$ center point of element
+             sp2(1) = espx(nachbar(i,k)) ! center point of element
              sp2(2) = espy(nachbar(i,k))
-!!!$    Geometrical part...
+!    Geometrical part...
 
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
@@ -454,20 +460,20 @@ CONTAINS
   END SUBROUTINE bsmatmtri
 
   SUBROUTINE bsmatmlma      ! levenberg-marquardt damping
-!!!$    
-!!!$    Unterprogramm belegt die Glaettungsmtrix
-!!!$    (hier Daempfungsmatrix (smatm))
-!!!$    
-!!!$    Copyright by Andreas Kemna                               2009
-!!!$    Erstellt von Roland Martin                               18-Dec-2009
-!!!$    Letzte Aenderung RM                                      Jul-2010
-!!!$    
-!!!$........................................................................
-!!!$    PROGRAMMINTERNE PARAMETER:
+!    
+!    Unterprogramm belegt die Glaettungsmtrix
+!    (hier Daempfungsmatrix (smatm))
+!    
+!    Copyright by Andreas Kemna                               2009
+!    Erstellt von Roland Martin                               18-Dec-2009
+!    Letzte Aenderung RM                                      Jul-2010
+!    
+!........................................................................
+!    PROGRAMMINTERNE PARAMETER:
     REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
     INTEGER :: j
-!!!$.....................................................................
+!.....................................................................
 
     IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
     IF (errnr/=0) THEN
@@ -498,20 +504,20 @@ CONTAINS
 
 
   SUBROUTINE bsmatmmgs      !MGS
-!!!$    
-!!!$  Unterprogramm belegt die Rauhigkeitsmatrix ala 
-!!!$ Portniaguine und Zhdanov [1999]
-!!!$ Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
-!!!$
-!!!$    Copyright by Andreas Kemna 2009
-!!!$    
-!!!$    Erste Version von Roland Martin                          03-Nov-2009
-!!!$    
-!!!$    Last edited  RM                                          18-Dec-2009
-!!!$    
-!!!$........................................................................
-!!!$     PROGRAMMINTERNE PARAMETER:
-!!!$     Hilfsvariablen 
+!    
+!  Unterprogramm belegt die Rauhigkeitsmatrix ala 
+! Portniaguine und Zhdanov [1999]
+! Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
+!
+!    Copyright by Andreas Kemna 2009
+!    
+!    Erste Version von Roland Martin                          03-Nov-2009
+!    
+!    Last edited  RM                                          18-Dec-2009
+!    
+!........................................................................
+!     PROGRAMMINTERNE PARAMETER:
+!     Hilfsvariablen 
 
     REAL(KIND(0D0)) :: dum,dum2 ! helpers
     REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
@@ -524,7 +530,7 @@ CONTAINS
     REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
     REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
     REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
-!!!$.....................................................................
+!.....................................................................
 
     errnr = 4
     dum = 0D0
@@ -563,74 +569,74 @@ CONTAINS
 
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
 
-!!!$schwerpunkt des nachbar elements
-             sp2(1) = espx(nachbar(i,k))!!!$ center point of element
+!schwerpunkt des nachbar elements
+             sp2(1) = espx(nachbar(i,k))! center point of element
              sp2(2) = espy(nachbar(i,k))
 
-!!!$    Geometrical part...
+!    Geometrical part...
              ! distance of the mid points
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 !!$! including anisotropy!
 !angle to horizon
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
-!!!$ geometrical contribution... (as smooth regularization..)
+! geometrical contribution... (as smooth regularization..)
 ! projected effective contribution due to anisotropic regu
              alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
 
-!!!$ Model value gradient (\nabla m)
+! Model value gradient (\nabla m)
 
 !!! TODO
              mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
              sqmgrad = mgrad * mgrad
-!!!$ TODO
-!!!$    MGS Teil
-!!!$
-!!!$    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
-!!!$    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
-!!!$            !!!! ATTENTION !!!!
-!!!$ The squared model gradient in the 
-!!!$ nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
-!!!$ !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
-!!!$ for now we have to deal with the denominator stuff only at this point!!
-!!!$ The gemoetrical part is than reduced to
-!!!$ \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
-!!!$ -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
-!!!$  of anisotropy
-             IF (ltri == 5) THEN !!!$reines MGS
+! TODO
+!    MGS Teil
+!
+!    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
+!    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
+!            !!!! ATTENTION !!!!
+! The squared model gradient in the 
+! nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
+! !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
+! for now we have to deal with the denominator stuff only at this point!!
+! The gemoetrical part is than reduced to
+! \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
+! -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
+!  of anisotropy
+             IF (ltri == 5) THEN !reines MGS
 
                 dum = sqmgrad + betamgs**2d0
 ! proportional contribution of integrated cell
                 dum = alfgeo * edglen / dist / dum
 
-             ELSE IF (ltri == 6) THEN !!!$sensitivitaetswichtung 1 von RM
-!!!$    f(i,k) = 1 + g(i) + g(k)
+             ELSE IF (ltri == 6) THEN !sensitivitaetswichtung 1 von RM
+!    f(i,k) = 1 + g(i) + g(k)
                 dum2 = 1d0 + DABS(DLOG10(csens(i))) + &
                      DABS(DLOG10(csens(nachbar(i,k))))
-!!!$    dum2 = f(i,k)^2
+!    dum2 = f(i,k)^2
                 dum2 = dum2**2d0
-!!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+!    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = sqmgrad + (betamgs / dum2)**2d0
-!!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
-!!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
+!    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+!    grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = alfgeo * edglen / dist / dum2 / dum
 
-             ELSE IF (ltri == 7) THEN !!!$sensitivitaetswichtung 2 von RM
+             ELSE IF (ltri == 7) THEN !sensitivitaetswichtung 2 von RM
 
-!!!$    f(i,k) = 1 + (g(i) + g(k))/mean(g)
+!    f(i,k) = 1 + (g(i) + g(k))/mean(g)
                 dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
                      DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
-!!!$    dum2 = f(i,k)^2
+!    dum2 = f(i,k)^2
                 dum2 = dum2**2d0
-!!!$    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+!    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = sqmgrad + (betamgs / dum2)**2d0
-!!!$    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
-!!!$    grad(m)^2 + (\beta/f(i,k)^2)^2
+!    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+!    grad(m)^2 + (\beta/f(i,k)^2)^2
                 dum = alfgeo * edglen / dist / dum2 / dum
 
-             ELSE IF (ltri == 8) THEN !!!$sensitivitaetswichtung von RB
+             ELSE IF (ltri == 8) THEN !sensitivitaetswichtung von RB
                 
-!!!$    der folgende code wurde mir so ueberliefert... 
-!!!$ kam von RB aber keine ahnung was das genau macht
+!    der folgende code wurde mir so ueberliefert... 
+! kam von RB aber keine ahnung was das genau macht
                 dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
                      DLOG10(csens(nachbar(i,k))) ) ))
                 
@@ -647,8 +653,8 @@ CONTAINS
 
              END IF
 
-!!!$    nun glaettung belegen
-             smatm(i,k) = -dum !!!$neben Diagonale
+!    nun glaettung belegen
+             smatm(i,k) = -dum !neben Diagonale
              smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !Hauptdiagonale
 
           END IF
@@ -662,51 +668,51 @@ CONTAINS
   END SUBROUTINE bsmatmmgs
 
   SUBROUTINE bsmatmtv      !betatv
-!!!$    
-!!!$    Unterprogramm belegt die Rauhigkeitsmatrix mit total variance
-!!!$    fuer beliebige Triangulierung 
-!!!$
-!!!$    Copyright by Andreas Kemna 2009
-!!!$    
-!!!$    Created by Roland Martin                          23-Nov-2009
-!!!$    
-!!!$    Letzte Aenderung   RM                                    23-Nov-2009
-!!!$    
-!!!$........................................................................
-!!!$   PROGRAMMINTERNE PARAMETER:
-!!!$   Hilfsvariablen 
+!    
+!    Unterprogramm belegt die Rauhigkeitsmatrix mit total variance
+!    fuer beliebige Triangulierung 
+!
+!    Copyright by Andreas Kemna 2009
+!    
+!    Created by Roland Martin                          23-Nov-2009
+!    
+!    Letzte Aenderung   RM                                    23-Nov-2009
+!    
+!........................................................................
+!   PROGRAMMINTERNE PARAMETER:
+!   Hilfsvariablen 
     REAL(KIND(0D0)) :: dum
     INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen !!!$Kantenlaenge
-    REAL(KIND(0D0)) :: dist   !!!$Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) !!!$Schwerpunktkoordinaten
+    REAL(KIND(0D0)) :: edglen !Kantenlaenge
+    REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
+    REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
     REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
     REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
     REAL(KIND(0D0)) :: alftv  !TV Glaettung
-!!!$.....................................................................
+!.....................................................................
 
     
     IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
-    smatm = 0d0               !!!$initialize smatm
+    smatm = 0d0               !initialize smatm
 
     DO i=1,elanz
-       sp1(1) = espx(i) !!!$Mittelpunkt des aktuellen Elements
+       sp1(1) = espx(i) !Mittelpunkt des aktuellen Elements
        sp1(2) = espy(i)
 
-       DO k=1,smaxs           !!!$jedes flaechenele hat mind einen nachbarn
+       DO k=1,smaxs           !jedes flaechenele hat mind einen nachbarn
 
           ik = MOD(k,smaxs) + 1
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
-               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) !!!$edge
+               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) !edge
 
 
           IF (nachbar(i,k)>0) THEN !nachbar existiert 
 
-             sp2(1) = espx(nachbar(i,k)) !!!$schwerpunkt des nachbar elements
+             sp2(1) = espx(nachbar(i,k)) !schwerpunkt des nachbar elements
              sp2(2) = espy(nachbar(i,k))
 
-!!!$   Geometrischer Teil...
+!   Geometrischer Teil...
              dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
 
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !neu
@@ -715,11 +721,11 @@ CONTAINS
 
              alftv = edglen / dist * alfgeo
 
-!!!$   Total variance
+!   Total variance
              dum = SQRT(alftv**2d0 + betamgs**2d0)
-!!!$   nun glaettung belegen
+!   nun glaettung belegen
 
-             smatm(i,k) = -dum !!!$ off diagonal
+             smatm(i,k) = -dum ! off diagonal
 
              smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !main diagonal
 
@@ -731,28 +737,28 @@ CONTAINS
   END SUBROUTINE bsmatmtv
 
   SUBROUTINE bsmatmsto
-!!!$
-!!!$    Unterprogramm belegt die Kovarianzmatrix.   
-!!!$    Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
-!!!$
-!!!$    Copyright by Andreas Kemna                              2009
-!!!$    Created by Anastasia August / Roland Martin             03-Apr-2009
-!!!$
-!!!$    Last edited RM                                          Jul-2010
-!!!$....................................................................
-!!!$    Hilfsmatrix
+!
+!    Unterprogramm belegt die Kovarianzmatrix.   
+!    Neue Regularisierungsmatrix (stoch. Kovarianzmatrix).
+!
+!    Copyright by Andreas Kemna                              2009
+!    Created by Anastasia August / Roland Martin             03-Apr-2009
+!
+!    Last edited RM                                          Jul-2010
+!....................................................................
+!    Hilfsmatrix
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE :: work
     REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE :: myold,proof
-!!!$    Korrelation lengths, variance (var) and nugget
+!    Korrelation lengths, variance (var) and nugget
     REAL(KIND(0D0))      :: hx,hy,var,nugget
     REAL                 :: epsi
-!!!$    gibt es evtl schon eine inverse?
+!    gibt es evtl schon eine inverse?
     LOGICAL              :: ex
-!!!$    Hilfsvariablen
+!    Hilfsvariablen
     INTEGER              :: i,j,ifp
-!!!$    smatm file name
+!    smatm file name
     CHARACTER(124)        :: fsmat
-!!!$    clearscreen
+!    clearscreen
     CHARACTER(80)        :: csz
 
     epsi=EPSILON(epsi)
@@ -795,11 +801,11 @@ CONTAINS
           RETURN
        END IF
     END IF
-!!!$    Belege die Matrix
+!    Belege die Matrix
 
     smatm = 0d0
 
-    INQUIRE(FILE=fsmat,EXIST=ex) !!!$already an inverse c_m ?
+    INQUIRE(FILE=fsmat,EXIST=ex) !already an inverse c_m ?
 
     IF (ex) THEN
 
@@ -826,10 +832,10 @@ CONTAINS
                'cov/',REAL(i*(100./manz)),'%',''
 
           smatm(i,i) = var ! nugget (=variance) effect on the main
-!!!$ R(h) = C_0 \delta(h)  = 
-!!!$ \begin{case} C_0 & \mbox{if}\;h = 0 \\ 0 & else \end{case}
+! R(h) = C_0 \delta(h)  = 
+! \begin{case} C_0 & \mbox{if}\;h = 0 \\ 0 & else \end{case}
 
-          DO j = i+1 , manz   !!!$fills upper triangle
+          DO j = i+1 , manz   !fills upper triangle
 
              hx = (espx(i) - espx(j)) !main point differences
              hy = (espy(i) - espy(j))
@@ -855,7 +861,7 @@ CONTAINS
 
        IF (lverb) myold = smatm
 
-!!!$    Berechne nun die Inverse der Covarianzmatrix!!!
+!    Berechne nun die Inverse der Covarianzmatrix!!!
        IF (lgauss) THEN
           PRINT*,'   Gauss elemination ... '
           CALL gauss_dble(smatm,manz,errnr)
@@ -865,7 +871,7 @@ CONTAINS
              errnr = 108
              RETURN
           END IF
-       ELSE                   !!!$default..
+       ELSE                   !default..
           WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'Factorization...'
           ALLOCATE (work(manz))
           CALL CHOLD(smatm,work,manz,errnr,lverb)
@@ -927,7 +933,7 @@ CONTAINS
 
        END IF
 
-!!!!$ verbose output of inverse smatm data
+!! verbose output of inverse smatm data
        IF (lverb_dat) THEN
           fetxt = 'cm0_inv.dat'
           PRINT*,'writing '//TRIM(fetxt)

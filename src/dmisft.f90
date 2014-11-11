@@ -1,11 +1,21 @@
+!> \file dmisfit.f90
+!> \brief compute data misfit
+!> \details Kemna (2000) Section 1.3.2: It seems obvious to formulate the complex resistivity inverse problem directly for complex parameters and data, i.e., to jointly invert for resistivity magnitude and phase as a complex number. An inherent advantage of such a formulation is that the inverse solution can be obtained in an elegant way using complex calculus. By the following definitions and considerations, it is shown that the inversion approach outlined in the previous section can be applied to the complex-valued problem in a straightforward manner.
+!>
+!> Within the complex resistivity inversion, log transformed parameters and data shall be used to account for the wide dynamic range of resistivity magnitude encountered in earth materials. In terms of conductivity, the model vector \f$ m \f$ and the data vector \f$ d \f$ of the inverse problem may thus be defined as
+!> \f[ m_j = \ln \sigma_j  d_i = \ln \sigma_{a_i} \f]
+!> @author Andreas Kemna
+!> @date 10/11/1993
+
+
 SUBROUTINE dmisft(lsetup)
 
-!!!$     Unterprogramm zum Bestimmen des Misfits der Daten.
+!     Unterprogramm zum Bestimmen des Misfits der Daten.
 
-!!!$     Andreas Kemna                                            01-Mar-1995
-!!!$     Letzte Aenderung   15-Jan-2001
+!     Andreas Kemna                                            01-Mar-1995
+!     Letzte Aenderung   15-Jan-2001
 
-!!!$.....................................................................
+!.....................................................................
 
   USE invmod
   USE datmod
@@ -16,29 +26,29 @@ SUBROUTINE dmisft(lsetup)
   IMPLICIT NONE
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Hilfsschalter
+!     Hilfsschalter
   LOGICAL ::     lsetup
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsfelder
+!     Hilfsfelder
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: psi,eps2
   INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: wdlok
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND = 4)  ::     i,idum
   COMPLEX (KIND(0D0)) ::    cdum,cdat,csig
   REAL(KIND(0D0))     ::     dum,norm,norm2
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     einfach mal oeffnen falls Ausgabe
+!     einfach mal oeffnen falls Ausgabe
   errnr = 1
   fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
   OPEN(fpeps,file=TRIM(fetxt),STATUS='old',POSITION='append',ERR=1000)
@@ -59,7 +69,7 @@ SUBROUTINE dmisft(lsetup)
           //ACHAR(9)//'Im(d)'//ACHAR(9)//'Im(f(m))'
   END IF
 
-!!!$     RMS-WERTE BERECHNEN
+!     RMS-WERTE BERECHNEN
   nrmsd  = 0d0
   betrms = 0d0
   pharms = 0d0
@@ -75,21 +85,21 @@ SUBROUTINE dmisft(lsetup)
   DO i=1,nanz
      wdlok(i) = 1
 
-!!!$     Phasen lokal korrigieren
+!     Phasen lokal korrigieren
      CALL chkpo2(dat(i),sigmaa(i),cdat,csig,wdlok(i),lpol)
 
-!!!$     ak Ggf. Daten mit Phase betraglich groesser 200 mrad nicht beruecksichtigen
-!!!$     ak (Standardabweichung auf 1d4 hochsetzen)
-!!!$     ak           if (dabs(1d3*dimag(csig)).gt.200d0) wmatd(i)=1d-8
+!     ak Ggf. Daten mit Phase betraglich groesser 200 mrad nicht beruecksichtigen
+!     ak (Standardabweichung auf 1d4 hochsetzen)
+!     ak           if (dabs(1d3*dimag(csig)).gt.200d0) wmatd(i)=1d-8
 
-!!!$     diff-            cdum = cdat - csig
-!!!$     diff+<
+!     diff-            cdum = cdat - csig
+!     diff+<
      IF (.NOT.ldiff) THEN
         cdum = cdat - csig
      ELSE
         cdum = cdat - csig - (d0(i) - fm0(i))
      END IF
-!!!$     diff+>
+!     diff+>
 
      IF (lfpi) THEN
         psi(i) = dsqrt(wmatd(i))*dabs(dimag(cdum))
@@ -97,7 +107,7 @@ SUBROUTINE dmisft(lsetup)
         psi(i) = dsqrt(wmatd(i))*cdabs(cdum)
      END IF
 
-!!!$     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
+!     Ggf. 'eps_i', 'psi_i' und Hilfsfeld ausgeben
      IF ((llam.AND..NOT.lstep).OR.lsetup) WRITE(fpeps,11,err=1000) &
           i, REAL(1d0/dsqrt(wmatd(i))),REAL(psi(i)),wdlok(i),&
           REAL(csig),REAL(cdat),AIMAG(cdat),AIMAG(csig)
@@ -113,7 +123,7 @@ SUBROUTINE dmisft(lsetup)
 
   END DO
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
   IF (idum.EQ.0) THEN
      fetxt = ' '
      errnr = 99
@@ -126,7 +136,7 @@ SUBROUTINE dmisft(lsetup)
   betrms = dsqrt(betrms/DBLE(idum))
   pharms = dsqrt(pharms/DBLE(idum))
 
-!!!$     Ggf. ROBUST INVERSION (nach Doug' LaBrecque)
+!     Ggf. ROBUST INVERSION (nach Doug' LaBrecque)
   IF (lrobust) THEN
 
      !     get memory for wdlok
@@ -136,7 +146,7 @@ SUBROUTINE dmisft(lsetup)
         errnr = 94
         RETURN
      END IF
-!!!$     'estimated weights' und 1-Normen berechnen
+!     'estimated weights' und 1-Normen berechnen
      norm  = 0d0
      norm2 = 0d0
 
@@ -147,12 +157,12 @@ SUBROUTINE dmisft(lsetup)
         norm2   = norm2 + psi(i)*(wdlok(i))*dum/eps2(i)
      END DO
 
-!!!$     'estimated weights' normieren
+!     'estimated weights' normieren
      DO i=1,nanz
         eps2(i) = eps2(i) * norm2/norm
      END DO
 
-!!!$     Kleinere Standardabweichung ausschliessen und neue 1-Norm berechnen
+!     Kleinere Standardabweichung ausschliessen und neue 1-Norm berechnen
      norm2 = 0d0
 
      DO i=1,nanz
@@ -163,12 +173,12 @@ SUBROUTINE dmisft(lsetup)
 
      l1rat = norm/norm2
 
-!!!$     Ggf. neue Wichtungsfaktoren belegen
+!     Ggf. neue Wichtungsfaktoren belegen
      IF (l1rat.GT.l1min) THEN
         DO i=1,nanz
            dum = 1./(eps2(i) * eps2(i))
 
-!!!$     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
+!     Ausgabe, falls 'eps_neu' > 1.1 * 'eps_alt'
            IF (dum.LT.0.83d0*wmatd(i).AND. &
                 ((llam.AND..NOT.lstep).OR.lsetup)) THEN
 
@@ -188,9 +198,9 @@ SUBROUTINE dmisft(lsetup)
   errnr = 0
   RETURN
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 1000 CLOSE(fpeps)
   CLOSE(fprun)
   RETURN
@@ -198,49 +208,49 @@ SUBROUTINE dmisft(lsetup)
 END SUBROUTINE dmisft
 
 
-!!!$*********************************************************************
+!*********************************************************************
 
 SUBROUTINE chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Eingabe
+!     Eingabe
   COMPLEX (KIND(0D0)) ::    dati,sigi
 
-!!!$     Ausgabe
+!     Ausgabe
   COMPLEX (KIND(0D0)) ::    cdat,csig
 
-!!!$     Schalter
+!     Schalter
   INTEGER (KIND = 4)  ::     wdlok
   LOGICAL ::     ldum
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idat,isig
 
-!!!$     Real-, Imaginaerteile
+!     Real-, Imaginaerteile
   REAL (KIND(0D0))    ::     redat,imdat,resig,imsig
 
-!!!$     Pi
+!     Pi
   REAL (KIND(0D0))    ::     pi
 
-!!!$.....................................................................
+!.....................................................................
 
   pi = dacos(-1d0)
 
-!!!$     Logarithmierte Betraege in den Realteilen,
-!!!$     Phasen (in rad) in den Imaginaerteilen
+!     Logarithmierte Betraege in den Realteilen,
+!     Phasen (in rad) in den Imaginaerteilen
   redat = DBLE(dati)
   imdat = dimag(dati)
   resig = DBLE(sigi)
   imsig = dimag(sigi)
 
-!!!$     Phasenbereich checken
+!     Phasenbereich checken
   IF (imdat.GT.pi/2d0) THEN
      idat = -1
   ELSE IF (imdat.LE.-pi/2d0) THEN
@@ -259,8 +269,8 @@ SUBROUTINE chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
 
   IF (idat.EQ.0.AND.isig.NE.0) THEN
 
-!!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
-!!!$     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
+!     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
+!     ggf. Korrektur; auf jeden Fall Polaritaetswechsel
      imsig = imsig + DBLE(isig)*pi
      IF (.NOT.ldum) imdat=imdat-dsign(pi,imdat)
 
@@ -268,21 +278,21 @@ SUBROUTINE chkpo2(dati,sigi,cdat,csig,wdlok,ldum)
 
   ELSE IF (idat.NE.0.AND.isig.EQ.0) THEN
 
-!!!$     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
-!!!$     ggf. Korrektur
+!     Falls ldum=.true., angenommene Polaritaet des Messdatums falsch,
+!     ggf. Korrektur
      IF (ldum) imdat=imdat+DBLE(idat)*pi
 
      wdlok = 0
 
   ELSE IF (idat.NE.0.AND.isig.NE.0) THEN
 
-!!!$     Polaritaetswechsel
+!     Polaritaetswechsel
      imsig = imsig + DBLE(isig)*pi
      imdat = imdat + DBLE(idat)*pi
 
   END IF
 
-!!!$     'cdat' und 'csig' speichern
+!     'cdat' und 'csig' speichern
   cdat = dcmplx(redat,imdat)
   csig = dcmplx(resig,imsig)
 

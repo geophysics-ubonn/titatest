@@ -1,3 +1,9 @@
+!> \file bnachbar.f90
+!> \brief find neighbouring forward modelling cells 
+!> \details Find neighbouring model cells to carry out the triangular regularization in the inversion update process. The algorithms attempts to find equal edges of triangular and quadrilateral elements and marks them as neighbors 
+
+!> @author Roland Martin
+!> @date 07/29/2009, last change 08/26/2009
 SUBROUTINE bnachbar
 !!!$     
 !!!$     Unterprogramm zum Bestimmen der Elementnachbarn

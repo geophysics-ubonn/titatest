@@ -1,45 +1,50 @@
+!> \file cjgmod.f90
+!> \brief variable delarations for the conjugate gradient (CG) solver in <I>cg_mod</I>
+!> @author Roland Martin
+!> @date 07/27/2010
+
 MODULE cjgmod
-!!!$ ------------------------------------------------------------------
-!!$ Module for the data of Conjugate gradient to solve Linear systems
-!!$ Copyright by Andreas Kemna   2010
-!!$ Edited first by Roland Martin                          27-07-2010
-!!$ -------------------------------------------------------------------
+!! ------------------------------------------------------------------
+! Module for the data of Conjugate gradient to solve Linear systems
+! Copyright by Andreas Kemna   2010
+! Edited first by Roland Martin                          27-07-2010
+! -------------------------------------------------------------------
   USE datmod,ONLY:nanz
   USE modelmod,ONLY:manz
 
   IMPLICIT none
-!!!!$ COMPLEX CASE
-!!!$ auxiliary vector stores product of A*(Ap)
+!!! COMPLEX CASE
+!! auxiliary vector stores product of A*(Ap)
   COMPLEX(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC  :: ap
-!!$ Right hand side (RHS) vector
+! Right hand side (RHS) vector
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: bvec
-!!$ residual vector
+! residual vector
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: rvec
-!!$ intermediate vector (stores Ap)
+! intermediate vector (stores Ap)
   COMPLEX(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE  :: pvec
 
-!!!!$ DC CASE
-!!$c assist vectors
+!!! DC CASE
+!c assist vectors
   REAL(KIND(0D0)),ALLOCATABLE,DIMENSION(:),PUBLIC     :: apdc
-!!$ dc real valued version ov RHS
+! dc real valued version ov RHS
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: bvecdc
-!!$ residual vector dc
+! residual vector dc
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: rvecdc
-!!$ intermediate vector (stores Ap) dc
+! intermediate vector (stores Ap) dc
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: pvecdc
 
-!!!$ variables for every case
-!!$ CG residuals
+!! variables for every case
+! CG residuals
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres
-!!$ storage
+! storage
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgres2
-!!$ preconditioning factors
+! preconditioning factors
   REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: cgfac
-!!$ CG Epsilon
+! CG Epsilon
   REAL(KIND(0D0)),PUBLIC                              :: eps
-!!$ maximum number of CG steps
+! maximum number of CG steps
   INTEGER (KIND = 4),PUBLIC                           :: ncgmax
-!!$ actual number of CG steps..
+! actual number of CG steps..
   INTEGER (KIND = 4),PUBLIC                           :: ncg
 
   PUBLIC :: con_cjgmod ! constructor
@@ -50,7 +55,7 @@ CONTAINS
 
   SUBROUTINE con_cjgmod (mycase,errtxt,errnr) ! constructor of cjgmod
     INTEGER (KIND=4),INTENT (IN) :: mycase ! mycase can have 3 values
-!!!$ 0:  allocate global cgres and bvec which should be called from update
+!! 0:  allocate global cgres and bvec which should be called from update
     CHARACTER (*),INTENT(INOUT)  :: errtxt
     INTEGER (KIND=4),INTENT(OUT) :: errnr
 
@@ -62,7 +67,7 @@ CONTAINS
        errtxt = 'allocation problem cgres2'
        ALLOCATE (cgres2(ncgmax+1),STAT=errnr)
        IF (errnr /= 0) RETURN
-!!!$  CJG aux vectors and update
+!!  CJG aux vectors and update
        errtxt = 'allocation problem bvec'
        ALLOCATE (bvec(manz),STAT=errnr)
        IF (errnr /= 0) RETURN
@@ -70,7 +75,7 @@ CONTAINS
        ALLOCATE (cgfac(manz),STAT=errnr)
        IF (errnr /= 0) RETURN
     CASE (2)! ERT or FPI
-!!$ getting further CJG variables
+! getting further CJG variables
        errtxt = 'allocation problem pvecdc'
        ALLOCATE (pvecdc(manz),STAT=errnr)
        IF (errnr /= 0) RETURN
@@ -108,7 +113,7 @@ CONTAINS
        errtxt = 'deallocation problem cgres2'
        DEALLOCATE (cgres2,STAT=errnr)
        IF (errnr /= 0) RETURN
-!!!$  CJG aux vectors and update
+!!  CJG aux vectors and update
        errtxt = 'deallocation problem bvec'
        DEALLOCATE (bvec,STAT=errnr)
        IF (errnr /= 0) RETURN
@@ -116,7 +121,7 @@ CONTAINS
        DEALLOCATE (cgfac,STAT=errnr)
        IF (errnr /= 0) RETURN
     CASE (2)! ERT or FPI
-!!$ getting further CJG variables
+! getting further CJG variables
        errtxt = 'deallocation problem pvecdc'
        DEALLOCATE (pvecdc,STAT=errnr)
        IF (errnr /= 0) RETURN

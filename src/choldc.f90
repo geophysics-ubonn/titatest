@@ -1,3 +1,9 @@
+!> \file choldc.f90
+!> \brief Cholesky decomposition of the stiffness matrix A for the DC case
+!> \details Cholesky decomposition of the stiffness matrix A on the allocated memory of A. The algorithm closely follows <I>CHOBNDN</I> in Schwarz (1991).
+!> @author Andreas Kemna
+!> @date 10/11/1993
+
 SUBROUTINE choldc(a_chol)
 
 !!!$  Cholesky-Zerlegung der positiv definiten Matrix 'adc'; erfolgt auf dem

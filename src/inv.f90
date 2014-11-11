@@ -1,6 +1,12 @@
+!> \file inv.f90
+!! \brief Main inversion algorithm
+!> \author Andreas Kemna, Roland Martin, Johannes Kenkel
+!> \date 11/4/2014
+!> \date {original version} 1990
+!> @param aggr information
 PROGRAM inv
 
-!!!$   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
+!>   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
 
 !!!$   Belegte Kanaele:  
 !!!$   9 - error.dat   -> fperr

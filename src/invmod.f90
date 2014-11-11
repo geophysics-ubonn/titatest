@@ -1,3 +1,8 @@
+!> \file invmod.f90
+!> \brief variable delarations for the inversion algorithm
+!> \details Replacement of former 'inv.fin' 
+!> @author Andreas Kemna
+!> @date 04/02/1994, last change 07/27/2010
 MODULE invmod
 !!$c  'inv.fin'
 !!$c

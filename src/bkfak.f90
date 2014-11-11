@@ -1,12 +1,18 @@
+!> \file bkfak.f90
+!> \brief compute geometry factors
+!> \details Compute the geometry factors of all measurements in case of a surface geometry, allowing borehole electrodes. 
+!> @author Andreas Kemna
+!> @date 05/02/1996, last change 04/29/2003
+
 subroutine bkfak()
 
-!!!$     Unterprogramm zur Berechnung der Konfigurationsfaktoren
-!!!$     (bei Standard-Geometrie!).
+!     Unterprogramm zur Berechnung der Konfigurationsfaktoren
+!     (bei Standard-Geometrie!).
 
-!!!$     Andreas Kemna                                            02-May-1996
-!!!$     Letzte Aenderung   29-Apr-2003
+!     Andreas Kemna                                            02-May-1996
+!     Letzte Aenderung   29-Apr-2003
 
-!!!$.....................................................................
+!.....................................................................
 
   USE datmod
   USE electrmod
@@ -16,26 +22,26 @@ subroutine bkfak()
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER (KIND = 4)  ::     i,fp
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
-!!!$     Koordinaten
+!     Koordinaten
   REAL (KIND(0D0))    ::     xk(4)= 0D0,yk(4) = 0D0
 
-!!!$     Pi
+!     Pi
   REAL (KIND(0D0))    ::     pi
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   REAL (KIND(0D0))    ::     dx,dym,dyp,dum,r1,r2,r3,r4
 
-!!!$.....................................................................
+!.....................................................................
 
   pi = dacos(-1d0)
   xk = 0D0
@@ -121,8 +127,8 @@ subroutine bkfak()
         write(fetxt(7:10),'(i4)') i
         errnr = 93
         goto 1000
-!!!$     tmp                write(*,'(i4)') i
-!!!$     tmp                dum = 1d-12
+!     tmp                write(*,'(i4)') i
+!     tmp                dum = 1d-12
      end if
 
      kfak(i) = 4d0*pi / dum
@@ -134,9 +140,9 @@ subroutine bkfak()
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 1000 return
 

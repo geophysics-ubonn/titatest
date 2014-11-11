@@ -1,11 +1,8 @@
-!> Replacement of former 'elem.fin' and basically contains 
-!! the FE-element related variables and two methods for allocation and
-!! deallocation of global memory.
-
-!> @author Andreas Kemna
-!> - 24-Nov-1993, elem.fin was written
-!> @author Roland Martin
-!> - 20-Nov-2009 until Sep. 2013
+!> \file elemmod.f90
+!> \brief variable delarations for the FE modelling part
+!> \details Replacement of former 'elem.fin' and basically contains the FE-element related variables and two methods for allocation and deallocation of global memory.
+!>
+!> Latest changes:
 !> - translated to F90 module
 !> - added nachbar (neighbor)
 !> - added esp (central point)
@@ -13,6 +10,9 @@
 !! grid statistics
 !> - add doxy style for comments
 !> - add describtion and translation
+!> 
+!> @author Andreas Kemna, Roland Martin
+!> @date 11/24/1993, last change 09/2013
 MODULE elemmod
 
   IMPLICIT none

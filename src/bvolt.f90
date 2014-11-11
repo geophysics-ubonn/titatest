@@ -1,13 +1,19 @@
+!> \file bvolt.f90
+!> \brief compute measured voltages and apparent resistivities.
+
+!> @author Andreas Kemna
+!> @date 11/06/1997
+
 subroutine bvolt()
 
-!!!$     Unterprogramm zur Berechnung der Spannungs- und scheinbaren
-!!!$     Widerstandswerte (beachte: Potentialwerte wurden fuer Einheitsstrom
-!!!$     berechnet).
+!     Unterprogramm zur Berechnung der Spannungs- und scheinbaren
+!     Widerstandswerte (beachte: Potentialwerte wurden fuer Einheitsstrom
+!     berechnet).
 
-!!!$     Andreas Kemna                                            03-Sep-1994
-!!!$     Letzte Aenderung   06-Nov-1997
+!     Andreas Kemna                                            03-Sep-1994
+!     Letzte Aenderung   06-Nov-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE alloci
   USE datmod
@@ -17,34 +23,34 @@ subroutine bvolt()
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER (KIND = 4)  ::     i,j
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::    dum1,dum2,dum3,dum4
 
-!!!$.....................................................................
+!.....................................................................
   j=0
   do i=1,nanz
 
-!!!$     Stromelektroden bestimmen
+!     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
-!!!$     Messelektroden bestimmen
+!     Messelektroden bestimmen
      elec3 = mod(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
-!!!$     Spannungswert berechnen (Superposition)
-!!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
-!!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
+!     Spannungswert berechnen (Superposition)
+!     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
+!     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
      dum1 = dcmplx(min0(elec4,1)*min0(elec2,1)) &
           *hpot(enr(max0(elec4,1)),max0(elec2,1))
      dum2 = dcmplx(min0(elec4,1)*min0(elec1,1)) &
@@ -58,16 +64,16 @@ subroutine bvolt()
 
      if (cdabs(volt(i)).eq.0d0) then
         j=j+1
-!!!$     ak
+!     ak
         write(*,'(A,I8,A,I8)',ADVANCE='no')ACHAR(13)// &
              ' --- Messpannung',i,' ist null ',j
-!!!$     RM               fetxt = ' '
-!!!$     RM               errnr = 82
-!!!$     RM               goto 1000
+!     RM               fetxt = ' '
+!     RM               errnr = 82
+!     RM               goto 1000
      end if
 
-!!!$     Scheinbaren Widerstandswert berechnen
-!!!$     ak            sigmaa(i) = dcmplx(kfak(i)) * volt(i)
+!     Scheinbaren Widerstandswert berechnen
+!     ak            sigmaa(i) = dcmplx(kfak(i)) * volt(i)
      sigmaa(i) = volt(i)
      sigmaa(i) = dcmplx(kfak(i)) * volt(i)
   end do
@@ -76,8 +82,8 @@ subroutine bvolt()
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 end subroutine bvolt

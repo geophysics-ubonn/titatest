@@ -1,9 +1,11 @@
-!!!$ Gauss-Legendre "integration"
-!!!$ Numerical Recipies (1986), p. 125, subroute GAULEG
-!!!$ Returns the abcissas (x) and weights(w) of length n
-!!!$ For a gauss-quadrature integration.
-!!!$ Provideds x_i and w_i for the formula: 
-!!!$ \sum_{x_1}^{x_2} f(x) dx = \sum_{i=1}^N w_i f(x_i)
+!> \file gauleg.f90
+!> \brief Gauss-Legendre integration
+!> \details Gauss-Legendre integration: Returns the abcissas (x) and weights(w) of length n for a Gauss quadrature integration. Provides \f$x_i\f$ and \f$w_i \f$ inside
+!> \f[ \sum_{x_1}^{x_2} f(x) dx = \sum_{i=1}^N w_i f(x_i) \f] 
+!> Details can be found in Press et al. <I> Numerical Resipes in Fortran 77 and 90 (second edition) </I> (2001), pp. 145
+!> @author William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery
+!> @date 2001
+
 SUBROUTINE gauleg(x1,x2,x,w,n)
   IMPLICIT none
   INTEGER (KIND = 4)  :: n

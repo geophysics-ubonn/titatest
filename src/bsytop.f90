@@ -1,30 +1,36 @@
+!> \file bsytop.f90
+!> \brief compute the average element height for von-Neumann boundary elements (mirror sources)
+
+!> @author Roland Martin
+!> @date 11/20/2010
+
 SUBROUTINE bsytop
-!!!$     
-!!!$     Unterprogramm zum Bestimmen der Mittleren Elementhoehe
-!!!$     aller "no-flow" Elemente (Halbraumgrenze) sytop
-!!!$     
-!!!$     Copyright by Andreas Kemna
-!!!$     
-!!!$     Erste Version von Roland Martin                          20-Nov-2009
-!!!$     
-!!!$     Letzte Aenderung                                         20-Nov-2009
-!!!$     
-!!!$.....................................................................
+!     
+!     Unterprogramm zum Bestimmen der Mittleren Elementhoehe
+!     aller "no-flow" Elemente (Halbraumgrenze) sytop
+!     
+!     Copyright by Andreas Kemna
+!     
+!     Erste Version von Roland Martin                          20-Nov-2009
+!     
+!     Letzte Aenderung                                         20-Nov-2009
+!     
+!.....................................................................
 
   USE elemmod               ! fuer sytop und den ganzen rest 
 
   IMPLICIT none
 
-!!!$     PROGRAMMINTERNE PARAMETER:-------------------------------------------
-!!!$     Indexvariablen
+!     PROGRAMMINTERNE PARAMETER:-------------------------------------------
+!     Indexvariablen
   INTEGER :: i,j,ik
-!!!$     Elementnummer
+!     Elementnummer
   INTEGER :: iel
-!!!$     Knotenanzahl der no flow elemente 
+!     Knotenanzahl der no flow elemente 
   INTEGER :: nkel
-!!!$     Schwerpunktskoordinaten des randelements
+!     Schwerpunktskoordinaten des randelements
   REAL(KIND(0D0)) :: sp
-!!!$-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
 
   sytop = 0.
   iel = 0

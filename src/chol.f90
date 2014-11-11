@@ -1,15 +1,21 @@
+!> \file chol.f90
+!> \brief Cholesky decomposition of the stiffness matrix A
+!> \details Cholesky decomposition of the stiffness matrix A on the allocated memory of A. The algorithm closely follows <I>CHOBNDN</I> in Schwarz (1991).
+!> @author Andreas Kemna
+!> @date 10/11/1993
+
 subroutine chol(a_chol)
 
-!!!$     Cholesky-Zerlegung der positiv definiten Matrix 'a'; erfolgt auf dem
-!!!$     Platz von 'a', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
-!!!$     'a' zerstoert.
+!     Cholesky-Zerlegung der positiv definiten Matrix 'a'; erfolgt auf dem
+!     Platz von 'a', d.h. bei Auftreten eines Fehlers ist gegebene Matrix
+!     'a' zerstoert.
 
-!!!$     ( Vgl. Subroutine 'CHOBNDN' in Schwarz (1991) )
+!     ( Vgl. Subroutine 'CHOBNDN' in Schwarz (1991) )
 
-!!!$     Andreas Kemna                                            11-Oct-1993
-!!!$     Letzte Aenderung   07-Mar-2003
+!     Andreas Kemna                                            11-Oct-1993
+!     Letzte Aenderung   07-Mar-2003
 
-!!!$.....................................................................
+!.....................................................................
 
   USE alloci
   USE elemmod
@@ -19,20 +25,21 @@ subroutine chol(a_chol)
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
+!> stiffness matrix A
   COMPLEX (KIND(0D0)),DIMENSION(*) :: a_chol
   
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND = 4)  ::     idi,i0,ij,j0
   INTEGER (KIND = 4)  ::     m1,fi
   COMPLEX (KIND(0D0)) ::  s
 
-!!!$     Indexvariablen
+!     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j,k
 
-!!!$.....................................................................
+!.....................................................................
 
   m1 = mb+1
 
@@ -72,9 +79,9 @@ subroutine chol(a_chol)
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 1000 return
 

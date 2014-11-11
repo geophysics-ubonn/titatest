@@ -1,3 +1,8 @@
+!> \file electrmod.f90
+!> \brief variable delarations for the <I> electrode</I> part of the inversion
+!> @author Andreas Kemna
+!> @date 01/22/1993
+
 MODULE electrmod
 !!$c 'electr.fin'
 !!$

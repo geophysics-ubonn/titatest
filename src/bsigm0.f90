@@ -1,11 +1,22 @@
+!> \file bsigm0.f90
+!> \brief Set starting model \f$ \sigma_0 \f$
+!> \details Set starting model for the inversion algorithm from
+!> - \f$ m_0 \f$ if ldiff (absolute difference inversion)
+!> - <I>rho.dat</I> (forward model file) if lstart 
+!> - <I>bet0</I> and <I>pha0</I> if they were set in <I> rall </I> and lrho is true
+!> - measured data via weighted sum of apparent conductivities if lbeta is true. lbeta can only be set to true in case of measurements with a horizontal surface; electrodes may nonetheless be placed below the surface. 
+!> <I> bsigm0 </I> also computes the reference conductivity for the mixed boundaries in <I> refsig </I> (if lbeta is true).
+!> @author Andreas Kemna
+!> @date 05/02/1995, last change 01/15/2001
+
 subroutine bsigm0(kanal,dstart)
 
-!!!$     Unterprogramm zum Belegen des Startmodells.
+!     Unterprogramm zum Belegen des Startmodells.
 
-!!!$     Andreas Kemna                                            02-May-1995
-!!!$     Letzte Aenderung   15-Jan-2001
+!     Andreas Kemna                                            02-May-1995
+!     Letzte Aenderung   15-Jan-2001
 
-!!!$.....................................................................
+!.....................................................................
 
   USE femmod
   USE datmod
@@ -18,63 +29,61 @@ subroutine bsigm0(kanal,dstart)
 
   IMPLICIT none
 
-!!!$     diff+<
-!!!$     diff+>
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> file id
   INTEGER (KIND = 4)  ::  kanal
 
-!!!$     Dateiname
+!> filename
   CHARACTER (80) ::   dstart
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER (KIND = 4)  ::   i
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND = 4)  ::   idat
   REAL (KIND(0D0))    ::   dum,dum2
 
-!!!$     Real-, Imaginaerteil
+!     Real-, Imaginaerteil
   REAL (KIND(0D0))    ::   redat,imdat
 
-!!!$     Pi
+!     Pi
   REAL (KIND(0D0))    ::   pi
 
-!!!$.....................................................................
+!.....................................................................
 
   pi = dacos(-1d0)
 
-!!!$     diff-        if (lstart) then
-!!!$     diff+<
+!     diff-        if (lstart) then
+!     diff+<
   if (ldiff) then ! m0 was set within rall for this case 
-!!!!$ (absolute difference inversion)
+!! (absolute difference inversion)
      do i=1,elanz
         sigma(i) = cdexp(m0(mnr(i)))
      end do
   else if (lstart) then
-!!!$     diff+>
-!!!$     'sigma' aus 'dstart' einlesen
+!     diff+>
+!     'sigma' aus 'dstart' einlesen
      call rsigma(kanal,dstart)
      if (errnr.ne.0) goto 999
 
   else if (lrho0) then
 
-!!!$     'sigma' gemaess 'bet0', 'pha0' belegen
+!     'sigma' gemaess 'bet0', 'pha0' belegen
      do i=1,elanz
         sigma(i) = dcmplx( dcos(pha0/1d3)/bet0 , -dsin(pha0/1d3)/bet0 )
      end do
 
   else if (lbeta) then
 
-!!!$     Geometriefaktoren der Messungen bestimmen ("Standard-Geometrie")
+!     Geometriefaktoren der Messungen bestimmen ("Standard-Geometrie")
      call bkfak()
      if (errnr.ne.0) goto 999
 
@@ -82,8 +91,8 @@ subroutine bsigm0(kanal,dstart)
      dum    = 0d0
 
      do i=1,nanz
-!!!$     Phase lokal korrigieren
-!!!$     (entspricht hier "lpol=.true.", aber anders nicht moeglich)
+!     Phase lokal korrigieren
+!     (entspricht hier "lpol=.true.", aber anders nicht moeglich)
         imdat = dimag(dat(i))
 
         if (imdat.gt.pi/2d0) then
@@ -99,10 +108,10 @@ subroutine bsigm0(kanal,dstart)
            PRINT*,'swapping line',idat,i
         END if
         
-!!!$     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
+!     Von "transfer resistance" auf scheinbaren Widerstand umrechnen
         redat = dble(dat(i))-dlog(dabs(kfak(i)))
 
-!!!$     Werte gewichtet mitteln
+!     Werte gewichtet mitteln
         dum2   = dsqrt(wmatd(i))*dble(wdfak(i))
         sigma0 = sigma0 + dcmplx(redat,imdat)*dcmplx(dum2)
         dum    = dum + dum2
@@ -111,14 +120,14 @@ subroutine bsigm0(kanal,dstart)
 
      end do
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
      if (dabs(dum).eq.0d0) then
         fetxt = 'unable to find starting value sigma0'
         errnr = 99
         goto 999
      end if
 
-!!!$     'sigma' belegen
+!     'sigma' belegen
 !     print*,'Write:',sigma0
      do i=1,elanz
         sigma(i) = cdexp(sigma0/dcmplx(dum))
@@ -126,7 +135,7 @@ subroutine bsigm0(kanal,dstart)
 
   else
 
-!!!$     Fehlermeldung
+!     Fehlermeldung
      fetxt = ' '
      errnr = 100
      goto 999
@@ -136,15 +145,15 @@ subroutine bsigm0(kanal,dstart)
 
 !!$     Referenzleitfaehigkeit 'sigma0' bestimmen
 
-!!!$ >> RM This is now a must have for mixed boundaries
+! >> RM This is now a must have for mixed boundaries
   IF (lbeta) call refsig()
-!!!!$ << RM because the sigma0 is needed
+!! << RM because the sigma0 is needed
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 999 return
 

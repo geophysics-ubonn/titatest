@@ -1,12 +1,19 @@
+!> \file bvolti.f90
+!> \brief compute measured voltages for unity current \f$ 1A \f$.
+!> \details Used for the inversion algorithm
+
+!> @author Andreas Kemna
+!> @date 09/03/1994, last change 11/13/1997
+
 SUBROUTINE bvolti()
 
-!!!$     Unterprogramm zur Berechnung der modellierten Spannungswerte
-!!!$     (beachte: Potentialwerte wurden fuer Einheitsstrom berechnet).
+!     Unterprogramm zur Berechnung der modellierten Spannungswerte
+!     (beachte: Potentialwerte wurden fuer Einheitsstrom berechnet).
 
-!!!$     Andreas Kemna                                            03-Sep-1994
-!!!$     Letzte Aenderung   13-Nov-1997
+!     Andreas Kemna                                            03-Sep-1994
+!     Letzte Aenderung   13-Nov-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE alloci
   USE femmod
@@ -17,35 +24,35 @@ SUBROUTINE bvolti()
   IMPLICIT NONE
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER (KIND = 4)  ::     i
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER (KIND = 4)  ::     elec1,elec2,elec3,elec4
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   COMPLEX (KIND(0D0)) ::    dum1,dum2,dum3,dum4
   REAL (KIND(0D0))    ::     dum1dc,dum2dc,dum3dc,dum4dc
 
-!!!$.....................................................................
+!.....................................................................
 
   DO i=1,nanz
 
-!!!$     Stromelektroden bestimmen
+!     Stromelektroden bestimmen
      elec1 = MOD(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
-!!!$     Messelektroden bestimmen
+!     Messelektroden bestimmen
      elec3 = MOD(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
-!!!$     Spannungswert berechnen (Superposition)
-!!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
-!!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
+!     Spannungswert berechnen (Superposition)
+!     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
+!     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
      IF (ldc) THEN
         dum1dc = DBLE(min0(elec4,1)*min0(elec2,1)) &
              *hpotdc(enr(max0(elec4,1)),max0(elec2,1))
@@ -77,16 +84,16 @@ SUBROUTINE bvolti()
         GOTO 1000
      END IF
 
-!!!$     Werte logarithmieren
+!     Werte logarithmieren
      sigmaa(i) = -cdlog(volt(i))
   END DO
 
   errnr = 0
   RETURN
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 1000 RETURN
 

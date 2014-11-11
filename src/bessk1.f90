@@ -1,3 +1,8 @@
+!> \file bessk1.f90
+!> \brief compute modified Bessel function \f$ K_1 \f$
+!> \details Details can be found in Press et al. <I> Numerical Resipes in Fortran 77 and 90 (second edition) </I> (2001), pp. 232
+!> @author William H. Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery
+!> @date 2001
 REAL (KIND(0D0))  FUNCTION BESSK1(X)
   REAL (KIND(0D0)) :: x,bessi1
   REAL (KIND(0D0)) :: Y,P1,P2,P3,P4,P5,P6,P7,&

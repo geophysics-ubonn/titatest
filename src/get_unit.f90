@@ -1,3 +1,6 @@
+!> \file get_unit.f90
+!> \brief returns a free <I>FORTRAN</I> unit number
+!> @author John Burkhardt, Roland Martin
 SUBROUTINE get_unit ( iunit )
 
   !     !$*****************************************************************************

@@ -1,12 +1,17 @@
+!> \file bpot.f90
+!> \brief compute the potential values in real space by applying the current strength \f$ I_i \f$
+!> @author Andreas Kemna
+!> @date 08/17/1994, last change 06/24/1997
+
 subroutine bpot(kanal,datei)
 
-!!!$     Unterprogramm zur Berechnung der Potentialwerte
-!!!$     (beachte: Potentialwerte wurden fuer Einheitsstrom berechnet).
+!     Unterprogramm zur Berechnung der Potentialwerte
+!     (beachte: Potentialwerte wurden fuer Einheitsstrom berechnet).
 
-!!!$     Andreas Kemna                                            17-Aug-1994
-!!!$     Letzte Aenderung   24-Jun-1997
+!     Andreas Kemna                                            17-Aug-1994
+!     Letzte Aenderung   24-Jun-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE alloci
   USE femmod
@@ -18,28 +23,28 @@ subroutine bpot(kanal,datei)
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!     Kanalnummer
   INTEGER (KIND = 4)  ::     kanal
 
-!!!$     Datei
+!     Datei
   CHARACTER (80)      ::    datei
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariablen
+!     Indexvariablen
   INTEGER (KIND = 4)  ::     i,j
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER (KIND = 4)  ::     elec1,elec2
 
   INTEGER (KIND = 4) ::  icount
-!!!$.....................................................................
+!.....................................................................
 
   icount = 0
 
@@ -53,14 +58,14 @@ subroutine bpot(kanal,datei)
      icount = icount + 1
 
      WRITE (*,'(a,F10.2,A)',ADVANCE='no')ACHAR(13)//'Potential :',REAL(icount)/REAL(nanz)*100.,' %'
-!!!$     Stromelektroden bestimmen
+!     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
      do j=1,sanz
 
-!!!$     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
-!!!$     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
+!     (beachte: Faktoren '.../2d0' (-> Potentialwerte fuer Einheitsstrom)
+!     und '...*2d0' (-> Ruecktransformation) kuerzen sich weg !)
         if (elec1.eq.0) then
            pot(j) = hpot(j,elec2) * dcmplx(strom(i))
         else if (elec2.eq.0) then
@@ -70,7 +75,7 @@ subroutine bpot(kanal,datei)
         end if
      end do
 
-!!!$     Potentialwerte ausgeben
+!     Potentialwerte ausgeben
      call wpot(datei,i,pot)
   end do
   !$OMP END DO
@@ -84,9 +89,9 @@ subroutine bpot(kanal,datei)
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 1000 return
 

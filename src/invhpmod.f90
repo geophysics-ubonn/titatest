@@ -1,3 +1,8 @@
+!> \file invhpmod.f90
+!> \brief variable delarations
+!> \details Replacement of former 'invhp.fin' 
+!> @author Andreas Kemna
+!> @date 04/16/1996, last change 07/16/2007
 MODULE invhpmod
 !!$c 'invhp.fin'
 !!$

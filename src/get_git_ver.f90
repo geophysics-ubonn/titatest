@@ -1,3 +1,9 @@
+!> \file get_git_ver.f90
+!> \brief get the <I>git </I> version info from the file <I>my_git_version.h</I> 
+!> \details the file is automatically created at the first compile time.
+!> @author Roland Martin
+!> @date <I> unknown </I>
+
 MODULE get_ver
 
   IMPLICIT none
