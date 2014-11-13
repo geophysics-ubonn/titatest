@@ -1,12 +1,17 @@
+!> \file rdatm.f90
+!> \brief read data and electrode configurations for the forward modelling
+!> @author Andreas Kemna 
+!> @date 10/11/1993
+
 subroutine rdatm(kanal,datei)
 
-!!!$     Unterprogramm zum Einlesen der Stromwerte sowie der Elektroden-
-!!!$     kennungen aus 'datei'.
+!     Unterprogramm zum Einlesen der Stromwerte sowie der Elektroden-
+!     kennungen aus 'datei'.
 
-!!!$     Andreas Kemna                                            11-Oct-1993
-!!!$     Letzte Aenderung   22-Feb-2006
+!     Andreas Kemna                                            11-Oct-1993
+!     Letzte Aenderung   22-Feb-2006
 
-!!!$.....................................................................
+!.....................................................................
 
   USE datmod
   USE electrmod
@@ -15,39 +20,39 @@ subroutine rdatm(kanal,datei)
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> unit number
   INTEGER(KIND = 4) ::    kanal
 
-!!!$     Datei
+!> filename
   CHARACTER (80)    ::   datei
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER(KIND = 4) ::     i
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER(KIND = 4) ::     elec1,elec2,elec3,elec4
-!!!$c check whether the file format is crtomo konform or not..
+!c check whether the file format is crtomo konform or not..
   LOGICAL           ::    crtf
-!!!$c
-!!!$.....................................................................
+!c
+!.....................................................................
 
-!!!$     'datei' oeffnen
+!     'datei' oeffnen
   fetxt = datei
   errnr = 1
   open(kanal,file=TRIM(fetxt),status='old',err=999)
   errnr = 3
 
-!!!$     Anzahl der Messwerte lesen
+!     Anzahl der Messwerte lesen
   read(kanal,*,end=1001,err=1000) nanz
-!!!$c check if data file format is CRTOmo konform..
+!c check if data file format is CRTOmo konform..
   read(kanal,*,end=1001,err=1000) elec1
   BACKSPACE(kanal)
 
@@ -64,7 +69,7 @@ subroutine rdatm(kanal,datei)
   END IF
 
 
-!!!$     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
+!     Stromelektrodennummern, Stromwerte und Spannungselektrodennummern lesen
   do i=1,nanz
      WRITE (*,'(A,I6)',ADVANCE='no')ACHAR(13)//'Getting voltage ',i
      IF (crtf) THEN
@@ -74,18 +79,18 @@ subroutine rdatm(kanal,datei)
         strnr(i) = elec1*10000 + elec2
         vnr(i)   = elec3*10000 + elec4
      END IF
-!!!$     Einheitsstrom annehmen
+!     Einheitsstrom annehmen
      strom(i) = 1d0
 
-!!!$     Stromelektroden bestimmen
+!     Stromelektroden bestimmen
      elec1 = mod(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
-!!!$     Messelektroden bestimmen
+!     Messelektroden bestimmen
      elec3 = mod(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
      if (elec1.lt.0.or.elec1.gt.eanz.or. &
           elec2.lt.0.or.elec2.gt.eanz.or. &
           elec3.lt.0.or.elec3.gt.eanz.or. &
@@ -94,10 +99,10 @@ subroutine rdatm(kanal,datei)
         errnr = 46
         goto 1000
      end if
-!!!$ >> RM
-!!!$ plausibility check of possible electrode intersection
-!!!$ devide the strnr and vnr into elec{1,2,3,4}
-!!!$ 
+! >> RM
+! plausibility check of possible electrode intersection
+! devide the strnr and vnr into elec{1,2,3,4}
+! 
      IF ((elec1.eq.elec2).OR.(elec3.eq.elec4).OR.&
           &((((elec1.eq.elec3).or.(elec1.eq.elec4)).and.(elec1.ne.0)).or.&
           (((elec2.eq.elec3).or.(elec2.eq.elec4)).and.(elec2.ne.0)))) THEN
@@ -105,19 +110,19 @@ subroutine rdatm(kanal,datei)
         errnr = 73
         GOTO 1000
      END IF
-!!!$ << RM
+! << RM
 
   end do
 
-!!!$     'datei' schliessen
+!     'datei' schliessen
   close(kanal)
 
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 999 return
 

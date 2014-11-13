@@ -1,11 +1,18 @@
+!> \file rsigma.f90
+!> \brief read model conductivity file.
+!> \details Read model conductivity file and store it in the complex format \f$ \sigma = \frac{1}{| \rho |} \exp^{\i \varphi} \f$
+!> @author Andreas Kemna 
+!> @date 10/11/1993
+
+
 SUBROUTINE rsigma(kanal,datei)
 
-!!!$     Unterprogramm zum Einlesen der Widerstandsverteilung aus 'datei'.
+!     Unterprogramm zum Einlesen der Widerstandsverteilung aus 'datei'.
 
-!!!$     Andreas Kemna                                            20-Dec-1993
-!!!$     Letzte Aenderung   07-Nov-1997
+!     Andreas Kemna                                            20-Dec-1993
+!     Letzte Aenderung   07-Nov-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE make_noise
   USE alloci,ONLY:rnd_r,rnd_p
@@ -19,35 +26,35 @@ SUBROUTINE rsigma(kanal,datei)
 
   IMPLICIT NONE
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> unit number
   INTEGER (KIND=4) ::    kanal
 
-!!!$     Datei
+!> filename
   CHARACTER (80)   ::    datei
 
-!!!$.....................................................................
-!!!$ FUNCTION
+!.....................................................................
+! FUNCTION
   INTEGER :: set_ind_ref_grad
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND=4) ::     i,idum,ifp1,ifp2
   REAL(KIND(0D0))  ::     bet,pha,eps_r,eps_p,bet_ref,pha_ref
-!!!$ Pi
+! Pi
   REAL (KIND(0D0)) ::    pi
-!!!$.....................................................................
+!.....................................................................
   pi = dacos(-1d0)
 
   lw_ref = .FALSE.
   lam_ref = -1d0 
   lam_ref_sw = 0
 
-!!!$     'datei' oeffnen
+!     'datei' oeffnen
   fetxt = datei
 
   errnr = 1
@@ -77,8 +84,8 @@ SUBROUTINE rsigma(kanal,datei)
      PRINT*,''
   END IF
 
-!!!$     Anzahl der Messwerte lesen
-!!!$ also check if we may use individual errors or not
+!     Anzahl der Messwerte lesen
+! also check if we may use individual errors or not
 !!! Failsafe read in one line
 
   READ(kanal,*,END=11,err=11) idum,lw_ref,lam_ref,lam_ref_sw
@@ -107,7 +114,7 @@ SUBROUTINE rsigma(kanal,datei)
      PRINT*,'     lambda ref (factor)=',lam_ref
   END IF
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
   IF (idum.NE.elanz) THEN
      fetxt = ' '
      errnr = 47
@@ -116,7 +123,7 @@ SUBROUTINE rsigma(kanal,datei)
   
 
 
-!!!$     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
+!     Betrag und Phase (in mrad) des komplexen Widerstandes einlesen
   DO i=1,elanz
      
      IF (lw_ref) THEN
@@ -159,7 +166,7 @@ SUBROUTINE rsigma(kanal,datei)
               END IF
            END IF
            sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
-!!!$    hier koennte mittelung passieren
+!    hier koennte mittelung passieren
            m0(mnr(i)) = cdlog(sigma(i))
         ELSE                
            !     or let it stay at zero and take background cond
@@ -169,29 +176,29 @@ SUBROUTINE rsigma(kanal,datei)
 
      ELSE
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
         IF (bet.LT.1d-12) THEN
            fetxt = ' '
            errnr = 11
            GOTO 999
         END IF
 
-!!!$     Komplexe Leitfaehigkeit bestimmen
+!     Komplexe Leitfaehigkeit bestimmen
         sigma(i) = dcmplx(dcos(pha)/bet,-dsin(pha)/bet)
 
      END IF
 
-!!!$ >> RM ref model regu
+! >> RM ref model regu
      IF (.NOT.lw_ref) CYCLE ! next i 
      IF (w_ref_re(mnr(i)) > EPSILON(eps_r)) THEN
 
-!!!$ variance -> inverse weighting        
+! variance -> inverse weighting        
         w_ref_re(mnr(i)) = 1d0/w_ref_re(mnr(i))
 
-!!!$ assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
-!!!$              = -\ln(|\rho|) - i\phi(\rho) 
-!!!$              = - (\ln(|\rho|)+i\phi(\rho)
-!!!$ for \phi(z) = Im(z) / Re(z), z\inC
+! assign m_ref = \ln(|\sigma|) + i \phi(\sigma) 
+!              = -\ln(|\rho|) - i\phi(\rho) 
+!              = - (\ln(|\rho|)+i\phi(\rho)
+! for \phi(z) = Im(z) / Re(z), z\inC
 
         m_ref(mnr(i)) = -DCMPLX(DLOG(bet_ref),pha_ref)
         IF (w_ref_im(mnr(i)) > EPSILON(eps_p)) THEN
@@ -206,11 +213,11 @@ SUBROUTINE rsigma(kanal,datei)
         m_ref(mnr(i)) = DCMPLX(0d0)
 
      END IF
-!!!$ << RM ref model regu
+! << RM ref model regu
 
   END DO
 
-!!!$     'datei' schliessen
+!     'datei' schliessen
   CLOSE(kanal)
 
   IF (lw_ref .AND. lam_ref_sw > 0) THEN
@@ -232,9 +239,9 @@ SUBROUTINE rsigma(kanal,datei)
   errnr = 0
   RETURN
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 999 RETURN
 
@@ -271,9 +278,9 @@ INTEGER FUNCTION set_ind_ref_grad(i)
      
      IF (nik == 0) CYCLE ! if it is not a neighbor.. skip it
 !!! else check the element number
-     ax = ABS(espx(i) - espx(nik)) !!!$ center point differences
-!!!$ for vertical gradient, this needs to be smaller than the grid distance
-     ay = ABS(espy(i) - espy(nik)) !!!$ center point differences
+     ax = ABS(espx(i) - espx(nik)) ! center point differences
+! for vertical gradient, this needs to be smaller than the grid distance
+     ay = ABS(espy(i) - espy(nik)) ! center point differences
      
      
      IF ( ((lam_ref_sw == 1) .AND. &
@@ -314,18 +321,18 @@ SUBROUTINE set_ind_ref_grad2
 
         IF (nik == 0) CYCLE ! if it is not a neighbor.. skip it
 !!! else check the element number
-        ax = ABS(espx(i) - espx(nik)) !!!$ center point differences
-!!!$ for vertical gradient, this needs to be smaller than the grid distance
-        ay = ABS(espy(i) - espy(nik)) !!!$ center point differences
+        ax = ABS(espx(i) - espx(nik)) ! center point differences
+! for vertical gradient, this needs to be smaller than the grid distance
+        ay = ABS(espy(i) - espy(nik)) ! center point differences
         
 
 !!$        IF (lam_ref_sw == 1 ) THEN ! vertical gradient
 !!$           IF (ax < grid_minx) THEN ! if the points are at the same profile coordinate
 !!$!!! There are just two or less more pints: 
-!!$!!!$ one above and one below
+!!$! one above and one below
 !!$              PRINT*,i,nachbar(i,k)
 !!$              IF (espy(nachbar(i,k)) < espy(i)) THEN ! is the point is _below_ the other..
-!!$!!!$ save its number
+!!$! save its number
 !!$                 ind_ref_grad(i) = nachbar(i,k)
 !!$              END IF
 !!$           END IF
@@ -339,7 +346,7 @@ SUBROUTINE set_ind_ref_grad2
 !!$        END IF
 
 
-!!!$ shorter XOR variant
+! shorter XOR variant
 
         IF ( ((lam_ref_sw == 1) .AND. &
              (ax >= grid_minx .OR. espy(nik) > espy(i))) .OR. &

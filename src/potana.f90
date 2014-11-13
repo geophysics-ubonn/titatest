@@ -1,12 +1,18 @@
+!> \file potana.f90
+!> \brief compute analytical solution
+!> \details Compute the analytical solution of the Helmholtz equation of a homogeneous half-space for unity current \f$ 1A \f$. 
+!> @author Andreas Kemna 
+!> @date 01/04/1996
+
 subroutine potana(l,k,my_pota)
 
-!!!$     Unterprogramm zur Berechnung der analytischen Loesung der
-!!!$     Helmholtzgleichung fuer einen homogenen Halbraum (fuer Einheitsstrom !).
+!     Unterprogramm zur Berechnung der analytischen Loesung der
+!     Helmholtzgleichung fuer einen homogenen Halbraum (fuer Einheitsstrom !).
 
-!!!$     Andreas Kemna                                            04-Jan-1996
-!!!$     Letzte Aenderung   11-Nov-1997
+!     Andreas Kemna                                            04-Jan-1996
+!     Letzte Aenderung   11-Nov-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE sigmamod
   USE electrmod
@@ -15,35 +21,35 @@ subroutine potana(l,k,my_pota)
 
   IMPLICIT none
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Elektrodenindex
+!     Elektrodenindex
   INTEGER (KIND=4)  :: l
 
-!!!$     Wellenzahlindex
+!     Wellenzahlindex
   INTEGER (KIND=4)  :: k
 
 !!$ Analytische berechnete Potentialwerte 
   COMPLEX (KIND(0D0)), DIMENSION(sanz) :: my_pota
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Hilfsfunction
+!     Hilfsfunction
   REAL (KIND(0D0))  :: bessk0
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   REAL (KIND(0D0))  :: xk1,yk1,xk2,yk2,x21,y21m,y21p,rm,rp,potmax,dum
   COMPLEX (KIND(0D0))  ::    dum2
   INTEGER (KIND=4)  ::  idum,j
 
-!!!$     Pi
+!     Pi
   REAL (KIND(0D0))  ::  pi
 
-!!!$.....................................................................
+!.....................................................................
 
   pi = dacos(-1d0)
 
@@ -80,12 +86,12 @@ subroutine potana(l,k,my_pota)
      my_pota(j) = dcmplx(dum)
   end do
 
-!!!$     Endlichen Wert fuer Singularitaet vorgeben (beeinflusst nur
-!!!$     berechnete Potentialwerte in direkter Umgebung des Stromknotens !)
-!!!$     ak
+!     Endlichen Wert fuer Singularitaet vorgeben (beeinflusst nur
+!     berechnete Potentialwerte in direkter Umgebung des Stromknotens !)
+!     ak
   my_pota(idum) = dcmplx(5d0*potmax)
 
-!!!$     Potentialwerte skalieren (fuer Einheitsstrom !)
+!     Potentialwerte skalieren (fuer Einheitsstrom !)
   dum2 = dcmplx(5d-1/pi) / sigma0
 
   my_pota = my_pota * dum2

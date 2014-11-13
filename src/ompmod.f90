@@ -1,3 +1,7 @@
+!> \file ompmod.f90
+!> \brief variable declarations for OpenMP
+!> @author Roland Martin 
+
 MODULE ompmod
 
   IMPLICIT none

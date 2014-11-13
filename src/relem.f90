@@ -1,11 +1,17 @@
+!> \file relem.f90
+!> \brief read model grid file
+!> \details Read model grid file from filename. Involves node numbering information computed with the Cuthill-McKee algorithm.
+!> @author Andreas Kemna 
+!> @date 10/11/1993
+
 SUBROUTINE relem(kanal,datei)
 
-!!!$     Unterprogramm zum Einlesen der FEM-Parameter aus 'datei'.
+!     Unterprogramm zum Einlesen der FEM-Parameter aus 'datei'.
 
-!!!$     Andreas Kemna                                            11-Oct-1993
-!!!$     Letzte Aenderung   24-Oct-1996
+!     Andreas Kemna                                            11-Oct-1993
+!     Letzte Aenderung   24-Oct-1996
 
-!!!$.....................................................................
+!.....................................................................
 
   USE elemmod
   USE errmod
@@ -14,36 +20,36 @@ SUBROUTINE relem(kanal,datei)
   IMPLICIT NONE
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> unit number
   INTEGER (KIND = 4) ::    kanal
 
-!!!$     Datei
+!> filename
   CHARACTER (80)     ::    datei
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariablen
+!     Indexvariablen
   INTEGER (KIND =4)  ::    i,j,k
 
-!!!$     Hilfsvariable
+!     Hilfsvariable
   INTEGER (KIND =4)  ::    idum,ifln,iflnr
   LOGICAL            ::    my_check, failed(2)
 
-!!!$ To check for border to element connection (rnr)
+! To check for border to element connection (rnr)
   INTEGER            :: ik1,ik2,jk1,jk2,ic,l
 
-!!!$ NEW rnr
+! NEW rnr
   INTEGER (KIND = 4),ALLOCATABLE,DIMENSION(:,:) :: my_nrel
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     'datei' oeffnen
+!     'datei' oeffnen
   fetxt = datei
 
   errnr = 1
@@ -51,8 +57,8 @@ SUBROUTINE relem(kanal,datei)
 
   errnr = 3
 
-!!!$     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
-!!!$     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
+!     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
+!     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
   READ(kanal,*,END=1001,err=1000) sanz,typanz,mb
 
 !!$ now get some memory for the fields..
@@ -71,15 +77,15 @@ SUBROUTINE relem(kanal,datei)
      GOTO 999
   END IF
 
-!!!$     Elementtypen, Anzahl der Elemente eines bestimmten Typs sowie
-!!!$     Anzahl der Knoten in einem Elementtyp einlesen
+!     Elementtypen, Anzahl der Elemente eines bestimmten Typs sowie
+!     Anzahl der Knoten in einem Elementtyp einlesen
   READ(kanal,*,END=1001,err=1000)(typ(i),nelanz(i),selanz(i),i=1,typanz)
 
 !!$ set number of node points for regular elements
   smaxs = MAXVAL(selanz)
 
-!!!$     Anzahl der Elemente (ohne Randelemente) und Anzahl der Randelemente
-!!!$     bestimmen
+!     Anzahl der Elemente (ohne Randelemente) und Anzahl der Randelemente
+!     bestimmen
   relanz = 0
   elanz  = 0
 
@@ -94,8 +100,8 @@ SUBROUTINE relem(kanal,datei)
      my_check = my_check .OR. (typ(i) == 11)
   END DO
 
-!!!$ if all no flow boundaries, we do not have to search for a 
-!!!$ average sy top...
+! if all no flow boundaries, we do not have to search for a 
+! average sy top...
 !!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
@@ -114,17 +120,17 @@ SUBROUTINE relem(kanal,datei)
      GOTO 999
   END IF
   espx = 0.;espy = 0.
-!!!$     Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
-!!!$     einlesen
+!     Zeiger auf Koordinaten, x-Koordinaten sowie y-Koordinaten der Knoten
+!     einlesen
   READ(kanal,*,END=1001,err=1000) (snr(i),sx(i),sy(i),i=1,sanz)
-!!!$     Knotennummern der Elemente einlesen
+!     Knotennummern der Elemente einlesen
   idum = 0;ifln = 0;iflnr = 0
   DO i=1,typanz
      DO j=1,nelanz(i)
         READ(kanal,*,END=1001,err=1000)(nrel(idum+j,k),k=1,selanz(i))
 
         IF (typ(i) < 10) THEN ! set midpoints of the parameters
-!!!$ in correct numbering of j = 1, .... m
+! in correct numbering of j = 1, .... m
 
            ifln = ifln + 1
 
@@ -141,14 +147,14 @@ SUBROUTINE relem(kanal,datei)
      idum = idum + nelanz(i)
 
   END DO
-!!!$     Zeiger auf Werte der Randelemente einlesen
+!     Zeiger auf Werte der Randelemente einlesen
   READ(kanal,*,END=1001,err=1000) (rnr(i),i=1,relanz)
 
-!!!$ >> RM
-!!!$ border lines have to be clock wise oriented to let the normal vector point
-!!!$ outwards
+! >> RM
+! border lines have to be clock wise oriented to let the normal vector point
+! outwards
 
-!!!$ internal copy of element numberings
+! internal copy of element numberings
   my_nrel = nrel
 
   failed = .FALSE.
@@ -158,7 +164,7 @@ SUBROUTINE relem(kanal,datei)
   ik2 = nrel(elanz + 1,2)
   ic = 1
   DO i=2,relanz
-!!!$ consistency check of node ordering, assume ascending?
+! consistency check of node ordering, assume ascending?
 
      jk1 = nrel(elanz + i,1)
      jk2 = nrel(elanz + i,2)
@@ -174,7 +180,7 @@ SUBROUTINE relem(kanal,datei)
 
   IF (ic == relanz) THEN
 
-     !!!$ if consisntency check fails, reorder the stuff
+     ! if consisntency check fails, reorder the stuff
 
      WRITE(*,'(/a/a/)',ADVANCE='no')'+++ WARNING: consistency check of border numbering failed ',&
           '-> swapping border-line-elements and writing it to '//TRIM(datei)//'_new'
@@ -186,38 +192,38 @@ SUBROUTINE relem(kanal,datei)
         
      END DO
   END IF
-!!!$ << RM
+! << RM
   IF (failed(1)) print*,'-- failed'
 
-!!!$ >> RM
-!!!$ IF THIS IS NOT a pointer to the
-!!!$ REGULAR ELEMENT adjacent to the border line
-!!!$ THIS MAY CAUSE THE MIXED BOUNDARY TO BLOW UP
+! >> RM
+! IF THIS IS NOT a pointer to the
+! REGULAR ELEMENT adjacent to the border line
+! THIS MAY CAUSE THE MIXED BOUNDARY TO BLOW UP
 
-!!!$ TODO: 
-!!!$ - independent of numbering order (plane b4 line elements)
-!!!$ - CHECK where the BORDER ELE begin in nrel
+! TODO: 
+! - independent of numbering order (plane b4 line elements)
+! - CHECK where the BORDER ELE begin in nrel
 
   WRITE (*,'(a)',ADVANCE='no')ACHAR(13)//'++ check 2'
   ic = 0
   DO i=1,relanz
-!!!$ define the node points of the border-line
+! define the node points of the border-line
      ik1 = nrel(elanz + i,1)
      ik2 = nrel(elanz + i,2)
 
-!!!$ now search for the corresponding element
-!!!$ how to do so?
-!!!$ suppose we have a ordered input file, where the
-!!!$ big elements come first, than we might have something like
+! now search for the corresponding element
+! how to do so?
+! suppose we have a ordered input file, where the
+! big elements come first, than we might have something like
      DO k = 1,elanz
         jk1 = 0;jk2 = 0
         DO  l = 1, selanz(1) ! TODO : fix this for multi FE
-!!!$ so, we set jk1 if the node of the element coincides
+! so, we set jk1 if the node of the element coincides
            IF (nrel(k,l) == ik1) jk1 = 1
-!!!$ so, we set jk2 if the node of the lement coincides
+! so, we set jk2 if the node of the lement coincides
            IF (nrel(k,l) == ik2) jk2 = 1
         END DO
-!!!$ if both nodes are found, k is the only element possible
+! if both nodes are found, k is the only element possible
         IF (jk1 == 1 .AND. jk2 == 1.AND.rnr(i) /= k) THEN
            ic = ic + 1
            WRITE (*,'(a,I7,1x,a,I7)',ADVANCE='no')ACHAR(13)//&
@@ -245,12 +251,12 @@ SUBROUTINE relem(kanal,datei)
      PRINT*,'done!'
   END IF
 
-!!!$ << RM
-!!!$     'datei' schliessen
+! << RM
+!     'datei' schliessen
   CLOSE(kanal)
 
-!!!$ >> RM
-!!!$ write new grid if one of the checks failed
+! >> RM
+! write new grid if one of the checks failed
   IF (ANY(failed)) THEN
 
 101  FORMAT (I9)
@@ -266,15 +272,15 @@ SUBROUTINE relem(kanal,datei)
      
      errnr = 3
 
-!!!$     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
-!!!$     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
+!     Anzahl der Knoten (bzw. Knotenvariablen), Anzahl der Elementtypen
+!     sowie Bandbreite der Gesamtsteifigkeitsmatrix einlesen
      WRITE(kanal,103) sanz,typanz,mb
      WRITE(kanal,103) (typ(i),nelanz(i),selanz(i),i=1,typanz)
      DO i=1,sanz
         WRITE(kanal,105) snr(i),sx(i),sy(i)
      END DO
 !     STOP
-!!!$     Knotennummern der Elemente einlesen
+!     Knotennummern der Elemente einlesen
      idum = 0;ifln = 0;iflnr = 0
      DO i=1,typanz
         DO j=1,nelanz(i)
@@ -298,15 +304,15 @@ SUBROUTINE relem(kanal,datei)
   END IF
 
   DEALLOCATE (my_nrel)
-!!!$ << RM
+! << RM
 
 
   errnr = 0
   RETURN
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 999 RETURN
 

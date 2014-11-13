@@ -1,13 +1,20 @@
+!> \file kompadc.f90
+!> \brief compilation of the stiffness matrix S and the right-hand-side source vector b in DC case
+!> \details The stiffness matrix S is compiled from the form functions (see <I>elem1, elem3, elem8</I>) and the conductivity of the individual cells according to (Kemna, 2000, pp. 52):
+!> \f[ S = \sum_{j=1}^{N_e} \sigma_j \left( S_{1j}+ k^2 S_{2j} \right) + \sum_{j=1}^{N_b} \beta_j S_{3j} \f]
+!> The matrix is stored in band format, the matrix elements \f$ S_{mn} \f$ are assigned to the band matrix (a vector of length ((bandwidth+1)*nr_nodes)) via
+!> \f[ S_{mn} \rightarrow S_{band}(max(m,n)*bandwidth + min(m,n)) \f]
+
 subroutine kompadc(nelec,ki,a_komp,b_komp)
 
-!!!$     Unterprogramm zur Kompilation der FE-Matrix 'adc' in Bandform
-!!!$     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'bdc'
-!!!$     ( A * x + b = 0 ).
+!     Unterprogramm zur Kompilation der FE-Matrix 'adc' in Bandform
+!     (vorgegebene Bandbreite 'mb') und des Konstantenvektors 'bdc'
+!     ( A * x + b = 0 ).
 
-!!!$     Andreas Kemna                                            17-Dec-1993
-!!!$     Letzte Aenderung   16-Jul-2007
+!     Andreas Kemna                                            17-Dec-1993
+!     Letzte Aenderung   16-Jul-2007
 
-!!!$.....................................................................
+!.....................................................................
 
   USE alloci
   USE femmod
@@ -20,46 +27,46 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
   IMPLICIT none
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
   REAL (KIND (0D0)),DIMENSION((mb + 1)*sanz) ::     a_komp
   REAL (KIND (0D0)),DIMENSION(sanz) ::     b_komp
 
-!!!$     Aktuelle Elektrodennummer
+!     Aktuelle Elektrodennummer
   INTEGER (KIND = 4) ::     nelec
 
-!!!$     Aktueller Wellenzahlindex
+!     Aktueller Wellenzahlindex
   INTEGER (KIND = 4) ::     ki
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Aktuelle Elementnummer
+!     Aktuelle Elementnummer
   INTEGER (KIND = 4) ::     iel
 
-!!!$     Aktuelle Randelementnummer
+!     Aktuelle Randelementnummer
   INTEGER (KIND = 4) ::     rel
 
-!!!$     Aktueller Elementtyp
+!     Aktueller Elementtyp
   INTEGER (KIND = 4) ::     ntyp
 
-!!!$     Anzahl der Knoten im aktuellen Elementtyp
+!     Anzahl der Knoten im aktuellen Elementtyp
   INTEGER (KIND = 4) ::     nkel
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   REAL (KIND (0D0)) ::     dum
   REAL (KIND (0D0)) ::     dum2
   INTEGER (KIND = 4) ::     im,imax,imin
   INTEGER (KIND = 4) ::     nzp,nnp,idif,ikl
 
-!!!$     Indexvariablen
+!     Indexvariablen
   INTEGER (KIND = 4) ::     i,j,k,l
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
+!     Gesamtsteifigkeitsmatrix und Konstantenvektor auf Null setzen
   im = (mb+1)*sanz
 
   a_komp = 0D0
@@ -84,7 +91,7 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
               nnp  = nrel(iel,l)
               idif = iabs(nzp-nnp)
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
               if (idif.gt.mb) then
 
                  fetxt = ' '
@@ -93,7 +100,7 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
 
               else
 
-!!!$     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
+!     Aufbau der Gesamtsteifigkeitsmatrix und ggf. des Konstantenvektors
                  ikl = ikl + 1
 
                  imax = max0(nzp,nnp)
@@ -103,7 +110,7 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
                  if (ntyp.eq.11) then
                     rel  = iel - elanz
                     dum  = relbg(rel,ikl) * kg(rel,nelec,ki)
-!!!$ << RM
+! << RM
                     dum2 = DBLE(sigma(rnr(rel)))
 !!$                    dum2 = DBLE(sigma0)
 !!$                    dum2 = 0d0 ! which removes the influence
@@ -112,14 +119,14 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
                     dum2 = DBLE(sigma(iel))
                  end if
 
-!!!$ GRIDBUG was causing some problems here
-!!!$ sigma index can be overaccessed due to some segementation
-!!!$ issue which will cause undefined sigma access..
-!!!$ FIXED this with grid consisitency check during read in
+! GRIDBUG was causing some problems here
+! sigma index can be overaccessed due to some segementation
+! issue which will cause undefined sigma access..
+! FIXED this with grid consisitency check during read in
 
                  a_komp(im) = a_komp(im) + dum * dum2
 
-!!!$ << RM
+! << RM
 
                  if (lsr) then
                     dum2   = dum * DBLE(dum2 - sigma0)
@@ -135,34 +142,34 @@ subroutine kompadc(nelec,ki,a_komp,b_komp)
      END do ! j=1,nelanz(i)
   end do ! i=1,typanz
   
-!!!$     Ggf. Konstantenvektor belegen
+!     Ggf. Konstantenvektor belegen
   if (.not.lsr) b_komp(enr(nelec)) = -1d0
 
-!!!$     akc BAW-Tank
-!!!$     ak        b_komp(211) = 1d0
-!!!$     akc Model EGS2003
-!!!$     ak        b_komp(1683) = 1d0
-!!!$     akc Lysimeter hor_elem\normal
-!!!$     ak        b_komp(129) = 1d0
-!!!$     akc Lysimeter hor_elem\fine
-!!!$     ak        b_komp(497) = 1d0
-!!!$     akc Simple Tucson Model
-!!!$     ak        b_komp(431) = 1d0
-!!!$     akc TU Berlin Mesokosmos
-!!!$     ak        b_komp(201) = 1d0
-!!!$     akc Andy
-!!!$     ak        b_komp(2508) = 1d0
-!!!$     akc Sandra (ele?_anom)
-!!!$     ak        b_komp(497) = 1d0
+!     akc BAW-Tank
+!     ak        b_komp(211) = 1d0
+!     akc Model EGS2003
+!     ak        b_komp(1683) = 1d0
+!     akc Lysimeter hor_elem\normal
+!     ak        b_komp(129) = 1d0
+!     akc Lysimeter hor_elem\fine
+!     ak        b_komp(497) = 1d0
+!     akc Simple Tucson Model
+!     ak        b_komp(431) = 1d0
+!     akc TU Berlin Mesokosmos
+!     ak        b_komp(201) = 1d0
+!     akc Andy
+!     ak        b_komp(2508) = 1d0
+!     akc Sandra (ele?_anom)
+!     ak        b_komp(497) = 1d0
 
   if (lsink) b_komp(nsink) = 1d0
 
   errnr = 0
   return
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 1000 return
 

@@ -1,12 +1,17 @@
+!> \file rdati.f90
+!> \brief read data with standard deviations and electrode configurations for the inversion
+!> @author Andreas Kemna 
+!> @date 10/11/1993
+
 SUBROUTINE rdati(kanal,datei)
 
-!!!$     Unterprogramm zum Einlesen der Elektrodenkennungen und der Daten
-!!!$     inkl. Standardabweichungen aus 'datei'.
+!     Unterprogramm zum Einlesen der Elektrodenkennungen und der Daten
+!     inkl. Standardabweichungen aus 'datei'.
 
-!!!$     Andreas Kemna                                            11-Oct-1993
-!!!$     Letzte Aenderung   20-Aug-2007
+!     Andreas Kemna                                            11-Oct-1993
+!     Letzte Aenderung   20-Aug-2007
 
-!!!$.....................................................................
+!.....................................................................
   USE make_noise
   USE alloci, ONLY:rnd_r,rnd_p
   USE femmod
@@ -19,67 +24,67 @@ SUBROUTINE rdati(kanal,datei)
   IMPLICIT NONE
 
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     EIN-/AUSGABEPARAMETER:
+!     EIN-/AUSGABEPARAMETER:
 
-!!!$     Kanalnummer
+!> unit number
   INTEGER (KIND = 4) ::     kanal
 
-!!!$     Datei
+!> filename
   CHARACTER (80)     ::    datei
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariable
+!     Indexvariable
   INTEGER (KIND = 4) ::     i,ifp1,ifp2,ifp3
 
 !!! >> RM
-!!!$  USED ONLY IF NOISE IS ADDED!!
-!!!$ Magnitude and Phase of new data
+!  USED ONLY IF NOISE IS ADDED!!
+! Magnitude and Phase of new data
   REAL(KIND(0D0))     ::     new_bet,new_pha
-!!!$ Counting signum mismatches of magnitude and phases 
-!!!$    if noise is added
+! Counting signum mismatches of magnitude and phases 
+!    if noise is added
   INTEGER (KIND = 4) ::     icount_pha,icount_mag
-!!!$ << RM
+! << RM
 
-!!!$     Elektrodennummern
+!     Elektrodennummern
   INTEGER (KIND = 4) ::     elec1,elec2,elec3,elec4
 
-!!!$     Betrag und Phase (in mrad) der Daten
+!     Betrag und Phase (in mrad) der Daten
   REAL(KIND(0D0))     ::     bet,pha
 
-!!!$     Standardabweichung eines logarithmierten (!) Datums
+!     Standardabweichung eines logarithmierten (!) Datums
   REAL(KIND(0D0))      ::     stabw
-!!!$     Error of the resistance
+!     Error of the resistance
   REAL(KIND(0D0))     ::     eps_r
-!!!$     Standardabweichung der Phase
+!     Standardabweichung der Phase
   REAL(KIND(0D0))     ::     stabwp,stabwb
-!!!$     Error of the phase
+!     Error of the phase
   REAL(KIND(0D0))     ::     eps_p
-!!!$     Pi
+!     Pi
   REAL(KIND(0D0))     ::     pi
-!!!$ check whether the file format is crtomo konform or not..
+! check whether the file format is crtomo konform or not..
   LOGICAL             ::    crtf
-!!!$.....................................................................
+!.....................................................................
   pi = dacos(-1d0)
 
-!!!$     'datei' oeffnen
+!     'datei' oeffnen
   fetxt = datei
   errnr = 1
   OPEN(kanal,file=TRIM(fetxt),status='old',err=999)
   errnr = 3
 
-!!!$     Anzahl der Messwerte lesen
-!!!$ also check if we may use individual errors or not
+!     Anzahl der Messwerte lesen
+! also check if we may use individual errors or not
   READ(kanal,*,END=1001,err=11) nanz,lindiv
   IF (lindiv) PRINT*,'+ Individual data error!'
   GOTO 12
 11 PRINT*,'+ Taking error model'
   BACKSPACE(kanal)
-!!!$c check if data file format is CRTOmo konform..
+!c check if data file format is CRTOmo konform..
 12 READ(kanal,*,END=1001,err=1000) elec1
   BACKSPACE(kanal)
 
@@ -97,8 +102,8 @@ SUBROUTINE rdati(kanal,datei)
      GOTO 1000
   END IF
 
-!!!$     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
-!!!$     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
+!     Stromelektrodennummern, Spannungselektrodennummern, Daten inkl.
+!     auf 1 normierte Standardabweichungen lesen und Daten logarithmieren
   IF (lnse ) THEN
      icount_mag = 0;icount_pha = 0
      WRITE (*,'(A)',ADVANCE='no')ACHAR(13)//'Initializing noise'
@@ -156,14 +161,14 @@ SUBROUTINE rdati(kanal,datei)
                  strnr(i) = elec1*10000 + elec2
                  vnr(i)   = elec3*10000 + elec4
               END IF
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
               IF (stabwp.LE.0d0) THEN
                  fetxt = ' '
                  errnr = 88
                  GOTO 1000
               END IF
 
-!!!$     ak                        stabwp = stabp0 * stabwp
+!     ak                        stabwp = stabp0 * stabwp
               stabwp = 1d-3*stabwp
            ELSE
               IF (crtf) THEN
@@ -179,14 +184,14 @@ SUBROUTINE rdati(kanal,datei)
            END IF
         END IF ! lindiv
 
-!!!$ >> RM
-!!!$ plausibility check of possible electrode intersection
-!!!$ devide the strnr and vnr into elec{1,2,3,4}
-!!!$ 
-!!!$ Current electrodes
+! >> RM
+! plausibility check of possible electrode intersection
+! devide the strnr and vnr into elec{1,2,3,4}
+! 
+! Current electrodes
         elec1 = MOD(strnr(i),10000)
         elec2 = (strnr(i)-elec1)/10000
-!!!$    potential electrodes
+!    potential electrodes
         elec3 = MOD(vnr(i),10000)
         elec4 = (vnr(i)-elec3)/10000
 
@@ -198,7 +203,7 @@ SUBROUTINE rdati(kanal,datei)
         GOTO 1000
      END IF
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
         IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
              elec2.LT.0.OR.elec2.GT.eanz.OR. &
              elec3.LT.0.OR.elec3.GT.eanz.OR. &
@@ -207,10 +212,10 @@ SUBROUTINE rdati(kanal,datei)
            errnr = 46
            GOTO 1000
         END IF
-!!!$ << RM
+! << RM
 
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
         IF (stabw.LE.0d0) THEN
            fetxt = ' '
            errnr = 88
@@ -244,7 +249,7 @@ SUBROUTINE rdati(kanal,datei)
 
         END IF
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
         IF (bet.LE.0d0) THEN
            WRITE (fetxt,'(A,I6)')'Error reading ',i
            fetxt = 'Error memory allocation data space'
@@ -298,7 +303,7 @@ SUBROUTINE rdati(kanal,datei)
 
            END IF
 
-!!!$! assign the noised values
+!! assign the noised values
            bet = new_bet;pha = new_pha
 
            ! write out full noisy data as measured voltages..
@@ -308,7 +313,7 @@ SUBROUTINE rdati(kanal,datei)
 
      END IF
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
      IF (bet.LE.0d0) THEN
         fetxt = ' '
         errnr = 94
@@ -317,12 +322,12 @@ SUBROUTINE rdati(kanal,datei)
 
      IF (ldc) THEN
 
-!!!$     set phase to zero internally
+!     set phase to zero internally
         pha = 0d0
 
      ELSE
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
         IF (dabs(pha).GT.1d3*pi) THEN
            fetxt = ' '
            errnr = 95
@@ -334,7 +339,7 @@ SUBROUTINE rdati(kanal,datei)
 
      wmatdr(i) = 1d0/(stabw**2d0) !=C_d^{-1} !!!!
 
-!!!$     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
+!     ak            if (lfphai) wmatd(i)=1d0/dsqrt(stabw*stabw+stabwp*stabwp)
      IF (.NOT.ldc) THEN
         wmatd_cri(i)=1d0/(stabw**2d0+stabwp**2d0)
         wmatdp(i)=1d0/(stabwp**2d0)
@@ -342,26 +347,26 @@ SUBROUTINE rdati(kanal,datei)
 
      wdfak(i) = 1
 
-!!!$     Stromelektroden bestimmen
+!     Stromelektroden bestimmen
      elec1 = MOD(strnr(i),10000)
      elec2 = (strnr(i)-elec1)/10000
 
-!!!$     Messelektroden bestimmen
+!     Messelektroden bestimmen
      elec3 = MOD(vnr(i),10000)
      elec4 = (vnr(i)-elec3)/10000
 
-!!!$     Ggf. Fehlermeldung
+!     Ggf. Fehlermeldung
      IF (elec1.LT.0.OR.elec1.GT.eanz.OR. &
           elec2.LT.0.OR.elec2.GT.eanz.OR. &
           elec3.LT.0.OR.elec3.GT.eanz.OR. &
           elec4.LT.0.OR.elec4.GT.eanz) THEN
-!!!$     ak
+!     ak
         WRITE (fetxt,'(a,I5,a)')'Electrode pair ',i,'not correct '
         errnr = 46
         GOTO 1000
      END IF
   END DO ! i=1,nanz
-!!!$     ak
+!     ak
   if (lindiv) then
      IF (ldc) THEN
         read(kanal,*,end=1001,err=1000) stabw
@@ -383,7 +388,7 @@ SUBROUTINE rdati(kanal,datei)
      END IF
   end if
 
-!!!$     'datei' schliessen
+!     'datei' schliessen
   CLOSE(kanal)
   IF ( lnse ) THEN
 
@@ -417,9 +422,9 @@ SUBROUTINE rdati(kanal,datei)
 
   RETURN
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$     Fehlermeldungen
+!     Fehlermeldungen
 
 999 RETURN
 

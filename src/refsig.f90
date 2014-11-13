@@ -1,29 +1,35 @@
+!> \file refsig.f90
+!> \brief compute reference conductivity for mixed boundaries
+!> \details Compute the area-weighted conductivity average of the whole model. It is used in <I>beta</I> to determine the mixed boundary conditions. <I>Taking the overall model average is one possible option for the mixed boundary. However, it is also possible to use the adjacent model cell conductivity.</I> The area is computed with Gauss' area equation.
+!> @author Andreas Kemna 
+!> @date 02/29/1996
+
 subroutine refsig()
 
-!!!$     Unterprogramm zum Bestimmen der Referenzleitfaehigkeit.
+!     Unterprogramm zum Bestimmen der Referenzleitfaehigkeit.
 
-!!!$     Andreas Kemna                                            29-Feb-1996
-!!!$     Letzte Aenderung   08-Nov-1997
+!     Andreas Kemna                                            29-Feb-1996
+!     Letzte Aenderung   08-Nov-1997
 
-!!!$.....................................................................
+!.....................................................................
 
   USE sigmamod
   USE elemmod,only:sx,sy,snr,typanz,nelanz,typ,nrel
 
   IMPLICIT none
 
-!!!$.....................................................................
+!.....................................................................
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+!     PROGRAMMINTERNE PARAMETER:
 
-!!!$     Indexvariablen
+!     Indexvariablen
   INTEGER (KIND = 4 ) ::     i,j
 
-!!!$     Hilfsvariablen
+!     Hilfsvariablen
   INTEGER (KIND = 4) ::      iel
   REAL (KIND(0D0))   ::     xk,yk,ax,ay,bx,by,cx,cy,dum,area
 
-!!!$.....................................................................
+!.....................................................................
   dum    = 0D0
   iel    = 0
   area   = 0d0
