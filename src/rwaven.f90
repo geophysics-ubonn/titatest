@@ -14,7 +14,7 @@
 !> \f[ \int_{k_0}^\infty \tilde \phi(k) dk = \int_0^\infty e^{-k'} g(k') dk' = \sum_{n=1}^{N_L} w'_n g(k'_n) = \pi \sum_{n=1}^{N_L} w_n \tilde \phi (k_n) \f]
 !> with the rescaled abscissa and weights, respectively, \f$ k_n = k_0 (k'_n +1) \f$ and \f$ w_n = k_0 e^{k'_n} w'_n /\pi \f$. Note that in the last equation, after substitution of \f$ k' = k/k_0 -1 \f$, the new function \f$ g(k') = k_0 e^{k'} \tilde \phi (k) \f$ is temporarily defined.
 !> The integration bound \f$ k_0 \f$ has to be specified in relation to the spatial scale of the considered problem. A characteristic quantity in this regard is given by the minimum distance between corresponding transmitting and receiving electrodes within the underlying set of measurement configurations, denoted by \f$ r_{min} \f$. The number of employed abscissa in the integration formulas determines the valid range of the integration in terms of the distance from the source. From a numerical analysis for a homogeneous half-space, it was found that the variable choice
-!> \f[ N_G = \int \[ 6 \log (r_{max}/r_{min}) \] \f]
+!> \f[ N_G = \int \left( 6 \log (r_{max}/r_{min}) \right) \f]
 !> together with \f$ N_L = 4 \f$ and \f$ k_0 = 1/(2r_{min}) \f$, guarantees an error of less than 0.5 % in the inverse Fourier integration for distances ranging from \f$ r_{min}\f$ to \f$r_{max}\f$ (see Figure C.1). Herein,  denotes the maximum distance between source and receiver electrodes as being of interest within the survey.
 !> @author Andreas Kemna 
 !> @date 10/11/1993
