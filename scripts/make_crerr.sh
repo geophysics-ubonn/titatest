@@ -56,6 +56,9 @@ branch=$( git branch | awk '/\*/{print $2}' )
 arch=$( uname -n )
 
 prefix=$branch'_'$arch
+# replace all '-' characters by '_'
+prefix=${prefix//-/_}
+
 cur=$(pwd)
 echo "setting PREFIX $prefix in $cur/Makefile.am"
 
