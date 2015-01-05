@@ -3,4 +3,4 @@ clean-local:
 
 SUBDIRS = src cutmckee man minimalbeispiele
 
-EXTRA_DIST = scripts
+EXTRA_DIST = scripts debian

@@ -16,4 +16,5 @@ mkdir package
 mv crtomomod*.bz2 package
 cd package
 tar xvjf crtomomod*.bz2
+echo "Now enter package/crtomomod*/ and type dpkg-buildpackage"
 

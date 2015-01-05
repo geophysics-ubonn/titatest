@@ -1,19 +1,20 @@
 #!/bin/bash
 #----------------------------------------------------------------------------------------
 #	Name		: gen_pbuilder_packages.sh
-#	Description	: Generate griev .deb packages for various distributions. Use the alien package to convert those .debs to .rpms
+#	Description	: Generate griev .deb packages for various
+#	distributions. Use the alien package to convert those .debs to .rpms
 #	Input		:
 #	Output		:
 #	Return		:
 #----------------------------------------------------------------------------------------
 # create griev packages with pbuilder
 #pbuilder_target_loc="/var/cache/pbuilder"
-pbuilder_target_loc="/home/mweigand/BIG_DATA/pbuilder"
+pbuilder_target_loc="/home/mweigand/pbuilder"
 
 if [ ! -e "$pbuilder_target_loc"/squeeze-base.tgz ]; then
-	DIST=squeeze pbuilder create --basetgz  "$pbuilder_target_loc"/squeeze-base.tgz
+	DIST=wheezy pbuilder create --basetgz  "$pbuilder_target_loc"/squeeze-base.tgz
 else
-	DIST=squeeze pbuilder update --basetgz  "$pbuilder_target_loc"/squeeze-base.tgz
+	DIST=wheezy pbuilder update --basetgz  "$pbuilder_target_loc"/squeeze-base.tgz
 fi
 
 # ubuntu distributions
@@ -49,6 +50,7 @@ fi
 cd package/crtomomod*
 dpkg-buildpackage
 cd ../../
+exit
 
 
 ## build for various distributions

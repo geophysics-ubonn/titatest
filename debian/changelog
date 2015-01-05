@@ -1,5 +1,11 @@
-crtools (0.1-1) unstable; urgency=low
+crtomomod (0.1-2) UNRELEASED; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Package new version of dev
+
+ -- Maximilian Weigand <mweigand@geo.uni-bonn.de>  Mon, 05 Jan 2015 15:36:21 +0100
+
+crtomomod (0.1-1) unstable; urgency=low
+
+  * Initial release
 
  -- Maximilian Weigand <mweigand@geo.uni-bonn.de>  Mon, 15 Feb 2010 15:19:35 +0100
