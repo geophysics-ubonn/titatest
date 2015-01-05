@@ -1,6 +1,9 @@
 #!/bin/sh
 make clean
 
+rm curmckee/Makefile.am
+rm man/Makefile.am
+rm minimalbeispiele//Makefile.am
 rm src/crerror.h
 rm cutmckee/crerror.h
 rm -r config
