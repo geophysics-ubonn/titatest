@@ -1,4 +1,7 @@
 #!/bin/sh
+make clean
+
+rm src/crerror.h
 rm cutmckee/crerror.h
 rm -r config
 
@@ -30,6 +33,7 @@ rm Man/Makefile
 
 rm configure
 
+rm INSTALL
 rm install-sh
 rm libtool
 rm ltmain.sh
