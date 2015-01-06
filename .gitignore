@@ -31,7 +31,7 @@ configure
 aclocal.m4
 autom4te.cache/
 config.status
-# config/
+/config/
 cutmckee/crerror.h
 minimalbeispiele/minimal_omp
 minimalbeispiele/minimal_prec
