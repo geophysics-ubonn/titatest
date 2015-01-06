@@ -5,7 +5,6 @@ CRTomo*
 CutMcK*
 mini_*
 forfiles
-*.mod
 cutmckee/Makefile.am
 ./error.txt
 Makefile.in
@@ -24,15 +23,15 @@ Makefile
 doxy.inp
 html
 latex
-inv.last*
-inv.el*
-*/inv/*
+# inv.last*
+# inv.el*
+# */inv/*
 config.log
 configure
 aclocal.m4
 autom4te.cache/
 config.status
-config/
+# config/
 cutmckee/crerror.h
 minimalbeispiele/minimal_omp
 minimalbeispiele/minimal_prec

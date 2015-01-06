@@ -1,4 +1,15 @@
-exe/crt.lamnull
+# gitignore file for tomodirs
+
+# to ignore modelling results
+mod/
+exe/crmod.pid
+
+# to ignore inversion results
+inv/
+exe/crtomo.pid
+exe/inv.elecpositions
+exe/inv.lastmod
+exe/inv.lastmod_rho
 exe/gmon.out
 exe/inv.gstat
-inv/
+
