@@ -3,8 +3,7 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS = -pg -O0 -fbounds-check \
-		 -fall-intrinsics  -fopenmp -Wall
+AM_FC_FLAGS =  -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
 ## Only un-comment for debug purpose
 # TODO : figure out how to switch
 #AM_DBG_FLAGS = -pg -fbounds-check -llapack -Wuninitialized -O -ftrapv -#pedantic \
