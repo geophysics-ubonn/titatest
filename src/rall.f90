@@ -101,6 +101,12 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   LOGICAL ::    crtf
 !!!$     check whether a file exists..
   LOGICAL ::    exi
+!!!$ decoupling.dat exists?
+!!!  LOGICAL ::    decexi
+  !!! INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE :: edecoup
+  !!! REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE :: edecstr
+  !!! INTEGER (KIND = 4) ::  decanz
+
 !!!$.....................................................................
 
 !!!$     PROGRAMMINTERNE PARAMETER:
@@ -614,6 +620,28 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   CALL relem(kanal,delem)
   IF (errnr.NE.0) GOTO 999
 
+  !!! MW: read in decoupling 
+  INQUIRE(FILE=TRIM("decouplings.dat"),EXIST=decexi)
+  IF (decexi) THEN
+       WRITE(*,*) "Found decoupling file"
+
+       OPEN(kanal, file=TRIM('decouplings.dat'),status='old')
+       READ(kanal,*) decanz
+       WRITE(*,*) "number decouplings: ", decanz
+       ALLOCATE (edecoup(decanz, 2),stat=errnr)
+       ALLOCATE (edecstr(decanz),stat=errnr)
+       DO j=1,decanz
+          READ(kanal, *) edecoup(j, 1), edecoup(j, 2), edecstr(j)
+          WRITE(*,*) "Input: ", edecoup(j, 1), edecoup(j, 2), edecstr(j)
+       END DO
+
+     CLOSE(kanal)
+  ELSE
+     decanz = 0
+  END IF
+
+
+  !!! decoupling end
   IF (ltri/=0) THEN
      manz = elanz           ! wichtig an dieser stelle..
      lvario = lvario.OR.lsto

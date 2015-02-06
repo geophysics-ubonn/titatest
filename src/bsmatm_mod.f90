@@ -21,7 +21,7 @@ MODULE bsmatm_mod
   USE tic_toc ! counts calculation time
   USE alloci , ONLY : sens,sensdc,smatm
   USE femmod , ONLY : fak,ldc
-  USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz,nachbar
+  USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz,nachbar,edecoup,edecstr,decanz
   USE invmod , ONLY : lfpi,par,wmatd,wdfak
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat
@@ -56,6 +56,7 @@ MODULE bsmatm_mod
 ! Total variance regu (alpha)
   PRIVATE :: bsmatmsto
 ! Stochastical regularization
+  INTEGER (kind = 4) :: p
 
 CONTAINS  
 
@@ -403,7 +404,7 @@ CONTAINS
 !
 !    Hilfsvariablen 
     REAL(KIND(0D0)) :: dum    !dummy stores numbers
-    INTEGER         :: i,k,ik
+    INTEGER         :: i,k,ik,decn
     REAL(KIND(0D0)) :: edglen !Kantenlaenge
     REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
     REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
@@ -447,6 +448,34 @@ CONTAINS
              alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
              
              dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
+
+             WRITE(*,*) 'Decanz', decanz
+             DO decn=1,decanz
+                ! WRITE(*,*) "BSMATM", nachbar(i, k)
+                ! , nachbar(i, k), n 
+                !! WRITE(*,*) edecoup(n, 1), edecoup(n, 2), edecstr(n)
+                if (((i == edecoup(decn, 1)) .AND. (nachbar(i, k) == edecoup(decn, 2))) .OR. &
+                   ((nachbar(i, k) == edecoup(decn, 1)) .AND. (i == edecoup(decn, 2))) ) &
+                    THEN
+                    WRITE(*,*) "SET"
+                    ! dum = edecstr(n)
+                    dum = 0
+                END IF
+                !! WRITE(*,*) n
+             END DO
+!!!             IF (((i == 1) .AND. (nachbar(i, k) == 11)) .OR. &
+!!!                 ((i == 2) .AND. (nachbar(i, k) == 12)) .OR. &
+!!!                 ((i == 3) .AND. (nachbar(i, k) == 13)) .OR. &
+!!!                 ((i == 4) .AND. (nachbar(i, k) == 14)) .OR. &
+!!!                 ((i == 5) .AND. (nachbar(i, k) == 15)) .OR. &
+!!!                 ((i == 6) .AND. (nachbar(i, k) == 16)) .OR. &
+!!!                 ((i == 7) .AND. (nachbar(i, k) == 17)) .OR. &
+!!!                 ((i == 8) .AND. (nachbar(i, k) == 18)) .OR. &
+!!!                 ((i == 9) .AND. (nachbar(i, k) == 19)) .OR. &
+!!!                 ((i == 10) .AND. (nachbar(i, k) == 20)) &
+!!!                 )THEN
+!!!                 dum = 0
+!!!             END IF
              
              smatm(i,k) = -dum ! set off diagonal of R
              

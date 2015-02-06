@@ -125,4 +125,9 @@ MODULE elemmod
 !>Elementvektor
   REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: elve
 
+  !!!$ decoupling.dat exists?
+  LOGICAL ::    decexi
+  INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE,PUBLIC :: edecoup
+  REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE,PUBLIC :: edecstr
+  INTEGER (KIND = 4) ::  decanz
 END MODULE elemmod
