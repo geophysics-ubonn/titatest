@@ -914,7 +914,7 @@ PROGRAM inv
      END DO ! DO WHILE (.not. converged)
 
 !!!$ RESET FPI status variable to proceed with full COMPLEX calculus
-     lfpi = .FALSE.
+     ! lfpi = .FALSE.
 !!!$
 !!!$.................................................
 
