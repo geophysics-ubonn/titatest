@@ -446,39 +446,23 @@ CONTAINS
              ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Angle
 
              alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
-             
+
              dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
 
-             WRITE(*,*) 'Decanz', decanz
+             ! grid decoupling
+             ! note that the triangular regularisation work in both directions,
+             ! therefore the .OR. chaining with switched positions
              DO decn=1,decanz
-                ! WRITE(*,*) "BSMATM", nachbar(i, k)
-                ! , nachbar(i, k), n 
-                !! WRITE(*,*) edecoup(n, 1), edecoup(n, 2), edecstr(n)
                 if (((i == edecoup(decn, 1)) .AND. (nachbar(i, k) == edecoup(decn, 2))) .OR. &
                    ((nachbar(i, k) == edecoup(decn, 1)) .AND. (i == edecoup(decn, 2))) ) &
                     THEN
-                    WRITE(*,*) "SET"
-                    ! dum = edecstr(n)
-                    dum = 0
+                    dum = edecstr(decn)
+                    ! dum = 0
                 END IF
-                !! WRITE(*,*) n
              END DO
-!!!             IF (((i == 1) .AND. (nachbar(i, k) == 11)) .OR. &
-!!!                 ((i == 2) .AND. (nachbar(i, k) == 12)) .OR. &
-!!!                 ((i == 3) .AND. (nachbar(i, k) == 13)) .OR. &
-!!!                 ((i == 4) .AND. (nachbar(i, k) == 14)) .OR. &
-!!!                 ((i == 5) .AND. (nachbar(i, k) == 15)) .OR. &
-!!!                 ((i == 6) .AND. (nachbar(i, k) == 16)) .OR. &
-!!!                 ((i == 7) .AND. (nachbar(i, k) == 17)) .OR. &
-!!!                 ((i == 8) .AND. (nachbar(i, k) == 18)) .OR. &
-!!!                 ((i == 9) .AND. (nachbar(i, k) == 19)) .OR. &
-!!!                 ((i == 10) .AND. (nachbar(i, k) == 20)) &
-!!!                 )THEN
-!!!                 dum = 0
-!!!             END IF
-             
+
              smatm(i,k) = -dum ! set off diagonal of R
-             
+
              smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal
 
           END IF
