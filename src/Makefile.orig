@@ -3,7 +3,6 @@
 #      Makefile for CRTomo (default)
 #       
 
-AM_FC_FLAGS =  -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp
 
 ## Only un-comment for debug purpose
 # TODO : figure out how to switch
@@ -84,13 +83,15 @@ crm_subs = 	bpot.f90 bsens.f90 bvolt.f90 \
 
 CRTomo_myBranchName_SOURCES 	= $(main_mods) $(main_subs) \
 			$(crt_mods) $(crt_subs) $(crt_main)
-# CRTomo_myBranchName_FFLAGS 	= $(AM_FC_FLAGS)
-CRTomo_myBranchName_FCFLAGS 	= $(AM_FC_FLAGS)
+AM_FC_FLAGS=@AM_FC_FLAGS@
+AM_FCFLAGS=@AM_FC_FLAGS@
+CRTomo_myBranchName_FFLAGS 	= $(AM_FC_FLAGS)
+CRTomo_myBranchName_FCFLAGS = $(AM_FC_FLAGS)
 CRTomo_myBranchName_LDFLAGS 	= $(AM_LD_FLAGS)
 
 CRMod_myBranchName_SOURCES 	= $(main_mods) $(main_subs) \
 			$(crm_subs) $(crm_main) 
-# CRMod_myBranchName_FFLAGS  	= $(AM_FC_FLAGS)
+CRMod_myBranchName_FFLAGS  	= $(AM_FC_FLAGS)
 CRMod_myBranchName_FCFLAGS 	= $(AM_FC_FLAGS)
 CRMod_myBranchName_LDFLAGS 	= $(AM_LD_FLAGS)
 

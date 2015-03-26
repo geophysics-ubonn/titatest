@@ -6,11 +6,30 @@ AC_CONFIG_SRCDIR([src/inv.f90])
 AC_CONFIG_AUX_DIR([config])
 
 mySCRIPTS=scripts
-myCompiler=gfortran
+
+# apparently the call to AC_PROG_FF/AC_PROG_F77 will change the user-supplied
+# settings for the compilers. Therefore, save and restore the content later
+
+# normally we should not set FCFLAGS and FFLAGS (these are for user-supplied settings). However, we want to change some machine specific stuff for the Debian package
+test -z "${FCFLAGS}" && FCFLAGS="-O4 -march=native"
+test -z "${FFLAGS}" && FFFLAGS="-O4 -march=native"
+
+FCFLAGS_SAVE="${FCFLAGS}"
+FFLAGS_SAVE="${FFLAGS}"
+
+# default compiler flags
+AM_FC_FLAGS="-ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp"
+AC_SUBST(AM_FC_FLAGS)
+
 # den autotools mitteilen, das Fortran benutzt wird. Mit folgenden Aufrufen werden die
 # entsprechenden Variablen initialisiert 
-AC_PROG_FC([$myCompiler])
-AC_PROG_F77([$myCompiler])
+AC_PROG_FC([gfortran])
+AC_PROG_F77([gfortran])
+
+# restore user compiler flags
+FCFLAGS="${FCFLAGS_SAVE}"
+FFLAGS="${FFLAGS_SAVE}"
+
 AC_PREFIX_DEFAULT($HOME)
 
 # Automake soll aufgerufen werden (nicht nur autoconf)
