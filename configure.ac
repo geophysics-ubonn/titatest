@@ -38,7 +38,6 @@ AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../$mySCRIPTS/make_crerr.sh ; cd ..;])
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
 		 cutmckee/Makefile
-		 minimalbeispiele/Makefile
 		 man/Makefile])
 # generiere output
 AC_OUTPUT
