@@ -1,3 +1,10 @@
+TODO
+----
+
+we should restrict the calling of external shell scripts (git version, error
+messages, etc) to the ./autogen.sh script, and remove them from configure.ac.
+This simplifies the Debian package generation.
+
 Installation
 ------------
 
@@ -13,7 +20,7 @@ Otherwise, configure, compile, and install the program with
 # make
 # make install
 
-The default installation path points to /usr. You can change the installation
+The default installation path points to $HOME/bin. You can change the installation
 directory with
 
 # ./configure --prefix=$HOME/inst/
