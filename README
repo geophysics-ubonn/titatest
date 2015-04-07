@@ -1,28 +1,52 @@
 Installation
 ------------
 
-If you are working with a git clone, run ./autogen.sh to generate a configure
-script.
+If you are working with a git repository, run
 
-The run:
-./configure
-make
-make install
+./autogen.sh
 
-You can change the installation directory with
-./configure --prefix=$HOME/inst/
+once to generate the necessary autotools files.
+
+Otherwise, configure, compile, and install the program with
+
+# ./configure
+# make
+# make install
+
+The default installation path points to /usr. You can change the installation
+directory with
+
+# ./configure --prefix=$HOME/inst/
+
+Run
+
+# ./clean_autotools.sh
+
+to remove all auto-generated files.
 
 Distribution
 ------------
 
-After running ./configure, create an archive using
+After running ./configure, a source archive called "crtomomod*.tar.gz" can be
+generated using
 
-make dist
+# make dist
+
+Debian Packaging
+----------------
+
+The command
+
+# ./prep_deb_package.sh
+
+creates a Debian package in the "package/" subdirectory.
 
 Limiting CPU usage
 ------------------
 
-export OMP_THREAD_LIMIT=1 
+CRTomoMod is compiled using openmp. The number of CPU cores that are
+facilitated can be controlled using the following environment variables:
+
+export OMP_THREAD_LIMIT=1
 export OMP_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
-CRTomo_dev_g4
