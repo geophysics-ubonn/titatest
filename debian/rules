@@ -9,5 +9,14 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+
+export FCFLAGS = -O4 -march=core2
+
 %:
-	dh  $@
+	dh  $@ --with quilt
+
+override_dh_auto_configure:
+	FCFLAGS="$(FCFLAGS)" FFLAGS="$(FCFLAGS)" ./configure --prefix=/usr
+
+# dh_usrlocal throws build errors on the man page files...
+override_dh_usrlocal:

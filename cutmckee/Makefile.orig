@@ -4,9 +4,16 @@ cOBJ		= relem.f welem.f relectr.f welectr.f
 cOBJF90		= elemmod.f90 electrmod.f90
 cOBJERR		= get_error.f90
 
-CutMcK_myBranchName_SOURCES = $(cOBJF90) $(cOBJ) $(cOBJERR) cutmck.f 
-CutMcK_myBranchName_FFLAGS =  -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
-CutMcK_myBranchName_FCFLAGS = $(CutMcK_FFLAGS)
+CutMcK_myBranchName_SOURCES = $(cOBJF90) $(cOBJ) $(cOBJERR) cutmck.f
+
+AM_FC_FLAGS=@AM_FC_FLAGS@
+AM_FCFLAGS=@AM_FC_FLAGS@
+AM_FFFLAGS=@AM_FC_FLAGS@
+
+CutMcK_myBranchName_FCLAGS = $(AM_FC_FLAGS)
+CutMcK_myBranchName_FFLAGS = $(AM_FC_FLAGS)
+# -O3 -march=native -ftree-vectorize -fexpensive-optimizations -ffast-math
+# CutMcK_myBranchName_FCFLAGS = $(CutMcK_FFLAGS)
 CutMcK_myBranchName_LDFLAGS = -lm # -llapack -lblas
 
 # zusätzliche clean-rule, um Fortranmodule zu löschen, falls sie existieren
