@@ -1092,6 +1092,8 @@ PROGRAM inv
 
      IF (ALLOCATED (w_ref_re)) DEALLOCATE (w_ref_re,w_ref_im,m_ref)
 
+    !!! write final statement in run.ctr
+     WRITE(fprun,'(a)') '***finished***'
      CLOSE(fprun)
 
 !!!$   Ggf. weiteren Datensatz invertieren
@@ -1110,6 +1112,9 @@ PROGRAM inv
   OPEN(fpinv,file=TRIM(fetxt),status='old',POSITION='append',err=999)
   WRITE (fpinv,'(a)')'***finished***'
   CLOSE(fpinv)
+
+  !!! also write the final statement to STDOU
+  WRITE(*,*) '***finished***'
   STOP '0'
 
 !!!$.....................................................................
