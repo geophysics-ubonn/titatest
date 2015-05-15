@@ -14,7 +14,6 @@ SUBROUTINE gaulag(x,w,n,alf)
   REAL (KIND(0D0)) :: ai,gammln
   REAL (KIND(0D0)) :: p1,p2,p3,pp,z,z1
   do i=1,n
-     z=0D0
      if(i.eq.1)then
         z=(1.d0+alf)*(3.d0+.92d0*alf)/(1.d0+2.4d0*n+1.8d0*alf)
      else if(i.eq.2)then
