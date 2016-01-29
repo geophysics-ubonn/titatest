@@ -56,12 +56,6 @@ subroutine wsens(kanal,datei)
   htxt  = filpat(datei,idum2,1,slash(1:1))
   idum  = idum2+index(datei(idum2+1:80),'.')-1
 
-  if ((idum-idum2-1).gt.(8-lnanz)) then
-     fetxt = datei
-     errnr = 15
-     goto 999
-  end if
-
 !!!$     Ausgabeschleife
   do i=1,nanz
 
