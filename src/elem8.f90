@@ -15,7 +15,7 @@
 !> @author Andreas Kemna
 !> @date 10/11/1993, last change 1/26/1998
 
-subroutine elem8(kelmas,kelve,kwert,smaxs)
+subroutine elem8(kelmas,kelve,kwert,max_nr_element_nodes)
 
 !     Unterprogramm liefert die Elementmatrix 'kelmas(4,4)' und den Element-
 !     vektor 'kelve(4)' fuer ein zusammengesetztes Viereckelement
@@ -34,16 +34,16 @@ subroutine elem8(kelmas,kelve,kwert,smaxs)
 
 !.....................................................................
 !> element contribution after condensation
-  REAL(KIND(0D0)),DIMENSION(smaxs,smaxs) :: kelmas
+  REAL(KIND(0D0)),DIMENSION(max_nr_element_nodes,max_nr_element_nodes) :: kelmas
 
 !> element vector after condensation
-  REAL(KIND(0D0)),DIMENSION(smaxs)       :: kelve
+  REAL(KIND(0D0)),DIMENSION(max_nr_element_nodes)       :: kelve
 
 !> wave number
   REAL(KIND(0D0))                        :: kwert
 
 !> unused
-  INTEGER (KIND = 4)                     :: smaxs
+  INTEGER (KIND = 4)                     :: max_nr_element_nodes
 
 !.....................................................................
 

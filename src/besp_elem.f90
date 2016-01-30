@@ -33,14 +33,14 @@ SUBROUTINE besp_elem
 
   DO i=1,elanz ! only if there is a good ordering.. TODO..
 
-     DO j=1,smaxs
+     DO j=1,max_nr_element_nodes
 
         IF (nachbar(i,j)==0) CYCLE
 
         abst(i) = SQRT((espx(i) - espx(nachbar(i,j)))**2D0 + &
              (espy(i) - espy(nachbar(i,j)))**2D0)
 
-     END DO                 ! inner loop ik=1,smaxs
+     END DO                 ! inner loop ik=1,max_nr_element_nodes
 
      DO j=1,elanz
 

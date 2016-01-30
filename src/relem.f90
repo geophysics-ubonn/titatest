@@ -82,7 +82,7 @@ SUBROUTINE relem(kanal,datei)
   READ(kanal,*,END=1001,err=1000)(typ(i),nelanz(i),selanz(i),i=1,typanz)
 
 !!$ set number of node points for regular elements
-  smaxs = MAXVAL(selanz)
+  max_nr_element_nodes = MAXVAL(selanz)
 
 !     Anzahl der Elemente (ohne Randelemente) und Anzahl der Randelemente
 !     bestimmen
@@ -105,7 +105,7 @@ SUBROUTINE relem(kanal,datei)
 !!$  lsytop = .NOT. my_check
 
 !!$ get memory for the element integer field      
-  ALLOCATE (nrel(elanz+relanz,smaxs),my_nrel(elanz+relanz,smaxs),rnr(relanz),&
+  ALLOCATE (nrel(elanz+relanz,max_nr_element_nodes),my_nrel(elanz+relanz,max_nr_element_nodes),rnr(relanz),&
        stat=errnr)
   IF (errnr /= 0) THEN
      fetxt = 'Error memory allocation nrel,rnr failed'

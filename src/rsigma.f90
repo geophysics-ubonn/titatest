@@ -272,7 +272,7 @@ INTEGER FUNCTION set_ind_ref_grad(i)
 
   set_ind_ref_grad = 0
 
-  DO k = 1, nachbar(i,smaxs + 1) ! check all neighboring elements
+  DO k = 1, nachbar(i,max_nr_element_nodes + 1) ! check all neighboring elements
      
      nik = nachbar(i,k)
      
@@ -315,7 +315,7 @@ SUBROUTINE set_ind_ref_grad2
 
   DO i = 1,elanz
 
-     DO k = 1, nachbar(i,smaxs + 1) ! check all neighboring elements
+     DO k = 1, nachbar(i,max_nr_element_nodes + 1) ! check all neighboring elements
 
         nik = nachbar(i,k)
 
@@ -361,7 +361,7 @@ SUBROUTINE set_ind_ref_grad2
         WRITE (ifp,*) i,ind_ref_grad(i),REAL(espx(i)),&
              REAL(espy(i)),REAL(espx(ind_ref_grad(i))),REAL(espy(ind_ref_grad(i)))
      ELSE
-        WRITE (ifp,*) nachbar(i,smaxs + 1),i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i))
+        WRITE (ifp,*) nachbar(i,max_nr_element_nodes + 1),i,ind_ref_grad(i),REAL(espx(i)),REAL(espy(i))
      END IF
 
 

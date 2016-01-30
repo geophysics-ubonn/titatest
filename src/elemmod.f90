@@ -69,7 +69,7 @@ MODULE elemmod
     INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: rnr
 
     !> Groeste Anzahl der Knoten der Flaechenelemente
-    INTEGER(KIND = 4),PUBLIC                            :: smaxs
+    INTEGER(KIND = 4),PUBLIC                            :: max_nr_element_nodes
 
     !> Gitter Statistiken:
 

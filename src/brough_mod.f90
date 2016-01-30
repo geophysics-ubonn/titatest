@@ -16,7 +16,7 @@ MODULE brough_mod
   USE invmod , ONLY : lfpi,par,m0
   USE konvmod , ONLY : ltri,nx,nz,lprior,rough
   USE modelmod , ONLY : manz
-  USE elemmod, ONLY : smaxs,nachbar
+  USE elemmod, ONLY : max_nr_element_nodes,nachbar
   USE errmod , ONLY : errnr,fetxt
   USE datmod , ONLY : nanz
 
@@ -140,11 +140,11 @@ CONTAINS
     IF (.NOT. lprior) THEN
        DO i=1,manz
           cdum = dcmplx(0d0)
-          DO j=1,smaxs
+          DO j=1,max_nr_element_nodes
              IF (nachbar(i,j) /= 0) cdum = cdum + &
                   DCMPLX(smatm(i,j)) * par(nachbar(i,j))
           END DO
-          cdum = cdum + dcmplx(smatm(i,smaxs+1)) * par(i)
+          cdum = cdum + dcmplx(smatm(i,max_nr_element_nodes+1)) * par(i)
           IF (lfpi) THEN
              rough = rough + dimag(cdum) * dimag(par(i))
           ELSE
@@ -154,12 +154,12 @@ CONTAINS
     ELSE 
        DO i=1,manz
           cdum = dcmplx(0d0)
-          DO j=1,smaxs
+          DO j=1,max_nr_element_nodes
              IF (nachbar(i,j) /= 0) cdum = cdum + &
                   DCMPLX(smatm(i,j)) * &
                   (par(nachbar(i,j)) - m0(nachbar(i,j)))
           END DO
-          cdum = cdum + dcmplx(smatm(i,smaxs+1)) * (par(i) - m0(i))
+          cdum = cdum + dcmplx(smatm(i,max_nr_element_nodes+1)) * (par(i) - m0(i))
           IF (lfpi) THEN
              rough = rough + dimag(cdum) * dimag(par(i) - m0(i))
           ELSE

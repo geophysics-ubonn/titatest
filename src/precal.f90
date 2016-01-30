@@ -59,20 +59,20 @@ subroutine precal()
   lrandb = .false.
   iel    = 0
 
-  ALLOCATE (xk(smaxs),yk(smaxs),elmas(smaxs,smaxs),&
-       elmam(smaxs,smaxs),elve(smaxs),stat=errnr)
+  ALLOCATE (xk(max_nr_element_nodes),yk(max_nr_element_nodes),elmas(max_nr_element_nodes,max_nr_element_nodes),&
+       elmam(max_nr_element_nodes,max_nr_element_nodes),elve(max_nr_element_nodes),stat=errnr)
   IF (errnr /= 0) then
      fetxt = 'allocation problem elbg elmam'
      errnr = 97 
      GOTO 1000
   END IF
-  ALLOCATE (elbg(elanz,(smaxs*(smaxs+1))/2,kwnanz),stat=errnr)
+  ALLOCATE (elbg(elanz,(max_nr_element_nodes*(max_nr_element_nodes+1))/2,kwnanz),stat=errnr)
   IF (errnr /= 0) then
      fetxt = 'allocation problem elbg elbg'
      errnr = 97 
      GOTO 1000
   END IF
-  ALLOCATE (relbg(relanz,(smaxs*(smaxs+1))/2),stat=errnr)
+  ALLOCATE (relbg(relanz,(max_nr_element_nodes*(max_nr_element_nodes+1))/2),stat=errnr)
   ALLOCATE (kg(relanz,eanz,kwnanz),stat=errnr)
   IF (errnr /= 0) then
      fetxt = 'allocation problem elbg relbg or kg'
@@ -157,7 +157,7 @@ subroutine precal()
         else if (ntyp.eq.8) then
 
            do k=1,kwnanz
-              call elem8(elmas,elve,kwn(k),smaxs)
+              call elem8(elmas,elve,kwn(k),max_nr_element_nodes)
               if (errnr.ne.0) goto 1000
 
 !!!$     Elementbeitraege berechnen

@@ -102,7 +102,7 @@ SUBROUTINE update()
 ! C_m^-1 * (m_q - m_0)
         DO i=1,manz
            cdum = dcmplx(0d0)
-           DO ij=1,smaxs
+           DO ij=1,max_nr_element_nodes
               in = nachbar(i,ij)
               IF (in /= 0) THEN
                  IF (.NOT. lprior) THEN
@@ -113,9 +113,9 @@ SUBROUTINE update()
               END IF
            END DO
            IF (.NOT. lprior) THEN
-              bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1)) * par(i)
+              bvec(i) = cdum + DCMPLX(smatm(i,max_nr_element_nodes+1)) * par(i)
            ELSE
-              bvec(i) = cdum + DCMPLX(smatm(i,smaxs+1)) * (par(i) - m0(i))
+              bvec(i) = cdum + DCMPLX(smatm(i,max_nr_element_nodes+1)) * (par(i) - m0(i))
            END IF
         END DO
 
@@ -204,7 +204,7 @@ SUBROUTINE update()
         ELSE IF (ltri == 1.OR.ltri == 2.OR. &
              (ltri > 4 .AND. ltri < 15)) THEN
 
-           dum    = dum + lam * smatm(j,smaxs+1)
+           dum    = dum + lam * smatm(j,max_nr_element_nodes+1)
 
         ELSE IF (ltri == 3.OR.ltri == 4) THEN
 

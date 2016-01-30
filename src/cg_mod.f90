@@ -20,7 +20,7 @@ MODULE cg_mod
 
   USE alloci , ONLY : sens,sensdc,smatm
   USE femmod , ONLY : fak,ldc
-  USE elemmod, ONLY : smaxs,nachbar
+  USE elemmod, ONLY : max_nr_element_nodes,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,dpar
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lam,nx,nz,lverb,lw_ref, lam_ref, lam_ref_sw
@@ -289,12 +289,12 @@ CONTAINS
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
        dum = 0d0
-       DO j=1,smaxs
+       DO j=1,max_nr_element_nodes
           IF (nachbar(i,j) /= 0) dum = dum + pvecdc(nachbar(i,j)) * & 
                smatm(i,j) * cgfac(nachbar(i,j)) ! off diagonals
        END DO
        !     main diagonal
-       bvecdc(i) = dum + pvecdc(i) * smatm(i,smaxs+1) * cgfac(i) 
+       bvecdc(i) = dum + pvecdc(i) * smatm(i,max_nr_element_nodes+1) * cgfac(i) 
     END DO
 
   END SUBROUTINE bpdctri
@@ -599,13 +599,13 @@ CONTAINS
     !     R^m * p  berechnen (skaliert)
     DO i=1,manz
        cdum = dcmplx(0d0)
-       DO j=1,smaxs
+       DO j=1,max_nr_element_nodes
           idum=nachbar(i,j)
           IF (idum/=0) cdum = cdum + pvec(idum) * & 
                DCMPLX(smatm(i,j)) * cgfac(idum) ! off diagonals
        END DO
 
-       bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,smaxs+1)) * &
+       bvec(i) = cdum + pvec(i) * DCMPLX(smatm(i,max_nr_element_nodes+1)) * &
             cgfac(i) ! + main diagonal
 
     END DO
