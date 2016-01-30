@@ -14,120 +14,132 @@
 !> @author Andreas Kemna, Roland Martin
 !> @date 11/24/1993, last change 09/2013
 MODULE elemmod
+    IMPLICIT none
 
-  IMPLICIT none
+    !> Anzahl der Knoten (bzw. Knotenvariablen)
+    INTEGER(KIND = 4),PUBLIC :: sanz
 
-  !> Anzahl der Knoten (bzw. Knotenvariablen)
-  INTEGER(KIND = 4),PUBLIC                            :: sanz 
+    !> Anzahl der Elementtypen
+    INTEGER(KIND = 4),PUBLIC :: typanz
 
-  !> Anzahl der Elementtypen
-  INTEGER(KIND = 4),PUBLIC                            :: typanz 
+    !> Bandbreite der Gesamtsteifigkeitsmatrix 'a'
+    INTEGER(KIND = 4),PUBLIC ::  mb
 
-  !> Bandbreite der Gesamtsteifigkeitsmatrix 'a'
-  INTEGER(KIND = 4),PUBLIC                            ::  mb
+    !>Elementtypen
+    !! (Randelemente (ntyp > 10) am Schluss !)
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: typ
 
-!>Elementtypen
-!! (Randelemente (ntyp > 10) am Schluss !)
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: typ
+    !> Anzahl der Elemente eines bestimmten Typs
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: nelanz
 
-!> Anzahl der Elemente eines bestimmten Typs
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: nelanz
+    !> Anzahl der Knoten (bzw. Knotenvariablen) in einem Elementtyp
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: selanz
 
-!> Anzahl der Knoten (bzw. Knotenvariablen) in einem Elementtyp
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: selanz
+    !> Zeiger auf Koordinaten der Knoten
+    !! (Inverser Permutationsvektor der Umnumerierung)
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: snr
 
-!> Zeiger auf Koordinaten der Knoten
-!! (Inverser Permutationsvektor der Umnumerierung)
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: snr
+    !> x-Koordinaten der Knoten
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sx
 
-!> x-Koordinaten der Knoten
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sx
+    !> y-Koordinaten der Knoten
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sy
 
-!> y-Koordinaten der Knoten
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: sy
+    !> Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
+    !! x-direction
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: espx
 
-!> Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
-!! x-direction
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: espx
-!> Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
-!! y-direction
-  REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: espy
+    !> Elementschwerpunktkoordinaten (ESP) der Flaechenelemente
+    !! y-direction
+    REAL(KIND(0D0)),PUBLIC,DIMENSION(:),ALLOCATABLE     :: espy
 
-!> Zeiger auf die Nachbarn der nichtentarteten Elemente
-  INTEGER, DIMENSION(:,:), ALLOCATABLE, PUBLIC        :: nachbar
+    !> Zeiger auf die Nachbarn der nichtentarteten Elemente
+    INTEGER, DIMENSION(:,:), ALLOCATABLE, PUBLIC        :: nachbar
 
-!> Knotennummern der Elemente (Reihenfolge !)
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:,:),ALLOCATABLE :: nrel
+    !> Knotennummern der Elemente (Reihenfolge !)
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:,:),ALLOCATABLE :: nrel
 
-!> Anzahl der Elemente (ohne Randelemente)
-  INTEGER(KIND = 4),PUBLIC                            :: elanz
+    !> Anzahl der Elemente (ohne Randelemente)
+    INTEGER(KIND = 4),PUBLIC                            :: elanz
 
-!> Anzahl der Randelemente
-  INTEGER(KIND = 4),PUBLIC                            :: relanz
+    !> Anzahl der Randelemente
+    INTEGER(KIND = 4),PUBLIC                            :: relanz
 
-!> Zeiger auf Werte der Randelemente
-  INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: rnr
+    !> Zeiger auf Werte der Randelemente
+    INTEGER(KIND = 4),PUBLIC,DIMENSION(:),ALLOCATABLE   :: rnr
 
-!> Groeste Anzahl der Knoten der Flaechenelemente
-  INTEGER(KIND = 4),PUBLIC                            :: smaxs
+    !> Groeste Anzahl der Knoten der Flaechenelemente
+    INTEGER(KIND = 4),PUBLIC                            :: smaxs
 
-!> Gitter statistiken: 
-!!Minaler Abstand zwischen (Flaechen) Elementschwerpunkten
-  REAL(KIND(0D0)),PUBLIC                              :: esp_min
-!> Gitter statistiken: 
-!!Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten
-  REAL(KIND(0D0)),PUBLIC                              :: esp_max
-!> Gitter statistiken: 
-!> Mittelwert/Median und Standardabweichung der ESP
-  REAL(KIND(0D0)),PUBLIC                              :: esp_mit
-!> Gitter statistiken: 
-!> Median und Standardabweichung der ESP
-  REAL(KIND(0D0)),PUBLIC                              :: esp_med
-!> Gitter statistiken: 
-!> Standardabweichung der ESP
-  REAL(KIND(0D0)),PUBLIC                              :: esp_std
+    !> Gitter Statistiken:
 
-!>Minaler Gitterabstand (Betrag)
-  REAL(KIND(0D0)),PUBLIC                              :: grid_min
-!>Maximaler Gitterabstand (Betrag)
-  REAL(KIND(0D0)),PUBLIC                              :: grid_max
-!>Minimaler Gitterabstand in x-Richtung
-  REAL(KIND(0D0)),PUBLIC                              :: grid_minx
-!>Minimaler Gitterabstand in y-Richtung
-  REAL(KIND(0D0)),PUBLIC                              :: grid_miny
-!>Maximaler Gitterabstand in x-Richtung
-  REAL(KIND(0D0)),PUBLIC                              :: grid_maxx
-!>Maximaler Gitterabstand in y-Richtung
-  REAL(KIND(0D0)),PUBLIC                              :: grid_maxy
+    !!Minaler Abstand zwischen (Flaechen) Elementschwerpunkten
+    REAL(KIND(0D0)),PUBLIC                              :: esp_min
 
-!>switch/number fictitious sink node (only for 2D)
-  LOGICAL,PUBLIC                                      :: lsink
-!>number of grid node for sink
-  INTEGER(KIND = 4),PUBLIC                            :: nsink
+    !> Gitter Statistiken:
+    !!Maximaler Abstand zwischen (Flaechen) Elementschwerpunkten
+    REAL(KIND(0D0)),PUBLIC                              :: esp_max
 
-!>switch boundary values
-  LOGICAL,PUBLIC                                      :: lrandb2
+    !> Gitter statistiken:
+    !> Mittelwert/Median und Standardabweichung der ESP
+    REAL(KIND(0D0)),PUBLIC                              :: esp_mit
 
-!>mittlere y-Koordinate aller Randelemente vom Typ 12 ("no flow")
-  REAL(KIND(0D0)),PUBLIC                              :: sytop 
+    !> Gitter statistiken:
+    !> Median und Standardabweichung der ESP
+    REAL(KIND(0D0)),PUBLIC                              :: esp_med
 
-!>x-Koordinaten der Eckknotenpunkte
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: xk
+    !> Gitter statistiken:
+    !> Standardabweichung der ESP
+    REAL(KIND(0D0)),PUBLIC                              :: esp_std
 
-!>y-Koordinaten der Eckknotenpunkte
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: yk
+    !>Minaler Gitterabstand (Betrag)
+    REAL(KIND(0D0)),PUBLIC                              :: grid_min
 
-!>Elementarmatrizen
-  REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE,PUBLIC :: elmam
-!>Elementarmatrizen
-  REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE,PUBLIC :: elmas
+    !>Maximaler Gitterabstand (Betrag)
+    REAL(KIND(0D0)),PUBLIC                              :: grid_max
 
-!>Elementvektor
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: elve
+    !>Minimaler Gitterabstand in x-Richtung
+    REAL(KIND(0D0)),PUBLIC                              :: grid_minx
 
-  !!!$ decoupling.dat exists?
-  LOGICAL ::    decexi
-  INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE,PUBLIC :: edecoup
-  REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE,PUBLIC :: edecstr
-  INTEGER (KIND = 4) ::  decanz
+    !>Minimaler Gitterabstand in y-Richtung
+    REAL(KIND(0D0)),PUBLIC                              :: grid_miny
+
+    !>Maximaler Gitterabstand in x-Richtung
+    REAL(KIND(0D0)),PUBLIC                              :: grid_maxx
+
+    !>Maximaler Gitterabstand in y-Richtung
+    REAL(KIND(0D0)),PUBLIC                              :: grid_maxy
+
+    !>switch/number fictitious sink node (only for 2D)
+    LOGICAL,PUBLIC                                      :: lsink
+
+    !>number of grid node for sink
+    INTEGER(KIND = 4),PUBLIC                            :: nsink
+
+    !>switch boundary values
+    LOGICAL,PUBLIC                                      :: lrandb2
+
+    !>mittlere y-Koordinate aller Randelemente vom Typ 12 ("no flow")
+    REAL(KIND(0D0)),PUBLIC                              :: sytop
+
+    !>x-Koordinaten der Eckknotenpunkte
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: xk
+
+    !>y-Koordinaten der Eckknotenpunkte
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: yk
+
+    !>Elementarmatrizen
+    REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE,PUBLIC :: elmam
+
+    !>Elementarmatrizen
+    REAL(KIND(0D0)),DIMENSION(:,:),ALLOCATABLE,PUBLIC :: elmas
+
+    !>Elementvektor
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: elve
+
+    !!!$ decoupling.dat exists?
+    LOGICAL ::    decexi
+    INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE,PUBLIC :: edecoup
+    REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE,PUBLIC :: edecstr
+    INTEGER (KIND = 4) ::  decanz
 END MODULE elemmod
