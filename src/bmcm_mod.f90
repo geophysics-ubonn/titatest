@@ -16,7 +16,7 @@ MODULE bmcm_mod
   USE tic_toc ! counts calculation time
   USE alloci , ONLY : sens,sensdc,smatm,ata,ata_reg,cov_m
   USE femmod , ONLY : ldc
-  USE elemmod, ONLY : smaxs,espx,espy,nachbar
+  USE elemmod, ONLY : max_nr_element_nodes,espx,espy,nachbar
   USE invmod , ONLY : lfpi,wmatd,wdfak,par
   USE errmod , ONLY : errnr,fetxt
   USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,mswitch,lcov2,lres,lverb,&
@@ -361,9 +361,9 @@ CONTAINS
           write(*,'(a,1X,F6.2,A)',advance='no')ACHAR(13)// &
                'ATC_d^-1A+reg/ ',REAL( j * (100./manz)),'%'
           
-          ata_reg(j,j) = ata(j,j) + lam * smatm(j,smaxs+1) ! main diagonal
+          ata_reg(j,j) = ata(j,j) + lam * smatm(j,max_nr_element_nodes+1) ! main diagonal
 
-          DO k=1,nachbar(j,smaxs+1) ! off diagonal
+          DO k=1,nachbar(j,max_nr_element_nodes+1) ! off diagonal
              
              ik = nachbar(j,k) 
 
