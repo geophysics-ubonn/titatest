@@ -438,7 +438,7 @@ CONTAINS
                         IF (((i == edecoup(decn, 1)) .AND. (nachbar(i, k) == edecoup(decn, 2))) .OR. &
                             ((nachbar(i, k) == edecoup(decn, 1)) .AND. (i == edecoup(decn, 2))) ) &
                                 THEN
-                            regularisation_strength = edecstr(decn)
+                            regularisation_strength = regularisation_strength * edecstr(decn)
                         END IF
                     END DO
 
