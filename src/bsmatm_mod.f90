@@ -21,7 +21,7 @@ MODULE bsmatm_mod
     USE tic_toc ! counts calculation time
     USE alloci , ONLY : sens,sensdc,smatm
     USE femmod , ONLY : fak,ldc
-    USE elemmod, ONLY : smaxs,sx,sy,espx,espy,nrel,snr,elanz,nachbar,edecoup,edecstr,decanz
+    USE elemmod, ONLY : max_nr_element_nodes,sx,sy,espx,espy,nrel,snr,elanz,nachbar,edecoup,edecstr,decanz
     USE invmod , ONLY : lfpi,par,wmatd,wdfak
     USE errmod , ONLY : errnr,fetxt
     USE konvmod , ONLY : ltri,lgauss,lam,nx,nz,alfx,alfz,betamgs,lverb,lverb_dat
@@ -384,7 +384,7 @@ CONTAINS
         REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
         !.....................................................................
 
-        IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,smaxs+1),STAT=errnr)
+        IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1),STAT=errnr)
         IF (errnr/=0) THEN
             WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmtri'
             errnr = 97
@@ -521,7 +521,7 @@ CONTAINS
 
     PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
 
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1),&
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1),&
          STAT=errnr)
 
     IF (errnr/=0) THEN
@@ -538,9 +538,9 @@ CONTAINS
        sp1(1) = espx(i) ! Mittelpunkt des aktuellen Elements
        sp1(2) = espy(i)
 
-       DO k=1,smaxs           ! jedes flaechenele hat mind einen nachbarn
+       DO k=1,max_nr_element_nodes           ! jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
+          ik = MOD(k,max_nr_element_nodes) + 1 !!! associates the next node, or itself
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
                (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
@@ -634,7 +634,7 @@ CONTAINS
 
 !    nun glaettung belegen
              smatm(i,k) = -dum !neben Diagonale
-             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !Hauptdiagonale
+             smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum !Hauptdiagonale
 
           END IF
        END DO
@@ -671,16 +671,16 @@ CONTAINS
 !.....................................................................
 
     
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,smaxs+1))
+    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1))
     smatm = 0d0               !initialize smatm
 
     DO i=1,elanz
        sp1(1) = espx(i) !Mittelpunkt des aktuellen Elements
        sp1(2) = espy(i)
 
-       DO k=1,smaxs           !jedes flaechenele hat mind einen nachbarn
+       DO k=1,max_nr_element_nodes           !jedes flaechenele hat mind einen nachbarn
 
-          ik = MOD(k,smaxs) + 1
+          ik = MOD(k,max_nr_element_nodes) + 1
 
           edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
                (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) !edge
@@ -706,7 +706,7 @@ CONTAINS
 
              smatm(i,k) = -dum ! off diagonal
 
-             smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum !main diagonal
+             smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum !main diagonal
 
           END IF
 
