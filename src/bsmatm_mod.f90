@@ -375,8 +375,12 @@ CONTAINS
         !    PROGRAMMINTERNE PARAMETER:
         !
         !    Hilfsvariablen
-        REAL(KIND(0D0)) :: dum    !dummy stores numbers
-        INTEGER         :: i,k,ik,decn
+        ! REAL(KIND(0D0)) :: dum    !dummy stores numbers
+        ! store regularisation strength for each individual cell border
+        ! this is a temporary variable
+        REAL(kind(0D0)) :: regularisation_strength
+        INTEGER         :: i,k,decn
+        INTEGER :: next_node_id
         REAL(KIND(0D0)) :: edglen !Kantenlaenge
         REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
         REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
@@ -399,23 +403,33 @@ CONTAINS
             sp1(1) = espx(i)
             sp1(2) = espy(i)
 
-            DO k=1,smaxs  ! jedes flaechenelement hat mind einen nachbarn
+            DO k=1,max_nr_element_nodes  ! jedes flaechenelement hat mind einen nachbarn
 
-                ik = MOD(k,smaxs) + 1 !!! associates the next node, or itself
+                next_node_id = MOD(k,max_nr_element_nodes) + 1 !!! associates the next node, or itself
 
-                edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
-                    (sy(snr(nrel(i,k))) -  sy(snr(nrel(i,ik))))**2d0) !edge
+                edglen = SQRT( &
+                        (sx(snr(nrel(i, k))) - sx(snr(nrel(i, next_node_id))))**2d0 + &
+                        (sy(snr(nrel(i, k))) - sy(snr(nrel(i, next_node_id))))**2d0 &
+                    ) !edge
 
                 IF (nachbar(i,k)>0) THEN !nachbar an der Kante existiert
 
-                    sp2(1) = espx(nachbar(i,k)) ! center point of element
+                    ! x/z component of neighbouring cell center
+                    sp2(1) = espx(nachbar(i,k))
                     sp2(2) = espy(nachbar(i,k))
 
                     ! Geometrical part...
+                    ! distance between cell centers
                     dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
+
+                    ! angle of direct line between cell centers
                     ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1))) !Angle
+
+                    ! regularisation contributions of anisotropic regularisation weights
                     alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
-                    dum = edglen / dist * alfgeo ! proportional contribution of integrated cell
+
+                    ! norm the regularisation component with edgewidth and distance
+                    regularisation_strength = edglen / dist * alfgeo
 
                     ! grid decoupling
                     ! note that the triangular regularisation works in both directions,
@@ -423,15 +437,18 @@ CONTAINS
                     DO decn=1,decanz
                         IF (((i == edecoup(decn, 1)) .AND. (nachbar(i, k) == edecoup(decn, 2))) .OR. &
                             ((nachbar(i, k) == edecoup(decn, 1)) .AND. (i == edecoup(decn, 2))) ) &
-                            THEN
-                            dum = edecstr(decn)
-                            ! dum = 0
+                                THEN
+                            regularisation_strength = edecstr(decn)
                         END IF
                     END DO
 
-                    smatm(i,k) = -dum ! set off diagonal of R
+                    ! set off diagonal of R (these entries are only set once for each
+                    !  specific cell-neighboring cell pair
+                    smatm(i,k) = -regularisation_strength
 
-                    smatm(i,smaxs+1) = smatm(i,smaxs+1) + dum ! Main diagonal
+                    ! set main diagonal
+                    ! we need to sum up contribution from various cell interfaces here
+                    smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + regularisation_strength
 
                 END IF
             END DO
