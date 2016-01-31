@@ -137,9 +137,15 @@ MODULE elemmod
     !>Elementvektor
     REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE,PUBLIC   :: elve
 
-    !!!$ decoupling.dat exists?
+    ! decoupling.dat exists?
     LOGICAL ::    decexi
-    INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE,PUBLIC :: edecoup
+
+    ! cell numbers defining decoupling interfaces
+    INTEGER(KIND = 4), DIMENSION(:, :), ALLOCATABLE,PUBLIC :: edecoup
+
+    ! decoupling values
     REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE,PUBLIC :: edecstr
+
+    ! number of interfaces to decouple (i.e., number of lines in decouplings.dat)
     INTEGER (KIND = 4) ::  decanz
 END MODULE elemmod
