@@ -42,517 +42,518 @@
 SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
 
-!!!$     Unterprogramm zum Einlesen der benoetigten Variablen.
+    !    Unterprogramm zum Einlesen der benoetigten Variablen.
+    !    Andreas Kemna 01-Mar-1995
+    !    Letzte Aenderung 20-Aug-2007
+    !....................................................................
 
-!!!$     Andreas Kemna                                            01-Mar-1995
-!!!$     Letzte Aenderung   20-Aug-2007
-!!!$     
-!!!$.....................................................................
+    USE make_noise
+    USE variomodel
+    USE femmod
+    USE datmod
+    USE invmod
+    USE cjgmod
+    USE sigmamod
+    USE electrmod
+    USE modelmod
+    USE elemmod
+    USE wavenmod
+    USE randbmod
+    USE errmod
+    USE konvmod
+    USE pathmod
+    USE get_ver, ONLY:version
 
-  USE make_noise
-  USE variomodel
-  USE femmod
-  USE datmod
-  USE invmod
-  USE cjgmod
-  USE sigmamod
-  USE electrmod
-  USE modelmod
-  USE elemmod
-  USE wavenmod
-  USE randbmod
-  USE errmod
-  USE konvmod
-  USE pathmod
-  USE get_ver, ONLY:version
-  IMPLICIT NONE
+    IMPLICIT NONE
 
+    ! EIN-/AUSGABEPARAMETER:
 
-!!!$.....................................................................
+    !> FID number
+    INTEGER (KIND = 4) ::     kanal
 
-!!!$     EIN-/AUSGABEPARAMETER:
+    !> grid file
+    CHARACTER (80) :: delem
 
-!> FID number
-  INTEGER (KIND = 4) ::     kanal
+    !> electrodes file
+    CHARACTER (80) :: delectr
 
-!> grid file
-  CHARACTER (80) :: delem
-!> electrodes file
-  CHARACTER (80) :: delectr
-!> configurations file
-  CHARACTER (80) :: dstrom
-!> complex resistivity model file
-  CHARACTER (80) :: dsigma
-!> measurements file
-  CHARACTER (80) :: dvolt
-!> sensitivities file
-  CHARACTER (80) :: dsens
-!> starting model file
-  CHARACTER (80) :: dstart
-  CHARACTER (80) :: dd0
-  CHARACTER (80) :: dm0
-  CHARACTER (80) :: dfm0
-  CHARACTER (80) :: drandb
+    !> configurations file
+    CHARACTER (80) :: dstrom
 
-!> run another inversion?
-  LOGICAL ::     lagain
-  LOGICAL ::     lsto
-!!!$     check whether the file format is crtomo konform or not..
-  LOGICAL ::    crtf
-!!!$     check whether a file exists..
-  LOGICAL ::    exi
-!!!$ decoupling.dat exists?
-!!!  LOGICAL ::    decexi
-  !!! INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE :: edecoup
-  !!! REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE :: edecstr
-  !!! INTEGER (KIND = 4) ::  decanz
+    !> complex resistivity model file
+    CHARACTER (80) :: dsigma
 
-!!!$.....................................................................
+    !> measurements file
+    CHARACTER (80) :: dvolt
 
-!!!$     PROGRAMMINTERNE PARAMETER:
+    !> sensitivities file
+    CHARACTER (80) :: dsens
 
-!!!$     Indexvariable
-  INTEGER (KIND = 4) ::     i
+    !> starting model file
+    CHARACTER (80) :: dstart
+    CHARACTER (80) :: dd0
+    CHARACTER (80) :: dm0
+    CHARACTER (80) :: dfm0
+    CHARACTER (80) :: drandb
 
-!!!$     Pi
-  REAL(KIND(0D0))   ::     pi
+    !> run another inversion?
+    LOGICAL ::     lagain
+    LOGICAL ::     lsto
 
-!!!$     diff+<
-  REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
-  REAL(KIND(0D0))                            :: dum3
-  INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
-  INTEGER (KIND = 4) ::  nanz0,j,j0
-!!!$     diff+>
+    ! check whether the file format is crtomo konform or not..
+    LOGICAL ::    crtf
 
-!!!$     ak Inga
-  INTEGER (KIND = 4) ::  elec1,elec2,elec3,elec4
-!!!$.....................................................................
+    ! check whether a file exists..
+    LOGICAL ::    exi
 
-  pi = dacos(-1d0)
+    ! decoupling.dat exists?
+    ! LOGICAL ::    decexi
+    !!! INTEGER(KIND = 4), DIMENSION(:, :),ALLOCATABLE :: edecoup
+    !!! REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE :: edecstr
+    !!! INTEGER (KIND = 4) ::  decanz
 
-!!!$     'crtomo.cfg' EINLESEN
-  fetxt = 'crtomo.cfg'
-  errnr = 3
-!!!$#################DEFAULTS ########################
-!!!$###  switches 
-!!!$     ro        lsr    = .false.
-!!!$     ro        lpol   = .true.
-!!!$     ro        lfphai = .true.
-!!!$     ro        lrho0  = .false.
-!!!$     akERT2003
-!!!$     ak        ld!!!$    = .true.
-!!!$     ak        lsr    = .false.
-!!!$     ak        lpol   = .false.
-!!!$     Sonstiges
-!!!$     diff+<
-  lsr    = .FALSE.
-  lpol   = .FALSE.
-  lindiv = .FALSE.
-!!!$     ak
-!!!$     'dstart'
-  lstart = .FALSE.
-  dstart = ' '
-!!!$     ak        lstart = .true.
-!!!$     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
-  ltri   = 0
-  lsto = .FALSE.            !default--
-!!!$     "Force negative phase" ?
-!!!$     sandra        lphi0 = .true.
-  lphi0 = .FALSE.
-!!!$     ak        lphi0 = .false.
-!!!$     "ratio-dataset" ?
-  lratio = .FALSE.
-!!!$     ak        lratio = .true.
-!!!$     final phase improvement setzt phase zueruck auf homogenes modell
-  lffhom = .FALSE.
-!!!$     Daten Rauschen vom Fehlermodell entkoppeln ?
-  lnse2 = .FALSE.
-!!!$     Regularisierung mit prior modell?
-  lprior = .FALSE.
-!!!$######values..
-!!!$     FIXED PARAMETER
-!!!$     Slash
+    !!!$.....................................................................
 
-!!!$ BETA MGS
-  betamgs = 1d0
-  WRITE (*,'(/a)',ADVANCE='no')'OS identification:'
-  IF (INDEX ( version(5), 'Msys') /= 0) THEN
-     PRINT*,' MS-OS'
-     slash = '\'  !' \ is escape char for syntax highlights
-  ELSE
-     PRINT*,' Linux-OS'
-     slash = '/'
-  END IF
+    !!!$     PROGRAMMINTERNE PARAMETER:
 
-  !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension 
-!!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
-  l1min = 1d0
-!!!$     ak        l1min = 1.2d0
-  nrmsdm = 1d0
-!!!$     Art der Ruecktransformation
-!!!$     ak        swrtr = 1
-!!!$     Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
-!!!$     ak Default
-!!!$     ak        mqrms = 1d-2
-!!!$     ak ERT 2002-2003 synth
-  mqrms = 2d-2
-!!!$     ak        mqrms = 2d-2
-!!!$     ak Tank
-!!!$     ak        mqrms = 2d-2
-!!!$     ak MMAJ
-!!!$     ak        mqrms = 5d-2
-!!!$     CG-Epsilon
-  eps = 1d-4
-!!!$     Mindest-step-length
-  stpmin = 1d-3
-!!!$     Minimale stepsize (bdpar)
-  bdmin = 1d-3
-!!!$     Regularisierungsparameter
-!!!$     ak Default
-  nlam   = 30
-!!!$     ak Default
-  fstart = 0.5d0
-  fstop  = 0.9d0
-  lamfix = 0.0D0
-  llamf = 0
-!!!$     ak MMAJ
-!!!$     ak        fstart = 0.2d0
-!!!$     ak        fstop  = 0.8d0
-!!!$     ak Strasbrg/Werne/Grimberg
-!!!$     ak        fstart = 0.5d0
-!!!$     ak        fstop  = 0.8d0
-  iseedpri = 0; modl_stdn = 0.; iseed = 1
-  mswitch = 0
-!!!$#########################################################
-!!!$     Read in input values..
+    !!!$     Indexvariable
+    INTEGER (KIND = 4) ::     i
 
-  fetxt = 'rall -> mswitch'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=98) mswitch
+    !!!$     Pi
+    REAL(KIND(0D0))   ::     pi
 
-98 fetxt = 'rall -> grid file'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) delem
-  CALL clear_string (delem)
+    !!!$     diff+<
+    REAL(KIND(0D0)),DIMENSION(:),ALLOCATABLE   :: dum,dum2
+    REAL(KIND(0D0))                            :: dum3
+    INTEGER(KIND = 4),DIMENSION(:),ALLOCATABLE :: idum,ic,ip
+    INTEGER (KIND = 4) ::  nanz0,j,j0
+    !!!$     diff+>
 
-  fetxt = 'rall -> electrode file'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) delectr
-  CALL clear_string (delectr)
+    !!!$     ak Inga
+    INTEGER (KIND = 4) ::  elec1,elec2,elec3,elec4
+    !!!$.....................................................................
 
-  fetxt = 'rall -> meaurement file'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) dstrom
-  CALL clear_string (dstrom)
+    pi = dacos(-1d0)
 
-  fetxt = 'rall -> directory for inversion results'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) ramd
-  CALL clear_string (ramd)
+    !!!$     'crtomo.cfg' EINLESEN
+    fetxt = 'crtomo.cfg'
+    errnr = 3
+    !!!$#################DEFAULTS ########################
+    !!!$###  switches 
+    !!!$     ro        lsr    = .false.
+    !!!$     ro        lpol   = .true.
+    !!!$     ro        lfphai = .true.
+    !!!$     ro        lrho0  = .false.
+    !!!$     akERT2003
+    !!!$     ak        ld!!!$    = .true.
+    !!!$     ak        lsr    = .false.
+    !!!$     ak        lpol   = .false.
+    !!!$     Sonstiges
+    !!!$     diff+<
+    lsr    = .FALSE.
+    lpol   = .FALSE.
+    lindiv = .FALSE.
+    !!!$     ak
+    !!!$     'dstart'
+    lstart = .FALSE.
+    dstart = ' '
+    !!!$     ak        lstart = .true.
+    !!!$     ak        dstart = '..\..\strasbrg\9610\plane45\mod\rho0.dat'
+    ltri   = 0
+    lsto = .FALSE.            !default--
+    !!!$     "Force negative phase" ?
+    !!!$     sandra        lphi0 = .true.
+    lphi0 = .FALSE.
+    !!!$     ak        lphi0 = .false.
+    !!!$     "ratio-dataset" ?
+    lratio = .FALSE.
+    !!!$     ak        lratio = .true.
+    !!!$     final phase improvement setzt phase zueruck auf homogenes modell
+    lffhom = .FALSE.
+    !!!$     Daten Rauschen vom Fehlermodell entkoppeln ?
+    lnse2 = .FALSE.
+    !!!$     Regularisierung mit prior modell?
+    lprior = .FALSE.
+    !!!$######values..
+    !!!$     FIXED PARAMETER
+    !!!$     Slash
 
-!!$! checks if dir exists and if not, create it
-  !#if defined (__INTEL_COMPILER)
-!!$! check for the intel compiler..
-  !#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-  !#else   
-!!$! other compilers go here
-!!$! here we may put #elif defined (__GFORTRAN__) as well
-  !#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
-  !#endif
-  ! ifort uses DIRECTORY for folders, so this is to be used than..
-  ! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+    !!!$ BETA MGS
+    betamgs = 1d0
+    WRITE (*,'(/a)',ADVANCE='no')'OS identification:'
+    IF (INDEX ( version(5), 'Msys') /= 0) THEN
+        PRINT*,' MS-OS'
+        slash = '\'  !' \ is escape char for syntax highlights
+    ELSE
+        PRINT*,' Linux-OS'
+        slash = '/'
+    END IF
 
-!!$! workaround for compability issues with ifort..
-  fetxt = TRIM(ramd)//slash//'tmp.check'
-  crtf = .FALSE.
-!!$ test if you can open a file in the directory..
-  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',ERR=97)
-!!$ if you can, the directory exits and you can remove it safely
-  CLOSE(fprun,STATUS='delete')
-!!$ set this switch to circumvent mkdir
-  PRINT*,'writing inversion results into '//TRIM(ramd)
-  crtf = .TRUE.
-97 IF (.NOT.crtf) THEN
-     PRINT*,'Creating inversion directory '//TRIM(ramd)
-     CALL SYSTEM ('mkdir '//TRIM(ramd))
-  END IF
-  fetxt = 'rall -> Difference inversion ?'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) ldiff
+    !  CALL CALL get_environment_variable('DELIMITER',slash) ! seems a special C extension
+    !!!$     Minimale "L1-ratio" (Grenze der "robust inversion")
+    l1min = 1d0
+    !!!$     ak        l1min = 1.2d0
+    nrmsdm = 1d0
+    !!!$     Art der Ruecktransformation
+    !!!$     ak        swrtr = 1
+    !!!$     Minimaler Quotient zweier aufeinanderfolgender Daten-RMS-Werte
+    !!!$     ak Default
+    !!!$     ak        mqrms = 1d-2
+    !!!$     ak ERT 2002-2003 synth
+    mqrms = 2d-2
+    !!!$     ak        mqrms = 2d-2
+    !!!$     ak Tank
+    !!!$     ak        mqrms = 2d-2
+    !!!$     ak MMAJ
+    !!!$     ak        mqrms = 5d-2
+    !!!$     CG-Epsilon
+    eps = 1d-4
+    !!!$     Mindest-step-length
+    stpmin = 1d-3
+    !!!$     Minimale stepsize (bdpar)
+    bdmin = 1d-3
+    !!!$     Regularisierungsparameter
+    !!!$     ak Default
+    nlam   = 30
+    !!!$     ak Default
+    fstart = 0.5d0
+    fstop  = 0.9d0
+    lamfix = 0.0D0
+    llamf = 0
+    !!!$     ak MMAJ
+    !!!$     ak        fstart = 0.2d0
+    !!!$     ak        fstop  = 0.8d0
+    !!!$     ak Strasbrg/Werne/Grimberg
+    !!!$     ak        fstart = 0.5d0
+    !!!$     ak        fstop  = 0.8d0
+    iseedpri = 0; modl_stdn = 0.; iseed = 1
+    mswitch = 0
+    !!!$#########################################################
+    !!!$     Read in input values..
 
-  fetxt = 'rall -> Diff. measurements'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) dd0
-  CALL clear_string (dd0)
+    fetxt = 'rall -> mswitch'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=98) mswitch
 
-  fetxt = 'rall -> Diff. model (prior)'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) dm0
-  CALL clear_string (dm0)
+    98 fetxt = 'rall -> grid file'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) delem
+    CALL clear_string (delem)
 
-  fetxt = 'rall -> Diff. model response of prior'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a)',END=1001,err=999) dfm0
-  CALL clear_string (dfm0)
+    fetxt = 'rall -> electrode file'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) delectr
+    CALL clear_string (delectr)
 
-  IF (dm0 /= '') THEN
-     INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
-     IF (lstart) THEN       ! set the starting model
-        dstart = dm0
-        PRINT*,'+ read prior:',ACHAR(9)//TRIM(dm0)
-     ELSE
-        PRINT*,'- omit prior (NO FILE):',ACHAR(9)//TRIM(dm0)
-        dm0 = ''
-     END IF
-  END IF
-  IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
-     PRINT*,'Prior model regularization !'
-     lprior = .TRUE.        ! reference model regu only if there is no
-     ldiff = .FALSE.        ! time difference inversion
-  END IF
-!!!$     diff+>
-  fetxt = 'trying noise model seed'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=99) iseedpri,modl_stdn
-  !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
-  !      lnse2 = .NOT.lprior       ! kein prior?
-  !     Daten Rauschen unabhängig vom Fehlermodell?
-  lnsepri = lstart          ! if we have seed and std we assume to add noise to prior
-  PRINT*,'Prior model noise !'
-99 fetxt = 'rall -> Gitter nx'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) nx
-  fetxt = 'rall -> (lamfix) Gitter nz'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) nz
-  fetxt = 'rall -> Anisotropie /x'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) alfx
-  fetxt = 'rall -> Anistotropie /y'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) alfz
-  fetxt = 'rall -> Maximale Iterationen'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) itmax
-!!!$     ak        READ (fpcfg,*,end=1001,err=999) nrmsdm
-  fetxt = 'rall -> DC/IP Inversion'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) ldc
-!!!$     ak        READ (fpcfg,*,end=1001,err=999) lsr
-  fetxt = 'rall -> Robuste Inversion'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lrobust
-  IF (lrobust) PRINT*,'## Robust inversion ##'
-!!!$     ak        READ (fpcfg,*,end=1001,err=999) lpol
-  fetxt = 'rall -> Finale Phasen Inversion'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lfphai
-!!!$     ak        READ (fpcfg,*,end=1001,err=999) lindiv
-  fetxt = 'rall -> Relativer Fehler Widerstand'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabw0
-  fetxt = 'rall -> Absoluter Fehler Widerstand'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabm0
-  fetxt = 'rall -> Phasenfehlerparameter A1'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabpA1
-  fetxt = 'rall -> Phasenfehlerparameter B'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabpB
-  fetxt = 'rall -> Relative Fehler Phasen'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabpA2
-  fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) stabp0
-  fetxt = 'rall -> Homogenes Startmodell?'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lrho0
-  fetxt = 'rall -> rho_0'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) bet0
-  fetxt = 'rall -> phase_0'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) pha0
-  fetxt = 'rall -> Noch eine Inversion'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lagain
-  fetxt = 'rall -> 2D oder 2.5D ?'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) swrtr
-  fetxt = 'rall -> weitere Quelle?'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lsink
-  fetxt = 'rall -> Nummer der Quelle'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) nsink
-  fetxt = 'rall -> Randbedingungen ?'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,*,END=1001,err=999) lrandb2
-  fetxt = 'rall -> Datei mit Randwerten'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(a80)',END=1001,err=999) drandb
-  fetxt = 'triangularization switch'
-  CALL read_comments(fpcfg)
-  READ (fpcfg,'(I2)',END=100,err=100) ltri
+    fetxt = 'rall -> meaurement file'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) dstrom
+    CALL clear_string (dstrom)
 
-  IF (BTEST(ltri,5)) THEN
-     llamf = 1
-     fetxt = 'rall -> fixed lam value'
-     CALL read_comments(fpcfg)
-     READ (fpcfg,*,END=104,err=104) lamfix
-     GOTO 105
-104  lamfix = 1.0           ! default value for MGS
-     BACKSPACE(fpcfg)
+    fetxt = 'rall -> directory for inversion results'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) ramd
+    CALL clear_string (ramd)
 
-105  PRINT*,'Fixing Lambda =', lamfix
-     ltri = ltri - 2**5
+    !!$! checks if dir exists and if not, create it
+    !#if defined (__INTEL_COMPILER)
+    !!$! check for the intel compiler..
+    !#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
+    !#else   
+    !!$! other compilers go here
+    !!$! here we may put #elif defined (__GFORTRAN__) as well
+    !#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
+    !#endif
+    ! ifort uses DIRECTORY for folders, so this is to be used than..
+    ! INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
 
-     IF (BTEST(ltri,6)) THEN 
-        llamf = llamf + 2
-        PRINT*,'NEW:: COOLING lambdas during inv'
-        ltri = ltri - 2**6
-     END IF
+    !!$! workaround for compability issues with ifort..
+    fetxt = TRIM(ramd)//slash//'tmp.check'
+    crtf = .FALSE.
+    !!$ test if you can open a file in the directory..
+    OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',ERR=97)
+    !!$ if you can, the directory exits and you can remove it safely
+    CLOSE(fprun,STATUS='delete')
+    !!$ set this switch to circumvent mkdir
+    PRINT*,'writing inversion results into '//TRIM(ramd)
+    crtf = .TRUE.
+    97 IF (.NOT.crtf) THEN
+        PRINT*,'Creating inversion directory '//TRIM(ramd)
+        CALL SYSTEM ('mkdir '//TRIM(ramd))
+    END IF
+    fetxt = 'rall -> Difference inversion ?'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) ldiff
 
-  END IF
+    fetxt = 'rall -> Diff. measurements'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) dd0
+    CALL clear_string (dd0)
 
-  IF (ltri > 15) THEN ! exception for wrong ltri switch
-     PRINT*,'WARNING, fix lambda switch has changed'
-     PRINT*,'check ltri value (>15):',ltri
-     STOP
-  END IF
+    fetxt = 'rall -> Diff. model (prior)'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) dm0
+    CALL clear_string (dm0)
 
-  lsto = (ltri == 15)
+    fetxt = 'rall -> Diff. model response of prior'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a)',END=1001,err=999) dfm0
+    CALL clear_string (dfm0)
 
-  GOTO 101
+    IF (dm0 /= '') THEN
+        INQUIRE(FILE=TRIM(dm0),EXIST=lstart) ! prior model ?
+        IF (lstart) THEN       ! set the starting model
+            dstart = dm0
+            PRINT*,'+ read prior:',ACHAR(9)//TRIM(dm0)
+        ELSE
+            PRINT*,'- omit prior (NO FILE):',ACHAR(9)//TRIM(dm0)
+            dm0 = ''
+        END IF
+    END IF
+    IF (lstart.AND.ldiff.AND.((dd0 == ''.AND.dfm0 == ''))) THEN
+        PRINT*,'Prior model regularization !'
+        lprior = .TRUE.        ! reference model regu only if there is no
+        ldiff = .FALSE.        ! time difference inversion
+    END IF
+    !!!$     diff+>
+    fetxt = 'trying noise model seed'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=99) iseedpri,modl_stdn
+    !     hier landet man nur, wenn man iseed und modl_stdn angenommen hat
+    !      lnse2 = .NOT.lprior       ! kein prior?
+    !     Daten Rauschen unabhängig vom Fehlermodell?
+    lnsepri = lstart          ! if we have seed and std we assume to add noise to prior
+    PRINT*,'Prior model noise !'
+    99 fetxt = 'rall -> Gitter nx'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) nx
+    fetxt = 'rall -> (lamfix) Gitter nz'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) nz
+    fetxt = 'rall -> Anisotropie /x'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) alfx
+    fetxt = 'rall -> Anistotropie /y'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) alfz
+    fetxt = 'rall -> Maximale Iterationen'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) itmax
+    !!!$     ak        READ (fpcfg,*,end=1001,err=999) nrmsdm
+    fetxt = 'rall -> DC/IP Inversion'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) ldc
+    !!!$     ak        READ (fpcfg,*,end=1001,err=999) lsr
+    fetxt = 'rall -> Robuste Inversion'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lrobust
+    IF (lrobust) PRINT*,'## Robust inversion ##'
+    !!!$     ak        READ (fpcfg,*,end=1001,err=999) lpol
+    fetxt = 'rall -> Finale Phasen Inversion'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lfphai
+    !!!$     ak        READ (fpcfg,*,end=1001,err=999) lindiv
+    fetxt = 'rall -> Relativer Fehler Widerstand'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabw0
+    fetxt = 'rall -> Absoluter Fehler Widerstand'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabm0
+    fetxt = 'rall -> Phasenfehlerparameter A1'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabpA1
+    fetxt = 'rall -> Phasenfehlerparameter B'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabpB
+    fetxt = 'rall -> Relative Fehler Phasen'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabpA2
+    fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) stabp0
+    fetxt = 'rall -> Homogenes Startmodell?'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lrho0
+    fetxt = 'rall -> rho_0'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) bet0
+    fetxt = 'rall -> phase_0'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) pha0
+    fetxt = 'rall -> Noch eine Inversion'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lagain
+    fetxt = 'rall -> 2D oder 2.5D ?'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) swrtr
+    fetxt = 'rall -> weitere Quelle?'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lsink
+    fetxt = 'rall -> Nummer der Quelle'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) nsink
+    fetxt = 'rall -> Randbedingungen ?'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,*,END=1001,err=999) lrandb2
+    fetxt = 'rall -> Datei mit Randwerten'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(a80)',END=1001,err=999) drandb
+    fetxt = 'triangularization switch'
+    CALL read_comments(fpcfg)
+    READ (fpcfg,'(I2)',END=100,err=100) ltri
 
-100 BACKSPACE (fpcfg)
+    IF (BTEST(ltri,5)) THEN
+        llamf = 1
+        fetxt = 'rall -> fixed lam value'
+        CALL read_comments(fpcfg)
+        READ (fpcfg,*,END=104,err=104) lamfix
+        GOTO 105
+        104  lamfix = 1.0           ! default value for MGS
+        BACKSPACE(fpcfg)
 
+        105  PRINT*,'Fixing Lambda =', lamfix
+        ltri = ltri - 2**5
 
-101 IF (lsto) THEN
-     PRINT*,'Stochastische Regularisierung'
-     !     eps = eps*1d-2
-  END IF
-  IF (ltri > 4 .AND. ltri < 15) THEN
-     fetxt = 'rall -> beta value'
-     CALL read_comments(fpcfg)
-     READ (fpcfg,*,END=102,err=102) betamgs
-     GOTO 103
-102  betamgs = 0.1          ! default value for MGS
-     BACKSPACE (fpcfg)
+        IF (BTEST(ltri,6)) THEN
+            llamf = llamf + 2
+            PRINT*,'NEW:: COOLING lambdas during inv'
+            ltri = ltri - 2**6
+        END IF
+    END IF
 
-103  PRINT*,'Regularisation with support stabilizer beta =',betamgs
-  END IF
+    IF (ltri > 15) THEN ! exception for wrong ltri switch
+        PRINT*,'WARNING, fix lambda switch has changed'
+        PRINT*,'check ltri value (>15):',ltri
+        STOP
+    END IF
 
-  IF (itmax == 0) PRINT*,' ####### Only precalcs, itmax==0 ###########'
+    lsto = (ltri == 15)
 
-!!!$     check if the final phase should start with homogenous model      
-  lffhom = (stabp0 < 0)
-  IF (lffhom) stabp0 = -stabp0
+    GOTO 101
 
-!!!$     check if there is crt.noisemod containig noise info
-  fetxt = 'crt.noisemod'
-  INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
+    100 BACKSPACE (fpcfg)
 
-  lnse = ( stabw0 < 0 )     ! couple error and noise model
-  IF ( lnse ) THEN
-     stabw0 = -stabw0 ! reset standard deviation to positive val
-     IF (lnse2) PRINT*,'overriding seperate noise model'
-     lnse2 = .FALSE.        ! overrides the lnse2 switch
-!!!$     copy error model into noise model
-     nstabw0 = stabw0
-     nstabm0 = stabm0
-     nstabpA1 = stabpA1
-     nstabpA2 = stabpA2
-     nstabp0 = stabp0
+    101 IF (lsto) THEN
+        PRINT*,'Stochastische Regularisierung'
+        !     eps = eps*1d-2
+    END IF
+    IF (ltri > 4 .AND. ltri < 15) THEN
+        fetxt = 'rall -> beta value'
+        CALL read_comments(fpcfg)
+        READ (fpcfg,*,END=102,err=102) betamgs
+        GOTO 103
+        102  betamgs = 0.1          ! default value for MGS
+        BACKSPACE (fpcfg)
 
-     fetxt = 'rall -> seed'
+        103  PRINT*,'Regularisation with support stabilizer beta =',betamgs
+    END IF
 
-     CALL read_comments(fpcfg)
-     READ (fpcfg,*,END=106,err=106) iseed
-     GOTO 107
-106  iseed = 1              ! default value for PRS
-     BACKSPACE(fpcfg)
-     WRITE (*,'(a)')' Rauschen Gekoppelt an Fehlermodell '
-  END IF
+    IF (itmax == 0) PRINT*,' ####### Only precalcs, itmax==0 ###########'
 
-107 IF (lnse2) THEN
+    !!!$     check if the final phase should start with homogenous model
+    lffhom = (stabp0 < 0)
+    IF (lffhom) stabp0 = -stabp0
 
-     fetxt = 'get noise model from crt.noisemod'
-     CALL get_noisemodel(iseed,nstabw0,nstabm0,nstabpA1,&
-          nstabpB,nstabpA2,nstabp0,errnr)
+    !!!$ check if there is crt.noisemod containig noise info
+    fetxt = 'crt.noisemod'
+    INQUIRE(FILE=TRIM(fetxt),EXIST=lnse2)
 
-     IF (errnr /= 0) GOTO 999
+    lnse = ( stabw0 < 0 )     ! couple error and noise model
+    IF (lnse) THEN
+        stabw0 = -stabw0 ! reset standard deviation to positive val
+        IF (lnse2) PRINT*,'overriding seperate noise model'
+        lnse2 = .FALSE.        ! overrides the lnse2 switch
+        !!!$     copy error model into noise model
+        nstabw0 = stabw0
+        nstabm0 = stabm0
+        nstabpA1 = stabpA1
+        nstabpA2 = stabpA2
+        nstabp0 = stabp0
 
-     WRITE (*,'(a,I7)',ADVANCE='no')&
-          'Entkoppeltes Daten Rauschen:: seed:',iseed
+        fetxt = 'rall -> seed'
 
-     lnse = .TRUE.          ! add noise
+        CALL read_comments(fpcfg)
+        READ (fpcfg,*,END=106,err=106) iseed
+        GOTO 107
+        106  iseed = 1              ! default value for PRS
+        BACKSPACE(fpcfg)
+        WRITE (*,'(a)')' Rauschen Gekoppelt an Fehlermodell '
+    END IF
 
-  END IF
+    107 IF (lnse2) THEN
+        fetxt = 'get noise model from crt.noisemod'
+        CALL get_noisemodel(iseed,nstabw0,nstabm0,nstabpA1,&
+             nstabpB,nstabpA2,nstabp0,errnr)
 
-  IF (lnse) THEN 
-     fetxt = 'write out noise model'
-     CALL write_noisemodel(iseed,nstabw0,nstabm0,&
-          nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
-     IF (errnr /= 0) GOTO 999
-  END IF
+        IF (errnr /= 0) GOTO 999
+
+        WRITE (*,'(a,I7)',ADVANCE='no')&
+              'Entkoppeltes Daten Rauschen:: seed:',iseed
+
+        lnse = .TRUE.          ! add noise
+    END IF
+
+    IF (lnse) THEN
+        fetxt = 'write out noise model'
+        CALL write_noisemodel(iseed,nstabw0,nstabm0,&
+            nstabpA1,nstabpB,nstabpA2,nstabp0,errnr)
+        IF (errnr /= 0) GOTO 999
+    END IF
 
 
-  IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
+    IF ((nx<=0.OR.nz<=0).AND.ltri==0) ltri=1 ! at least L1-smoothness
 
-!!!$     Ggf. Fehlermeldungen
-  IF (ltri==0.AND.(nx.LT.2.OR.nz.LT.2)) THEN
-     fetxt = ' '
-     errnr = 89
-     GOTO 999
-!!!$  else if (alfx.le.0d0.or.alfz.le.0d0) then
-!!!$  fetxt = ' '
-!!!$  errnr = 96
-!!!$  goto 999
-  ELSE IF (itmax<0.OR.itmax.GE.100) THEN
-     fetxt = ' '
-     errnr = 61
-     GOTO 999
-  ELSE IF (nrmsdm.LT.1d-12) THEN
-     fetxt = ' '
-     errnr = 62
-     GOTO 999
-!!!$     else if (nlam.lt.0) then
-!!!$     fetxt = ' '
-!!!$     errnr = 83
-!!!$     goto 999
-!!!$     else if (fstart.gt.1d0.or.fstop.gt.1d0.or.
-!!!$     1           fstart.le.0d0.or.fstop.le.0d0.or.
-!!!$     1           fstart.gt.fstop) then
-!!!$     fetxt = ' '
-!!!$     errnr = 98
-!!!$     goto 999
-  ELSE IF (stabw0.LE.0d0.OR.stabm0.LT.0d0) THEN
-     fetxt = ' '
-     errnr = 104
-     GOTO 999
-  ELSE IF (.NOT.ldc.AND.lfphai.AND.&
-       ((stabp0.LT.0d0.OR.stabpA2.LT.0d0).OR. &
-       ((stabp0 == 0d0).AND.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) THEN
-     fetxt = ' '
-     errnr = 105
-     GOTO 999
-  ELSE IF (lrho0.AND.(bet0.LE.0d0.OR.&
-       (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi))) THEN
-     fetxt = ' '
-     errnr = 91
-     GOTO 999
-!!!$     else if (mqrms.lt.0d0.or.mqrms.ge.1d0) then
-!!!$     fetxt = ' '
-!!!$     errnr = 64
-!!!$     goto 999
-!!!$     else if (lrobust.and.l1min.lt.1d0) then
-!!!$     fetxt = ' '
-!!!$     errnr = 90
-!!!$     goto 999
-  END IF
+    !!!$     Ggf. Fehlermeldungen
+    IF (ltri==0.AND.(nx.LT.2.OR.nz.LT.2)) THEN
+        fetxt = ' '
+        errnr = 89
+        GOTO 999
+        !!!$  else if (alfx.le.0d0.or.alfz.le.0d0) then
+        !!!$  fetxt = ' '
+    !!!$  errnr = 96
+    !!!$  goto 999
+    ELSE IF (itmax<0.OR.itmax.GE.100) THEN
+        fetxt = ' '
+        errnr = 61
+        GOTO 999
+    ELSE IF (nrmsdm.LT.1d-12) THEN
+        fetxt = ' '
+        errnr = 62
+        GOTO 999
+        !!!$     else if (nlam.lt.0) then
+        !!!$     fetxt = ' '
+        !!!$     errnr = 83
+        !!!$     goto 999
+        !!!$     else if (fstart.gt.1d0.or.fstop.gt.1d0.or.
+        !!!$     1           fstart.le.0d0.or.fstop.le.0d0.or.
+        !!!$     1           fstart.gt.fstop) then
+        !!!$     fetxt = ' '
+        !!!$     errnr = 98
+        !!!$     goto 999
+    ELSE IF (stabw0.LE.0d0.OR.stabm0.LT.0d0) THEN
+        fetxt = ' '
+        errnr = 104
+        GOTO 999
+    ELSE IF (.NOT.ldc.AND.lfphai.AND.&
+        ((stabp0.LT.0d0.OR.stabpA2.LT.0d0).OR. &
+        ((stabp0 == 0d0).AND.(stabpA2 == 0d0).AND.(stabpA1 == 0d0)))) THEN
+        fetxt = ' '
+        errnr = 105
+        GOTO 999
+    ELSE IF (lrho0.AND.(bet0.LE.0d0.OR.&
+        (.NOT.ldc.AND.dabs(pha0).GT.1d3*pi))) THEN
+        fetxt = ' '
+        errnr = 91
+        GOTO 999
+        !!!$     else if (mqrms.lt.0d0.or.mqrms.ge.1d0) then
+        !!!$     fetxt = ' '
+        !!!$     errnr = 64
+        !!!$     goto 999
+        !!!$     else if (lrobust.and.l1min.lt.1d0) then
+        !!!$     fetxt = ' '
+        !!!$     errnr = 90
+        !!!$     goto 999
+    END IF
 
 !!$ RM >>
 !!!$ assign all the logical switches and settings for the inversion
@@ -620,25 +621,25 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
   CALL relem(kanal,delem)
   IF (errnr.NE.0) GOTO 999
 
-  !!! MW: read in decoupling 
-  INQUIRE(FILE=TRIM("decouplings.dat"),EXIST=decexi)
-  IF (decexi) THEN
-       WRITE(*,*) "Found decoupling file"
+    !!! MW: read in decoupling
+    INQUIRE(FILE=TRIM("decouplings.dat"),EXIST=decexi)
+    IF (decexi) THEN
+        WRITE(*,*) "Found decoupling file"
 
-       OPEN(kanal, file=TRIM('decouplings.dat'),status='old')
-       READ(kanal,*) decanz
-       WRITE(*,*) "number decouplings: ", decanz
-       ALLOCATE (edecoup(decanz, 2),stat=errnr)
-       ALLOCATE (edecstr(decanz),stat=errnr)
-       DO j=1,decanz
-          READ(kanal, *) edecoup(j, 1), edecoup(j, 2), edecstr(j)
-          WRITE(*,*) "Input: ", edecoup(j, 1), edecoup(j, 2), edecstr(j)
-       END DO
+        OPEN(kanal, file=TRIM('decouplings.dat'),status='old')
+        READ(kanal,*) decanz
+        WRITE(*,*) "number of decouplings: ", decanz
+        ALLOCATE (edecoup(decanz, 2),stat=errnr)
+        ALLOCATE (edecstr(decanz),stat=errnr)
+        DO j=1,decanz
+            READ(kanal, *) edecoup(j, 1), edecoup(j, 2), edecstr(j)
+            WRITE(*,*) "Input: ", edecoup(j, 1), edecoup(j, 2), edecstr(j)
+        END DO
 
-     CLOSE(kanal)
-  ELSE
-     decanz = 0
-  END IF
+        CLOSE(kanal)
+    ELSE
+        decanz = 0
+    END IF
 
 
   !!! decoupling end
@@ -807,100 +808,100 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      CALL rrandb(kanal,drandb)
      IF (errnr.NE.0) GOTO 999
   END IF
-!!!$     diff+<
-  IF (ldiff) THEN
-     ALLOCATE (d0(nanz),fm0(nanz),stat=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation diff data '
-        errnr = 94
-        GOTO 999
-     END IF
-     OPEN(kanal,file=TRIM(dd0),status='old')
-     READ(kanal,*) nanz0
-     READ(kanal,*,err=999) elec1
-     BACKSPACE(kanal)
 
-     elec3=elec1-10000      ! are we still positive?
-     crtf=(elec3 > 0)       ! crtomo konform?
-
-     ALLOCATE (dum(nanz0),dum2(nanz0),idum(nanz0),&
-          ic(nanz0),ip(nanz0),stat=errnr)
-     IF (errnr /= 0) THEN
-        fetxt = 'Error memory allocation dum'
-        errnr = 94
-        GOTO 999
-     END IF
-
-     DO j=1,nanz0
-        IF (crtf) THEN
-           READ(kanal,*) ic(j),ip(j),dum(j)
-        ELSE
-           READ(kanal,*) elec1,elec2,elec3,elec4,dum(j)
-           ic(j) = elec1*10000 + elec2
-           ip(j) = elec3*10000 + elec4
+    !!!$     diff+<
+    IF (ldiff) THEN
+        ALLOCATE (d0(nanz),fm0(nanz),stat=errnr)
+        IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation diff data '
+            errnr = 94
+            GOTO 999
         END IF
-     END DO
-     CLOSE(kanal)
+        OPEN(kanal,file=TRIM(dd0),status='old')
+        READ(kanal,*) nanz0
+        READ(kanal,*,err=999) elec1
+        BACKSPACE(kanal)
 
-     OPEN(kanal,file=TRIM(dfm0),status='old')
-     READ(kanal,*)
-     DO j=1,nanz0
-        READ(kanal,*) i,i,dum2(j),idum(j)
-     END DO
-     CLOSE(kanal)
+        elec3=elec1-10000      ! are we still positive?
+        crtf=(elec3 > 0)       ! crtomo konform?
 
-     j0 = 0
-     i  = 0
-10   i  = i+1
-     j = j0
-20   j = j+1
-     IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
-!!!$     nur falls jede Messkonfiguration nur einmal!
-!!!$     j0     = j
-        d0(i)  = dcmplx(-dlog(dum(j)),0d0)
-        fm0(i) = dcmplx(-dlog(dum2(j)),0d0)
-     ELSE IF (j.LT.nanz0) THEN
-        GOTO 20
-     ELSE
-        WRITE(fprun,'(i7,1x,i7,a12)',err=999)strnr(i),vnr(i),' : discarded'
+        ALLOCATE (dum(nanz0),dum2(nanz0),idum(nanz0),&
+            ic(nanz0),ip(nanz0),stat=errnr)
+        IF (errnr /= 0) THEN
+            fetxt = 'Error memory allocation dum'
+            errnr = 94
+            GOTO 999
+        END IF
 
-        nanz = nanz-1
-        DO j=i,nanz
-           strnr(j) = strnr(j+1)
-           vnr(j)   = vnr(j+1)
-           dat(j)   = dat(j+1)
-           wmatd(j) = wmatd(j+1)
-           IF (lfphai) wmatdp(j)=wmatdp(j+1)
-!!!$     nicht notwendig, da Werte eh alle 1
-!!!$     wdfak(j) = wdfak(j+1)
+        DO j=1,nanz0
+            IF (crtf) THEN
+                READ(kanal,*) ic(j),ip(j),dum(j)
+            ELSE
+                READ(kanal,*) elec1,elec2,elec3,elec4,dum(j)
+                ic(j) = elec1*10000 + elec2
+                ip(j) = elec3*10000 + elec4
+            END IF
         END DO
-        i = i-1
-     END IF
-     IF (i.LT.nanz) GOTO 10
+        CLOSE(kanal)
 
-     OPEN(kanal,file=TRIM(dm0),status='old')
-     READ(kanal,*)
-     DO j=1,elanz
-        READ(kanal,*) dum3,dum3,dum3
-        m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
-     END DO
-     CLOSE(kanal)
-     DEALLOCATE (dum,dum2,idum,ic,ip)
-  END IF ! ldiff
-!!!$     diff+>
+        OPEN(kanal,file=TRIM(dfm0),status='old')
+        READ(kanal,*)
+        DO j=1,nanz0
+            READ(kanal,*) i,i,dum2(j),idum(j)
+        END DO
+        CLOSE(kanal)
 
-  errnr = 0
+        j0 = 0
+        i  = 0
+        10   i  = i+1
+        j = j0
+        20   j = j+1
+        IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
+            !!!$     nur falls jede Messkonfiguration nur einmal!
+            !!!$     j0     = j
+            d0(i)  = dcmplx(-dlog(dum(j)),0d0)
+            fm0(i) = dcmplx(-dlog(dum2(j)),0d0)
+        ELSE IF (j.LT.nanz0) THEN
+            GOTO 20
+        ELSE
+            WRITE(fprun,'(i7,1x,i7,a12)',err=999)strnr(i),vnr(i),' : discarded'
 
-  RETURN
+            nanz = nanz-1
+            DO j=i,nanz
+                strnr(j) = strnr(j+1)
+                vnr(j)   = vnr(j+1)
+                dat(j)   = dat(j+1)
+                wmatd(j) = wmatd(j+1)
+                IF (lfphai) wmatdp(j)=wmatdp(j+1)
+                !!!$     nicht notwendig, da Werte eh alle 1
+                !!!$     wdfak(j) = wdfak(j+1)
+            END DO
+            i = i-1
+        END IF
+        IF (i.LT.nanz) GOTO 10
 
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+        OPEN(kanal,file=TRIM(dm0),status='old')
+        READ(kanal,*)
+        DO j=1,elanz
+            READ(kanal,*) dum3,dum3,dum3
+            m0(mnr(j)) = dcmplx(-dlog(1d1)*dum3,0d0)
+        END DO
+        CLOSE(kanal)
+        DEALLOCATE (dum,dum2,idum,ic,ip)
+    END IF ! ldiff
+    !!!$     diff+>
 
-!!!$     Fehlermeldungen
+    errnr = 0
 
-999 RETURN
+    RETURN
 
-1001 errnr = 2
-  RETURN
+    !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    !!!$     Fehlermeldungen
+
+    999 RETURN
+
+    1001 errnr = 2
+        RETURN
 
 END SUBROUTINE rall
-
