@@ -438,11 +438,15 @@ CONTAINS
                         IF (((i == edecoup(decn, 1)) .AND. (nachbar(i, k) == edecoup(decn, 2))) .OR. &
                             ((nachbar(i, k) == edecoup(decn, 1)) .AND. (i == edecoup(decn, 2))) ) &
                                 THEN
+                            ! if we would introduce anistroptic decoupling parameters, then the following line would be used to
+                            ! compute the decoupling strength
+                            ! decstr = DSQRT((edecstr(decn, 1) *DCOS(ang))**2d0 + (edecstr(decn, 2)*DSIN(ang))**2d0)
+
                             regularisation_strength = regularisation_strength * edecstr(decn)
                         END IF
                     END DO
 
-                    ! set off diagonal of R (these entries are only set once for each
+                    ! set off-diagonal of R (these entries are only set once for each
                     !  specific cell-neighboring cell pair
                     smatm(i,k) = -regularisation_strength
 
