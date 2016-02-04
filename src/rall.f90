@@ -336,68 +336,88 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
     fetxt = 'rall -> Anistotropie /y'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) alfz
+
     fetxt = 'rall -> Maximale Iterationen'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) itmax
     !!!$     ak        READ (fpcfg,*,end=1001,err=999) nrmsdm
+
     fetxt = 'rall -> DC/IP Inversion'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) ldc
     !!!$     ak        READ (fpcfg,*,end=1001,err=999) lsr
+
     fetxt = 'rall -> Robuste Inversion'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lrobust
     IF (lrobust) PRINT*,'## Robust inversion ##'
     !!!$     ak        READ (fpcfg,*,end=1001,err=999) lpol
+
     fetxt = 'rall -> Finale Phasen Inversion'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lfphai
     !!!$     ak        READ (fpcfg,*,end=1001,err=999) lindiv
+
     fetxt = 'rall -> Relativer Fehler Widerstand'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabw0
+
     fetxt = 'rall -> Absoluter Fehler Widerstand'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabm0
+
     fetxt = 'rall -> Phasenfehlerparameter A1'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabpA1
+
     fetxt = 'rall -> Phasenfehlerparameter B'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabpB
+
     fetxt = 'rall -> Relative Fehler Phasen'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabpA2
+
     fetxt = 'rall -> Absoluter Fehler Phasen (mRad)'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) stabp0
+
     fetxt = 'rall -> Homogenes Startmodell?'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lrho0
+
     fetxt = 'rall -> rho_0'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) bet0
+
     fetxt = 'rall -> phase_0'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) pha0
+
     fetxt = 'rall -> Noch eine Inversion'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lagain
+
     fetxt = 'rall -> 2D oder 2.5D ?'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) swrtr
+
     fetxt = 'rall -> weitere Quelle?'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lsink
+
     fetxt = 'rall -> Nummer der Quelle'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) nsink
+
     fetxt = 'rall -> Randbedingungen ?'
     CALL read_comments(fpcfg)
     READ (fpcfg,*,END=1001,err=999) lrandb2
+
     fetxt = 'rall -> Datei mit Randwerten'
     CALL read_comments(fpcfg)
     READ (fpcfg,'(a80)',END=1001,err=999) drandb
+
     fetxt = 'triangularization switch'
     CALL read_comments(fpcfg)
     READ (fpcfg,'(I2)',END=100,err=100) ltri
