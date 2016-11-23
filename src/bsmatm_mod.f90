@@ -460,239 +460,215 @@ CONTAINS
     END SUBROUTINE bsmatmtri
 
     SUBROUTINE bsmatmlma      ! levenberg-marquardt damping
-!
-!    Unterprogramm belegt die Glaettungsmtrix
-!    (hier Daempfungsmatrix (smatm))
-!
-!    Copyright by Andreas Kemna                               2009
-!    Erstellt von Roland Martin                               18-Dec-2009
-!    Letzte Aenderung RM                                      Jul-2010
-!    
-!........................................................................
-!    PROGRAMMINTERNE PARAMETER:
-    REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
-    REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
-    INTEGER :: j
-!.....................................................................
+        !
+        !    Unterprogramm belegt die Glaettungsmtrix
+        !    (hier Daempfungsmatrix (smatm))
+        !
+        !    Copyright by Andreas Kemna                          2009
+        !    Erstellt von Roland Martin                          18-Dec-2009
+        !    Letzte Aenderung RM                                 Jul-2010
+        !
+        !.....................................................................
+        !    PROGRAMMINTERNE PARAMETER:
+        REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
+        REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
+        INTEGER :: j
+        !.....................................................................
 
-    IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
-    IF (errnr/=0) THEN
-       WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmlma'
-       errnr = 97
-       RETURN
-    END IF
+        IF (.NOT.ALLOCATED (smatm)) ALLOCATE (smatm(manz,1),STAT=errnr)
+        IF (errnr/=0) THEN
+            WRITE (*,'(/a/)')'Allocation problem smatm in bsmatmlma'
+            errnr = 97
+            RETURN
+        END IF
 
-    smatm = 0d0               ! initialize smatm
+        ! initialize smatm
+        smatm = 0d0
 
-    IF (ltri==3) THEN
-
-       smatm = 1d0 ! Levenberg Damping
-
-    ELSE
-
-       CALL bcsens (csensmax,csensavg)
-
-       DO j = 1,manz
-
-          smatm(j,1) = csensmax/csens(j)
-
-       END DO
-
-    END IF
-
-  END SUBROUTINE bsmatmlma
+        IF (ltri==3) THEN
+            smatm = 1d0 ! Levenberg Damping
+        ELSE
+            CALL bcsens (csensmax,csensavg)
+            DO j = 1,manz
+                smatm(j,1) = csensmax/csens(j)
+            END DO
+        END IF
+    END SUBROUTINE bsmatmlma
 
 
-  SUBROUTINE bsmatmmgs      !MGS
-!    
-!  Unterprogramm belegt die Rauhigkeitsmatrix ala 
-! Portniaguine und Zhdanov [1999]
-! Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
-!
-!    Copyright by Andreas Kemna 2009
-!    
-!    Erste Version von Roland Martin                          03-Nov-2009
-!    
-!    Last edited  RM                                          18-Dec-2009
-!    
-!........................................................................
-!     PROGRAMMINTERNE PARAMETER:
-!     Hilfsvariablen 
+    SUBROUTINE bsmatmmgs      !MGS
+        !
+        ! Unterprogramm belegt die Rauhigkeitsmatrix ala
+        ! Portniaguine und Zhdanov [1999]
+        ! Fuer beliebige Triangulierung mit Sensitivitäten gewichtet [Blaschek 2008]
+        !
+        !    Copyright by Andreas Kemna 2009
+        !
+        !    Erste Version von Roland Martin                          03-Nov-2009
+        !
+        !    Last edited  RM                                          18-Dec-2009
+        !
+        !........................................................................
+        !     PROGRAMMINTERNE PARAMETER:
+        !     Hilfsvariablen 
+        REAL(KIND(0D0)) :: dum,dum2 ! helpers
+        REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
+        INTEGER         :: i,k,ik
+        REAL(KIND(0D0)) :: edglen ! Kantenlaenge
+        REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
+        REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
+        REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
+        REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
+        REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
+        REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
+        REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
+        !.....................................................................
 
-    REAL(KIND(0D0)) :: dum,dum2 ! helpers
-    REAL(KIND(0D0)) :: mgrad,sqmgrad ! model gradient and squared model grad
-    INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen ! Kantenlaenge
-    REAL(KIND(0D0)) :: dist ! Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) ! Schwerpunktkoordinaten
-    REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
-    REAL(KIND(0D0)) :: csensmax  !Maximale Covarage
-    REAL(KIND(0D0)) :: csensavg  !Mittlere Covarage
-    REAL(KIND(0D0)) :: alfgeo !Anisotrope Glaettung
-    REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
-!.....................................................................
+        errnr = 4
+        dum = 0D0
+        CALL bcsens(csensmax,csensavg)
 
-    errnr = 4
-    dum = 0D0
-    CALL bcsens(csensmax,csensavg)
+        IF (csensmax > 1d-12) THEN
+            csens = csens / csensmax
+        END IF
 
-    IF (csensmax > 1d-12) THEN
-       csens = csens / csensmax
-    END IF
+        PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
 
-    PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
+        IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1),&
+            STAT=errnr)
 
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1),&
-         STAT=errnr)
+        IF (errnr/=0) THEN
+            fetxt = 'Allocation problem WORK in bmcm'
+            WRITE (*,'(/a/)')TRIM(fetxt)
+            errnr = 97
+            RETURN
+        END IF
 
-    IF (errnr/=0) THEN
-       fetxt = 'Allocation problem WORK in bmcm'
-       WRITE (*,'(/a/)')TRIM(fetxt)
-       errnr = 97
-       RETURN
-    END IF
+        ! initialize smatm
+        smatm = 0d0
 
-    smatm = 0d0               ! initialize smatm
+        DO i=1,elanz ! elanz = flaecheneles
+            sp1(1) = espx(i) ! Mittelpunkt des aktuellen Elements
+            sp1(2) = espy(i)
 
-    DO i=1,elanz ! elanz = flaecheneles
+            DO k=1,max_nr_element_nodes  ! jedes flaechenele hat mind einen nachbarn
+                ik = MOD(k,max_nr_element_nodes) + 1 !!! associates the next node, or itself
 
-       sp1(1) = espx(i) ! Mittelpunkt des aktuellen Elements
-       sp1(2) = espy(i)
+                edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
+                    (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
+                !!$! edge of i,k and the next..
 
-       DO k=1,max_nr_element_nodes           ! jedes flaechenele hat mind einen nachbarn
+                IF (nachbar(i,k)>0) THEN !nachbar existiert 
+                    ! Schwerpunkt des nachbar elements
+                    sp2(1) = espx(nachbar(i,k))! center point of element
+                    sp2(2) = espy(nachbar(i,k))
 
-          ik = MOD(k,max_nr_element_nodes) + 1 !!! associates the next node, or itself
+                    ! Geometrical part...
+                    ! distance of the mid points
+                    dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
+                    !!$! including anisotropy!
+                    !angle to horizon
+                    ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
+                    ! geometrical contribution... (as smooth regularization..)
+                    ! projected effective contribution due to anisotropic regu
+                    alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
 
-          edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
-               (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
-!!$! edge of i,k and the next..
+                    ! Model value gradient (\nabla m)
 
-          IF (nachbar(i,k)>0) THEN !nachbar existiert 
+                    !!! TODO
+                    mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
+                    sqmgrad = mgrad * mgrad
+                    ! TODO
+                    ! MGS Teil
+                    !
+                    !    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
+                    !    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
+                    !            !!!! ATTENTION !!!!
+                    ! The squared model gradient in the 
+                    ! nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
+                    ! !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
+                    ! for now we have to deal with the denominator stuff only at this point!!
+                    ! The gemoetrical part is than reduced to
+                    ! \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
+                    ! -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
+                    !  of anisotropy
+                    IF (ltri == 5) THEN !reines MGS
+                        dum = sqmgrad + betamgs**2d0
+                        ! proportional contribution of integrated cell
+                        dum = alfgeo * edglen / dist / dum
 
-!schwerpunkt des nachbar elements
-             sp2(1) = espx(nachbar(i,k))! center point of element
-             sp2(2) = espy(nachbar(i,k))
+                    ELSE IF (ltri == 6) THEN !sensitivitaetswichtung 1 von RM
+                        ! f(i,k) = 1 + g(i) + g(k)
+                        dum2 = 1d0 + DABS(DLOG10(csens(i))) + &
+                            DABS(DLOG10(csens(nachbar(i,k))))
+                        ! dum2 = f(i,k)^2
+                        dum2 = dum2**2d0
+                        ! dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+                        dum = sqmgrad + (betamgs / dum2)**2d0
+                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+                        ! grad(m)^2 + (\beta/f(i,k)^2)^2
+                        dum = alfgeo * edglen / dist / dum2 / dum
+                    ELSE IF (ltri == 7) THEN !sensitivitaetswichtung 2 von RM
+                        ! f(i,k) = 1 + (g(i) + g(k))/mean(g)
+                        dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
+                            DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
+                        !    dum2 = f(i,k)^2
+                        dum2 = dum2**2d0
+                        !    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
+                        dum = sqmgrad + (betamgs / dum2)**2d0
+                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+                        ! grad(m)^2 + (\beta/f(i,k)^2)^2
+                        dum = alfgeo * edglen / dist / dum2 / dum
+                    ELSE IF (ltri == 8) THEN !sensitivitaetswichtung von RB
+                        !    der folgende code wurde mir so ueberliefert... 
+                        ! kam von RB aber keine ahnung was das genau macht
+                        dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
+                            DLOG10(csens(nachbar(i,k))) ) ))
+                        alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
+                        dum =  edglen * alfgeo * alfmgs
+                    ELSE IF (ltri == 9) THEN
+                        dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
+                            DLOG10(csens(nachbar(i,k))) ) / csensavg ))
 
-!    Geometrical part...
-             ! distance of the mid points
-             dist = SQRT((sp1(1) - sp2(1))**2d0 + (sp1(2) - sp2(2))**2d0)
-!!$! including anisotropy!
-!angle to horizon
-             ang = DATAN2((sp1(2) - sp2(2)),(sp1(1) - sp2(1)))
-! geometrical contribution... (as smooth regularization..)
-! projected effective contribution due to anisotropic regu
-             alfgeo = DSQRT((alfx*DCOS(ang))**2d0 + (alfz*DSIN(ang))**2d0)
+                        alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
+                        dum =  edglen * alfgeo * alfmgs
+                    END IF
+                    ! nun glaettung belegen
+                    smatm(i,k) = -dum !neben Diagonale
+                    smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum !Hauptdiagonale
+                END IF
+            END DO
+        END DO
+        DEALLOCATE (csens)
 
-! Model value gradient (\nabla m)
+        errnr = 0
+    END SUBROUTINE bsmatmmgs
 
-!!! TODO
-             mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
-             sqmgrad = mgrad * mgrad
-! TODO
-!    MGS Teil
-!
-!    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
-!    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
-!            !!!! ATTENTION !!!!
-! The squared model gradient in the 
-! nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
-! !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
-! for now we have to deal with the denominator stuff only at this point!!
-! The gemoetrical part is than reduced to
-! \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
-! -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
-!  of anisotropy
-             IF (ltri == 5) THEN !reines MGS
+    SUBROUTINE bsmatmtv      !betatv
+        !
+        !    Unterprogramm belegt die Rauhigkeitsmatrix mit total variance
+        !    fuer beliebige Triangulierung 
+        !
+        !    Copyright by Andreas Kemna 2009
+        !    
+        !    Created by Roland Martin                          23-Nov-2009
+        !    
+        !    Letzte Aenderung   RM                                    23-Nov-2009
+        !    
+        !........................................................................
+        !   PROGRAMMINTERNE PARAMETER:
+        !   Hilfsvariablen 
+        REAL(KIND(0D0)) :: dum
+        INTEGER         :: i,k,ik
+        REAL(KIND(0D0)) :: edglen !Kantenlaenge
+        REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
+        REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
+        REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
+        REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
+        REAL(KIND(0D0)) :: alftv  !TV Glaettung
+    !.....................................................................
 
-                dum = sqmgrad + betamgs**2d0
-! proportional contribution of integrated cell
-                dum = alfgeo * edglen / dist / dum
-
-             ELSE IF (ltri == 6) THEN !sensitivitaetswichtung 1 von RM
-!    f(i,k) = 1 + g(i) + g(k)
-                dum2 = 1d0 + DABS(DLOG10(csens(i))) + &
-                     DABS(DLOG10(csens(nachbar(i,k))))
-!    dum2 = f(i,k)^2
-                dum2 = dum2**2d0
-!    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = sqmgrad + (betamgs / dum2)**2d0
-!    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
-!    grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = alfgeo * edglen / dist / dum2 / dum
-
-             ELSE IF (ltri == 7) THEN !sensitivitaetswichtung 2 von RM
-
-!    f(i,k) = 1 + (g(i) + g(k))/mean(g)
-                dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
-                     DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
-!    dum2 = f(i,k)^2
-                dum2 = dum2**2d0
-!    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = sqmgrad + (betamgs / dum2)**2d0
-!    dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
-!    grad(m)^2 + (\beta/f(i,k)^2)^2
-                dum = alfgeo * edglen / dist / dum2 / dum
-
-             ELSE IF (ltri == 8) THEN !sensitivitaetswichtung von RB
-                
-!    der folgende code wurde mir so ueberliefert... 
-! kam von RB aber keine ahnung was das genau macht
-                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
-                     DLOG10(csens(nachbar(i,k))) ) ))
-                
-                alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
-                dum =  edglen * alfgeo * alfmgs
-
-             ELSE IF (ltri == 9) THEN
-
-                dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
-                     DLOG10(csens(nachbar(i,k))) ) / csensavg ))
-
-                alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
-                dum =  edglen * alfgeo * alfmgs
-
-             END IF
-
-!    nun glaettung belegen
-             smatm(i,k) = -dum !neben Diagonale
-             smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum !Hauptdiagonale
-
-          END IF
-       END DO
-    END DO
-
-    DEALLOCATE (csens)
-
-    errnr = 0
-
-  END SUBROUTINE bsmatmmgs
-
-  SUBROUTINE bsmatmtv      !betatv
-!    
-!    Unterprogramm belegt die Rauhigkeitsmatrix mit total variance
-!    fuer beliebige Triangulierung 
-!
-!    Copyright by Andreas Kemna 2009
-!    
-!    Created by Roland Martin                          23-Nov-2009
-!    
-!    Letzte Aenderung   RM                                    23-Nov-2009
-!    
-!........................................................................
-!   PROGRAMMINTERNE PARAMETER:
-!   Hilfsvariablen 
-    REAL(KIND(0D0)) :: dum
-    INTEGER         :: i,k,ik
-    REAL(KIND(0D0)) :: edglen !Kantenlaenge
-    REAL(KIND(0D0)) :: dist   !Abstand der Schwerpunkte
-    REAL(KIND(0D0)) :: sp1(2),sp2(2) !Schwerpunktkoordinaten
-    REAL(KIND(0D0)) :: ang    !Winkel fuer anisotrope Glaettung
-    REAL(KIND(0D0)) :: alfgeo !Anisotrope (geometrische) Glaettung
-    REAL(KIND(0D0)) :: alftv  !TV Glaettung
-!.....................................................................
-
-    
-    IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1))
+        IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1))
     smatm = 0d0               !initialize smatm
 
     DO i=1,elanz
