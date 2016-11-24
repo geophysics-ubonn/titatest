@@ -151,13 +151,13 @@ subroutine rwaven()
     end do
 
     ! debug output: wavenumbers
-    print *, ""
-    print *, "amin/amax", amin, amax
-    print*, "Number of wavenumbers", kwnanz
-    print *, "wavenumber    weight"
-    do i=1,kwnanz
-        PRINT*, kwn(i), kwnwi(i)
-    end do
+    ! print *, ""
+    ! print *, "amin/amax", amin, amax
+    ! print*, "Number of wavenumbers", kwnanz
+    ! print *, "wavenumber    weight"
+    ! do i=1,kwnanz
+    !     PRINT*, kwn(i), kwnwi(i)
+    ! end do
 
     errnr = 0
     return

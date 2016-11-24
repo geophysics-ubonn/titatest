@@ -63,22 +63,22 @@ REAL (KIND(0D0)) function beta(nelec,k)
     REAL (KIND(0D0))    ::     xs,ys,xr,yr,x3,y3m,y3p,&
         x4,y4,r2,bk0m,bk0p,bk1m,bk1p
 
-    print *, 'xk', xk
-    print *, 'yk', yk
+    ! print *, 'xk', xk
+    ! print *, 'yk', yk
     !!!$.....................................................................
     beta = 0D0
     !!!$ Koordinaten der Stromelektrode bestimmen
     xs = sx(snr(enr(nelec)))
     ys = sy(snr(enr(nelec)))
-    print *, 'Stromelektrode'
-    print *, xs
-    print *, ys
+    ! print *, 'Stromelektrode'
+    ! print *, xs
+    ! print *, ys
 
     !!!$ Koordinaten des aktuellen Randelements bestimmen
     xr = (xk(1)+xk(2)) / 2d0
     yr = (yk(1)+yk(2)) / 2d0
-    print *, 'xr', xr
-    print *, 'yr', yr
+    ! print *, 'xr', xr
+    ! print *, 'yr', yr
 
     !!!$ Abstand Randelement - Quelle/Spiegelquelle bestimmen
     x3  = xr - xs
@@ -120,8 +120,8 @@ REAL (KIND(0D0)) function beta(nelec,k)
 
     beta = kwn(k) * beta
 
-    print *, "beta", beta
-    stop
+    ! print *, "beta", beta
+    ! stop
 
     errnr = 0
     return
