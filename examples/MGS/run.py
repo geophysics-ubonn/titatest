@@ -17,8 +17,8 @@ def create_sim(outdir, mgs_type, mgs_beta):
     cfg['cells_z'] = '-1'
     cfg['fpi_inv'] = 'F'
 
-    cfg['mag_rel'] = '2'
-    cfg['mag_abs'] = '1e-3'
+    cfg['mag_rel'] = '1'
+    cfg['mag_abs'] = '5e-4'
 
     cfg['pha_abs'] = '0'
 
@@ -56,9 +56,19 @@ def create_sim(outdir, mgs_type, mgs_beta):
 
 
 if __name__ == '__main__':
-    for mgs_type in range(5, 10):
-        for mgs_beta in np.logspace(-5, -1, 5):
+    mgs_betas = np.hstack((
+        np.logspace(-5, -1, 5),
+        0.5, 0.8, 0.9, 1.0,
+    ))
+    for mgs_type in list(range(5, 10)):
+        for mgs_beta in mgs_betas:
             directory = 'SIMS/mgs_type_{0}_beta_{1}'.format(mgs_type, mgs_beta)
             if not os.path.isdir(directory):
                 os.makedirs(directory)
-            create_sim(directory, mgs_type, mgs_beta)
+                create_sim(directory, mgs_type, mgs_beta)
+
+    # we need ine reference unversion using the regular triangular reg.
+    directory = 'SIMS/smoothness_regularization'
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+        create_sim(directory, 1, 0)
