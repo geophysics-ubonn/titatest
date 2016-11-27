@@ -1,0 +1,40 @@
+1
+33
+2
+#Electrode_file
+NON
+#Tmin:
+0.5
+#Tmax:
+0
+#dmin
+0.5
+#dmax
+64
+#egl
+8
+#egr
+8
+#egb
+30
+#llx
+0
+#lrx
+0
+#ly
+0
+#nlx
+0
+#nrx
+0
+#nby
+0
+#ggtx
+2
+#ggty
+1
+
+  Anzahl Knoten gesamt horizontal: 129# number of nodes (horizontal)
+1# number of nodes (vertical)
+128# number of elements horizontal
+0# number of elements vertical
