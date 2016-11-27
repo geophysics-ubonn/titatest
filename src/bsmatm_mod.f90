@@ -524,7 +524,8 @@ CONTAINS
         REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
         !.....................................................................
 
-        errnr = 4
+        ! errnr = 4
+        errnr = 0
         dum = 0D0
         CALL bcsens(csensmax,csensavg)
 
@@ -533,11 +534,12 @@ CONTAINS
         END IF
 
         PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
+        PRINT*,'allocated',ALLOCATED(smatm)
 
-        IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1),&
-            STAT=errnr)
+        IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1), STAT=errnr)
 
         IF (errnr/=0) THEN
+            PRINT*,'DEBUG',manz,max_nr_element_nodes+1
             fetxt = 'Allocation problem WORK in bmcm'
             WRITE (*,'(/a/)')TRIM(fetxt)
             errnr = 97
@@ -554,11 +556,13 @@ CONTAINS
             DO k=1,max_nr_element_nodes  ! jedes flaechenele hat mind einen nachbarn
                 ik = MOD(k,max_nr_element_nodes) + 1 !!! associates the next node, or itself
 
-                edglen = SQRT((sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
-                    (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0) 
+                edglen = SQRT( &
+                    (sx(snr(nrel(i,k))) - sx(snr(nrel(i,ik))))**2d0 + &
+                    (sy(snr(nrel(i,k))) - sy(snr(nrel(i,ik))))**2d0 &
+                )
                 !!$! edge of i,k and the next..
 
-                IF (nachbar(i,k)>0) THEN !nachbar existiert 
+                IF (nachbar(i,k)>0) THEN !nachbar existiert
                     ! Schwerpunkt des nachbar elements
                     sp2(1) = espx(nachbar(i,k))! center point of element
                     sp2(2) = espy(nachbar(i,k))
@@ -577,6 +581,7 @@ CONTAINS
 
                     !!! TODO
                     mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
+                    PRINT*,'mgrad',mgrad
                     sqmgrad = mgrad * mgrad
                     ! TODO
                     ! MGS Teil
@@ -608,15 +613,29 @@ CONTAINS
                         ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
                         ! grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = alfgeo * edglen / dist / dum2 / dum
-                    ELSE IF (ltri == 7) THEN !sensitivitaetswichtung 2 von RM
+                    ELSE IF (ltri == 7) THEN
+                        ! previously this mgs type was used for a custom
+                        ! implementation by Roland Martin. See commented dum2
+                        ! below.  However, as none of these custom
+                        ! imlementations is documented anywhere we now
+                        ! change this type (ltri==7)
+                        ! back to the sensitivity-focussing version of Roland
+                        !  Blaschek, as described in the 2008 paper in
+                        ! Geophysics.
+                        dum2 = 1d0 + 0.4d0 *  DABS( &
+                            (DABS(DLOG10(csens(i)))) + DABS(DLOG10(csens(nachbar(i,k))))&
+                        ) / DABS(DLOG10(csensavg))
+
+                        ! Old version by Roland Martin:
                         ! f(i,k) = 1 + (g(i) + g(k))/mean(g)
-                        dum2 = 1d0 + DABS((DLOG10(csens(i))) + &
-                            DABS(DLOG10(csens(nachbar(i,k))))) / csensavg
+                        ! dum2 = 1d0 + DABS( &
+                        !     (DLOG10(csens(i))) + DABS(DLOG10(csens(nachbar(i,k))))&
+                        ! ) / csensavg
                         !    dum2 = f(i,k)^2
                         dum2 = dum2**2d0
                         !    dum = grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = sqmgrad + (betamgs / dum2)**2d0
-                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 /
                         ! grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = alfgeo * edglen / dist / dum2 / dum
                     ELSE IF (ltri == 8) THEN !sensitivitaetswichtung von RB
@@ -633,13 +652,15 @@ CONTAINS
                         alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                         dum =  edglen * alfgeo * alfmgs
                     END IF
-                    ! nun glaettung belegen
-                    smatm(i,k) = -dum !neben Diagonale
-                    smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum !Hauptdiagonale
+                    ! nun Glaettung belegen
+                    smatm(i,k) = -dum ! Nebendiagonale
+                    smatm(i,max_nr_element_nodes+1) = smatm(i,max_nr_element_nodes+1) + dum ! Hauptdiagonale
                 END IF
             END DO
         END DO
-        DEALLOCATE (csens)
+
+        ! we don't need this here, csens is taken care of in bsmatm()
+        ! DEALLOCATE (csens)
 
         errnr = 0
     END SUBROUTINE bsmatmmgs
