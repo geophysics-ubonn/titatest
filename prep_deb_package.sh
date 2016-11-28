@@ -1,4 +1,10 @@
 #!/bin/bash
+# change version number in those places:
+#	* configure.ac
+#	* debian/changelog
+
+# the Debian-changelog can be changed with:
+# debchange --newversion 1.6 --distribution stable
 
 # generate configure, configure
 # the Debian package always has the same prefix

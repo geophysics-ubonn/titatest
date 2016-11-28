@@ -1,10 +1,17 @@
-crtomomod (0.1-4) UNRELEASED; urgency=low
+crtomomod (1.5) stable; urgency=medium
+
+  * New version 1.5
+  * Provide a fixed MGS version
+
+ -- Maximilian Weigand <mweigand@geo.uni-bonn.de>  Sun, 27 Nov 2016 13:55:24 +0100
+
+crtomomod (0.1-4) stable; urgency=low
 
   * Package new version of dev
 
  -- Maximilian Weigand <mweigand@geo.uni-bonn.de>  Mon, 05 May 2016 15:36:21 +0100
 
-crtomomod (0.1-2) UNRELEASED; urgency=low
+crtomomod (0.1-2) stable; urgency=low
 
   * Package new version of dev
 
