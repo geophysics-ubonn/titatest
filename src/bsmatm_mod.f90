@@ -524,7 +524,6 @@ CONTAINS
         REAL(KIND(0D0)) :: alfmgs !MGS Glaettung
         !.....................................................................
 
-        ! errnr = 4
         errnr = 0
         dum = 0D0
         CALL bcsens(csensmax,csensavg)
@@ -534,7 +533,6 @@ CONTAINS
         END IF
 
         PRINT*,'csensavg/csensmax',csensavg,'/',csensmax
-        PRINT*,'allocated',ALLOCATED(smatm)
 
         IF (.NOT.ALLOCATED(smatm)) ALLOCATE (smatm(manz,max_nr_element_nodes+1), STAT=errnr)
 
@@ -581,7 +579,6 @@ CONTAINS
 
                     !!! TODO
                     mgrad = CDABS(sigma(i) - sigma(nachbar(i,k))) / dist
-                    PRINT*,'mgrad',mgrad
                     sqmgrad = mgrad * mgrad
                     ! TODO
                     ! MGS Teil
@@ -589,13 +586,13 @@ CONTAINS
                     !    \int \frac{(\nabla m_{ij})^2}{(\nabla m_{ij})^2+\beta^2}\;dA
                     !    -> (m_i-m_{i+1})^2 \frac{\Delta z_i}{\Delta x_i}
                     !            !!!! ATTENTION !!!!
-                    ! The squared model gradient in the 
-                    ! nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2 
+                    ! The squared model gradient in the
+                    ! nominator of the stabilizer,  i.e. (m_i-m_{i+1})^2
                     ! !!!   IS EVALUATED LATER ON AS MATRIX VECTOR PRODUCT   !!!
                     ! for now we have to deal with the denominator stuff only at this point!!
                     ! The gemoetrical part is than reduced to
                     ! \frac{\Delta z_i}{\Delta x_i} which is edglen / dist!!!
-                    ! -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part 
+                    ! -> smatm(i) = \frac{\Delta z_i}{\Delta x_i} * geometrical part
                     !  of anisotropy
                     IF (ltri == 5) THEN !reines MGS
                         dum = sqmgrad + betamgs**2d0
@@ -610,7 +607,7 @@ CONTAINS
                         dum2 = dum2**2d0
                         ! dum = grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = sqmgrad + (betamgs / dum2)**2d0
-                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 / 
+                        ! dum = \alpha_{xz} * \Delta z / \Delta x / f(i,k)^2 /
                         ! grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = alfgeo * edglen / dist / dum2 / dum
                     ELSE IF (ltri == 7) THEN
@@ -622,9 +619,11 @@ CONTAINS
                         ! back to the sensitivity-focussing version of Roland
                         !  Blaschek, as described in the 2008 paper in
                         ! Geophysics.
-                        dum2 = 1d0 + 0.4d0 *  DABS( &
-                            (DABS(DLOG10(csens(i)))) + DABS(DLOG10(csens(nachbar(i,k))))&
-                        ) / DABS(DLOG10(csensavg))
+
+                        ! note that by multiplying the last term with a number
+                        ! between 0 and 1, the effect on the beta can be
+                        dum2 = 1d0 + (DABS(DLOG10(csens(i))) + DABS(DLOG10(csens(nachbar(i,k))))) / &
+                        DABS(DLOG10(csensavg))
 
                         ! Old version by Roland Martin:
                         ! f(i,k) = 1 + (g(i) + g(k))/mean(g)
@@ -639,9 +638,9 @@ CONTAINS
                         ! grad(m)^2 + (\beta/f(i,k)^2)^2
                         dum = alfgeo * edglen / dist / dum2 / dum
                     ELSE IF (ltri == 8) THEN !sensitivitaetswichtung von RB
-                        !    der folgende code wurde mir so ueberliefert... 
+                        !    der folgende code wurde mir so ueberliefert...
                         ! kam von RB aber keine ahnung was das genau macht
-                        dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + & 
+                        dum = mgrad * (1d0 + 0.2d0 * (DABS( DLOG10(csens(i)) + &
                             DLOG10(csens(nachbar(i,k))) ) ))
                         alfmgs = 1d0 - dum**2d0 / (dum**2d0 + betamgs**2d0)
                         dum =  edglen * alfgeo * alfmgs
