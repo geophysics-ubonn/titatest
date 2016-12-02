@@ -287,16 +287,19 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
     fetxt = 'rall -> Diff. measurements'
     CALL read_comments(fpcfg)
+    ! read measurement data for time 0
     READ (fpcfg,'(a)',END=1001,err=999) dd0
     CALL clear_string (dd0)
 
     fetxt = 'rall -> Diff. model (prior)'
     CALL read_comments(fpcfg)
+    ! read model time 0
     READ (fpcfg,'(a)',END=1001,err=999) dm0
     CALL clear_string (dm0)
 
     fetxt = 'rall -> Diff. model response of prior'
     CALL read_comments(fpcfg)
+    ! read forward response of model
     READ (fpcfg,'(a)',END=1001,err=999) dfm0
     CALL clear_string (dfm0)
 
@@ -843,6 +846,8 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
         BACKSPACE(kanal)
 
         elec3=elec1-10000      ! are we still positive?
+        ! testen, welches Format benutzt wird
+        ! crtf == True  - benutze 10002 40003 Format für Elektrodenkennungen
         crtf=(elec3 > 0)       ! crtomo konform?
 
         ALLOCATE (dum(nanz0),dum2(nanz0),idum(nanz0),&
@@ -853,6 +858,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
             GOTO 999
         END IF
 
+        ! read time 0 data
         DO j=1,nanz0
             IF (crtf) THEN
                 READ(kanal,*) ic(j),ip(j),dum(j)
@@ -864,18 +870,26 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
         END DO
         CLOSE(kanal)
 
+        ! read forward response of time-0 model
         OPEN(kanal,file=TRIM(dfm0),status='old')
         READ(kanal,*)
         DO j=1,nanz0
+            ! read current and voltage electrodes (ignored later on) as i,i
+            ! read dum2 == magnitudes
+            ! read idum == bool switch indicating invalid forward responses
+            !      i.e. because of sign problems with R (remember: we do not
+            !      switch any electrodes to correct signs)
             READ(kanal,*) i,i,dum2(j),idum(j)
         END DO
         CLOSE(kanal)
 
+        ! 
         j0 = 0
         i  = 0
         10   i  = i+1
         j = j0
         20   j = j+1
+        ! 
         IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
             !!!$     nur falls jede Messkonfiguration nur einmal!
             !!!$     j0     = j
@@ -900,6 +914,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
         END IF
         IF (i.LT.nanz) GOTO 10
 
+        ! read start model
         OPEN(kanal,file=TRIM(dm0),status='old')
         READ(kanal,*)
         DO j=1,elanz
