@@ -98,15 +98,22 @@ subroutine wout(kanal,dsigma,dvolt)
 !!$             real(dlog10(dum2)),real(1d2*(1d0-dum2/dum3)),&
 !!$             real(1d2*(1d0-dum3/dum2))
      else
+        ! model resistivity, linear
         dum3 = cdabs(dcmplx(1d0)/sigma(i))
+        ! start model, linear, resistivity
         dum2 = cdabs(dcmplx(1d0)/cdexp(m0(mnr(i))))
         write(kanal,'(7(f10.4,2x))',err=1000)&
              real(espx(i)),real(espy(i)),&
+             ! log10(rho)
              real(dlog10(dum3)),&
+             ! log10(rho0)
+             real(dlog10(dum2)),&
+             ! log10(rho) - log10(rho0)
+             real(dlog10(dum3) - dlog10(dum2)),&
+             ! (rho - rho0) / rho0 * 100
              real(1d2*(dum3/dum2-1d0)),&
-             real(dum3-dum2),&
-             real(1d2*(dum2/dum3-1d0)),&
-             real(1d3/dum3-1d3/dum2)
+             ! (sigma - sigma0) / sigma0 * 100
+             real(1d2*(dum2/dum3-1d0))
      end if
 !!!$     diff+>
   end do
