@@ -1,6 +1,6 @@
 AC_PREREQ(2.64)
 # das Projekt initialisieren, versionsnummer und emailadresse angeben
-AC_INIT([CRTomoMod], [1.5], [mweigand@uni-bonn.de])
+AC_INIT([CRTomoMod], [1.6], [mweigand@geo.uni-bonn.de])
 # eine beliebige Sourcedatei angeben, damit der Sourceordner bekannt ist
 AC_CONFIG_SRCDIR([src/inv.f90])
 AC_CONFIG_AUX_DIR([config])

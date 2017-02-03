@@ -1,3 +1,10 @@
+crtomomod (1.6) stable; urgency=medium
+
+  * new version 1.6
+  * change output of difference inversion
+
+ -- Maximilian Weigand <mweigand@titan.geo.uni-bonn.de>  Tue, 06 Dec 2016 15:40:15 +0100
+
 crtomomod (1.5) stable; urgency=medium
 
   * New version 1.5
