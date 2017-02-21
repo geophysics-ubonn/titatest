@@ -1,0 +1,10 @@
+pacman -Sy pacman
+pacman -Syu
+pacman -S git
+pacman -S automake
+pacman -S autoconf
+pacman -S mingw-w64-x86_64-gcc
+pacman -S mingw-w64-x86_64-toolchain
+LDFLAGS="-static-libgcc -static" ./configure --host=x86_64-w64-mingw32
+pacman -S make
+LDFLAGS="-static-libgcc -static" ./configure --host=x86_64-w64-mingw32
