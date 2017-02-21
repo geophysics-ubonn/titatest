@@ -1,0 +1,151 @@
+##
+## Complex Resistivity Tomography (CRTomo)
+##
+## Git-Branch dev
+## Git-ID     2121bf8870708947e13c606d6b8ef352e3ad76a2
+## Compiler   
+## OS         GNU/Linux
+##
+## Created  Fri-Dec--2-13:25:53-2016
+##
+
+       1           #  mswitch
+../grid/elem.dat # FEM grid
+../grid/elec.dat # Electrodes
+../mod/volt1.dat # Measurements
+../inv # Inversion results
+T                  ! difference inversion or (m - m_{prior})
+../../time0/mod/volt.dat
+../../time0/inv/rho05.mag
+../../time0/inv/volt05.dat
+***PARAMETERS***
+       0           ! nx-switch or # cells in x-direction
+      -1           ! nz-switch or # cells in z-direction
+ 1.0000            ! smoothing parameter in x-direction
+ 1.0000            ! smoothing parameter in z-direction
+      20           ! max. # inversion iterations
+T                  ! DC inversion ?
+T                  ! robust inversion ?
+F                  ! final phase improvement ?
+ 2.0000            ! rel. resistance error level (%)  (parameter A1 in err(R) = A1*abs(R) + A2)
+0.30000E-03        ! min. abs. resistance error (ohm) (parameter A2 in err(R) = A1*abs(R) + A2)
+ 0.0000            ! phase error model parameter A1 (mrad/ohm^B) (in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)
+ 0.0000            ! phase error model parameter B  (-)          (in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)
+ 0.0000            ! phase error model parameter A2 (%)          (in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)
+ 0.0000            ! phase error model parameter A3 (mrad)       (in err(pha) = A1*abs(R)**B + A2*abs(pha) + A3)
+F                  ! homogeneous background resistivity ?
+ 20.000            ! background magnitude (ohm*m)
+ 0.0000            ! background phase (mrad)
+F                  ! Another dataset?
+       1           ! 2D (=0) or 2.5D (=1)
+F                  ! fictitious sink ?
+    6467           ! fictitious sink node number
+F                  ! boundary values ?
+boundary.dat
+ 1
+ 1
+
+***Model stats***
+# Model parameters               3828
+# Data points                     361
+Add data noise ?                      F
+Couple to Err. Modl?                  T
+    seed                            1
+    Variance                 0.0000    
+Add model noise ?                     F
+    seed                            0
+    Variance                 0.0000    
+
+******** Regularization Part *********
+Prior regualrization                  F
+Reference regualrization              F
+Regularization-switch                 1
+Regular grid smooth                   F
+Triangular regu                       T
+Triangular regu2                      F
+Levenberg damping                     F
+Marquardt damping                     F
+Minimum grad supp                     F
+MGS beta/sns1 (RM)                    F
+MGS beta/sns2 (RM)                    F
+MGS beta/sns1 (RB)                    F
+MGS beta/sns2 (RB)                    F
+TV (Huber)                            F
+Fixed lambda?                         F
+Taking easy lam_0 :    3828.00000    
+
+******** Additional output *********
+mswitch                               1
+Read start model?                     T
+Write coverage?                       T
+Write MCM 1?                          F
+Write resolution?                     F
+Write MCM 2?                          F
+Using Gauss ols?                      F
+Forcing negative phase?               F
+Calculate sytop?                      F
+Verbose?                              F
+Error Ellipses?                       F
+Restart FPI with homogenous phase?    F
+F                ! individual error ?
+
+***FIXED***
+ # wavenumbers :                                 10
+ Inverse Fourier transform range :                1.5000     m
+                                                  16.606     m
+ Force negative phase ?                          F
+ Ratio dataset ?                                 F
+ Min. L1 norm                                     1.0000    
+ Min. rel. decrease of data RMS :                0.20000E-01
+ Min. steplength              :                  0.10000E-02
+ Min. stepsize (||\delta m||) :                  0.10000E-02
+ Min. error in relaxation :                      0.10000E-03
+ Max. # relaxation iterations :                    382
+ Max. # regularization steps :                    30
+ Initial step factor :                           0.50000    
+ Final   step factor :                           0.90000    
+
+-------------------------------------------------------------------------------------------------------------
+
+ ID it.   data RMS    stepsize    lambda      roughn.    CG-steps    mag RMS     pha RMS    - # data    L1-ratio    steplength
+
+************************************************************************************************************* 
+ IT   0    19.08                                                     20.29       0.000         0         1.28    
+************************************************************************************************************* 
+ UP   1    6.665      0.191E+04   3828.       1.767         110                                          1.18       1.000
+ UP   2    5.838      0.189E+04   1914.       3.252         110                                          1.19       1.000
+ UP   3    4.997      0.181E+04   997.1       5.845         104                                          1.20       1.000
+ UP   4    4.285      0.166E+04   545.1       9.648          94                                          1.22       1.000
+ UP   5    3.735      0.148E+04   312.5       14.40          90                                          1.23       1.000
+ UP   6    3.496      0.102E+04   187.0       20.58          58                                          1.22       1.000
+ UP   7    3.546       905.       114.2       26.79          46                                          1.24       1.000
+ UP   8    7.551       508.       187.0       12.87          58                                          1.21       0.500
+************************************************************************************************************* 
+ IT   1    3.496       1016.      187.0       20.58          58      5.087       0.000         0         1.22       1.000
+************************************************************************************************************* 
+ UP   0    2.233       505.       187.0       13.93          90                                          1.19       1.000
+ UP   1    1.973       423.       131.2       16.54          92                                          1.19       1.000
+ UP   2    2.624       356.       95.65       18.95          91                                          1.23       1.000
+ UP   3    1.846       212.       131.2       17.84          92                                          1.17       0.500
+************************************************************************************************************* 
+ IT   2    1.816       302.1      131.2       17.11          92      4.375       0.000         0         1.18       0.714
+************************************************************************************************************* 
+ UP   0    1.615       89.8       131.2       13.41          93                                          1.17       1.000
+ UP   1    1.440       60.6       101.8       14.98          89                                          1.17       1.000
+ UP   2    1.302       35.9       81.81       16.40          78                                          1.17       1.000
+ UP   3    1.186       7.97       67.85       17.81          43                                          1.17       1.000
+ UP   4    1.110       6.79       57.92       18.81          41                                          1.16       1.000
+ UP   5    1.048       6.83       50.47       19.69          41                                          1.16       1.000
+ UP   6   0.9977       7.06       44.77       20.47          40                                          1.16       1.000
+ UP   7    1.042       6.87       49.78       19.78          41                                         1.000
+ UP   8    1.163       3.53       44.77       18.66          40                                         0.500
+************************************************************************************************************* 
+ IT   3   0.9996       7.007      44.77       20.44          40      2.738       0.000         0        0.993
+************************************************************************************************************* 
+ UP   0   0.9832       8.49       44.77       20.55         105                                         1.000
+ UP   1    1.031       11.8       50.01       19.80         107                                         1.000
+ UP   2   0.9895       4.24       44.77       20.48         105                                         0.500
+************************************************************************************************************* 
+ IT   4   0.9995      0.8490E-02  44.77       20.44         105      2.737       0.000         0        0.001
+************************************************************************************************************* 
+***finished***

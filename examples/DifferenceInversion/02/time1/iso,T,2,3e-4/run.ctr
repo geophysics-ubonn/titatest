@@ -1,0 +1,400 @@
+  20005  400043 : discarded
+  20005  430046 : discarded
+  20005  340037 : discarded
+  20005  470050 : discarded
+  30006  400043 : discarded
+  40007  400043 : discarded
+  40007  230026 : discarded
+  50008  400043 : discarded
+  50008  430046 : discarded
+  60009  140017 : discarded
+  70010  400043 : discarded
+  70010  150018 : discarded
+  80011  270030 : discarded
+  80011  280031 : discarded
+  80011  160019 : discarded
+ 100013  400043 : discarded
+ 140017  360039 : discarded
+ 160019  410044 : discarded
+ 170020  410044 : discarded
+ 170020   30006 : discarded
+ 180021  410044 : discarded
+ 190022  410044 : discarded
+ 200023  410044 : discarded
+ 200023   30006 : discarded
+ 200023  100013 : discarded
+ 210024  400043 : discarded
+ 210024  410044 : discarded
+ 220025  400043 : discarded
+ 230026  400043 : discarded
+ 230026  280031 : discarded
+ 230026  410044 : discarded
+ 230026   60009 : discarded
+ 280031  140017 : discarded
+ 280031  150018 : discarded
+ 280031   40007 : discarded
+ 280031   60009 : discarded
+ 290032  140017 : discarded
+ 290032   20005 : discarded
+ 290032  150018 : discarded
+ 290032   30006 : discarded
+ 290032  160019 : discarded
+ 290032   40007 : discarded
+ 290032  170020 : discarded
+ 290032   50008 : discarded
+ 290032  180021 : discarded
+ 290032   60009 : discarded
+ 290032  190022 : discarded
+ 290032   70010 : discarded
+ 290032   80011 : discarded
+ 290032  210024 : discarded
+ 290032   90012 : discarded
+ 290032  100013 : discarded
+ 300033  140017 : discarded
+ 300033   20005 : discarded
+ 300033  150018 : discarded
+ 300033   30006 : discarded
+ 300033  160019 : discarded
+ 300033   40007 : discarded
+ 300033  170020 : discarded
+ 300033   50008 : discarded
+ 300033  180021 : discarded
+ 300033   60009 : discarded
+ 300033  190022 : discarded
+ 300033   70010 : discarded
+ 300033  200023 : discarded
+ 300033  470050 : discarded
+ 300033   80011 : discarded
+ 300033  210024 : discarded
+ 300033   90012 : discarded
+ 300033  220025 : discarded
+ 300033  100013 : discarded
+ 310034  140017 : discarded
+ 310034  150018 : discarded
+ 310034  160019 : discarded
+ 310034  170020 : discarded
+ 310034  180021 : discarded
+ 310034  190022 : discarded
+ 310034  200023 : discarded
+ 310034  210024 : discarded
+ 310034  480051 : discarded
+ 310034  220025 : discarded
+ 310034  230026 : discarded
+ 320035  440041 : discarded
+ 320035  150018 : discarded
+ 320035   30006 : discarded
+ 320035  160019 : discarded
+ 400043   60009 : discarded
+ 400043  350032 : discarded
+ 400043  380035 : discarded
+ 410044  360033 : discarded
+ 410044  370034 : discarded
+ 420045  210024 : discarded
+ 430046  170020 : discarded
+ 430046  190022 : discarded
+ 430046   70010 : discarded
+ 430046  330036 : discarded
+ 430046   80011 : discarded
+ 430046   90012 : discarded
+ 440047  140017 : discarded
+ 440047  300027 : discarded
+ 440047   20005 : discarded
+ 440047  150018 : discarded
+ 440047   30006 : discarded
+ 440047  160019 : discarded
+ 440047   40007 : discarded
+ 440047  170020 : discarded
+ 440047   50008 : discarded
+ 440047  180021 : discarded
+ 440047   60009 : discarded
+ 440047  190022 : discarded
+ 440047  320035 : discarded
+ 440047   70010 : discarded
+ 440047  200023 : discarded
+ 440047  330036 : discarded
+ 440047   80011 : discarded
+ 440047  210024 : discarded
+ 440047  340037 : discarded
+ 440047   90012 : discarded
+ 440047  220025 : discarded
+ 440047  350038 : discarded
+ 440047  100013 : discarded
+ 440047  230026 : discarded
+ 450048  300027 : discarded
+ 450048   40007 : discarded
+ 450048  190022 : discarded
+ 450048  320035 : discarded
+ 450048  330036 : discarded
+ 450048  340037 : discarded
+ 450048  350038 : discarded
+ 450048  360039 : discarded
+ 460049  300027 : discarded
+ 460049  150018 : discarded
+ 460049  310028 : discarded
+ 460049  160019 : discarded
+ 460049  320035 : discarded
+ 460049   70010 : discarded
+ 460049  330036 : discarded
+ 460049   80011 : discarded
+ 460049  340037 : discarded
+ 460049  350038 : discarded
+ 460049  230026 : discarded
+ 460049  360039 : discarded
+ 470050   50008 : discarded
+ 470050   60009 : discarded
+ 470050  330036 : discarded
+ 470050  340037 : discarded
+ 470050  350038 : discarded
+ 470050  360039 : discarded
+ 480051  150018 : discarded
+ 480051   30006 : discarded
+ 480051  160019 : discarded
+ 480051   40007 : discarded
+ 480051   50008 : discarded
+ 480051   60009 : discarded
+ 480051   70010 : discarded
+ 480051  200023 : discarded
+ 480051  330036 : discarded
+ 480051  340037 : discarded
+ 480051  350038 : discarded
+ 480051  360039 : discarded
+ 490052  140017 : discarded
+ 490052  150018 : discarded
+ 490052   60009 : discarded
+ 490052   70010 : discarded
+ 490052  330036 : discarded
+ 490052   80011 : discarded
+ 490052  360039 : discarded
+ Iteration   0,   0 : Calculating Potentials
+ 244 : increase standard deviation *  1.1
+ 255 : increase standard deviation *  1.2
+ 266 : increase standard deviation *  1.2
+ 278 : increase standard deviation *  1.2
+ 280 : increase standard deviation *  1.2
+ 287 : increase standard deviation *  1.3
+ 291 : increase standard deviation *  1.2
+ 292 : increase standard deviation *  1.4
+ 295 : increase standard deviation *  1.2
+ 296 : increase standard deviation *  1.6
+ 297 : increase standard deviation *  1.4
+ 298 : increase standard deviation *  1.7
+ 299 : increase standard deviation *  1.4
+ 302 : increase standard deviation *  1.3
+ 303 : increase standard deviation *  1.5
+ 304 : increase standard deviation *  1.5
+ 306 : increase standard deviation *  1.2
+ 307 : increase standard deviation *  1.5
+ 308 : increase standard deviation *  1.4
+ 309 : increase standard deviation *  1.7
+ 310 : increase standard deviation *  1.4
+ 313 : increase standard deviation *  1.5
+ 314 : increase standard deviation *  1.6
+ 315 : increase standard deviation *  1.6
+ 316 : increase standard deviation *  1.3
+ 317 : increase standard deviation *  1.4
+ 318 : increase standard deviation *  1.7
+ 319 : increase standard deviation *  1.5
+ 320 : increase standard deviation *  1.9
+ 321 : increase standard deviation *  1.6
+ 323 : increase standard deviation *  1.5
+ 324 : increase standard deviation *  1.8
+ 325 : increase standard deviation *  1.7
+ 326 : increase standard deviation *  1.4
+ 329 : increase standard deviation *  1.7
+ 330 : increase standard deviation *  1.9
+ 331 : increase standard deviation *  1.7
+ 332 : increase standard deviation *  1.8
+ 333 : increase standard deviation *  2.0
+ 334 : increase standard deviation *  1.9
+ 335 : increase standard deviation *  1.5
+ 339 : increase standard deviation *  1.4
+ 340 : increase standard deviation *  1.7
+ 341 : increase standard deviation *  1.8
+ 345 : increase standard deviation *  1.2
+ 346 : increase standard deviation *  1.3
+ 347 : increase standard deviation *  1.5
+ 348 : increase standard deviation *  1.8
+ 350 : increase standard deviation *  1.9
+ 351 : increase standard deviation *  1.7
+ 352 : increase standard deviation *  2.0
+ 353 : increase standard deviation *  2.1
+ 354 : increase standard deviation *  1.6
+ 355 : increase standard deviation *  2.0
+ 356 : increase standard deviation *  1.7
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Updating
+ Iteration   1,   1 : Calculating Potentials
+ Iteration   1,   2 : Updating
+ Iteration   1,   2 : Calculating Potentials
+ Iteration   1,   3 : Updating
+ Iteration   1,   3 : Calculating Potentials
+ Iteration   1,   4 : Updating
+ Iteration   1,   4 : Calculating Potentials
+ Iteration   1,   5 : Updating
+ Iteration   1,   5 : Calculating Potentials
+ Iteration   1,   6 : Updating
+ Iteration   1,   6 : Calculating Potentials
+ Iteration   1,   7 : Updating
+ Iteration   1,   7 : Calculating Potentials
+ Iteration   1,   8 : Updating
+ Iteration   1,   8 : Calculating Potentials
+ Iteration   1,   9 : Updating
+ Iteration   1,   9 : Calculating Potentials
+ Iteration   1,  10 : Updating
+ Iteration   1,  10 : Calculating Potentials
+ Iteration   1,  10 : Updating
+ Iteration   1,  10 : Calculating Potentials
+  72 : increase standard deviation *  1.1
+ 124 : increase standard deviation *  1.1
+ 140 : increase standard deviation *  1.3
+ 145 : increase standard deviation *  1.2
+ 155 : increase standard deviation *  1.2
+ 159 : increase standard deviation *  1.3
+ 162 : increase standard deviation *  1.3
+ 165 : increase standard deviation *  1.2
+ 177 : increase standard deviation *  1.2
+ 256 : increase standard deviation *  1.1
+ 257 : increase standard deviation *  1.2
+ 258 : increase standard deviation *  1.2
+ 259 : increase standard deviation *  1.9
+ 267 : increase standard deviation *  1.2
+ 268 : increase standard deviation *  1.5
+ 269 : increase standard deviation *  1.3
+ 270 : increase standard deviation *  1.1
+ 271 : increase standard deviation *  1.1
+ 278 : increase standard deviation *  1.1
+ 279 : increase standard deviation *  1.2
+ 280 : increase standard deviation *  1.8
+ 281 : increase standard deviation *  1.2
+ 286 : increase standard deviation *  1.2
+ 287 : increase standard deviation *  1.2
+ 288 : increase standard deviation *  1.3
+ 289 : increase standard deviation *  1.1
+ 290 : increase standard deviation *  1.2
+ 292 : increase standard deviation *  1.3
+ 294 : increase standard deviation *  1.1
+ 295 : increase standard deviation *  1.1
+ 300 : increase standard deviation *  1.5
+ 301 : increase standard deviation *  1.2
+ 303 : increase standard deviation *  1.1
+ 304 : increase standard deviation *  2.2
+ 305 : increase standard deviation *  1.4
+ 306 : increase standard deviation *  1.5
+ 311 : increase standard deviation *  1.8
+ 312 : increase standard deviation *  1.3
+ 316 : increase standard deviation *  2.0
+ 317 : increase standard deviation *  1.6
+ 322 : increase standard deviation *  1.8
+ 327 : increase standard deviation *  1.3
+ 328 : increase standard deviation *  2.3
+ 329 : increase standard deviation *  1.8
+ 331 : increase standard deviation *  1.3
+ 332 : increase standard deviation *  1.2
+ 333 : increase standard deviation *  1.5
+ 334 : increase standard deviation *  1.2
+ 336 : increase standard deviation *  1.2
+ 337 : increase standard deviation *  1.8
+ 338 : increase standard deviation *  2.3
+ 339 : increase standard deviation *  2.5
+ 340 : increase standard deviation *  1.7
+ 342 : increase standard deviation *  1.2
+ 343 : increase standard deviation *  2.4
+ 344 : increase standard deviation *  2.4
+ 345 : increase standard deviation *  1.8
+ 346 : increase standard deviation *  1.2
+ 350 : increase standard deviation *  1.3
+ 353 : increase standard deviation *  1.3
+ 354 : increase standard deviation *  1.6
+ Iteration   2,   0 : Calculating Sensitivities
+ Iteration   2,   0 : Updating
+ Iteration   2,   0 : Calculating Potentials
+ Iteration   2,   1 : Updating
+ Iteration   2,   1 : Calculating Potentials
+ Iteration   2,   2 : Updating
+ Iteration   2,   2 : Calculating Potentials
+ Iteration   2,   3 : Updating
+ Iteration   2,   3 : Calculating Potentials
+ Iteration   2,   4 : Updating
+ Iteration   2,   4 : Calculating Potentials
+ Iteration   2,   5 : Updating
+ Iteration   2,   5 : Calculating Potentials
+ Iteration   2,   6 : Updating
+ Iteration   2,   6 : Calculating Potentials
+ Iteration   2,   7 : Updating
+ Iteration   2,   7 : Calculating Potentials
+ Iteration   2,   8 : Updating
+ Iteration   2,   8 : Calculating Potentials
+ Iteration   2,   9 : Updating
+ Iteration   2,   9 : Calculating Potentials
+ Iteration   2,  10 : Updating
+ Iteration   2,  10 : Calculating Potentials
+ Iteration   2,  11 : Updating
+ Iteration   2,  11 : Calculating Potentials
+ Iteration   2,  12 : Updating
+ Iteration   2,  12 : Calculating Potentials
+ Iteration   2,  13 : Updating
+ Iteration   2,  13 : Calculating Potentials
+ Iteration   2,  14 : Updating
+ Iteration   2,  14 : Calculating Potentials
+ Iteration   2,  15 : Updating
+ Iteration   2,  15 : Calculating Potentials
+ Iteration   2,  16 : Updating
+ Iteration   2,  16 : Calculating Potentials
+ Iteration   2,  17 : Updating
+ Iteration   2,  17 : Calculating Potentials
+ Iteration   2,  18 : Updating
+ Iteration   2,  18 : Calculating Potentials
+ Iteration   2,  18 : Updating
+ Iteration   2,  18 : Calculating Potentials
+ 345 : change polarity
+ 345 : excluded
+ Iteration   3,   0 : Calculating Sensitivities
+ Iteration   3,   0 : Updating
+ Iteration   3,   0 : Calculating Potentials
+ Iteration   3,   1 : Updating
+ Iteration   3,   1 : Calculating Potentials
+ Iteration   3,   2 : Updating
+ Iteration   3,   2 : Calculating Potentials
+ Iteration   3,   3 : Updating
+ Iteration   3,   3 : Calculating Potentials
+ Iteration   3,   4 : Updating
+ Iteration   3,   4 : Calculating Potentials
+ Iteration   3,   5 : Updating
+ Iteration   3,   5 : Calculating Potentials
+ Iteration   3,   6 : Updating
+ Iteration   3,   6 : Calculating Potentials
+ Iteration   3,   6 : Updating
+ Iteration   3,   6 : Calculating Potentials
+ 345 : excluded
+ Iteration   4,   0 : Calculating Sensitivities
+ Iteration   4,   0 : Updating
+ Iteration   4,   0 : Calculating Potentials
+ Iteration   4,   1 : Updating
+ Iteration   4,   1 : Calculating Potentials
+ Iteration   4,   2 : Updating
+ Iteration   4,   2 : Calculating Potentials
+ Iteration   4,   3 : Updating
+ Iteration   4,   3 : Calculating Potentials
+ Iteration   4,   4 : Updating
+ Iteration   4,   4 : Calculating Potentials
+ Iteration   4,   4 : Updating
+ Iteration   4,   4 : Calculating Potentials
+ 345 : excluded
+ Iteration   5,   0 : Calculating Sensitivities
+ Iteration   5,   0 : Updating
+ Iteration   5,   0 : Calculating Potentials
+ Iteration   5,   1 : Updating
+ Iteration   5,   1 : Calculating Potentials
+ Iteration   5,   2 : Updating
+ Iteration   5,   2 : Calculating Potentials
+ Iteration   5,   3 : Updating
+ Iteration   5,   3 : Calculating Potentials
+ Iteration   5,   4 : Updating
+ Iteration   5,   4 : Calculating Potentials
+ Iteration   5,   5 : Updating
+ Iteration   5,   5 : Calculating Potentials
+ Iteration   5,   5 : Updating
+ Iteration   5,   5 : Calculating Potentials
+ 345 : excluded
+ Iteration terminated: Min. RMS.
+ CPU time:  2hrs  7min

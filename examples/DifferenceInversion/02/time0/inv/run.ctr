@@ -1,0 +1,687 @@
+ Iteration   0,   0 : Calculating Potentials
+ 152 : change polarity
+ 182 : change polarity
+ 388 : change polarity
+ 407 : change polarity
+ 497 : change polarity
+ 510 : change polarity
+ 522 : change polarity
+ 533 : change polarity
+ 571 : change polarity
+ 619 : change polarity
+ 152 : excluded
+ 182 : excluded
+ 388 : excluded
+ 407 : excluded
+ 497 : excluded
+ 510 : excluded
+ 522 : excluded
+ 533 : excluded
+ 571 : excluded
+ 619 : excluded
+           1  : increase standard deviation *   1.21370316       271.30850722756111        8.8210870819092104     
+          11  : increase standard deviation *   1.46670532       183.95721359062361        12.881988100241841     
+          15  : increase standard deviation *   1.11186552       303.28603788840928        7.4028971514534678     
+          17  : increase standard deviation *   2.32773066       73.117009933288656        32.446109205763356     
+          20  : increase standard deviation *   1.58913600       157.36849403417332        15.122351424275873     
+          22  : increase standard deviation *   1.18992901       264.75025655313112        8.4788962572933535     
+          24  : increase standard deviation *   1.42948484       194.69764651784806        12.236474040174294     
+          40  : increase standard deviation *   1.54187584       166.22139248519633        14.236262551407654     
+          45  : increase standard deviation *   2.03140950       95.937904672847935        24.711100450943221     
+          48  : increase standard deviation *   1.43882847       191.90676870673335        12.396961335293890     
+          67  : increase standard deviation *   1.20301569       273.74232768552275        8.6664212557862541     
+          73  : increase standard deviation *   1.64384460       146.12107185051556        16.181497881129332     
+          78  : increase standard deviation *   1.17196536       273.21674791007524        8.2248259802314596     
+         101  : increase standard deviation *   1.15821695       296.35112187630546        8.0329861735822217     
+         104  : increase standard deviation *   1.14091480       288.48823484186073        7.7947748204105753     
+         127  : increase standard deviation *   1.20535183       273.48641003678443        8.7001123499719171     
+         128  : increase standard deviation *   1.13112342       293.13444252597822        7.6615593756440381     
+         145  : increase standard deviation *   1.34485376       212.07453668875735        10.830469656022936     
+         148  : increase standard deviation *   1.12423313       301.09599366831316        7.5685019138512484     
+         151  : increase standard deviation *   1.39106500       198.30970612083655        11.587560923120094     
+         152  : increase standard deviation *   3.34712982       35.009158447019850        67.087603696284518     
+         156  : increase standard deviation *   1.11235499       321.18364962259625        7.4094156962035189     
+         170  : increase standard deviation *   1.14878595       288.95450376685142        7.9026976719616879     
+         173  : increase standard deviation *   1.18266129       273.02622472026133        8.3756388656371499     
+         176  : increase standard deviation *   1.22907746       253.14726221000387        9.0459815649335340     
+         178  : increase standard deviation *   1.10093164       321.48372178092802        7.2580152848567039     
+         179  : increase standard deviation *   1.23342907       251.26368964192824        9.1101505923683241     
+         180  : increase standard deviation *   1.66926348       142.32907274830100        16.685796246565815     
+         182  : increase standard deviation *   3.63576770       29.805400888774553        79.157016430226236     
+         185  : increase standard deviation *   1.09792936       329.63350447793147        7.2184828065322151     
+         190  : increase standard deviation *   1.09765577       315.21075782964783        7.2148867225181217     
+         193  : increase standard deviation *   1.14774883       289.25876779683796        7.8884363259704422     
+         196  : increase standard deviation *   1.26972544       237.55736959331591        9.6542119354518814     
+         199  : increase standard deviation *   1.29137850       229.94340190152525        9.9862928330316709     
+         201  : increase standard deviation *   1.11772513       312.27789430605895        7.4811305747022168     
+         202  : increase standard deviation *   1.33159506       216.57467847108575        10.617971149128079     
+         204  : increase standard deviation *   1.22259533       261.38528570258080        8.9508159172979287     
+         205  : increase standard deviation *   1.45775807       181.40704086419058        12.725301167130542     
+         206  : increase standard deviation *   1.42062819       196.98083285554983        12.085317409972559     
+         208  : increase standard deviation *   1.65679002       144.62827164374787        16.437362618667844     
+         210  : increase standard deviation *   3.67812586       29.116671967725171        81.012186184107634     
+         214  : increase standard deviation *   1.25846863       250.64985268532757        9.4837900668492985     
+         216  : increase standard deviation *   1.11788607       303.90203876474357        7.4832845474804488     
+         219  : increase standard deviation *   1.20587361       262.45887534739927        8.7076460132885476     
+         222  : increase standard deviation *   1.32236600       219.38199369549500        10.471298513106069     
+         224  : increase standard deviation *   1.17861342       281.07022059828137        8.3184028477969054     
+         225  : increase standard deviation *   1.50888777       169.63860667153904        13.633615258574034     
+         227  : increase standard deviation *   1.25237811       249.30688851556087        9.3922172648011166     
+         228  : increase standard deviation *   1.51797712       167.71485634693110        13.798365420251095     
+         230  : increase standard deviation *   1.34488428       216.51958972519654        10.830961391075594     
+         231  : increase standard deviation *   1.53956139       163.15660750730956        14.193554988632448     
+         232  : increase standard deviation *   1.34292316       220.59722423092305        10.799396425410436     
+         234  : increase standard deviation *   1.34273851       220.50846422837324        10.796426762319840     
+         236  : increase standard deviation *   1.51307762       173.35494795067993        13.709435003664192     
+         238  : increase standard deviation *   1.11483252       303.09807741647882        7.4424589108727819     
+         239  : increase standard deviation *   2.89936090       46.998495791495948        50.338671377002392     
+         241  : increase standard deviation *   1.16003227       281.49296241414186        8.0581866336115198     
+         243  : increase standard deviation *   1.28947127       229.54601295225399        9.9568162462055874     
+         244  : increase standard deviation *   1.57476115       159.66521689120614        14.850002984138190     
+         246  : increase standard deviation *   1.35329735       209.28666344112793        10.966893524091034     
+         249  : increase standard deviation *   1.45522213       181.86877330169341        12.681066326910067     
+         251  : increase standard deviation *   1.22315729       261.03077245458394        8.9590471848168356     
+         252  : increase standard deviation *   1.47021866       178.42735447855449        12.943776919930004     
+         254  : increase standard deviation *   1.33951628       218.19447475008448        10.744673013102387     
+         255  : increase standard deviation *   1.50174427       171.28042384620832        13.504829590588852     
+         257  : increase standard deviation *   1.42231572       193.83763314824463        12.114045503234786     
+         258  : increase standard deviation *   1.49923944       171.88032632093172        13.459817051018057     
+         278  : increase standard deviation *   1.14272392       295.15701078895836        7.8195147293943723     
+         286  : increase standard deviation *   1.14061022       301.99342319737747        7.7906140270654758     
+         307  : increase standard deviation *   1.34012520       218.10584633114198        10.754443235881693     
+         308  : increase standard deviation *   1.30279887       231.02001369838030        10.163701317090702     
+         310  : increase standard deviation *   1.17386162       285.04420204401418        8.2514640091900429     
+         312  : increase standard deviation *   1.13942719       302.48139564110602        7.7744614523290503     
+         320  : increase standard deviation *   1.95370376       101.33740640099091        22.856757533322039     
+         327  : increase standard deviation *   1.29702604       232.49228972964110        10.073828703164130     
+         329  : increase standard deviation *   1.44757640       186.40679012613256        12.548162829198233     
+         330  : increase standard deviation *   1.30413783       230.48040630886570        10.184603680945232     
+         332  : increase standard deviation *   1.14581811       299.32075791406311        7.8619186585110219     
+         344  : increase standard deviation *   2.26867509       73.608117698017594        30.820649422152627     
+         348  : increase standard deviation *   1.37947369       204.79476335550697        11.395253386394195     
+         350  : increase standard deviation *   1.43654776       189.04258255219884        12.357690259733921     
+         351  : increase standard deviation *   1.22800577       260.04194173317671        9.0302135958043976     
+         367  : increase standard deviation *   1.42550921       190.99185882934876        12.168504839251085     
+         369  : increase standard deviation *   1.41214228       195.29936731968164        11.941368129629041     
+         370  : increase standard deviation *   1.13862920       302.45915389155368        7.7635767703216958     
+         386  : increase standard deviation *   1.51155686       168.66742209214027        13.681891130104949     
+         388  : increase standard deviation *   3.29183984       35.217199281787707        64.889525126812828     
+         389  : increase standard deviation *   1.41918612       192.71374392816986        12.060793016821906     
+         405  : increase standard deviation *   1.60973144       147.12607587559989        15.516866359350155     
+         406  : increase standard deviation *   1.42973387       188.97186999633371        12.240738242093936     
+         407  : increase standard deviation *   3.25271320       36.339302596650441        63.356145182593970     
+         419  : increase standard deviation *   1.14332354       300.10150199822027        7.8277240921877143     
+         423  : increase standard deviation *   1.11362219       315.93361998772673        7.4263069245981805     
+         424  : increase standard deviation *   1.71524358       127.44640869195415        17.617683053885436     
+         425  : increase standard deviation *   1.41725600       191.19706980206908        12.028009509196641     
+         438  : increase standard deviation *   1.16918325       287.05016158754069        8.1858224272904287     
+         440  : increase standard deviation *   1.22595048       261.27949350677761        9.0000108649224817     
+         442  : increase standard deviation *   1.24012506       255.32074118918797        9.2093324101704876     
+         443  : increase standard deviation *   1.86647189       104.33713794295166        20.861238520644090     
+         448  : increase standard deviation *   1.77823567       118.66443555865841        18.935457271873105     
+         454  : increase standard deviation *   1.23129570       258.81878445067071        9.0786635247677996     
+         456  : increase standard deviation *   1.29428399       234.56178062476880        10.031280155258784     
+         458  : increase standard deviation *   1.40206087       200.22412825475115        11.771474842052347     
+         459  : increase standard deviation *   1.14220715       303.97714781024672        7.8124443040205440     
+         460  : increase standard deviation *   1.42371881       194.23122229265525        12.137957633888833     
+         465  : increase standard deviation *   1.15549254       295.53084986971658        7.9952389828708572     
+         467  : increase standard deviation *   1.16369128       295.28042949968921        8.1091006992912842     
+         469  : increase standard deviation *   1.12353146       316.69148731764949        7.5590567517839613     
+         482  : increase standard deviation *   1.15658951       294.34288134048916        8.0104272947694746     
+         497  : increase standard deviation *   3.30557442       35.319756647655012        65.432128639236041     
+         498  : increase standard deviation *   1.31409466       230.59342199002126        10.340713468637034     
+         509  : increase standard deviation *   1.39383447       204.98223641464588        11.633745454557427     
+         510  : increase standard deviation *   3.24335599       37.681420109126151        62.992149194522248     
+         511  : increase standard deviation *   1.61589563       152.68861668486244        15.635932321202981     
+         513  : increase standard deviation *   1.17695558       288.00438932944502        8.2950184265697988     
+         521  : increase standard deviation *   1.52613878       170.87378304343713        13.947142725686184     
+         522  : increase standard deviation *   3.26661944       37.202905145170774        63.899026627630569     
+         523  : increase standard deviation *   1.59987986       155.77278102998025        15.327521976364471     
+         524  : increase standard deviation *   1.54154754       164.56041131354471        14.230200826562530     
+         532  : increase standard deviation *   1.29638028       237.00737169208082        10.063799470992921     
+         533  : increase standard deviation *   3.24939442       37.518902579119555        63.226917703582437     
+         544  : increase standard deviation *   1.33576787       223.19544230778735        10.684622388667981     
+         548  : increase standard deviation *   1.20396292       269.80573410070548        8.6800730103869146     
+         567  : increase standard deviation *   1.28851271       228.93992471874233        9.9420185190792552     
+         570  : increase standard deviation *   1.20243239       275.44896017832156        8.6580180895426313     
+         571  : increase standard deviation *   3.22458887       37.659780126930151        62.265268699655728     
+         577  : increase standard deviation *   1.31244373       218.04865280020147        10.314746920091070     
+         619  : increase standard deviation *   3.33267164       33.776309557132961        66.509273832150896     
+         621  : increase standard deviation *   1.17629433       271.22933643016910        8.2856998125205141     
+         625  : increase standard deviation *   1.19193852       263.01646448940875        8.5075577364723056     
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Calculating 1st regularization parameterlam_0   0.38E+04
+  Iteration            1 ,            1  : Updating
+ Iteration   1,   1 : Calculating Potentials
+  Iteration            1 ,            2  : Updating
+ Iteration   1,   2 : Calculating Potentials
+
+Chi increase:  -94.20     %
+Stepsize :   127.1    
+nrmsd/rmsreg :  0.9491    
+
+  Iteration            1 ,            3  : Updating
+ Iteration   1,   3 : Calculating Potentials
+
+Chi increase:  -107.5     %
+Stepsize :   190.0    
+nrmsd/rmsreg :  0.9359    
+
+  Iteration            1 ,            4  : Updating
+ Iteration   1,   4 : Calculating Potentials
+
+Chi increase:  -123.9     %
+Stepsize :   248.5    
+nrmsd/rmsreg :  0.9268    
+
+  Iteration            1 ,            5  : Updating
+ Iteration   1,   5 : Calculating Potentials
+
+Chi increase:  -137.3     %
+Stepsize :   290.6    
+nrmsd/rmsreg :  0.9437    
+
+  Iteration            1 ,            6  : Updating
+ Iteration   1,   6 : Calculating Potentials
+
+Chi increase:  -187.7     %
+Stepsize :   319.8    
+nrmsd/rmsreg :  0.8247    
+
+  Iteration            1 ,            7  : Updating
+ Iteration   1,   7 : Calculating Potentials
+
+Chi increase:  -270.8     %
+Stepsize :   299.9    
+nrmsd/rmsreg :  0.7758    
+
+  Iteration            1 ,            8  : Updating
+ Iteration   1,   8 : Calculating Potentials
+  Iteration            1 ,            9  : Updating
+ Iteration   1,   9 : Calculating Potentials
+  Iteration            1 ,            9  : Updating
+ Iteration   1,   9 : Calculating Potentials
+           1  : increase standard deviation *   1.51495457       118.21272144725675        4.0065521751282924     
+           2  : increase standard deviation *   1.79788542       104.65465723090789        5.6428127595006909     
+           3  : increase standard deviation *   1.47309589       182.91243103145692        3.7882062949963564     
+           4  : increase standard deviation *   1.22311926       266.98254258354774        2.6116152429181176     
+           8  : increase standard deviation *   1.27370489       231.08443377374499        2.8321040291250608     
+          11  : increase standard deviation *   2.00997233       45.534089899114626        7.0526408527320354     
+          17  : increase standard deviation *   2.16493130       15.600199390830634        8.1820076299925972     
+          20  : increase standard deviation *   1.72332561       52.988681657700582        5.1844928599726057     
+          24  : increase standard deviation *   1.33299315       109.57333956462089        3.1018972665781011     
+          26  : increase standard deviation *   1.49214017       179.46023957101843        3.8867878201463584     
+          27  : increase standard deviation *   1.49294424       172.25257894834479        3.8909782838710028     
+          28  : increase standard deviation *   1.28464353       242.09045621253588        2.8809578986042337     
+          37  : increase standard deviation *   1.16153514       246.01350622753458        2.3552463522838059     
+          40  : increase standard deviation *   1.86846709       47.611953238383563        6.0945623478961339     
+          44  : increase standard deviation *   1.15100670       301.78746287213744        2.3127424667655299     
+          45  : increase standard deviation *   1.74731755       31.422921177504843        5.3298535934660638     
+          47  : increase standard deviation *   1.17579842       289.12808164480987        2.4134447156058472     
+          48  : increase standard deviation *   1.29590237       114.27355311990510        2.9316773266295675     
+          50  : increase standard deviation *   1.13677788       309.00531979255800        2.2559155877485102     
+          67  : increase standard deviation *   1.41489506       136.73935618009438        3.4947815279984522     
+          73  : increase standard deviation *   1.32989943       82.618105139608460        3.0875160620318991     
+         112  : increase standard deviation *   1.11878717       319.08281445521044        2.1850762832878892     
+         122  : increase standard deviation *   1.28128076       236.19694021872851        2.8658946491980637     
+         124  : increase standard deviation *   1.15898955       287.58680515049127        2.3449339950771715     
+         145  : increase standard deviation *   1.24932098       135.87528478400333        2.7247061123869671     
+         151  : increase standard deviation *   1.30672276       116.13872888620342        2.9808389261141564     
+         156  : increase standard deviation *   1.11503172       258.33246195757204        2.1704313423835249     
+         175  : increase standard deviation *   1.17718470       280.81780512682207        2.4191390586199750     
+         178  : increase standard deviation *   1.22061050       215.77683776123868        2.6009126669165226     
+         181  : increase standard deviation *   1.12976599       289.35284133851815        2.2281711935326598     
+         185  : increase standard deviation *   1.24326050       213.25885178987596        2.6983351299349536     
+         198  : increase standard deviation *   1.23277771       256.12774325324568        2.6530238530548123     
+         201  : increase standard deviation *   1.27812922       191.15767792767389        2.8518133806659880     
+         204  : increase standard deviation *   1.32810473       148.18917451166172        3.0791884115147501     
+         205  : increase standard deviation *   1.19790900       126.41729960247183        2.5050663685756822     
+         208  : increase standard deviation *   1.47429752       66.540024083640787        3.7943889684584411     
+         210  : increase standard deviation *   2.59833980       4.3127060129456787        11.785919916642433     
+         211  : increase standard deviation *   1.42575049       187.98606552017159        3.5486130489402208     
+         212  : increase standard deviation *   1.15924215       286.53291519221710        2.3459562186796359     
+         214  : increase standard deviation *   1.61600995       95.979704501252215        4.5588956504298999     
+         215  : increase standard deviation *   1.10180628       318.65047037188492        2.1192494226206118     
+         218  : increase standard deviation *   1.20756745       266.01167992325423        2.5456248114396076     
+         221  : increase standard deviation *   1.24971449       249.00643903623995        2.7264227598731097     
+         224  : increase standard deviation *   1.46705210       130.59416715441972        3.7571857015366876     
+         225  : increase standard deviation *   1.18150210       121.52221194728158        2.4369164367005927     
+         227  : increase standard deviation *   1.41632688       124.28172043648131        3.5018587812723765     
+         228  : increase standard deviation *   1.15857589       124.94606745820620        2.3432603787344504     
+         230  : increase standard deviation *   1.46912944       100.31759178979171        3.7678335070939517     
+         231  : increase standard deviation *   1.29058635       97.955881199476721        2.9076742950132890     
+         233  : increase standard deviation *   1.25308764       236.03489662873724        2.7411607875868209     
+         234  : increase standard deviation *   1.20605195       151.59791629480708        2.5392393464588405     
+         235  : increase standard deviation *   1.49061656       168.55286094360665        3.8788544573186163     
+         236  : increase standard deviation *   1.98617005       43.944383371898759        6.8865939003770276     
+         237  : increase standard deviation *   1.47338665       175.60979558063178        3.7897021058630336     
+         239  : increase standard deviation *   1.96683204       12.149248636335718        6.7531460884923957     
+         240  : increase standard deviation *   1.36973751       205.31443500396591        3.2752640383041633     
+         242  : increase standard deviation *   1.27835429       236.83660697393222        2.8528181189223885     
+         244  : increase standard deviation *   1.42065418       79.110402503256879        3.5232894840522082     
+         245  : increase standard deviation *   1.47471499       158.05442275721350        3.7965383389626228     
+         248  : increase standard deviation *   1.36225617       177.26152576554708        3.2395834873311231     
+         251  : increase standard deviation *   1.46519113       121.59148428792972        3.7476597552662367     
+         254  : increase standard deviation *   1.50653207       96.136212049826369        3.9621266096402681     
+         257  : increase standard deviation *   1.55746496       79.910074173965924        4.2345588306465345     
+         258  : increase standard deviation *   1.10793853       140.02152639208842        2.1429052476040757     
+         259  : increase standard deviation *   1.39466214       203.35649897969685        3.3955463570154469     
+         260  : increase standard deviation *   1.88724208       95.989710308739873        6.2176576609765215     
+         262  : increase standard deviation *   1.25473261       246.45453287178293        2.7483624110300626     
+         263  : increase standard deviation *   1.14738035       298.84449978689236        2.2981927341700317     
+         278  : increase standard deviation *   1.16337204       218.08002528769131        2.3627013039435307     
+         283  : increase standard deviation *   1.45631146       183.04017172623088        3.7023729532588416     
+         284  : increase standard deviation *   1.14002633       254.77045260352421        2.2688269383651263     
+         286  : increase standard deviation *   1.22010183       202.86417408108241        2.5987454041630840     
+         307  : increase standard deviation *   1.25894892       137.61035643209436        2.7668638788753448     
+         308  : increase standard deviation *   1.17682028       166.81276716107348        2.4176416286655664     
+         320  : increase standard deviation *   2.06428456       23.781028206356599        7.4389349895456460     
+         329  : increase standard deviation *   1.15277815       140.27176981430532        2.3198668445005408     
+         344  : increase standard deviation *   2.54543328       11.360627140080290        11.310843989775018     
+         366  : increase standard deviation *   1.15049708       293.81269500453573        2.3106952946145110     
+         388  : increase standard deviation *   3.31394911       3.2067355350982649        19.171817089972816     
+         407  : increase standard deviation *   3.29587126       3.3453079174070672        18.963220562680220     
+         410  : increase standard deviation *   1.10392654       322.57563208592563        2.1274137822847048     
+         419  : increase standard deviation *   1.36358619       161.39979881330356        3.2459123363777564     
+         421  : increase standard deviation *   1.14529085       248.55629486286730        2.2898298610655714     
+         422  : increase standard deviation *   1.16533828       291.44583270397357        2.3706945184062183     
+         423  : increase standard deviation *   1.21516943       213.95487613999833        2.5777765074258654     
+         424  : increase standard deviation *   1.23506701       83.550027253990564        2.6628862341316419     
+         436  : increase standard deviation *   1.18274856       249.21733671234327        2.4420607115520379     
+         438  : increase standard deviation *   1.25178730       183.18786322536036        2.7354747178225374     
+         439  : increase standard deviation *   1.25038338       253.29401351132447        2.7293419872559932     
+         440  : increase standard deviation *   1.29179156       156.57429729624619        2.9131071603716832     
+         441  : increase standard deviation *   1.40364432       198.82802511317661        3.4394244581975766     
+         442  : increase standard deviation *   1.37104154       135.82660694129751        3.2815033440559556     
+         443  : increase standard deviation *   1.63062632       39.240093250283167        4.6417366302517964     
+         444  : increase standard deviation *   1.23164499       256.71573981513967        2.6481504930061863     
+         445  : increase standard deviation *   1.27677870       237.73468558493468        2.8457901515292119     
+         447  : increase standard deviation *   1.10665381       317.40554312036795        2.1379382452842450     
+         450  : increase standard deviation *   1.15119660       294.20207929964289        2.3135059192903769     
+         452  : increase standard deviation *   1.24192131       227.44580817628835        2.6925249085727523     
+         454  : increase standard deviation *   1.35148537       141.70106379203801        3.1885577635418967     
+         455  : increase standard deviation *   1.21404541       268.50149792162415        2.5730101707559294     
+         456  : increase standard deviation *   1.35810006       127.17263838118528        3.2198465504280103     
+         457  : increase standard deviation *   1.41118360       191.04594083416143        3.4764712404357470     
+         458  : increase standard deviation *   1.51465762       87.274525461589647        4.0049815695075077     
+         459  : increase standard deviation *   1.50827932       133.62182080146638        3.9713225043677083     
+         460  : increase standard deviation *   1.60960925       74.968381497143312        4.5228534377369058     
+         461  : increase standard deviation *   1.30950987       233.09319676047903        2.9935683650004274     
+         493  : increase standard deviation *   1.17720747       288.42967909449311        2.4192326710478316     
+         497  : increase standard deviation *   3.50156021       2.8806767233817716        21.403992280768485     
+         504  : increase standard deviation *   1.18429601       284.95794875984797        2.4484552313116570     
+         505  : increase standard deviation *   1.43198335       194.94346373167173        3.5797073406941644     
+         506  : increase standard deviation *   1.27611029       245.47227410781534        2.8428112352015189     
+         509  : increase standard deviation *   1.18978894       144.80259302871590        2.4712204805086766     
+         510  : increase standard deviation *   1.46951556       17.449336338443604        3.7698142733772473     
+         515  : increase standard deviation *   1.18670952       283.71021932014264        2.4584445853668222     
+         516  : increase standard deviation *   1.36899722       213.27221756954449        3.2717243473090192     
+         517  : increase standard deviation *   1.12416244       316.31409059947720        2.2061232253553489     
+         521  : increase standard deviation *   1.21113908       116.48966275487601        2.5607056107759312     
+         522  : increase standard deviation *   1.09993351       30.749920399783630        2.1120513138331001     
+         524  : increase standard deviation *   1.51599967       71.602333708669448        4.0120819320954926     
+         525  : increase standard deviation *   1.26784122       248.26661097990538        2.8060884305009544     
+         526  : increase standard deviation *   1.30318737       235.26418131929091        2.9647314671331273     
+         532  : increase standard deviation *   1.16534507       174.52304330436084        2.3707222903069516     
+         533  : increase standard deviation *   1.53299844       15.964919128396039        4.1025606523766287     
+         534  : increase standard deviation *   1.36104226       179.47770318644825        3.2338121864418072     
+         544  : increase standard deviation *   1.53170717       95.133584319344052        4.0956521911831052     
+         571  : increase standard deviation *   3.77490139       2.6428136367535231        24.876131704833295     
+         572  : increase standard deviation *   1.33002985       225.37091017601054        3.0881214142082190     
+         577  : increase standard deviation *   1.63538933       81.528806423324909        4.6688930951492313     
+         578  : increase standard deviation *   1.57751298       149.26553996490506        4.3442765159213934     
+         579  : increase standard deviation *   1.19780529       255.41056307578285        2.5046326986333711     
+         585  : increase standard deviation *   1.16119456       296.42838451707701        2.3538650873164628     
+         587  : increase standard deviation *   1.20697236       260.42811353946331        2.5431166436929864     
+         588  : increase standard deviation *   1.13876665       308.11344275772632        2.2638159082676292     
+         589  : increase standard deviation *   1.31800783       217.91385545570242        3.0325474537862922     
+         590  : increase standard deviation *   1.29366398       185.51487556354078        2.9215582646426297     
+         603  : increase standard deviation *   1.10552156       327.13248695448897        2.1335658866808811     
+         604  : increase standard deviation *   1.12713647       314.62263080191997        2.2178114380237868     
+         619  : increase standard deviation *   3.23416305       3.2291512709635315        18.259774610304820     
+ 152 : change polarity
+ 182 : change polarity
+ 510 : change polarity
+ 522 : change polarity
+ 533 : change polarity
+ 388 : excluded
+ 407 : excluded
+ 497 : excluded
+ 571 : excluded
+ 619 : excluded
+ Iteration   2,   0 : Calculating Sensitivities
+  Iteration            2 ,            0  : Updating
+ Iteration   2,   0 : Calculating Potentials
+  Iteration            2 ,            1  : Updating
+ Iteration   2,   1 : Calculating Potentials
+
+Chi increase:  -18.72     %
+Stepsize :   146.4    
+nrmsd/rmsreg :  0.9178    
+
+  Iteration            2 ,            2  : Updating
+ Iteration   2,   2 : Calculating Potentials
+
+Chi increase:  -27.58     %
+Stepsize :   189.5    
+nrmsd/rmsreg :  0.9306    
+
+  Iteration            2 ,            3  : Updating
+ Iteration   2,   3 : Calculating Potentials
+
+Chi increase:  -31.99     %
+Stepsize :   233.8    
+nrmsd/rmsreg :  0.9666    
+
+  Iteration            2 ,            4  : Updating
+ Iteration   2,   4 : Calculating Potentials
+
+Chi increase:  -36.18     %
+Stepsize :   282.5    
+nrmsd/rmsreg :  0.9692    
+
+  Iteration            2 ,            5  : Updating
+ Iteration   2,   5 : Calculating Potentials
+
+Chi increase:  -37.64     %
+Stepsize :   341.8    
+nrmsd/rmsreg :  0.9893    
+
+  Iteration            2 ,            6  : Updating
+ Iteration   2,   6 : Calculating Potentials
+
+Chi increase:  -40.12     %
+Stepsize :   382.6    
+nrmsd/rmsreg :  0.9823    
+
+  Iteration            2 ,            7  : Updating
+ Iteration   2,   7 : Calculating Potentials
+
+Chi increase:  -42.68     %
+Stepsize :   444.4    
+nrmsd/rmsreg :  0.9820    
+
+  Iteration            2 ,            8  : Updating
+ Iteration   2,   8 : Calculating Potentials
+  Iteration            2 ,            9  : Updating
+ Iteration   2,   9 : Calculating Potentials
+  Iteration            2 ,            9  : Updating
+ Iteration   2,   9 : Calculating Potentials
+           1  : increase standard deviation *   1.20917308       80.851354105462775        1.7677852730819632     
+           2  : increase standard deviation *   1.38412416       54.627137561085050        2.3163421459149980     
+           3  : increase standard deviation *   1.20651710       125.65397878358215        1.7600279750521575     
+           4  : increase standard deviation *   1.10785866       217.52747113201349        1.4839571054538299     
+           8  : increase standard deviation *   1.28139722       140.73532327574256        1.9852726999475752     
+          11  : increase standard deviation *   1.51862431       19.744037023224770        2.7883885955710763     
+          17  : increase standard deviation *   1.32969224       8.8232354067210466        2.1377399659481342     
+          20  : increase standard deviation *   1.27916956       32.383729308159516        1.9783760588373951     
+          21  : increase standard deviation *   1.18323994       273.12821688060842        1.6927710582401700     
+          24  : increase standard deviation *   1.12933886       85.912496958345002        1.5420595688658083     
+          25  : increase standard deviation *   1.34308708       211.53078903208871        2.1810263385380497     
+          26  : increase standard deviation *   1.11716723       143.79106355973903        1.5089989620834683     
+          27  : increase standard deviation *   1.19653416       120.31383577430297        1.7310226629646424     
+          35  : increase standard deviation *   1.10234535       314.81652997577737        1.4692237464052049     
+          40  : increase standard deviation *   1.32490563       27.123522238251233        2.1223768812860353     
+          41  : increase standard deviation *   1.18565929       271.92746739229972        1.6997003635627232     
+          45  : increase standard deviation *   1.19826102       21.884855846511201        1.7360229396498406     
+          46  : increase standard deviation *   1.29705977       227.19838116501333        2.0341012790838349     
+          49  : increase standard deviation *   1.42512238       187.94126503280808        2.4555958813450953     
+          67  : increase standard deviation *   1.17593348       98.884449573354530        1.6719301295969515     
+          70  : increase standard deviation *   1.10936499       311.06998468954004        1.4879952051557213     
+          71  : increase standard deviation *   1.19521868       261.67613174478493        1.7272186416913200     
+          73  : increase standard deviation *   1.16091096       61.302388629521303        1.6294852252806895     
+          74  : increase standard deviation *   1.17172194       278.82976211531974        1.6599755254940776     
+         122  : increase standard deviation *   1.33830369       131.87574159856388        2.1655187396119469     
+         124  : increase standard deviation *   1.26040554       181.02906597871507        1.9207606036093996     
+         126  : increase standard deviation *   1.15434158       282.19937955805909        1.6110953694589931     
+         136  : increase standard deviation *   1.31466746       217.87878212721012        2.0897021516295946     
+         139  : increase standard deviation *   1.12638152       297.51575764263214        1.5339938836796465     
+         144  : increase standard deviation *   1.11525083       311.26234951828167        1.5038263313875253     
+         145  : increase standard deviation *   1.54690230       56.782524986137958        2.8931993613305056     
+         147  : increase standard deviation *   1.17591000       280.52543729534375        1.6718633143738628     
+         149  : increase standard deviation *   1.21616161       228.03618339515097        1.7882786645339717     
+         150  : increase standard deviation *   1.22937310       234.28318089366576        1.8273427959006503     
+         151  : increase standard deviation *   1.47872412       53.113234224247044        2.6437897508987027     
+         153  : increase standard deviation *   1.26170588       235.58890202605701        1.9247256637231922     
+         156  : increase standard deviation *   1.25833201       163.15052523754528        1.9144459101346243     
+         158  : increase standard deviation *   1.17340040       270.86123730753195        1.6647347551269920     
+         161  : increase standard deviation *   1.25316167       239.30199768575744        1.8987457203450970     
+         166  : increase standard deviation *   1.22147000       258.92635309484092        1.8039239427724072     
+         167  : increase standard deviation *   1.32410252       213.64162216156612        2.1198047159451865     
+         169  : increase standard deviation *   1.22390652       258.46642360933953        1.8111276247944399     
+         170  : increase standard deviation *   1.26758420       179.83567050182484        1.9427021613922362     
+         172  : increase standard deviation *   1.31746018       200.93197112999090        2.0985900895447389     
+         175  : increase standard deviation *   1.32488739       159.98037171068142        2.1223183688569685     
+         176  : increase standard deviation *   1.10374904       207.79378014874223        1.4729679084723806     
+         178  : increase standard deviation *   1.30825782       126.07185695067319        2.0693753346077477     
+         181  : increase standard deviation *   1.60762715       111.95850464760154        3.1248074111200683     
+         183  : increase standard deviation *   1.24872971       244.13001315008293        1.8853393042888726     
+         184  : increase standard deviation *   1.58956659       148.71734336095048        3.0549915808043844     
+         185  : increase standard deviation *   1.13697433       164.97030282044506        1.5629816846071831     
+         186  : increase standard deviation *   1.32617855       198.23733768409645        2.1264568904488854     
+         187  : increase standard deviation *   1.46816528       169.48905443761319        2.6061685205012379     
+         189  : increase standard deviation *   1.16155517       286.00750381553485        1.6312941462691233     
+         190  : increase standard deviation *   1.49602771       140.83862644161442        2.7060252464857686     
+         192  : increase standard deviation *   1.34657598       213.50538357938134        2.1923722025903403     
+         193  : increase standard deviation *   1.38800788       150.14215465345700        2.3293592933319553     
+         195  : increase standard deviation *   1.34821713       211.06175664062101        2.1977194672347076     
+         196  : increase standard deviation *   1.32498336       135.31553963393881        2.1226257472181316     
+         198  : increase standard deviation *   1.34364319       141.86940446946002        2.1828328006461657     
+         199  : increase standard deviation *   1.12467909       181.78736035030406        1.5293604771408751     
+         201  : increase standard deviation *   1.31762755       110.10484269912696        2.0991231556966108     
+         202  : increase standard deviation *   1.16444576       159.72362272779696        1.6394233646094101     
+         204  : increase standard deviation *   1.31586754       85.583914431670067        2.0935190945655862     
+         205  : increase standard deviation *   1.39820492       64.664338982607831        2.3637103702725426     
+         206  : increase standard deviation *   1.16711271       137.78031656280325        1.6469416010838349     
+         207  : increase standard deviation *   1.09777963       308.30969382758843        1.4570784402855661     
+         208  : increase standard deviation *   1.35998571       35.976118171676703        2.2362545978844510     
+         209  : increase standard deviation *   1.26714289       211.46088178285785        1.9413498489904661     
+         210  : increase standard deviation *   1.49643683       1.9258971769779925        2.7075055257114111     
+         211  : increase standard deviation *   1.40307021       95.491971525182606        2.3801887182694093     
+         212  : increase standard deviation *   1.27030659       177.56500675015178        1.9510559781973678     
+         213  : increase standard deviation *   1.26966381       204.20466720353528        1.9490820137247995     
+         214  : increase standard deviation *   1.47491145       44.121223361520727        2.6301738566547077     
+         215  : increase standard deviation *   1.35691881       173.06402527041459        2.2261804119663555     
+         216  : increase standard deviation *   1.21437454       206.07641928528585        1.7830269517840667     
+         217  : increase standard deviation *   1.09878981       330.13453174050397        1.4597613241793779     
+         218  : increase standard deviation *   1.36839819       142.06127309250874        2.2640061249301460     
+         219  : increase standard deviation *   1.24587798       169.08699869022820        1.8767379755188907     
+         221  : increase standard deviation *   1.37182772       132.31572560872328        2.2753683285907602     
+         222  : increase standard deviation *   1.20426583       151.27118545245614        1.7534660535725599     
+         224  : increase standard deviation *   1.40442312       66.210650939876700        2.3847810738130071     
+         225  : increase standard deviation *   1.44071054       58.546665132023534        2.5096091985043443     
+         227  : increase standard deviation *   1.33771574       69.451171823106790        2.1636164396500468     
+         228  : increase standard deviation *   1.42150259       61.833992512825709        2.4431374256781924     
+         230  : increase standard deviation *   1.34768796       55.232973422625960        2.1959946015404190     
+         231  : increase standard deviation *   1.39024901       50.681014750530345        2.3368875124397848     
+         233  : increase standard deviation *   1.35631907       128.30763668440596        2.2242126388189063     
+         234  : increase standard deviation *   1.15812969       113.02611484817041        1.6216869669768570     
+         235  : increase standard deviation *   1.34619498       93.007972513358979        2.1911320181363929     
+         236  : increase standard deviation *   1.43060970       21.471434476083079        2.4745424518073325     
+         237  : increase standard deviation *   1.26785445       109.24710092123902        1.9435307230224954     
+         238  : increase standard deviation *   1.39011538       156.17248615475378        2.3364382409931856     
+         239  : increase standard deviation *   1.24538410       7.8332640522763999        1.8752503167257695     
+         240  : increase standard deviation *   1.22948503       135.82288749436117        1.8276756221793389     
+         241  : increase standard deviation *   1.20626032       193.45744709372454        1.7592788555376773     
+         242  : increase standard deviation *   1.29033804       142.24657150718124        2.0130734303600146     
+         243  : increase standard deviation *   1.40488493       108.03834700879791        2.3863498167420398     
+         244  : increase standard deviation *   1.37663364       41.744270135542138        2.2913388350904778     
+         245  : increase standard deviation *   1.38767600       82.078706794536046        2.3282453361304194     
+         246  : increase standard deviation *   1.40424597       105.30914084424769        2.3841795000917494     
+         247  : increase standard deviation *   1.32375228       219.26542107580582        2.1186832347804971     
+         248  : increase standard deviation *   1.31437182       102.60724719263332        2.0887623983826260     
+         249  : increase standard deviation *   1.34124529       95.664535373833516        2.1750488556273324     
+         251  : increase standard deviation *   1.31043029       70.806859363218138        2.0762537134057490     
+         252  : increase standard deviation *   1.20633352       122.61020097394825        1.7594925240604218     
+         254  : increase standard deviation *   1.30951595       56.061595881313288        2.0733572682688193     
+         255  : increase standard deviation *   1.25428832       108.41155817600068        1.9021612917350033     
+         257  : increase standard deviation *   1.32780743       45.324327525867929        2.1316836710423623     
+         258  : increase standard deviation *   1.19356549       98.288405849778343        1.7224439969222218     
+         259  : increase standard deviation *   1.11893642       162.42289890570800        1.5137821950892203     
+         260  : increase standard deviation *   1.49741721       42.809390544337049        2.7110543851949140     
+         262  : increase standard deviation *   1.20613575       169.41210647683556        1.7589154416160551     
+         283  : increase standard deviation *   1.35165334       100.18801889566852        2.2089364389613082     
+         320  : increase standard deviation *   1.54741585       9.9315394845519922        2.8951205254938182     
+         344  : increase standard deviation *   1.75923729       3.6707384171582436        3.7419800105579899     
+         388  : increase standard deviation *   2.15802860      0.68857098683593032        5.6307600245096507     
+         390  : increase standard deviation *   1.11475527       244.18392664371225        1.5024904108757522     
+         407  : increase standard deviation *   1.88680947      0.93968000174791544        4.3043612001340437     
+         419  : increase standard deviation *   1.23058140       106.58161422225278        1.8309365291445567     
+         440  : increase standard deviation *   1.13548768       121.43827479402455        1.5588971976702530     
+         443  : increase standard deviation *   1.30509341       23.038108927562174        2.0593767119729391     
+         445  : increase standard deviation *   1.21202588       161.83363453612557        1.7761365692772044     
+         448  : increase standard deviation *   1.36955631       63.264600179644532        2.2678399628538020     
+         452  : increase standard deviation *   1.16212785       168.41086034724822        1.6329031866784687     
+         454  : increase standard deviation *   1.20135236       98.182092866656902        1.7449919152776447     
+         456  : increase standard deviation *   1.17382598       92.296716222837944        1.6659425687593377     
+         458  : increase standard deviation *   1.30627799       51.146539371697834        2.0631168960740349     
+         459  : increase standard deviation *   1.18615818       94.971255235648556        1.7011311656470589     
+         460  : increase standard deviation *   1.30346620       44.124376299266302        2.0542445769125890     
+         461  : increase standard deviation *   1.20948195       159.34219073979779        1.7686887283047430     
+         471  : increase standard deviation *   1.28869259       219.91578150297764        2.0079423973668247     
+         477  : increase standard deviation *   1.20153964       265.58312379793921        1.7455358931389628     
+         486  : increase standard deviation *   1.23503196       242.40433150818859        1.8442042898507425     
+         493  : increase standard deviation *   1.17871797       207.59654800980590        1.6798573852882634     
+         504  : increase standard deviation *   1.11912465       227.52221536764125        1.5142917700656360     
+         505  : increase standard deviation *   1.20230961       134.85779973241137        1.7477737103716284     
+         516  : increase standard deviation *   1.12114358       169.67264069898818        1.5197601743930069     
+         532  : increase standard deviation *   1.12804151       137.15215515888838        1.5385185434938033     
+         533  : increase standard deviation *   1.11694193       12.796922610514574        1.5083904470374629     
+         544  : increase standard deviation *   1.40574789       48.141427410491374        2.3892824364049408     
+         555  : increase standard deviation *   1.21046674       233.67400223121848        1.7715698897200765     
+         571  : increase standard deviation *   1.93277025      0.70746684835850271        4.5166146532492712     
+         572  : increase standard deviation *   1.32353199       128.65567686563298        2.1179782626875219     
+         577  : increase standard deviation *   1.47554982       37.445818935316922        2.6324512980914827     
+         578  : increase standard deviation *   1.49743307       66.567882816501978        2.7111116657863579     
+         579  : increase standard deviation *   1.42599046       125.60462149027184        2.4585884061415597     
+         580  : increase standard deviation *   1.14913511       275.96116610003975        1.5965949863922653     
+         584  : increase standard deviation *   1.28091323       202.00963858166637        1.9837730581523541     
+         587  : increase standard deviation *   1.41712940       129.67876914537706        2.4281280120969022     
+         588  : increase standard deviation *   1.09769464       255.70989890566892        1.4568528907114497     
+         589  : increase standard deviation *   1.50673819       95.986294409523111        2.7449106520834214     
+         590  : increase standard deviation *   1.38823354       96.261733777234213        2.3301165994611011     
+         591  : increase standard deviation *   1.38423836       174.09871946444767        2.3167242911894914     
+         592  : increase standard deviation *   1.15340078       274.73520279725244        1.6084703398242310     
+         607  : increase standard deviation *   1.16407013       273.10509040643177        1.6383657611684688     
+         615  : increase standard deviation *   1.14831245       270.92107855250151        1.5943098843971475     
+         619  : increase standard deviation *   2.19810915      0.66832827491087621        5.8418600539813852     
+         621  : increase standard deviation *   1.18889058       191.89024221015626        1.7089775762205508     
+         622  : increase standard deviation *   1.37763345       197.05558051127235        2.2946683237679353     
+         623  : increase standard deviation *   1.39862072       191.01438265279103        2.3651163240706023     
+         624  : increase standard deviation *   1.46570170       174.00698363612059        2.5974294108178149     
+         625  : increase standard deviation *   1.14646268       200.10735652485573        1.5891777454755498     
+         626  : increase standard deviation *   1.40918994       187.68631795886563        2.4009971092729314     
+         627  : increase standard deviation *   1.47506952       171.46060012535415        2.6307379795573578     
+         628  : increase standard deviation *   1.40594351       170.51993180198846        2.3899474861514780     
+         629  : increase standard deviation *   1.32512820       189.58750320144520        2.1230900377058322     
+ 407 : change polarity
+ 497 : change polarity
+ 571 : change polarity
+ 388 : excluded
+ 619 : excluded
+ Iteration   3,   0 : Calculating Sensitivities
+  Iteration            3 ,            0  : Updating
+ Iteration   3,   0 : Calculating Potentials
+  Iteration            3 ,            1  : Updating
+ Iteration   3,   1 : Calculating Potentials
+
+Chi increase:  -34.23     %
+Stepsize :   28.18    
+nrmsd/rmsreg :   1.106    
+
+  Iteration            3 ,            2  : Updating
+ Iteration   3,   2 : Calculating Potentials
+
+Chi increase:  -35.24     %
+Stepsize :   26.33    
+nrmsd/rmsreg :  0.9925    
+
+  Iteration            3 ,            3  : Updating
+ Iteration   3,   3 : Calculating Potentials
+
+Chi increase:  -29.19     %
+Stepsize :   24.66    
+nrmsd/rmsreg :   1.047    
+
+  Iteration            3 ,            4  : Updating
+ Iteration   3,   4 : Calculating Potentials
+  Iteration            3 ,            5  : Updating
+ Iteration   3,   5 : Calculating Potentials
+  Iteration            3 ,            5  : Updating
+ Iteration   3,   5 : Calculating Potentials
+ 388 : excluded
+ 619 : excluded
+ Iteration   4,   0 : Calculating Sensitivities
+  Iteration            4 ,            0  : Updating
+ Iteration   4,   0 : Calculating Potentials
+  Iteration            4 ,            1  : Updating
+ Iteration   4,   1 : Calculating Potentials
+
+Chi increase:  -15.50     %
+Stepsize :   2.443    
+nrmsd/rmsreg :   1.025    
+
+  Iteration            4 ,            2  : Updating
+ Iteration   4,   2 : Calculating Potentials
+
+Chi increase:  -8.917     %
+Stepsize :   4.450    
+nrmsd/rmsreg :   1.060    
+
+  Iteration            4 ,            3  : Updating
+ Iteration   4,   3 : Calculating Potentials
+
+Chi increase:  -2.951     %
+Stepsize :   5.785    
+nrmsd/rmsreg :   1.058    
+
+  Iteration            4 ,            4  : Updating
+ Iteration   4,   4 : Calculating Potentials
+
+Chi increase:   2.483     %
+Stepsize :   7.498    
+nrmsd/rmsreg :   1.056    
+
+  Iteration            4 ,            5  : Updating
+ Iteration   4,   5 : Calculating Potentials
+  Iteration            4 ,            6  : Updating
+ Iteration   4,   6 : Calculating Potentials
+  Iteration            4 ,            6  : Updating
+ Iteration   4,   6 : Calculating Potentials
+ 388 : excluded
+ 619 : excluded
+ Iteration   5,   0 : Calculating Sensitivities
+  Iteration            5 ,            0  : Updating
+ Iteration   5,   0 : Calculating Potentials
+  Iteration            5 ,            1  : Updating
+ Iteration   5,   1 : Calculating Potentials
+
+Chi increase:  -5.043     %
+Stepsize :  0.6961    
+nrmsd/rmsreg :   1.021    
+
+  Iteration            5 ,            2  : Updating
+ Iteration   5,   2 : Calculating Potentials
+
+Chi increase:  -2.210     %
+Stepsize :  0.9322    
+nrmsd/rmsreg :   1.028    
+
+  Iteration            5 ,            3  : Updating
+ Iteration   5,   3 : Calculating Potentials
+
+Chi increase: -0.9148     %
+Stepsize :   1.535    
+nrmsd/rmsreg :   1.013    
+
+  Iteration            5 ,            4  : Updating
+ Iteration   5,   4 : Calculating Potentials
+  Iteration            5 ,            5  : Updating
+ Iteration   5,   5 : Calculating Potentials
+  Iteration            5 ,            5  : Updating
+ Iteration   5,   5 : Calculating Potentials
+ 388 : excluded
+ 619 : excluded
+ Iteration terminated: Min. rel. CHI decrease.
+ CPU time:  0d/  0h/  3m/ 16s/ 718ms
+***finished***
