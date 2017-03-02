@@ -40,3 +40,6 @@ minimalbeispiele/minimal_prec
 INSTALL
 *.*~
 package/
+
+output_benchmark_binaries/
+settings.txt
