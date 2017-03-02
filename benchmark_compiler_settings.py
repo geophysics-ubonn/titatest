@@ -53,7 +53,6 @@ def compile_flags(output_dir, flags):
     ).strip()[2:]
     binary_name = 'src/CRTomo_' + git_branch + '_' + computer_name
     print('binary_name', binary_name)
-    exit()
 
     for nr, flag in enumerate(flags):
         output_file = output_dir + '/{0:03}_CRTomo'.format(nr)
