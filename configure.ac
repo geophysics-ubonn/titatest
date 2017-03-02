@@ -1,4 +1,4 @@
-AC_PREREQ(2.64)
+AC_PREREQ(2.63)
 # das Projekt initialisieren, versionsnummer und emailadresse angeben
 AC_INIT([CRTomoMod], [1.6], [mweigand@geo.uni-bonn.de])
 # eine beliebige Sourcedatei angeben, damit der Sourceordner bekannt ist
@@ -10,19 +10,24 @@ mySCRIPTS=scripts
 # apparently the call to AC_PROG_FF/AC_PROG_F77 will change the user-supplied
 # settings for the compilers. Therefore, save and restore the content later
 
-# normally we should not set FCFLAGS and FFLAGS (these are for user-supplied settings). However, we want to change some machine specific stuff for the Debian package
-test -z "${FCFLAGS}" && FCFLAGS="-O4 -march=native"
-test -z "${FFLAGS}" && FFFLAGS="-O4 -march=native"
+# normally we should not set FCFLAGS and FFLAGS (these are for user-supplied
+# settings). However, we want to change some machine specific stuff for the
+# Debian package
+
+default_flags=" -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions "
+test -z "${FCFLAGS}" && FCFLAGS="${default_flags}"
+test -z "${FFLAGS}" && FFLAGS="${default_flags}"
 
 FCFLAGS_SAVE="${FCFLAGS}"
 FFLAGS_SAVE="${FFLAGS}"
 
 # default compiler flags
-AM_FC_FLAGS="-ftree-vectorize -ffast-math -funroll-loops -finline-functions -fopenmp"
+# AM_FC_FLAGS=" -fopenmp "
+AM_FC_FLAGS=" "
 AC_SUBST(AM_FC_FLAGS)
 
 # den autotools mitteilen, das Fortran benutzt wird. Mit folgenden Aufrufen werden die
-# entsprechenden Variablen initialisiert 
+# entsprechenden Variablen initialisiert
 AC_PROG_FC([gfortran])
 AC_PROG_F77([gfortran])
 
