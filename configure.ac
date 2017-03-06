@@ -14,7 +14,7 @@ mySCRIPTS=scripts
 # settings). However, we want to change some machine specific stuff for the
 # Debian package
 
-default_flags=" -O4 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions "
+default_flags=" -O3 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions "
 test -z "${FCFLAGS}" && FCFLAGS="${default_flags}"
 test -z "${FFLAGS}" && FFLAGS="${default_flags}"
 
@@ -22,8 +22,7 @@ FCFLAGS_SAVE="${FCFLAGS}"
 FFLAGS_SAVE="${FFLAGS}"
 
 # default compiler flags
-# AM_FC_FLAGS=" -fopenmp "
-AM_FC_FLAGS=" "
+AM_FC_FLAGS="-static-libgcc -static -fopenmp "
 AC_SUBST(AM_FC_FLAGS)
 
 # den autotools mitteilen, das Fortran benutzt wird. Mit folgenden Aufrufen werden die
