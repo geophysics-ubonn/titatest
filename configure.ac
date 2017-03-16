@@ -22,7 +22,7 @@ FCFLAGS_SAVE="${FCFLAGS}"
 FFLAGS_SAVE="${FFLAGS}"
 
 # default compiler flags
-AM_FC_FLAGS="-static-libgcc -static -fopenmp "
+AM_FC_FLAGS="-fopenmp "
 AC_SUBST(AM_FC_FLAGS)
 
 # den autotools mitteilen, das Fortran benutzt wird. Mit folgenden Aufrufen werden die
