@@ -14,7 +14,7 @@ mySCRIPTS=scripts
 # settings). However, we want to change some machine specific stuff for the
 # Debian package
 
-default_flags=" -O3 -march=native -ftree-vectorize -ffast-math -funroll-loops -finline-functions -floop-nest-optimize "
+default_flags=" -O3 -march=native -ftree-vectorize -ffast-math -finline-functions -floop-nest-optimize "
 test -z "${FCFLAGS}" && FCFLAGS="${default_flags}"
 test -z "${FFLAGS}" && FFLAGS="${default_flags}"
 
