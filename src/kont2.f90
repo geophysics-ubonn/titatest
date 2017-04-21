@@ -1,88 +1,89 @@
 subroutine kont2(lsetup)
+    !     Unterprogramm zur Ausgabe der Kontrollvariablen.
+    !     Andreas Kemna 16-Apr-1996
+    !     Letzte Aenderung 11-Nov-1997
+    ! ....................................................................
 
-!!!$     Unterprogramm zur Ausgabe der Kontrollvariablen.
+    USE datmod
+    !     mw
+    USE invmod
+    USE cjgmod,ONLY:cgres,ncg
+    USE errmod
+    USE konvmod
+    USE pathmod
 
-!!!$     Andreas Kemna                                         16-Apr-1996
-!!!$     Letzte Aenderung   11-Nov-1997
+    IMPLICIT none
 
-!!!$.....................................................................
+    !.....................................................................
+    !     EIN-/AUSGABEPARAMETER:
 
-  USE datmod
-!!!$     mw
-  USE invmod
-  USE cjgmod,ONLY:cgres,ncg
-  USE errmod
-  USE konvmod
-  USE pathmod
+    !     Hilfsschalter
+    LOGICAL  ::  lsetup
 
-  IMPLICIT none
+    !.....................................................................
 
+    !     PROGRAMMINTERNE PARAMETER:
 
-!!!$.....................................................................
+    !     Indexvariable
+    INTEGER (KIND=4)  ::  i,k
+    !!!$     Platzhalter
+    INTEGER,PARAMETER :: ncdump=110
+    CHARACTER(ncdump) :: cdump
+    !!!$.....................................................................
+    ! first iteration, robust
+    100 FORMAT (t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3)
+    ! first iteration, non-robust
+    101 FORMAT (t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4)
 
-!!!$     EIN-/AUSGABEPARAMETER:
+    ! other iterations, robust
+    110 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
+        i6,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3,t117,f5.3)
+    ! other iterations, non-robust
+    111 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
+        i6,t69,g10.4,t81,g10.4,t93,i4,t105,f5.3)
 
-!!!$     Hilfsschalter
-  LOGICAL  ::  lsetup
+    ! update iterations, non-robust
+    105 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
+        i6,t105,f5.3)
+    ! update iterations, robust
+    106 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
+        i6,t105,g9.3,t117,f5.3)
 
-!!!$.....................................................................
-
-!!!$     PROGRAMMINTERNE PARAMETER:
-
-!!!$     Indexvariable
-  INTEGER (KIND=4)  ::  i,k
-!!!$     Platzhalter
-  INTEGER,PARAMETER :: ncdump=110
-  CHARACTER(ncdump) :: cdump
-!!!$.....................................................................
-100 FORMAT (t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3)
-101 FORMAT (t1,a3,t5,i3,t11,g10.4,t69,g10.4,t81,g10.4,t93,i4)
-
-110 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
-       i6,t69,g10.4,t81,g10.4,t93,i4,t105,g9.3,t117,f5.3)
-111 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g10.4,t34,g10.4,t46,g10.4,t58,&
-       i6,t69,g10.4,t81,g10.4,t93,i4,t105,f5.3)
-
-105 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
-       i6,t105,f5.3)
-106 FORMAT (t1,a3,t5,i3,t11,g10.4,t23,g9.3,t34,g10.4,t46,g10.4,t58,&
-       i6,t105,g9.3,t117,f5.3)
-
-!!!$     'inv.ctr' oeffnen
-  DO i=1,ncdump-1
-     cdump(i:i+1)='*'
-  END DO
-  errnr = 1
-  fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-  open(fpinv,file=TRIM(fetxt),status='old',err=1000,position='append')
-  fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-  open(fpcjg,file=TRIM(fetxt),status='old',err=1000,position='append')
-  errnr = 4
-  ncg = INT(cgres(1))
-!!!$     Erste Iteration (?)
-  if (lsetup) then
-     IF (lfpi) THEN          ! FPI?
-        write(fpinv,'(a)',err=1000)cdump
-!!!$     Robuste Inversion
-        if (lrobust) then
-           write(fpinv,100,err=1000)'PIT',it,nrmsd,betrms,pharms,npol,l1rat
-        else
-           write(fpinv,101,err=1000)'PIT',it,nrmsd,betrms,pharms,npol
-        end if
-        write(fpinv,'(a)',err=1000)cdump
-     ELSE
-        write(fpinv,'(a)',err=1000)cdump
-!!!$     Robuste Inversion
-        if (lrobust) then
-           write(fpinv,100,err=1000)'IT',it,nrmsd,betrms,pharms,npol,l1rat
-        else
-           write(fpinv,101,err=1000)'IT',it,nrmsd,betrms,pharms,npol
-        end if
-        write(fpinv,'(a)',err=1000)cdump
-     END IF
-  else
-!!!$     
-!!!$     Hauptiterationen
+    !!!$     'inv.ctr' oeffnen
+    DO i=1,ncdump-1
+        cdump(i:i+1)='*'
+    END DO
+    errnr = 1
+    fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+    open(fpinv,file=TRIM(fetxt),status='old',err=1000,position='append')
+    fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
+    open(fpcjg,file=TRIM(fetxt),status='old',err=1000,position='append')
+    errnr = 4
+    ncg = INT(cgres(1))
+    !!!$     Erste Iteration (?)
+    if (lsetup) then
+        IF (lfpi) THEN          ! FPI?
+            write(fpinv,'(a)',err=1000)cdump
+            !!!$     Robuste Inversion
+            if (lrobust) then
+                write(fpinv,100,err=1000)'PIT',it,nrmsd,betrms,pharms,npol,l1rat
+            else
+            write(fpinv,101,err=1000)'PIT',it,nrmsd,betrms,pharms,npol
+            end if
+            write(fpinv,'(a)',err=1000)cdump
+        ELSE
+            write(fpinv,'(a)',err=1000)cdump
+            !!!$     Robuste Inversion
+            if (lrobust) then
+                write(fpinv,100,err=1000)'IT',it,nrmsd,betrms,pharms,npol,l1rat
+            else
+                write(fpinv,101,err=1000)'IT',it,nrmsd,betrms,pharms,npol
+            end if
+            write(fpinv,'(a)',err=1000)cdump
+        END IF
+    else
+        !!!$
+        !!!$     Hauptiterationen
      if (llam.and..not.lstep) then
         write(fpinv,'(a)',err=1000)cdump
         if (lfpi) then
@@ -120,7 +121,7 @@ subroutine kont2(lsetup)
            ELSE
               write(fpinv,105,err=1000)'PUP',itr,nrmsd,bdpar,lam,rough,ncg,step
            END if
-        ELSE 
+        ELSE
            if (lrobust) then
               write(fpinv,106,err=1000)'UP',itr,nrmsd,bdpar,lam,rough,ncg,l1rat,step
            ELSE
