@@ -6,276 +6,272 @@
 !> @param aggr information
 PROGRAM inv
 
-!>   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
+    !>   Hauptprogramm zur Complex-Resistivity-2.5D-Inversion.
 
-!!!$   Belegte Kanaele:  
-!!!$   9 - error.dat   -> fperr
-!!!$   10 - run.ctr    -> fprun
-!!!$   11 - in-/output -> kanal
-!!!$   12 - crtomo.cfg -> fpcfg
-!!!$   13 - inv.ctr    -> fpinv
-!!!$   14 - cjg.ctr    -> fpcjg
-!!!$   15 - eps.ctr    -> fpeps
-!!!$
-!!!$   Andreas Kemna                                        02-May-1995
-!!!$   Letzte Aenderung                                     Jul-2010
+    !!!$   Belegte Kanaele:
+    !!!$   9 - error.dat   -> fperr
+    !!!$   10 - run.ctr    -> fprun
+    !!!$   11 - in-/output -> kanal
+    !!!$   12 - crtomo.cfg -> fpcfg
+    !!!$   13 - inv.ctr    -> fpinv
+    !!!$   14 - cjg.ctr    -> fpcjg
+    !!!$   15 - eps.ctr    -> fpeps
+    !!!$
+    !!!$   Andreas Kemna                                        02-May-1995
+    !!!$   Letzte Aenderung                                     Jul-2010
 
-!!!$.....................................................................
+    !!!$.....................................................................
 
-  USE alloci
-  USE tic_toc
-  USE femmod
-  USE datmod
-  USE invmod
-  USE cjgmod
-  USE sigmamod
-  USE electrmod
-  USE modelmod
-  USE elemmod
-  USE wavenmod
-  USE randbmod
-  USE konvmod
-  USE errmod
-  USE pathmod
-  USE bsmatm_mod
-  USE bmcm_mod
-  USE brough_mod
-  USE invhpmod
-  USE omp_lib
-  USE ompmod
-  USE get_ver
-!!!$   USE portlib
+    USE alloci
+    USE tic_toc
+    USE femmod
+    USE datmod
+    USE invmod
+    USE cjgmod
+    USE sigmamod
+    USE electrmod
+    USE modelmod
+    USE elemmod
+    USE wavenmod
+    USE randbmod
+    USE konvmod
+    USE errmod
+    USE pathmod
+    USE bsmatm_mod
+    USE bmcm_mod
+    USE brough_mod
+    USE invhpmod
+    USE omp_lib
+    USE ompmod
+    USE get_ver
+    !!!$   USE portlib
 
-  IMPLICIT NONE
+    IMPLICIT NONE
 
-  CHARACTER(256)         :: ftext
-  INTEGER                :: c1,i,count,mythreads,maxthreads
-  REAL(KIND(0D0))        :: lamalt,bdalt
-  LOGICAL                :: converged,l_bsmat
-  INTEGER,PARAMETER      :: clrln_len=50
-  CHARACTER(clrln_len)   :: clrln ! clear line
+    CHARACTER(256)         :: ftext
+    INTEGER                :: c1,i,count,mythreads,maxthreads
+    REAL(KIND(0D0))        :: lamalt,bdalt
+    LOGICAL                :: converged,l_bsmat
+    INTEGER,PARAMETER      :: clrln_len=50
+    CHARACTER(clrln_len)   :: clrln ! clear line
 
-  INTEGER :: getpid,pid,myerr
-!!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    INTEGER :: getpid,pid,myerr
+    !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-!!!$   SETUP UND INPUT
-!!!$   'crtomo.cfg' oeffnen
-  errnr = 1
-!!!$   Kanal nummern belegen.. die variablen sind global!
-  fperr = 9 
-  fprun = 10
-  kanal = 11 
-  fpcfg = 12 
-  fpinv = 13 
-  fpcjg = 14 
-  fpeps = 15 
+    !!!$   SETUP UND INPUT
+    !!!$   'crtomo.cfg' oeffnen
+    errnr = 1
+    !!!$   Kanal nummern belegen.. die variablen sind global!
+    fperr = 9
+    fprun = 10
+    kanal = 11
+    fpcfg = 12
+    fpinv = 13
+    fpcjg = 14
+    fpeps = 15
 
-  DO i=1,clrln_len-1
-     clrln(i:i+1) = ' ' ! fill clear line CHARACTER array
-  END DO
+    DO i=1,clrln_len-1
+        clrln(i:i+1) = ' ' ! fill clear line CHARACTER array
+    END DO
 
-  pid = getpid()
-  fetxt = 'crtomo.pid'
-  PRINT*,'######### CRTomo ############'
-  PRINT*,'Process_ID ::',pid
-  OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
-  WRITE (fprun,*)pid
-  CLOSE (fprun)
-  maxthreads = OMP_GET_MAX_THREADS()
-  WRITE(6,"(a, i5)") " OpenMP max threads: ", maxthreads
+    pid = getpid()
+    fetxt = 'crtomo.pid'
+    PRINT*,'######### CRTomo ############'
+    PRINT*,'Process_ID ::',pid
+    OPEN (fprun,FILE=TRIM(fetxt),STATUS='replace',err=999)
+    WRITE (fprun,*)pid
+    CLOSE (fprun)
+    maxthreads = OMP_GET_MAX_THREADS()
+    WRITE(6,"(a, i5)") " OpenMP max threads: ", maxthreads
 
-  PRINT*,'Version control of binary:'
-  CALL get_git_ver
+    PRINT*,'Version control of binary:'
+    CALL get_git_ver
 
-  fetxt = 'crtomo.cfg'
-  OPEN(fpcfg,file=TRIM(fetxt),status='old',err=999)
+    fetxt = 'crtomo.cfg'
+    OPEN(fpcfg,file=TRIM(fetxt),status='old',err=999)
 
-  lagain=.TRUE. ! is set afterwards by user input file to false
+    lagain=.TRUE. ! is set afterwards by user input file to false
 
-!!!$   Allgemeine Parameter setzen
-  DO WHILE ( lagain ) ! this loop exits after all files are processed
+    !!!$   Allgemeine Parameter setzen
+    DO WHILE (lagain) ! this loop exits after all files are processed
+        errnr2 = 0
+        !!!$   Benoetigte Variablen einlesen
+        CALL rall(kanal,delem,delectr,dstrom,drandb,&
+            dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
+        !!!$   diff+<
+        !!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
+        !!!$   diff+>
+        IF (errnr.NE.0) GOTO 999
 
-     errnr2 = 0
-!!!$   Benoetigte Variablen einlesen
-     CALL rall(kanal,delem,delectr,dstrom,drandb,&
-          dsigma,dvolt,dsens,dstart,dd0,dm0,dfm0,lagain)
-!!!$   diff+<
-!!!$   diff-     1            dsigma,dvolt,dsens,dstart,lsens,lagain)
-!!!$   diff+>
-     IF (errnr.NE.0) GOTO 999
-
-     NTHREADS = maxthreads
-!!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
-     IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
-        mythreads = MAX(kwnanz,2)
-        PRINT*,'Rescheduling..'
-        IF ( mythreads <= maxthreads ) THEN ! best case,
-!!!$ the number of processors is greater or equal the assumed
-!!!$ workload
-           PRINT*,'perfect match'
-        ELSE 
-!!!$ is smaller than the minimum workload.. now we have to devide a bit..
-           PRINT*,'less nodes than wavenumbers'
-           DO i = 1, INT(kwnanz/2)
-              mythreads = INT(kwnanz / i) + 1
-              IF (mythreads < maxthreads) EXIT
-           END DO
+        NTHREADS = maxthreads
+        !!!$ now that we know nf and kwnanz, we can adjust the OMP environment..
+        IF (maxthreads > 2) THEN ! single or double processor machines don't need scheduling..
+            mythreads = MAX(kwnanz,2)
+            PRINT*,'Rescheduling..'
+            IF (mythreads <= maxthreads) THEN ! best case,
+                !!!$ the number of processors is greater or equal the assumed
+                !!!$ workload
+                PRINT*,'perfect match'
+            ELSE
+                !!!$ is smaller than the minimum workload.. now we have to devide a bit..
+                PRINT*,'less nodes than wavenumbers'
+                DO i = 1, INT(kwnanz/2)
+                    mythreads = INT(kwnanz / i) + 1
+                    IF (mythreads < maxthreads) EXIT
+                END DO
+            END IF
+            NTHREADS = mythreads
         END IF
-        NTHREADS = mythreads
-     END IF
-     CALL OMP_SET_NUM_THREADS ( NTHREADS )
-     ! recheck ..
-     i = OMP_GET_MAX_THREADS()
-     WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
-!!!$
+        CALL OMP_SET_NUM_THREADS ( NTHREADS )
+        ! recheck ..
+        i = OMP_GET_MAX_THREADS()
+        WRITE(6,'(2(a, i3),a)') " OpenMP threads: ",i,'(',maxthreads,')'
+        !!!$
 
-!!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
-!!!$   zur Berechnung der gemischten Randbedingung bestimmen
-     CALL precal()
-
-     IF (errnr.NE.0) GOTO 999
-
-     IF (.NOT.lbeta) THEN
-        lsr = .FALSE.
-
-!!!$   Ggf. Fehlermeldungen
-        IF (.NOT.lsink) THEN
-           fetxt = 'no mixed boundary specify sink node'
-           errnr = 102
-        END IF
-!!!$ RM this is handeled in rall..
-!!$        if (swrtr.eq.0.and..not.lrandb2) then
-!!$           fetxt = ' '
-!!$           errnr = 103
-!!$        end if
+        !!!$   Element- und Randelementbeitraege sowie ggf. Konfigurationsfaktoren
+        !!!$   zur Berechnung der gemischten Randbedingung bestimmen
+        CALL precal()
 
         IF (errnr.NE.0) GOTO 999
-     ELSE
 
-!!!$   Ggf. Fehlermeldungen
-        IF (swrtr.EQ.0) THEN
-           fetxt = ' '
-           errnr = 106
+        IF (.NOT.lbeta) THEN
+            lsr = .FALSE.
+
+            !!!$   Ggf. Fehlermeldungen
+            IF (.NOT.lsink) THEN
+                fetxt = 'no mixed boundary specify sink node'
+                errnr = 102
+            END IF
+            !!!$ RM this is handeled in rall..
+            !!$        if (swrtr.eq.0.and..not.lrandb2) then
+            !!$           fetxt = ' '
+            !!$           errnr = 103
+            !!$        end if
+
+            IF (errnr.NE.0) GOTO 999
+        ELSE
+
+            !!!$   Ggf. Fehlermeldungen
+            IF (swrtr.EQ.0) THEN
+                fetxt = ' '
+                errnr = 106
+            END IF
         END IF
-     END IF
 
-
-!!!$   getting dynamic memory 
-     errnr = 94
-!!!$ physical model
-     fetxt = 'allocation problem sigma'
-     ALLOCATE (sigma(elanz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-     fetxt = 'allocation problem sigma2'
-     ALLOCATE (sigma2(elanz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-!!!$  model parameters
-     fetxt = 'allocation problem par'
-     ALLOCATE (par(manz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-     fetxt = 'allocation problem dpar'
-     ALLOCATE (dpar(manz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-     fetxt = 'allocation problem dpar2'
-     ALLOCATE (dpar2(manz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-     fetxt = 'allocation problem pot'
-     ALLOCATE(pot(sanz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-     fetxt = 'allocation problem pota'
-     ALLOCATE (pota(sanz),STAT=myerr)
-     IF (myerr /= 0) GOTO 999
-!!!$ now the big array are coming.. 
-     fetxt = 'allocation problem fak'
-     ALLOCATE (fak(sanz),STAT=myerr) ! fak for modeling
-     IF (myerr /= 0) GOTO 999
-     IF (ldc) THEN
-        fetxt = 'allocation problem sensdc'
-        ALLOCATE (sensdc(nanz,manz),STAT=myerr)
+        !!!$   getting dynamic memory
+        errnr = 94
+        !!!$ physical model
+        fetxt = 'allocation problem sigma'
+        ALLOCATE (sigma(elanz),STAT=myerr)
         IF (myerr /= 0) GOTO 999
-        fetxt = 'allocation problem kpotdc'
-        ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=myerr)
-     ELSE
-        fetxt = 'allocation problem sens'
-        ALLOCATE (sens(nanz,manz),STAT=myerr)
+        fetxt = 'allocation problem sigma2'
+        ALLOCATE (sigma2(elanz),STAT=myerr)
         IF (myerr /= 0) GOTO 999
-        fetxt = 'allocation problem kpot'
-        ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=myerr)
-     END IF
-     IF (myerr /= 0) GOTO 999
+        !!!$  model parameters
+        fetxt = 'allocation problem par'
+        ALLOCATE (par(manz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
+        fetxt = 'allocation problem dpar'
+        ALLOCATE (dpar(manz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
+        fetxt = 'allocation problem dpar2'
+        ALLOCATE (dpar2(manz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
+        fetxt = 'allocation problem pot'
+        ALLOCATE(pot(sanz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
+        fetxt = 'allocation problem pota'
+        ALLOCATE (pota(sanz),STAT=myerr)
+        IF (myerr /= 0) GOTO 999
+        !!!$ now the big array are coming..
+        fetxt = 'allocation problem fak'
+        ALLOCATE (fak(sanz),STAT=myerr) ! fak for modeling
+        IF (myerr /= 0) GOTO 999
+        IF (ldc) THEN
+            fetxt = 'allocation problem sensdc'
+            ALLOCATE (sensdc(nanz,manz),STAT=myerr)
+            IF (myerr /= 0) GOTO 999
+            fetxt = 'allocation problem kpotdc'
+            ALLOCATE (kpotdc(sanz,eanz,kwnanz),STAT=myerr)
+        ELSE
+            fetxt = 'allocation problem sens'
+            ALLOCATE (sens(nanz,manz),STAT=myerr)
+            IF (myerr /= 0) GOTO 999
+            fetxt = 'allocation problem kpot'
+            ALLOCATE (kpot(sanz,eanz,kwnanz),STAT=myerr)
+        END IF
+        IF (myerr /= 0) GOTO 999
 
-!!!$ get CG data storage of residuums and bvec, which is global
-     CALL con_cjgmod (1,fetxt,myerr)
-     IF (myerr /= 0) GOTO 999
+        !!!$ get CG data storage of residuums and bvec, which is global
+        CALL con_cjgmod (1,fetxt,myerr)
+        IF (myerr /= 0) GOTO 999
 
-!!!$ >> RM ref model regu
-!!!$ assign memory to global variables
-     fetxt = 'allocation problem reference model'
-     ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=myerr)
-     w_ref_re = 0d0;m_ref = DCMPLX(0d0);w_ref_im = 0d0
-     IF (myerr /= 0) GOTO 999
-!!!$ << RM ref model regu
+        !!!$ >> RM ref model regu
+        !!!$ assign memory to global variables
+        fetxt = 'allocation problem reference model'
+        ALLOCATE (w_ref_re(manz),w_ref_im(manz),m_ref(manz),STAT=myerr)
+        w_ref_re = 0d0;m_ref = DCMPLX(0d0);w_ref_im = 0d0
+        IF (myerr /= 0) GOTO 999
+        !!!$ << RM ref model regu
 
+        !!!!$ INITIALIZE
+        !!!$   Startparameter setzen
+        bdalt = 1d0
+        it     = 0;itr    = 0
+        rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
+        !     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
+        IF (BTEST(llamf,0)) lamalt = lamfix
+        betrms = 0d0; pharms = 0d0
+        lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
+        llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
+        lfstep = .FALSE.; l_bsmat = .TRUE.
+        step   = 1d0; stpalt = 1d0; alam   = 0d0
 
-!!!!$ INITIALIZE
-!!!$   Startparameter setzen
-     bdalt = 1d0          
-     it     = 0;itr    = 0
-     rmsalt = 0d0; lamalt = 1d0; bdpar = 1d0
-     !     IF (lamnull_cri > 0d0) llamalt = lamnull_cri
-     IF (BTEST(llamf,0)) lamalt = lamfix
-     betrms = 0d0; pharms = 0d0
-     lsetup = .TRUE.; lsetip = .FALSE.; lfpi    = .FALSE.
-     llam   = .FALSE.; ldlami = .TRUE.; lstep  = .FALSE.
-     lfstep = .FALSE.; l_bsmat = .TRUE.
-     step   = 1d0; stpalt = 1d0; alam   = 0d0
+        !!!$   Kontrolldateien oeffnen
+        errnr = 1
+        !!!$ OPEN CONTRL FILES
+        fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
+        OPEN(fpinv,file=TRIM(fetxt),status='replace',err=999)
+        CLOSE(fpinv)
+        fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
+        OPEN(fprun,file=TRIM(fetxt),status='replace',err=999)
+        !!!$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
+        fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
+        OPEN(fpcjg,file=TRIM(fetxt),status='replace',err=999)
+        CLOSE(fpcjg)
+        fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
+        OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
 
-!!!$   Kontrolldateien oeffnen
-     errnr = 1
-!!!$ OPEN CONTRL FILES
-     fetxt = ramd(1:lnramd)//slash(1:1)//'inv.ctr'
-     OPEN(fpinv,file=TRIM(fetxt),status='replace',err=999)
-     CLOSE(fpinv)
-     fetxt = ramd(1:lnramd)//slash(1:1)//'run.ctr'
-     OPEN(fprun,file=TRIM(fetxt),status='replace',err=999)
-!!!$  close(fprun) muss geoeffnet bleiben da sie staendig beschrieben wird
-     fetxt = ramd(1:lnramd)//slash(1:1)//'cjg.ctr'
-     OPEN(fpcjg,file=TRIM(fetxt),status='replace',err=999)
-     CLOSE(fpcjg)
-     fetxt = ramd(1:lnramd)//slash(1:1)//'eps.ctr'
-     OPEN(fpeps,file=TRIM(fetxt),status='replace',err=999)
+        !!!$  SET ERRORS for all measurements and write control to fpeps
+        !!!$ >> RM
+        IF (ldc) THEN
+            WRITE (fpeps,'(a)')'1/eps_r eps_r datum'
+            WRITE (fpeps,'(G12.3,2x,G12.3,2X,G14.5)')( &
+                SQRT(wmatdr(i)),&
+                1/SQRT(wmatdr(i)), &
+                REAL(dat(i)), i=1,nanz)
+        ELSE
+            WRITE (fpeps,'(t5,a,t14,a,t27,a,t38,a,t50,a,t62,a,t71,a,t87,a)')'1/eps_r','1/eps_p',&
+                '1/eps','eps_r','eps_p','eps','-log(|R|)', '-Phase (rad)'
+            WRITE (fpeps,'(3F10.1,2x,3G12.3,2G15.7)')&
+                (SQRT(wmatdr(i)),SQRT(wmatdp(i)),SQRT(wmatd(i)),1/SQRT(wmatdr(i)),&
+                1/SQRT(wmatdp(i)),1/SQRT(wmatd(i)),REAL(dat(i)),AIMAG(dat(i)),i=1,nanz)
+        END IF
+        CLOSE(fpeps)
+        errnr = 4
 
-!!!$  SET ERRORS for all measurements and write control to fpeps
-!!!$ >> RM
-     IF (ldc) THEN
-        WRITE (fpeps,'(a)')'1/eps_r      datum'
-        WRITE (fpeps,'(G12.3,2x,G14.5)')(SQRT(wmatdr(i)),&
-             REAL(dat(i)),i=1,nanz)
-     ELSE
+        !!!$ set starting model
+        CALL bsigm0(kanal,dstart)
+        IF (errnr.NE.0) GOTO 999
 
-        WRITE (fpeps,'(t5,a,t14,a,t27,a,t38,a,t50,a,t62,a,t71,a,t87,a)')'1/eps_r','1/eps_p',&
-             '1/eps','eps_r','eps_p','eps','-log(|R|)', '-Phase (rad)'
-        WRITE (fpeps,'(3F10.1,2x,3G12.3,2G15.7)')&
-             (SQRT(wmatdr(i)),SQRT(wmatdp(i)),SQRT(wmatd(i)),1/SQRT(wmatdr(i)),&
-             1/SQRT(wmatdp(i)),1/SQRT(wmatd(i)),REAL(dat(i)),AIMAG(dat(i)),i=1,nanz)
-     END IF
-     CLOSE(fpeps)
-     errnr = 4
+        !!!$   Kontrolldateien initialisieren
+        !!!$   diff-        call kont1(delem,delectr,dstrom,drandb)
+        !!!$   diff+<
+        CALL kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
+        !!!$   diff+>
+        IF (errnr.NE.0) GOTO 999
 
-
-!!!$ set starting model 
-     CALL bsigm0(kanal,dstart)
-     IF (errnr.NE.0) GOTO 999
-
-
-!!!$   Kontrolldateien initialisieren
-!!!$   diff-        call kont1(delem,delectr,dstrom,drandb)
-!!!$   diff+<
-     CALL kont1(delem,delectr,dstrom,drandb,dd0,dm0,dfm0,lagain)
-!!!$   diff+>
-     IF (errnr.NE.0) GOTO 999
-
-!!$     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
+        !!$     write(6,"(a, i3)") " OpenMP max threads: ", OMP_GET_MAX_THREADS()
 !!$     !$OMP PARALLEL
 !!$     write(6,"(2(a,i3))") " OpenMP: N_threads = ",&
 !!$          OMP_GET_NUM_THREADS()," thread = ", OMP_GET_THREAD_NUM()
@@ -313,8 +309,8 @@ PROGRAM inv
            !$OMP FIRSTPRIVATE (pota,fak,pot,adc,bdc,fetxt) &
            !$OMP PRIVATE (j,l) &
            !$OMP SHARED (kwnanz,lverb,eanz,lsr,lbeta,lrandb,&
-           !$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)           
-           !$OMP DO 
+           !$OMP  lrandb2,sanz,kpotdc,swrtr,hpotdc,elbg,count,mb)
+           !$OMP DO
 !!!$   DC CASE
 
            DO k=1,kwnanz
@@ -356,7 +352,7 @@ PROGRAM inv
 
                  CALL vredc(adc,bdc,pot)
 
-!!!$   Scale back the potentials, save them and 
+!!!$   Scale back the potentials, save them and
 !!!$   eventually add the analytical response
                  DO j=1,sanz
                     kpotdc(j,l,k) = DBLE(pot(j)) * fak(j)
@@ -376,7 +372,7 @@ PROGRAM inv
            ALLOCATE (a((mb+1)*sanz),STAT=myerr)
            IF (myerr /= 0) GOTO 999
            fetxt = 'allocation problem hpot'
-           ALLOCATE (hpot(sanz,eanz),STAT=myerr) 
+           ALLOCATE (hpot(sanz,eanz),STAT=myerr)
            IF (myerr /= 0) GOTO 999
            fetxt = 'allocation problem b'
            ALLOCATE (b(sanz),STAT=myerr)
@@ -546,8 +542,8 @@ PROGRAM inv
 !              WRITE (6,'(a)',ADVANCE='no')'convergence '
 !              IF (nrmsd < 1d0 ) errnr2 = 94
 !              IF (nrmsd > rmsalt) errnr2 = 95
-!              IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93              
-!              PRINT*,errnr2        
+!              IF (dabs(1d0-nrmsd/rmsalt) < mqrms) errnr2 = 93
+!              PRINT*,errnr2
 !           END IF
 
 !!!$   Maximale Anzahl an Iterationen ?
@@ -597,7 +593,7 @@ PROGRAM inv
                       'and saving lam_cri: ',REAL(lam_cri)
 
                  lfpi    = .TRUE.
-                 lsetip = .TRUE. ! 
+                 lsetip = .TRUE. !
                  lfphai = .FALSE.
                  llam   = .FALSE.
                  ldlami = .TRUE.
@@ -669,7 +665,7 @@ PROGRAM inv
            dlalt  = 1d0
            ldlamf = .FALSE.
            bdpar = 1d0
-           bdalt = 1d0           
+           bdalt = 1d0
 
 !!!$   Daten-CHI speichern
            rmsalt = nrmsd
@@ -734,7 +730,7 @@ PROGRAM inv
            END IF
 
 !!!$   REGULARISIERUNG / STEP-LENGTH einstellen
-        ELSE 
+        ELSE
            IF (.NOT.lstep) THEN
 
               IF (llam) THEN
@@ -782,10 +778,10 @@ PROGRAM inv
 !!!$ (A^h * Cd^-1 A + Cm^-1) dm = A_q^h * C_d^-1 * (d - f(m_q)) + C_m^-1 * ({m_q,(m_q-m_0)})
 !!!$ Where we identify lam as inverse a-priori variance:
 !!!$ Cm^-1 = \lam R^T * R.
-!!!$ If we solve the normal equation 
+!!!$ If we solve the normal equation
 !!!$  Cm * (A^h * Cd^-1 A + I) dm = Cm * (A_q^h * C_d^-1 * (d - f(m_q)) - ({m_q,(m_q-m_0)}))
 !!!$ instead, we use \lam as prior variance.
-!!!$ This also results in the fundamental problem on how to adjust the search direction which depends on the 
+!!!$ This also results in the fundamental problem on how to adjust the search direction which depends on the
 !!!$ CHI decrease and thus should also be reciprocal.
 !!!$
 !!!$ nrmsdm and mqrms, fstart and fstop are set in rall.f90.
@@ -795,19 +791,19 @@ PROGRAM inv
                     ELSE ! for lambda search we go here
                        dlalt = dlam
                        IF (ldlami) THEN ! initialize search
-                          ldlami = .FALSE. 
+                          ldlami = .FALSE.
                           alam   = dmax1(dabs(dlog(nrmsd/nrmsdm)),&
-                               dlog(1d0+mqrms)) 
+                               dlog(1d0+mqrms))
 !!!$ alam = MAX(log(actual chi),log(1+0.02))
                           dlam   = fstart ! sets first dlam (0.5 default, which should be fine)
                        ELSE
-                          alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm))) 
+                          alam = dmax1(alam,dabs(dlog(nrmsd/nrmsdm)))
 !!!$ CHI dependend partial fraction of lam variation
 !!!$ alam = MAX(alam,log(actual chi))
                           dlam = dlog(fstop)*&
                                SIGN(1d0,dlog(nrmsd/nrmsdm))+&
                                dlog(fstart/fstop)*&
-                               dlog(nrmsd/nrmsdm)/alam 
+                               dlog(nrmsd/nrmsdm)/alam
 !!!$
 !!!$ dlam = ln(0.9) * sign(1,ln(act chi)) + (ln(0.5/0.9)) * ln(act chi)/alam
 !!!$ this makes mostly the same and dlam = exp(ln(0.9) + ln(0.5/0.9)) = 0.5
@@ -900,7 +896,7 @@ PROGRAM inv
 
 !!!$   Ggf. Referenzleitfaehigkeit bestimmen
 !!!$ >>> RM
-        !! $THIS has now a general meaning with the 
+        !! $THIS has now a general meaning with the
 !!!$ mixed boundary, since we like to set sigma0
 !!!$ as reference sigma as "mean" boundary value
 !!!$ <<< RM
@@ -1084,11 +1080,11 @@ PROGRAM inv
      IF (ALLOCATED (d0)) DEALLOCATE (d0,fm0)
      IF (ALLOCATED (m0)) DEALLOCATE (m0)
 
-     IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
-     IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
-     IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
-     IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
-     IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+     IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc)
+     IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc)
+     IF (ALLOCATED (rwd)) DEALLOCATE (rwd)
+     IF (ALLOCATED (rwn)) DEALLOCATE (rwn)
+     IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr)
 
      IF (ALLOCATED (w_ref_re)) DEALLOCATE (w_ref_re,w_ref_im,m_ref)
 
