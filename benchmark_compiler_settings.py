@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # *-* coding: utf-8 *-*
 # create CRTomo binaries with different compiler settings
+import glob
 import os
 import itertools
 import hashlib
@@ -75,9 +76,43 @@ def compile_flags(output_dir, flags):
             )
 
 
+def prepare_tomodirs(output_dir, flags):
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+
+    ref_td = 'examples/benchmark1'
+
+    for nr, flag in enumerate(flags):
+        target_dir = output_dir + os.sep + '{0:03}_tomodir'.format(nr)
+        if not os.path.isdir(target_dir):
+            print('preparing', nr)
+            shutil.copytree(ref_td, target_dir)
+            with open(target_dir + '/compiler_flags.txt', 'w') as fid:
+                fid.write(flag + '\n')
+            shutil.copy(
+                'output_benchmark_binaries/{0:03}_CRTomo'.format(nr),
+                target_dir + '/exe/CRTomo'
+            )
+
+
+def run_tomodirs(basedir):
+    tomodirs = sorted(glob.glob(basedir + '/*_tomodir'))
+    pwd = os.getcwd()
+    for tomodir in tomodirs:
+        os.chdir(tomodir + '/exe')
+        if(not os.path.isfile('error.dat') and
+           not os.path.isfile('../inv/inv.ctr')):
+            os.environ['OMP_NUM_THREADS'] = '6'
+            subprocess.call('./CRTomo', shell=True)
+        os.chdir(pwd)
+
+
 def main():
     flags = create_permutate_binaries()
     compile_flags('output_benchmark_binaries', flags)
+    prepare_tomodirs('output_tomodirs', flags)
+
+    run_tomodirs('output_tomodirs')
 
 
 if __name__ == '__main__':
