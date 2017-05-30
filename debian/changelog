@@ -1,3 +1,9 @@
+crtomomod (1.7.1) stable; urgency=medium
+
+  * make output of first line in eps.ctr more consistent for DC mode
+
+ -- Maximilian Weigand <mweigand@titan.geo.uni-bonn.de>  Tue, 30 May 2017 08:11:31 +0200
+
 crtomomod (1.7) stable; urgency=medium
 
   * minor improvements to output files
