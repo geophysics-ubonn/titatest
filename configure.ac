@@ -60,7 +60,6 @@ AC_CONFIG_COMMANDS_PRE([cd cutmckee; ./../$mySCRIPTS/make_crerr.sh ; cd ..;])
 # An diesen Stellen sollen Makefiles von configure erstellt werden
 AC_CONFIG_FILES([Makefile
 		 src/Makefile
-		 cutmckee/Makefile
-		 man/Makefile])
+		 cutmckee/Makefile])
 # generiere output
 AC_OUTPUT
