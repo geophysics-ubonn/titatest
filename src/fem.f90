@@ -1,3 +1,25 @@
+! Copyright © 1990-2017 Andreas Kemna <kemna@geo.uni-bonn.de>
+! Copyright © 2008-2017 CRTomo development team (see AUTHORS file)
+!
+!
+! Permission is hereby granted, free of charge, to any person obtaining a copy of
+! this software and associated documentation files (the “Software”), to deal in
+! the Software without restriction, including without limitation the rights to
+! use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+! of the Software, and to permit persons to whom the Software is furnished to do
+! so, subject to the following conditions:
+!
+! The above copyright notice and this permission notice shall be included in all
+! copies or substantial portions of the Software.
+!
+! THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+! IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+! FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+! AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+! LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+! SOFTWARE.
+
 program fem
 
 !!!$   Hauptprogramm zum Complex-Resistivity-2.5D-Modelling.
@@ -61,7 +83,7 @@ program fem
 !!!$   Indexvariablen
   integer         * 4     j,k,l,c1
 
-!!!$ counting wavenumbers  
+!!!$ counting wavenumbers
   INTEGER :: count
 
   character       *256    ftext
@@ -69,6 +91,30 @@ program fem
 
 !!!$:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+    PRINT*,'######### CMod ############'
+    WRITE(*,"(a)") 'Licence:', &
+    'Copyright © 1990-2017 Andreas Kemna <kemna@geo.uni-bonn.de>', &
+    'Copyright © 2008-2017 CRTomo development team (see AUTHORS file)',&
+    'Permission is hereby granted, free of charge, to any person obtaining a copy of',&
+    'this software and associated documentation files (the “Software”), to deal in',&
+    'the Software without restriction, including without limitation the rights to',&
+    'use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies',&
+    'of the Software, and to permit persons to whom the Software is furnished to do',&
+    'so, subject to the following conditions:',&
+    '',&
+    'The above copyright notice and this permission notice shall be included in all',&
+    'copies or substantial portions of the Software.',&
+    '',&
+    'THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR',&
+    'IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,',&
+    'FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE',&
+    'AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER',&
+    'LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,',&
+    'OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE',&
+    'SOFTWARE.'
+
+    PRINT*, ''
+    PRINT*, ''
   kanal = 11
   pid = getpid()
   fetxt = 'crmod.pid'
@@ -150,7 +196,7 @@ program fem
   IF (wkfak) PRINT*,'WITH K-FAKTOR'
   IF (lsr) THEN
      PRINT*,'WITH SINGULARITY REMOVAL'
-     lana = .FALSE. ! analytical for singularity 
+     lana = .FALSE. ! analytical for singularity
 ! is indeed controlled by lsr and not lana..
 ! lana is only true for analytical solution only
   END IF
@@ -194,7 +240,7 @@ program fem
 !!!$ the number of processors is greater or equal the assumed
 !!!$ workload
         PRINT*,'perfect match'
-     ELSE 
+     ELSE
 !!!$ is smaller than the minimum workload.. now we have to devide a bit..
         PRINT*,'less nodes than wavenumbers'
         DO k = 1, INT(kwnanz/2)
@@ -217,7 +263,7 @@ program fem
      goto 999
   END IF
 
-!!$ manz = elanz      
+!!$ manz = elanz
   manz =elanz
 
   call rsigma(kanal,dsigma)
@@ -245,13 +291,13 @@ program fem
        kpot(sanz,eanz,kwnanz),b(sanz),stat=errnr)
   if (errnr.ne.0) then
      fetxt = 'allocation problem a and hpot'
-     errnr = 97 
+     errnr = 97
      goto 999
   end if
   ALLOCATE(pot(sanz),pota(sanz),fak(sanz),stat=errnr)
   if (errnr.ne.0) then
      fetxt = 'allocation problem pot to fak'
-     errnr = 97 
+     errnr = 97
      goto 999
   end if
   count = 0
@@ -305,7 +351,7 @@ program fem
            call kompb(l,b,fak)
         end if
 
-!!!$   Gleichungssystem loesen only for 
+!!!$   Gleichungssystem loesen only for
 !!!$ non analytical
         IF (.NOT. lana) call vre(a,b,pot)
 !!!$   Potentialwerte zurueckskalieren und umspeichern sowie ggf.
@@ -349,7 +395,7 @@ program fem
         if (errnr.ne.0) goto 999
      else
 !!!$   nur echte Spannungen ausgeben...
-        kfak=1.0 
+        kfak=1.0
      end if
 
      call bvolt()
@@ -386,7 +432,7 @@ program fem
 !!!$   'sens' zuweisen
      ALLOCATE(sens(nanz,manz),stat=errnr)
      if (errnr.ne.0) then
-        errnr = 97 
+        errnr = 97
         goto 999
      end if
 
@@ -429,11 +475,11 @@ program fem
   IF (ALLOCATED (kwn)) DEALLOCATE (kwn)
   IF (ALLOCATED (kwnwi)) DEALLOCATE (kwnwi)
 
-  IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc) 
-  IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc) 
-  IF (ALLOCATED (rwd)) DEALLOCATE (rwd) 
-  IF (ALLOCATED (rwn)) DEALLOCATE (rwn) 
-  IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr) 
+  IF (ALLOCATED (rwddc)) DEALLOCATE (rwddc)
+  IF (ALLOCATED (rwndc)) DEALLOCATE (rwndc)
+  IF (ALLOCATED (rwd)) DEALLOCATE (rwd)
+  IF (ALLOCATED (rwn)) DEALLOCATE (rwn)
+  IF (ALLOCATED (rwdnr)) DEALLOCATE (rwdnr)
 
   STOP '0'
 
