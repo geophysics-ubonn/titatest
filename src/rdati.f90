@@ -42,7 +42,7 @@ SUBROUTINE rdati(kanal,datei)
     !  USED ONLY IF NOISE IS ADDED!!
     ! Magnitude and Phase of new data
     REAL(KIND(0D0))     ::     new_bet,new_pha
-    ! Counting signum mismatches of magnitude and phases 
+    ! Counting signum mismatches of magnitude and phases
     !    if noise is added
     INTEGER (KIND = 4) ::     icount_pha,icount_mag
     ! << RM
@@ -154,37 +154,31 @@ SUBROUTINE rdati(kanal,datei)
                     vnr(i)   = elec3*10000 + elec4
                 END IF
             ELSE
-                IF (lfphai) THEN
-                    IF (crtf) THEN
-                        READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha,&
-                            stabw,stabwp
-                    ELSE
-                        READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,&
-                            bet,pha,stabw,stabwp
-                        strnr(i) = elec1*10000 + elec2
-                        vnr(i)   = elec3*10000 + elec4
-                    END IF
-            !       Ggf. Fehlermeldung
-                    IF (stabwp.LE.0d0) THEN
-                        fetxt = ' '
-                        errnr = 88
-                        GOTO 1000
-                    END IF
-
-                    ! ak stabwp = stabp0 * stabwp
-                    stabwp = 1d-3*stabwp
+                ! complex inversion or FPI always assume we get magnitude AND
+                ! phase errors in the last two columns
+                ! assume phase errors in mrad
+                IF (crtf) THEN
+                    READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha,&
+                        stabw,stabwp
                 ELSE
-                    IF (crtf) THEN
-                        READ(kanal,*,END=1001,err=1000)strnr(i),vnr(i),bet,pha,&
-                            stabw
-                    ELSE
-                        READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,&
-                            bet,pha,stabw
-                        strnr(i) = elec1*10000 + elec2
-                        vnr(i)   = elec3*10000 + elec4
-                    END IF
+                    READ(kanal,*,END=1001,err=1000)elec1,elec2,elec3,elec4,&
+                        bet,pha,stabw,stabwp
+                    strnr(i) = elec1*10000 + elec2
+                    vnr(i)   = elec3*10000 + elec4
                 END IF
+                ! Ggf. Fehlermeldung
+                IF (stabwp.LE.0d0) THEN
+                    fetxt = ' '
+                    errnr = 88
+                    GOTO 1000
+                END IF
+
+                ! convert [mrad] error to [rad]
+                stabwp = 1d-3*stabwp
             END IF
+            ! we read in the linear errors in [Ohm]
+            ! convert to log(Z) errors
+            stabw = stabw / bet
 
             ! >> RM
             ! plausibility check of possible electrode intersection
@@ -221,7 +215,7 @@ SUBROUTINE rdati(kanal,datei)
                GOTO 1000
             END IF
 
-        ELSE ! lindiv
+        ELSE ! no individual errors (not lindiv)
             ! use the error model
             IF (ldc) THEN
                 IF (crtf) THEN
@@ -256,6 +250,7 @@ SUBROUTINE rdati(kanal,datei)
             END IF
 
             !!!!!!!!!!!! RESISTANCE ERROR !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            ! note that this already IS the error of log(Z) = 1 / bet * dZ
             stabw = 1d-2*stabw0 + stabm0/bet
             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
