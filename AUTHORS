@@ -1,6 +1,12 @@
+CRTomo (and CRmod) was initially conceived and created by Andreas Kemna.
+Subsequent improvements and extensions were then added by other developers.
+Note that the source code was converted to git only very recently, and thus
+code attribution should NOT follow the git commits!
+
 Andreas Kemna (kemna@geo.uni-bonn.de)
 Roland Blaschek
-Johannes Kenkel
+Frederic Nguyen
 Roland Martin
-Maximilian Weigand (mweigand@geo.uni-bonn.de)
-Frederic Nguyen (f.nguyen@ulg.ac.be)
+Johannes Kenkel
+Maximilian Weigand
+The CRTomo Development Team

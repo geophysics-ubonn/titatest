@@ -1,59 +1,69 @@
-TODO
-----
+# CRTomo - Complex Resistivity Tomography
 
-we should restrict the calling of external shell scripts (git version, error
-messages, etc) to the ./autogen.sh script, and remove them from configure.ac.
-This simplifies the Debian package generation.
+## Cite as
 
-Installation
-------------
+For scientific research we would ask you to attribute usage using the following
+citation:
+
+	Kemna, A.: Tomographic inversion of complex resistivity – theory and
+	application, Ph.D.  thesis, Ruhr-Universität Bochum,
+	doi:10.1111/1365-2478.12013, 2000.
+
+For technical documentation please cite either the full git commit hash, or (if
+available) a specific release with its DOI.
+
+## Installation
 
 If you are working with a git repository, run
 
-./autogen.sh
+	./autogen.sh
 
 once to generate the necessary autotools files.
 
 Otherwise, configure, compile, and install the program with
 
-# ./configure
-# make
-# make install
+	./configure
+	make
+	make install
 
-The default installation path points to $HOME/bin. You can change the installation
-directory with
+The default installation path points to $HOME/bin. You can change the
+installation directory with
 
-# ./configure --prefix=$HOME/inst/
+	./configure --prefix=$HOME/inst/
 
 Run
 
-# ./clean_autotools.sh
+	./clean_autotools.sh
 
 to remove all auto-generated files.
 
-Distribution
-------------
+## Distribution
 
 After running ./configure, a source archive called "crtomomod*.tar.gz" can be
 generated using
 
-# make dist
+	make dist
 
-Debian Packaging
-----------------
+## Debian Packaging
 
 The command
 
-# ./prep_deb_package.sh
+	./prep_deb_package.sh
 
 creates a Debian package in the "package/" subdirectory.
 
-Limiting CPU usage
-------------------
+## Limiting CPU usage
 
 CRTomoMod is compiled using openmp. The number of CPU cores that are
 facilitated can be controlled using the following environment variables:
 
-export OMP_THREAD_LIMIT=1
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
+	export OMP_THREAD_LIMIT=1
+	export OMP_NUM_THREADS=1
+	export OPENBLAS_NUM_THREADS=1
+
+## TODO
+
+We should restrict the calling of external shell scripts (git version, error
+messages, etc) to the ./autogen.sh script, and remove them from configure.ac.
+This simplifies the Debian package generation.
+
