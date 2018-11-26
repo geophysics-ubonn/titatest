@@ -1,5 +1,7 @@
 # CRTomo - Complex Resistivity Tomography
 
+<img src="frontcover/front_inversion1.jpg" />
+
 [a few nice inversion results]
 
 CRTomo is a finite-element forward (CRMod) and inversion (CRTomo) code for
@@ -24,6 +26,20 @@ yourself to use it.
 
 A companion project provides a work-in-progress python interface for the code
 (https://github.com/geophysics-ubonn/crtomo_tools).
+
+## Documentation
+
+Documentation and installation instructions (so far as it exists) can be found
+here for CRTomo:
+
+https://geophysics-ubonn.github.io/crtomo_docs_all/crtomo_doc/index.html
+
+Documentation for the crtomo_tools can be found here:
+
+https://geophysics-ubonn.github.io/crtomo_docs_all/crtomo_tools/index.html
+
+Note that these links point to static versions of the documentation, and are
+not necessarily updated regularly.
 
 ## Scope
 

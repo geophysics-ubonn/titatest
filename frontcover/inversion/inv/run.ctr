@@ -1,0 +1,1609 @@
+ Iteration   0,   0 : Calculating Potentials
+ Iteration   1,   0 : Calculating Sensitivities
+ Iteration   1,   1 : Calculating 1st regularization parameterlam_0   0.28E+04
+  Iteration            1 ,            1  : Updating
+ Iteration   1,   1 : Calculating Potentials
+  Iteration            1 ,            2  : Updating
+ Iteration   1,   2 : Calculating Potentials
+
+Rms increase:  -358.7     %
+rel Stepsize :  0.1988E-01
+nrmsd/rmsreg :   6.954    
+
+  Iteration            1 ,            3  : Updating
+ Iteration   1,   3 : Calculating Potentials
+
+Rms increase:  -371.4     %
+rel Stepsize :  0.3288E-01
+nrmsd/rmsreg :   3.663    
+
+  Iteration            1 ,            4  : Updating
+ Iteration   1,   4 : Calculating Potentials
+  Iteration            1 ,            5  : Updating
+ Iteration   1,   5 : Calculating Potentials
+  Iteration            1 ,            5  : Updating
+ Iteration   1,   5 : Calculating Potentials
+1605 : change polarity
+1606 : change polarity
+1607 : change polarity
+1608 : change polarity
+1609 : change polarity
+1610 : change polarity
+1611 : change polarity
+1612 : change polarity
+1613 : change polarity
+1614 : change polarity
+1615 : change polarity
+1616 : change polarity
+1617 : change polarity
+1618 : change polarity
+1619 : change polarity
+1620 : change polarity
+1675 : change polarity
+1676 : change polarity
+1677 : change polarity
+1678 : change polarity
+1679 : change polarity
+1680 : change polarity
+1681 : change polarity
+1682 : change polarity
+1683 : change polarity
+1684 : change polarity
+1685 : change polarity
+1686 : change polarity
+1687 : change polarity
+1688 : change polarity
+1689 : change polarity
+1690 : change polarity
+1691 : change polarity
+1692 : change polarity
+1693 : change polarity
+1694 : change polarity
+1695 : change polarity
+1696 : change polarity
+1697 : change polarity
+1698 : change polarity
+1699 : change polarity
+1700 : change polarity
+1701 : change polarity
+1702 : change polarity
+1703 : change polarity
+1704 : change polarity
+1705 : change polarity
+1706 : change polarity
+1707 : change polarity
+1761 : change polarity
+1762 : change polarity
+1763 : change polarity
+1764 : change polarity
+1765 : change polarity
+1766 : change polarity
+1767 : change polarity
+1768 : change polarity
+1769 : change polarity
+1770 : change polarity
+1771 : change polarity
+1772 : change polarity
+1773 : change polarity
+1774 : change polarity
+1775 : change polarity
+1776 : change polarity
+1777 : change polarity
+1778 : change polarity
+1779 : change polarity
+1780 : change polarity
+1781 : change polarity
+1782 : change polarity
+1783 : change polarity
+1784 : change polarity
+1785 : change polarity
+1786 : change polarity
+1787 : change polarity
+1788 : change polarity
+1789 : change polarity
+1790 : change polarity
+1791 : change polarity
+1822 : change polarity
+1823 : change polarity
+1824 : change polarity
+1825 : change polarity
+1826 : change polarity
+1827 : change polarity
+1828 : change polarity
+1829 : change polarity
+1830 : change polarity
+1831 : change polarity
+1832 : change polarity
+1833 : change polarity
+1834 : change polarity
+1835 : change polarity
+1836 : change polarity
+1837 : change polarity
+1838 : change polarity
+1839 : change polarity
+1840 : change polarity
+1841 : change polarity
+1842 : change polarity
+1843 : change polarity
+1844 : change polarity
+1845 : change polarity
+1846 : change polarity
+1847 : change polarity
+1848 : change polarity
+1849 : change polarity
+1850 : change polarity
+1851 : change polarity
+1852 : change polarity
+1853 : change polarity
+1854 : change polarity
+1855 : change polarity
+1856 : change polarity
+1857 : change polarity
+1858 : change polarity
+1859 : change polarity
+1884 : change polarity
+1885 : change polarity
+1886 : change polarity
+1887 : change polarity
+1888 : change polarity
+1889 : change polarity
+1890 : change polarity
+1891 : change polarity
+1892 : change polarity
+1893 : change polarity
+1894 : change polarity
+1895 : change polarity
+1896 : change polarity
+1897 : change polarity
+1898 : change polarity
+1899 : change polarity
+1900 : change polarity
+1901 : change polarity
+1902 : change polarity
+1904 : change polarity
+1905 : change polarity
+1906 : change polarity
+1907 : change polarity
+1908 : change polarity
+1909 : change polarity
+1910 : change polarity
+1911 : change polarity
+1912 : change polarity
+1913 : change polarity
+1914 : change polarity
+1915 : change polarity
+1916 : change polarity
+1917 : change polarity
+1918 : change polarity
+1919 : change polarity
+1920 : change polarity
+1921 : change polarity
+1922 : change polarity
+1923 : change polarity
+1953 : change polarity
+1954 : change polarity
+1955 : change polarity
+1956 : change polarity
+1957 : change polarity
+1958 : change polarity
+1959 : change polarity
+1960 : change polarity
+1962 : change polarity
+1963 : change polarity
+1964 : change polarity
+1965 : change polarity
+1966 : change polarity
+1967 : change polarity
+1968 : change polarity
+1969 : change polarity
+1970 : change polarity
+1972 : change polarity
+1973 : change polarity
+1974 : change polarity
+1975 : change polarity
+1976 : change polarity
+1977 : change polarity
+1978 : change polarity
+1979 : change polarity
+1980 : change polarity
+1981 : change polarity
+1982 : change polarity
+1983 : change polarity
+1984 : change polarity
+1985 : change polarity
+1986 : change polarity
+1987 : change polarity
+1988 : change polarity
+1989 : change polarity
+1990 : change polarity
+1991 : change polarity
+1992 : change polarity
+1993 : change polarity
+1994 : change polarity
+1995 : change polarity
+1996 : change polarity
+1997 : change polarity
+1998 : change polarity
+1999 : change polarity
+2000 : change polarity
+2038 : change polarity
+2039 : change polarity
+2040 : change polarity
+2041 : change polarity
+2042 : change polarity
+2043 : change polarity
+2044 : change polarity
+2045 : change polarity
+2047 : change polarity
+2048 : change polarity
+2049 : change polarity
+2050 : change polarity
+2051 : change polarity
+2052 : change polarity
+2053 : change polarity
+2054 : change polarity
+2055 : change polarity
+2100 : change polarity
+2101 : change polarity
+2102 : change polarity
+2103 : change polarity
+2104 : change polarity
+2105 : change polarity
+2106 : change polarity
+2107 : change polarity
+2241 : change polarity
+2242 : change polarity
+2248 : change polarity
+2249 : change polarity
+2250 : change polarity
+2251 : change polarity
+2252 : change polarity
+2258 : change polarity
+2259 : change polarity
+2260 : change polarity
+2261 : change polarity
+2266 : change polarity
+2267 : change polarity
+2272 : change polarity
+2276 : change polarity
+2277 : change polarity
+2773 : change polarity
+2783 : change polarity
+2784 : change polarity
+1605 : excluded
+1606 : excluded
+1607 : excluded
+1608 : excluded
+1609 : excluded
+1610 : excluded
+1611 : excluded
+1612 : excluded
+1613 : excluded
+1614 : excluded
+1615 : excluded
+1616 : excluded
+1617 : excluded
+1618 : excluded
+1619 : excluded
+1620 : excluded
+1675 : excluded
+1676 : excluded
+1677 : excluded
+1678 : excluded
+1679 : excluded
+1680 : excluded
+1681 : excluded
+1682 : excluded
+1683 : excluded
+1684 : excluded
+1685 : excluded
+1686 : excluded
+1687 : excluded
+1688 : excluded
+1689 : excluded
+1690 : excluded
+1691 : excluded
+1692 : excluded
+1693 : excluded
+1694 : excluded
+1695 : excluded
+1696 : excluded
+1697 : excluded
+1698 : excluded
+1699 : excluded
+1700 : excluded
+1701 : excluded
+1702 : excluded
+1703 : excluded
+1704 : excluded
+1705 : excluded
+1706 : excluded
+1707 : excluded
+1761 : excluded
+1762 : excluded
+1763 : excluded
+1764 : excluded
+1765 : excluded
+1766 : excluded
+1767 : excluded
+1768 : excluded
+1769 : excluded
+1770 : excluded
+1771 : excluded
+1772 : excluded
+1773 : excluded
+1774 : excluded
+1775 : excluded
+1776 : excluded
+1777 : excluded
+1778 : excluded
+1779 : excluded
+1780 : excluded
+1781 : excluded
+1782 : excluded
+1783 : excluded
+1784 : excluded
+1785 : excluded
+1786 : excluded
+1787 : excluded
+1788 : excluded
+1789 : excluded
+1790 : excluded
+1791 : excluded
+1822 : excluded
+1823 : excluded
+1824 : excluded
+1825 : excluded
+1826 : excluded
+1827 : excluded
+1828 : excluded
+1829 : excluded
+1830 : excluded
+1831 : excluded
+1832 : excluded
+1833 : excluded
+1834 : excluded
+1835 : excluded
+1836 : excluded
+1837 : excluded
+1838 : excluded
+1839 : excluded
+1840 : excluded
+1841 : excluded
+1842 : excluded
+1843 : excluded
+1844 : excluded
+1845 : excluded
+1846 : excluded
+1847 : excluded
+1848 : excluded
+1849 : excluded
+1850 : excluded
+1851 : excluded
+1852 : excluded
+1853 : excluded
+1854 : excluded
+1855 : excluded
+1856 : excluded
+1857 : excluded
+1858 : excluded
+1859 : excluded
+1884 : excluded
+1885 : excluded
+1886 : excluded
+1887 : excluded
+1888 : excluded
+1889 : excluded
+1890 : excluded
+1891 : excluded
+1892 : excluded
+1893 : excluded
+1894 : excluded
+1895 : excluded
+1896 : excluded
+1897 : excluded
+1898 : excluded
+1899 : excluded
+1900 : excluded
+1901 : excluded
+1902 : excluded
+1904 : excluded
+1905 : excluded
+1906 : excluded
+1907 : excluded
+1908 : excluded
+1909 : excluded
+1910 : excluded
+1911 : excluded
+1912 : excluded
+1913 : excluded
+1914 : excluded
+1915 : excluded
+1916 : excluded
+1917 : excluded
+1918 : excluded
+1919 : excluded
+1920 : excluded
+1921 : excluded
+1922 : excluded
+1923 : excluded
+1953 : excluded
+1954 : excluded
+1955 : excluded
+1956 : excluded
+1957 : excluded
+1958 : excluded
+1959 : excluded
+1960 : excluded
+1962 : excluded
+1963 : excluded
+1964 : excluded
+1965 : excluded
+1966 : excluded
+1967 : excluded
+1968 : excluded
+1969 : excluded
+1970 : excluded
+1972 : excluded
+1973 : excluded
+1974 : excluded
+1975 : excluded
+1976 : excluded
+1977 : excluded
+1978 : excluded
+1979 : excluded
+1980 : excluded
+1981 : excluded
+1982 : excluded
+1983 : excluded
+1984 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1988 : excluded
+1989 : excluded
+1990 : excluded
+1991 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1995 : excluded
+1996 : excluded
+1997 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2038 : excluded
+2039 : excluded
+2040 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2047 : excluded
+2048 : excluded
+2049 : excluded
+2050 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2100 : excluded
+2101 : excluded
+2102 : excluded
+2103 : excluded
+2104 : excluded
+2105 : excluded
+2106 : excluded
+2107 : excluded
+2241 : excluded
+2242 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2266 : excluded
+2267 : excluded
+2272 : excluded
+2276 : excluded
+2277 : excluded
+2773 : excluded
+2783 : excluded
+2784 : excluded
+ Iteration   2,   0 : Calculating Sensitivities
+  Iteration            2 ,            0  : Updating
+ Iteration   2,   0 : Calculating Potentials
+  Iteration            2 ,            1  : Updating
+ Iteration   2,   1 : Calculating Potentials
+  Iteration            2 ,            2  : Updating
+ Iteration   2,   2 : Calculating Potentials
+  Iteration            2 ,            2  : Updating
+ Iteration   2,   2 : Calculating Potentials
+1605 : change polarity
+1606 : change polarity
+1607 : change polarity
+1608 : change polarity
+1609 : change polarity
+1610 : change polarity
+1611 : change polarity
+1612 : change polarity
+1613 : change polarity
+1614 : change polarity
+1615 : change polarity
+1616 : change polarity
+1617 : change polarity
+1618 : change polarity
+1619 : change polarity
+1620 : change polarity
+1675 : change polarity
+1676 : change polarity
+1677 : change polarity
+1678 : change polarity
+1679 : change polarity
+1680 : change polarity
+1681 : change polarity
+1682 : change polarity
+1683 : change polarity
+1684 : change polarity
+1685 : change polarity
+1687 : change polarity
+1688 : change polarity
+1689 : change polarity
+1690 : change polarity
+1691 : change polarity
+1692 : change polarity
+1693 : change polarity
+1761 : change polarity
+1765 : change polarity
+1822 : change polarity
+1823 : change polarity
+1824 : change polarity
+1825 : change polarity
+1826 : change polarity
+1827 : change polarity
+1828 : change polarity
+1830 : change polarity
+1831 : change polarity
+1832 : change polarity
+1833 : change polarity
+1834 : change polarity
+1835 : change polarity
+1836 : change polarity
+1837 : change polarity
+1838 : change polarity
+1839 : change polarity
+1840 : change polarity
+1841 : change polarity
+1842 : change polarity
+1884 : change polarity
+1885 : change polarity
+1886 : change polarity
+1887 : change polarity
+1888 : change polarity
+1889 : change polarity
+1890 : change polarity
+1891 : change polarity
+1892 : change polarity
+1893 : change polarity
+1894 : change polarity
+1895 : change polarity
+1896 : change polarity
+1897 : change polarity
+1898 : change polarity
+1899 : change polarity
+1900 : change polarity
+1901 : change polarity
+1902 : change polarity
+1904 : change polarity
+1910 : change polarity
+1917 : change polarity
+1953 : change polarity
+1954 : change polarity
+1955 : change polarity
+1956 : change polarity
+1957 : change polarity
+1958 : change polarity
+1959 : change polarity
+1960 : change polarity
+1962 : change polarity
+1972 : change polarity
+1981 : change polarity
+2029 : change polarity
+2030 : change polarity
+2031 : change polarity
+2032 : change polarity
+2033 : change polarity
+2034 : change polarity
+2035 : change polarity
+2037 : change polarity
+2046 : change polarity
+2100 : change polarity
+2238 : change polarity
+2239 : change polarity
+2240 : change polarity
+2247 : change polarity
+2256 : change polarity
+2257 : change polarity
+2265 : change polarity
+2271 : change polarity
+2275 : change polarity
+2287 : change polarity
+2773 : change polarity
+2776 : change polarity
+2777 : change polarity
+2783 : change polarity
+2784 : change polarity
+2786 : change polarity
+2787 : change polarity
+2788 : change polarity
+2792 : change polarity
+2793 : change polarity
+2794 : change polarity
+2795 : change polarity
+1686 : excluded
+1694 : excluded
+1695 : excluded
+1696 : excluded
+1697 : excluded
+1698 : excluded
+1699 : excluded
+1700 : excluded
+1701 : excluded
+1702 : excluded
+1703 : excluded
+1704 : excluded
+1705 : excluded
+1706 : excluded
+1707 : excluded
+1762 : excluded
+1763 : excluded
+1764 : excluded
+1766 : excluded
+1767 : excluded
+1768 : excluded
+1769 : excluded
+1770 : excluded
+1771 : excluded
+1772 : excluded
+1773 : excluded
+1774 : excluded
+1775 : excluded
+1776 : excluded
+1777 : excluded
+1778 : excluded
+1779 : excluded
+1780 : excluded
+1781 : excluded
+1782 : excluded
+1783 : excluded
+1784 : excluded
+1785 : excluded
+1786 : excluded
+1787 : excluded
+1788 : excluded
+1789 : excluded
+1790 : excluded
+1791 : excluded
+1829 : excluded
+1843 : excluded
+1844 : excluded
+1845 : excluded
+1846 : excluded
+1847 : excluded
+1848 : excluded
+1849 : excluded
+1850 : excluded
+1851 : excluded
+1852 : excluded
+1853 : excluded
+1854 : excluded
+1855 : excluded
+1856 : excluded
+1857 : excluded
+1858 : excluded
+1859 : excluded
+1905 : excluded
+1906 : excluded
+1907 : excluded
+1908 : excluded
+1909 : excluded
+1911 : excluded
+1912 : excluded
+1913 : excluded
+1914 : excluded
+1915 : excluded
+1916 : excluded
+1918 : excluded
+1919 : excluded
+1920 : excluded
+1921 : excluded
+1922 : excluded
+1923 : excluded
+1963 : excluded
+1964 : excluded
+1965 : excluded
+1966 : excluded
+1967 : excluded
+1968 : excluded
+1969 : excluded
+1970 : excluded
+1973 : excluded
+1974 : excluded
+1975 : excluded
+1976 : excluded
+1977 : excluded
+1978 : excluded
+1979 : excluded
+1980 : excluded
+1982 : excluded
+1983 : excluded
+1984 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1988 : excluded
+1989 : excluded
+1990 : excluded
+1991 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1995 : excluded
+1996 : excluded
+1997 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2029 : excluded
+2030 : excluded
+2031 : excluded
+2032 : excluded
+2033 : excluded
+2034 : excluded
+2035 : excluded
+2037 : excluded
+2038 : excluded
+2039 : excluded
+2040 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2046 : excluded
+2047 : excluded
+2048 : excluded
+2049 : excluded
+2050 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2101 : excluded
+2102 : excluded
+2103 : excluded
+2104 : excluded
+2105 : excluded
+2106 : excluded
+2107 : excluded
+2238 : excluded
+2239 : excluded
+2240 : excluded
+2241 : excluded
+2242 : excluded
+2247 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2256 : excluded
+2257 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2265 : excluded
+2266 : excluded
+2267 : excluded
+2271 : excluded
+2272 : excluded
+2275 : excluded
+2276 : excluded
+2277 : excluded
+2287 : excluded
+2776 : excluded
+2777 : excluded
+2786 : excluded
+2787 : excluded
+2788 : excluded
+2792 : excluded
+2793 : excluded
+2794 : excluded
+2795 : excluded
+ Iteration   3,   0 : Calculating Sensitivities
+  Iteration            3 ,            0  : Updating
+ Iteration   3,   0 : Calculating Potentials
+  Iteration            3 ,            1  : Updating
+ Iteration   3,   1 : Calculating Potentials
+
+Rms increase: -0.3400     %
+rel Stepsize :  0.4178    
+nrmsd/rmsreg :   3.919    
+
+  Iteration            3 ,            2  : Updating
+ Iteration   3,   2 : Calculating Potentials
+  Iteration            3 ,            3  : Updating
+ Iteration   3,   3 : Calculating Potentials
+  Iteration            3 ,            3  : Updating
+ Iteration   3,   3 : Calculating Potentials
+1686 : change polarity
+1829 : change polarity
+1843 : change polarity
+1981 : change polarity
+2238 : change polarity
+2239 : change polarity
+2247 : change polarity
+2256 : change polarity
+2265 : change polarity
+2275 : change polarity
+2287 : change polarity
+2776 : change polarity
+2777 : change polarity
+2786 : change polarity
+2787 : change polarity
+2788 : change polarity
+2792 : change polarity
+2793 : change polarity
+2794 : change polarity
+2795 : change polarity
+2813 : change polarity
+1694 : excluded
+1695 : excluded
+1696 : excluded
+1697 : excluded
+1698 : excluded
+1699 : excluded
+1700 : excluded
+1701 : excluded
+1702 : excluded
+1703 : excluded
+1704 : excluded
+1705 : excluded
+1706 : excluded
+1707 : excluded
+1762 : excluded
+1763 : excluded
+1764 : excluded
+1766 : excluded
+1767 : excluded
+1768 : excluded
+1769 : excluded
+1770 : excluded
+1771 : excluded
+1772 : excluded
+1773 : excluded
+1774 : excluded
+1775 : excluded
+1776 : excluded
+1777 : excluded
+1778 : excluded
+1779 : excluded
+1780 : excluded
+1781 : excluded
+1782 : excluded
+1783 : excluded
+1784 : excluded
+1785 : excluded
+1786 : excluded
+1787 : excluded
+1788 : excluded
+1789 : excluded
+1790 : excluded
+1791 : excluded
+1844 : excluded
+1845 : excluded
+1846 : excluded
+1847 : excluded
+1848 : excluded
+1849 : excluded
+1850 : excluded
+1851 : excluded
+1852 : excluded
+1853 : excluded
+1854 : excluded
+1855 : excluded
+1856 : excluded
+1857 : excluded
+1858 : excluded
+1859 : excluded
+1905 : excluded
+1906 : excluded
+1907 : excluded
+1908 : excluded
+1909 : excluded
+1911 : excluded
+1912 : excluded
+1913 : excluded
+1914 : excluded
+1915 : excluded
+1916 : excluded
+1918 : excluded
+1919 : excluded
+1920 : excluded
+1921 : excluded
+1922 : excluded
+1923 : excluded
+1963 : excluded
+1964 : excluded
+1965 : excluded
+1966 : excluded
+1967 : excluded
+1968 : excluded
+1969 : excluded
+1970 : excluded
+1973 : excluded
+1974 : excluded
+1975 : excluded
+1976 : excluded
+1977 : excluded
+1978 : excluded
+1979 : excluded
+1980 : excluded
+1981 : excluded
+1982 : excluded
+1983 : excluded
+1984 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1988 : excluded
+1989 : excluded
+1990 : excluded
+1991 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1995 : excluded
+1996 : excluded
+1997 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2029 : excluded
+2030 : excluded
+2031 : excluded
+2032 : excluded
+2033 : excluded
+2034 : excluded
+2035 : excluded
+2037 : excluded
+2038 : excluded
+2039 : excluded
+2040 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2046 : excluded
+2047 : excluded
+2048 : excluded
+2049 : excluded
+2050 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2101 : excluded
+2102 : excluded
+2103 : excluded
+2104 : excluded
+2105 : excluded
+2106 : excluded
+2107 : excluded
+2240 : excluded
+2241 : excluded
+2242 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2257 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2266 : excluded
+2267 : excluded
+2271 : excluded
+2272 : excluded
+2276 : excluded
+2277 : excluded
+2813 : excluded
+ Iteration   4,   0 : Calculating Sensitivities
+  Iteration            4 ,            0  : Updating
+ Iteration   4,   0 : Calculating Potentials
+  Iteration            4 ,            1  : Updating
+ Iteration   4,   1 : Calculating Potentials
+  Iteration            4 ,            2  : Updating
+ Iteration   4,   2 : Calculating Potentials
+  Iteration            4 ,            2  : Updating
+ Iteration   4,   2 : Calculating Potentials
+1605 : change polarity
+1606 : change polarity
+1607 : change polarity
+1608 : change polarity
+1609 : change polarity
+1610 : change polarity
+1611 : change polarity
+1612 : change polarity
+1613 : change polarity
+1614 : change polarity
+1615 : change polarity
+1616 : change polarity
+1617 : change polarity
+1618 : change polarity
+1619 : change polarity
+1620 : change polarity
+1675 : change polarity
+1676 : change polarity
+1677 : change polarity
+1678 : change polarity
+1679 : change polarity
+1680 : change polarity
+1681 : change polarity
+1682 : change polarity
+1683 : change polarity
+1684 : change polarity
+1685 : change polarity
+1686 : change polarity
+1687 : change polarity
+1688 : change polarity
+1689 : change polarity
+1690 : change polarity
+1691 : change polarity
+1692 : change polarity
+1823 : change polarity
+1824 : change polarity
+1825 : change polarity
+1826 : change polarity
+1827 : change polarity
+1828 : change polarity
+1829 : change polarity
+1831 : change polarity
+1832 : change polarity
+1833 : change polarity
+1834 : change polarity
+1835 : change polarity
+1836 : change polarity
+1837 : change polarity
+1838 : change polarity
+1839 : change polarity
+1840 : change polarity
+1841 : change polarity
+1842 : change polarity
+1843 : change polarity
+1885 : change polarity
+1886 : change polarity
+1887 : change polarity
+1888 : change polarity
+1889 : change polarity
+1890 : change polarity
+1891 : change polarity
+1892 : change polarity
+1894 : change polarity
+1895 : change polarity
+1896 : change polarity
+1897 : change polarity
+1898 : change polarity
+1899 : change polarity
+1900 : change polarity
+1901 : change polarity
+1902 : change polarity
+1904 : change polarity
+1954 : change polarity
+1955 : change polarity
+1956 : change polarity
+1957 : change polarity
+1958 : change polarity
+1959 : change polarity
+1960 : change polarity
+2029 : change polarity
+2030 : change polarity
+2031 : change polarity
+2032 : change polarity
+2033 : change polarity
+2034 : change polarity
+2035 : change polarity
+2046 : change polarity
+2257 : change polarity
+2271 : change polarity
+2813 : change polarity
+1605 : excluded
+1606 : excluded
+1607 : excluded
+1608 : excluded
+1609 : excluded
+1610 : excluded
+1611 : excluded
+1612 : excluded
+1613 : excluded
+1614 : excluded
+1615 : excluded
+1616 : excluded
+1617 : excluded
+1618 : excluded
+1619 : excluded
+1620 : excluded
+1675 : excluded
+1676 : excluded
+1677 : excluded
+1678 : excluded
+1679 : excluded
+1680 : excluded
+1681 : excluded
+1682 : excluded
+1683 : excluded
+1684 : excluded
+1685 : excluded
+1686 : excluded
+1687 : excluded
+1688 : excluded
+1689 : excluded
+1690 : excluded
+1691 : excluded
+1692 : excluded
+1694 : excluded
+1695 : excluded
+1696 : excluded
+1697 : excluded
+1698 : excluded
+1699 : excluded
+1700 : excluded
+1701 : excluded
+1702 : excluded
+1703 : excluded
+1704 : excluded
+1705 : excluded
+1706 : excluded
+1707 : excluded
+1762 : excluded
+1763 : excluded
+1764 : excluded
+1766 : excluded
+1767 : excluded
+1768 : excluded
+1769 : excluded
+1770 : excluded
+1771 : excluded
+1772 : excluded
+1773 : excluded
+1774 : excluded
+1775 : excluded
+1776 : excluded
+1777 : excluded
+1778 : excluded
+1779 : excluded
+1780 : excluded
+1781 : excluded
+1782 : excluded
+1783 : excluded
+1784 : excluded
+1785 : excluded
+1786 : excluded
+1787 : excluded
+1788 : excluded
+1789 : excluded
+1790 : excluded
+1791 : excluded
+1823 : excluded
+1824 : excluded
+1825 : excluded
+1826 : excluded
+1827 : excluded
+1828 : excluded
+1829 : excluded
+1831 : excluded
+1832 : excluded
+1833 : excluded
+1834 : excluded
+1835 : excluded
+1836 : excluded
+1837 : excluded
+1838 : excluded
+1839 : excluded
+1840 : excluded
+1841 : excluded
+1842 : excluded
+1843 : excluded
+1844 : excluded
+1845 : excluded
+1846 : excluded
+1847 : excluded
+1848 : excluded
+1849 : excluded
+1850 : excluded
+1851 : excluded
+1852 : excluded
+1853 : excluded
+1854 : excluded
+1855 : excluded
+1856 : excluded
+1857 : excluded
+1858 : excluded
+1859 : excluded
+1885 : excluded
+1886 : excluded
+1887 : excluded
+1888 : excluded
+1889 : excluded
+1890 : excluded
+1891 : excluded
+1892 : excluded
+1894 : excluded
+1895 : excluded
+1896 : excluded
+1897 : excluded
+1898 : excluded
+1899 : excluded
+1900 : excluded
+1901 : excluded
+1902 : excluded
+1904 : excluded
+1905 : excluded
+1906 : excluded
+1907 : excluded
+1908 : excluded
+1909 : excluded
+1911 : excluded
+1912 : excluded
+1913 : excluded
+1914 : excluded
+1915 : excluded
+1916 : excluded
+1918 : excluded
+1919 : excluded
+1920 : excluded
+1921 : excluded
+1922 : excluded
+1923 : excluded
+1954 : excluded
+1955 : excluded
+1956 : excluded
+1957 : excluded
+1958 : excluded
+1959 : excluded
+1960 : excluded
+1963 : excluded
+1964 : excluded
+1965 : excluded
+1966 : excluded
+1967 : excluded
+1968 : excluded
+1969 : excluded
+1970 : excluded
+1973 : excluded
+1974 : excluded
+1975 : excluded
+1976 : excluded
+1977 : excluded
+1978 : excluded
+1979 : excluded
+1980 : excluded
+1981 : excluded
+1982 : excluded
+1983 : excluded
+1984 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1988 : excluded
+1989 : excluded
+1990 : excluded
+1991 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1995 : excluded
+1996 : excluded
+1997 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2037 : excluded
+2038 : excluded
+2039 : excluded
+2040 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2047 : excluded
+2048 : excluded
+2049 : excluded
+2050 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2101 : excluded
+2102 : excluded
+2103 : excluded
+2104 : excluded
+2105 : excluded
+2106 : excluded
+2107 : excluded
+2240 : excluded
+2241 : excluded
+2242 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2266 : excluded
+2267 : excluded
+2272 : excluded
+2276 : excluded
+2277 : excluded
+ Iteration   5,   0 : Calculating Sensitivities
+  Iteration            5 ,            0  : Updating
+ Iteration   5,   0 : Calculating Potentials
+  Iteration            5 ,            1  : Updating
+ Iteration   5,   1 : Calculating Potentials
+  Iteration            5 ,            2  : Updating
+ Iteration   5,   2 : Calculating Potentials
+  Iteration            5 ,            2  : Updating
+ Iteration   5,   2 : Calculating Potentials
+1605 : excluded
+1606 : excluded
+1607 : excluded
+1608 : excluded
+1609 : excluded
+1610 : excluded
+1611 : excluded
+1612 : excluded
+1613 : excluded
+1614 : excluded
+1615 : excluded
+1616 : excluded
+1617 : excluded
+1618 : excluded
+1619 : excluded
+1620 : excluded
+1675 : excluded
+1676 : excluded
+1677 : excluded
+1678 : excluded
+1679 : excluded
+1680 : excluded
+1681 : excluded
+1682 : excluded
+1683 : excluded
+1684 : excluded
+1685 : excluded
+1686 : excluded
+1687 : excluded
+1688 : excluded
+1689 : excluded
+1690 : excluded
+1691 : excluded
+1692 : excluded
+1694 : excluded
+1695 : excluded
+1696 : excluded
+1697 : excluded
+1698 : excluded
+1699 : excluded
+1700 : excluded
+1701 : excluded
+1702 : excluded
+1703 : excluded
+1704 : excluded
+1705 : excluded
+1706 : excluded
+1707 : excluded
+1762 : excluded
+1763 : excluded
+1764 : excluded
+1766 : excluded
+1767 : excluded
+1768 : excluded
+1769 : excluded
+1770 : excluded
+1771 : excluded
+1772 : excluded
+1773 : excluded
+1774 : excluded
+1775 : excluded
+1776 : excluded
+1777 : excluded
+1778 : excluded
+1779 : excluded
+1780 : excluded
+1781 : excluded
+1782 : excluded
+1783 : excluded
+1784 : excluded
+1785 : excluded
+1786 : excluded
+1787 : excluded
+1788 : excluded
+1789 : excluded
+1790 : excluded
+1791 : excluded
+1823 : excluded
+1824 : excluded
+1825 : excluded
+1826 : excluded
+1827 : excluded
+1828 : excluded
+1829 : excluded
+1831 : excluded
+1832 : excluded
+1833 : excluded
+1834 : excluded
+1835 : excluded
+1836 : excluded
+1837 : excluded
+1838 : excluded
+1839 : excluded
+1840 : excluded
+1841 : excluded
+1842 : excluded
+1843 : excluded
+1844 : excluded
+1845 : excluded
+1846 : excluded
+1847 : excluded
+1848 : excluded
+1849 : excluded
+1850 : excluded
+1851 : excluded
+1852 : excluded
+1853 : excluded
+1854 : excluded
+1855 : excluded
+1856 : excluded
+1857 : excluded
+1858 : excluded
+1859 : excluded
+1885 : excluded
+1886 : excluded
+1887 : excluded
+1888 : excluded
+1889 : excluded
+1890 : excluded
+1891 : excluded
+1892 : excluded
+1894 : excluded
+1895 : excluded
+1896 : excluded
+1897 : excluded
+1898 : excluded
+1899 : excluded
+1900 : excluded
+1901 : excluded
+1902 : excluded
+1904 : excluded
+1905 : excluded
+1906 : excluded
+1907 : excluded
+1908 : excluded
+1909 : excluded
+1911 : excluded
+1912 : excluded
+1913 : excluded
+1914 : excluded
+1915 : excluded
+1916 : excluded
+1918 : excluded
+1919 : excluded
+1920 : excluded
+1921 : excluded
+1922 : excluded
+1923 : excluded
+1954 : excluded
+1955 : excluded
+1956 : excluded
+1957 : excluded
+1958 : excluded
+1959 : excluded
+1960 : excluded
+1963 : excluded
+1964 : excluded
+1965 : excluded
+1966 : excluded
+1967 : excluded
+1968 : excluded
+1969 : excluded
+1970 : excluded
+1973 : excluded
+1974 : excluded
+1975 : excluded
+1976 : excluded
+1977 : excluded
+1978 : excluded
+1979 : excluded
+1980 : excluded
+1981 : excluded
+1982 : excluded
+1983 : excluded
+1984 : excluded
+1985 : excluded
+1986 : excluded
+1987 : excluded
+1988 : excluded
+1989 : excluded
+1990 : excluded
+1991 : excluded
+1992 : excluded
+1993 : excluded
+1994 : excluded
+1995 : excluded
+1996 : excluded
+1997 : excluded
+1998 : excluded
+1999 : excluded
+2000 : excluded
+2037 : excluded
+2038 : excluded
+2039 : excluded
+2040 : excluded
+2041 : excluded
+2042 : excluded
+2043 : excluded
+2044 : excluded
+2045 : excluded
+2047 : excluded
+2048 : excluded
+2049 : excluded
+2050 : excluded
+2051 : excluded
+2052 : excluded
+2053 : excluded
+2054 : excluded
+2055 : excluded
+2101 : excluded
+2102 : excluded
+2103 : excluded
+2104 : excluded
+2105 : excluded
+2106 : excluded
+2107 : excluded
+2240 : excluded
+2241 : excluded
+2242 : excluded
+2248 : excluded
+2249 : excluded
+2250 : excluded
+2251 : excluded
+2252 : excluded
+2258 : excluded
+2259 : excluded
+2260 : excluded
+2261 : excluded
+2266 : excluded
+2267 : excluded
+2272 : excluded
+2276 : excluded
+2277 : excluded
+ Iteration terminated: Min. rel. RMS decrease.
+ CPU time:  0d/  0h/  4m/  6s/ 312ms
