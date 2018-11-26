@@ -1,5 +1,39 @@
 # CRTomo - Complex Resistivity Tomography
 
+[General description]
+
+[a few nice inversion results]
+
+[list of features]
+
+[link to documentation]
+
+[link to crtomo_tools]
+
+## Scope
+
+CRTomo reached a mature state and at this point new features are only added
+sporadically. If you are looking for a well-tested 2D/2.5D complex resistivity
+inversion code, CRTomo could be something for you. If you are new to electrical
+inversion and are looking for a general purpose inversion code/framework, have
+a look at PyGimli (www.pygimli.org) and its associated electrical inversion
+framework BERT (https://gitlab.com/resistivity-net/bert).
+
+## Getting help
+
+We appreciate any suggestions, improvements, and bug reports via the github
+interfaces (issues, merge requests). Due to time constraints in the in general
+we cannot provide detailed usage help. However, if you have interesting
+research applications and would like to use CRTomo, drop us a line and lets see
+what we can do.
+
+For technical matters please contact Maximilian Weigand
+(mweigand@geo.uni-bonn.de).
+
+For research proposals/larger collaborations, please contact Prof. A. Kemna
+(kemna@geo.uni-bonn.de).
+
+
 ## Cite as
 
 For scientific research we would ask you to attribute usage using the following
@@ -11,6 +45,11 @@ citation:
 
 For technical documentation please cite either the full git commit hash, or (if
 available) a specific release with its DOI.
+
+## License
+
+CRTomo and its components, if not otherwise stated, is distributed under the
+MIT licence. Please refer to the file **COPYING** for further information.
 
 ## Installation
 
