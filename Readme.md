@@ -1,18 +1,33 @@
 # CRTomo - Complex Resistivity Tomography
 
-[General description]
-
 [a few nice inversion results]
 
-[list of features]
+CRTomo is a finite-element forward (CRMod) and inversion (CRTomo) code for
+complex electrical impedance data, written in Fortran. The code has been in
+development since the early 1990s, and was used in numerous scientific
+publications. Please refer to the section **scope** to assess whether you want
+to use the code or not.
 
-[link to documentation]
+Main features:
 
-[link to crtomo_tools]
+* supports true 2D and 2.5D (constant y-resistivity distribution) forward and
+  inverse modeling
+* supports quadratic and triangular meshes with topography
+* support modeling/inversion of the complex resistance, i.e. magnitude and
+  phase values
+* support for various regularization schemes (smooth, anisotropic in x/z
+  directions, MGS)
+* works on Windows and Linux
+
+At the moment we do not publish binaries. You have to compile the code by
+yourself to use it.
+
+A companion project provides a work-in-progress python interface for the code
+(https://github.com/geophysics-ubonn/crtomo_tools).
 
 ## Scope
 
-CRTomo reached a mature state and at this point new features are only added
+CRTomo has reached a mature state and at this point new features are only added
 sporadically. If you are looking for a well-tested 2D/2.5D complex resistivity
 inversion code, CRTomo could be something for you. If you are new to electrical
 inversion and are looking for a general purpose inversion code/framework, have
@@ -49,7 +64,7 @@ available) a specific release with its DOI.
 ## License
 
 CRTomo and its components, if not otherwise stated, is distributed under the
-MIT licence. Please refer to the file **COPYING** for further information.
+MIT license. Please refer to the file **COPYING** for further information.
 
 ## Installation
 
