@@ -2,8 +2,6 @@
 
 <img src="frontcover/front_inversion1.jpg" />
 
-[a few nice inversion results]
-
 CRTomo is a finite-element forward (CRMod) and inversion (CRTomo) code for
 complex electrical impedance data, written in Fortran. The code has been in
 development since the early 1990s, and was used in numerous scientific
@@ -58,7 +56,7 @@ we cannot provide detailed usage help. However, if you have interesting
 research applications and would like to use CRTomo, drop us a line and lets see
 what we can do.
 
-For technical matters please contact Maximilian Weigand
+In technical matters please contact Maximilian Weigand
 (mweigand@geo.uni-bonn.de).
 
 For research proposals/larger collaborations, please contact Prof. A. Kemna
@@ -84,7 +82,10 @@ MIT license. Please refer to the file **COPYING** for further information.
 
 ## Installation
 
-If you are working with a git repository, run
+For detailed installation instructions, please refer to:
+https://geophysics-ubonn.github.io/crtomo_docs_all/crtomo_doc/misc/installation.html
+
+If you are working under Linux with a git repository, run
 
 	./autogen.sh
 
