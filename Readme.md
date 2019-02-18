@@ -5,9 +5,11 @@
 CRTomo is a finite-element forward (CRMod) and inversion (CRTomo) code for
 complex electrical impedance data, written in Fortran. The code was originally
 developed by Prof. A. Kemna (kemna@geo.uni-bonn.de), and has been extended in
-various scientific projects. Please refer to the section **scope** to assess
-whether you want to use the code or not. The code is distributed under the
-**MIT** open-source licence (see section below).
+various scientific projects (see **AUTHORS** file for a complete list of
+contributors -- the git history does not reflect the true contribution
+history!). Please refer to the section **scope** to assess whether you want to
+use the code or not. The code is distributed under the **MIT** open-source
+licence (see section below).
 
 Main features:
 
