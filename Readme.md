@@ -3,17 +3,18 @@
 <img src="frontcover/front_inversion1.jpg" />
 
 CRTomo is a finite-element forward (CRMod) and inversion (CRTomo) code for
-complex electrical impedance data, written in Fortran. The code has been in
-development since the early 1990s, and was used in numerous scientific
-publications. Please refer to the section **scope** to assess whether you want
-to use the code or not.
+complex electrical impedance data, written in Fortran. The code was originally
+developed by Prof. A. Kemna (kemna@geo.uni-bonn.de), and has been extended in
+various scientific projects. Please refer to the section **scope** to assess
+whether you want to use the code or not. The code is distributed under the
+**MIT** open-source licence (see section below).
 
 Main features:
 
-* supports true 2D and 2.5D (constant y-resistivity distribution) forward and
+* support for 2D and 2.5D (constant y-resistivity distribution) forward and
   inverse modeling
-* supports quadratic and triangular meshes with topography
-* support modeling/inversion of the complex resistance, i.e. magnitude and
+* support for quadratic and triangular meshes with topography
+* support for modeling/inversion of the complex impedance, i.e. magnitude and
   phase values
 * support for various regularization schemes (smooth, anisotropic in x/z
   directions, MGS)
