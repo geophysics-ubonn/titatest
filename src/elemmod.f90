@@ -10,7 +10,7 @@
 !! grid statistics
 !> - add doxy style for comments
 !> - add describtion and translation
-!> 
+!>
 !> @author Andreas Kemna, Roland Martin
 !> @date 11/24/1993, last change 09/2013
 MODULE elemmod
@@ -148,4 +148,14 @@ MODULE elemmod
 
     ! number of interfaces to decouple (i.e., number of lines in decouplings.dat)
     INTEGER (KIND = 4) ::  decanz
+
+    ! number of electrode capacitances
+    INTEGER (KIND = 4) :: nr_elec_capacitances;
+
+    ! electrode_capacitances.dat exists?
+    LOGICAL :: elec_caps_file_exists;
+
+    ! electrode capacitances
+    REAL(KIND(0D0)), DIMENSION(:),ALLOCATABLE,PUBLIC :: electrode_capacitances;
+
 END MODULE elemmod
