@@ -663,9 +663,27 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
     ELSE
         decanz = 0
     END IF
+    !!! decoupling end
 
+    !!! MW: electrode capacitances
+    INQUIRE(FILE=TRIM("electrode_capacitances.dat"), EXIST=elec_caps_file_exists)
+    IF (elec_caps_file_exists) THEN
+        WRITE(*,*) "Found electrode capacitances file"
+        OPEN(kanal, file=TRIM('electrode_capacitances.dat'), status='old')
+        READ(kanal,*) nr_elec_capacitances
+        WRITE(*,*) "number of electrode capacitances: ", nr_elec_capacitances
+        ALLOCATE (electrode_capacitances(nr_elec_capacitances), stat=errnr)
+        DO j=1,nr_elec_capacitances
+            READ(kanal, *) electrode_capacitances(j)
+            WRITE(*,*) "Capacitance: ", j, electrode_capacitances(j)
+        END DO
+        CLOSE(kanal)
+    ELSE
+        nr_elec_capacitances = 0
+    END IF
+    stop -1
+    !!! electrode capacitances end
 
-  !!! decoupling end
   IF (ltri/=0) THEN
      manz = elanz           ! wichtig an dieser stelle..
      lvario = lvario.OR.lsto
