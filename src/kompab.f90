@@ -137,6 +137,30 @@ subroutine kompab(nelec,ki,my_a,my_b)
         END do
     end do
 
+    ! electrode capacitances: start
+    write (*,*) ''
+    write (*,*) 'Electrode capacitances'
+    write (*,*) eanz
+    write (*,*) nr_elec_capacitances
+    write (*,*) 'sanz', sanz, mb
+    if (nr_elec_capacitances.gt.0) then
+        write(*,*) 'Applying electrode capacitances'
+        do i=1,eanz
+            im = j*mb + imin
+            write (*,*) 'electrode node', i, snr(enr(i))
+            ! see Schwartz, eq. 3.3 (page 142)
+            ! compute index of diagonal element (i, i) in my_a
+            write(*, *) 'index', (mb * sanz) + i
+            my_a((mb * sanz) + i)  = my_a((mb * sanz) + i) + electrode_capacitances(i)
+            !
+        end do
+    end if
+    ! get electrode nodes
+
+    stop -1
+    ! electrode capacitances: end
+
+
     !     Ggf. Konstantenvektor belegen
     if (.not.lsr) my_b(enr(nelec)) = dcmplx(-1d0)
 
