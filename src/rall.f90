@@ -1,9 +1,9 @@
 !> \file rall.f90
-!> \brief Read all parameters for the inversion. 
+!> \brief Read all parameters for the inversion.
 !> \details The file formats are as follows (comments after the vertical bar):
 !>      - grid file (delem):
-!>          \verbatim 
-!>      1209           3          49  | nr of nodes, nr of element types, bandwidth of FE matrix) 
+!>          \verbatim
+!>      1209           3          49  | nr of nodes, nr of element types, bandwidth of FE matrix)
 !>         8        1140           4  | element type description, nr of elements, nr of nodes per element:)
 !>        12          30           2  | ... element 5: triangles, 8: quadrilaterals (e.g., rectangles!))
 !>        11         106           2  | ...        11: mixed boundary, 12: von Neumann boundary )
@@ -31,7 +31,7 @@
 !>      - measurement file (dstrom):
 !>          \verbatim
 !>          812                       | nr of measurements
-!>        10002 40003   283.1  0.00   | encoded current electr, encoded volt electr,... 
+!>        10002 40003   283.1  0.00   | encoded current electr, encoded volt electr,...
 !>        10002 50004   61.42  0.00   | recorded voltages and phase.
 !>        10002 60005   6.364  0.00   | encoding: C1*10000+C2 same with P1 P2
 !>          \endverbatim
@@ -139,7 +139,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
     fetxt = 'crtomo.cfg'
     errnr = 3
     !!!$#################DEFAULTS ########################
-    !!!$###  switches 
+    !!!$###  switches
     !!!$     ro        lsr    = .false.
     !!!$     ro        lpol   = .true.
     !!!$     ro        lfphai = .true.
@@ -259,7 +259,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
     !#if defined (__INTEL_COMPILER)
     !!$! check for the intel compiler..
     !#define macro_1  INQUIRE ( DIRECTORY=TRIM(ramd),EXIST= crtf)
-    !#else   
+    !#else
     !!$! other compilers go here
     !!$! here we may put #elif defined (__GFORTRAN__) as well
     !#define macro_1  INQUIRE ( FILE=TRIM(ramd),EXIST= crtf)
@@ -596,8 +596,8 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   lphi0 = BTEST (mswitch,7) ! +128 forcing negative phase
 
-  lsytop = BTEST (mswitch,8) ! +256 disables sy top check of 
-  !     no flow boundary electrodes for enhanced beta calculation (bsytop). 
+  lsytop = BTEST (mswitch,8) ! +256 disables sy top check of
+  !     no flow boundary electrodes for enhanced beta calculation (bsytop).
   !     This is useful for including topographical effects and should be used
 
   lvario = BTEST (mswitch,9) ! +512 calculate variogram
@@ -610,9 +610,9 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
 
   lres = (lres.OR.lcov2)    ! compute mcm2 on top of resolution
   lcov1 = (lres.OR.lcov1)   ! compute resolution by taking mcm1
-!!!$     
+!!!$
   lsens = .TRUE.            ! default immer coverages schreiben..
-!!!$     
+!!!$
   IF (lratio) THEN
      lrho0  = .TRUE.
      lstart = .FALSE.
@@ -681,7 +681,6 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
     ELSE
         nr_elec_capacitances = 0
     END IF
-    stop -1
     !!! electrode capacitances end
 
   IF (ltri/=0) THEN
@@ -773,7 +772,7 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
      PRINT*,'++ Lambda_0(FPI) = ',REAL(lamnull_fpi)
      GOTO 31
 30   lamnull_fpi = 0d0
-     IF (BTEST(llamf,0)) lamnull_fpi = lamfix ! in case of llamf we possibly 
+     IF (BTEST(llamf,0)) lamnull_fpi = lamfix ! in case of llamf we possibly
 !!!$ do not want lam0 search at the beginning of FPI
 31   CLOSE(kanal)
      PRINT*
@@ -901,13 +900,13 @@ SUBROUTINE rall(kanal,delem,delectr,dstrom,drandb,&
         END DO
         CLOSE(kanal)
 
-        ! 
+        !
         j0 = 0
         i  = 0
         10   i  = i+1
         j = j0
         20   j = j+1
-        ! 
+        !
         IF (strnr(i).EQ.ic(j).AND.vnr(i).EQ.ip(j).AND.idum(j).EQ.1) THEN
             !!!$     nur falls jede Messkonfiguration nur einmal!
             !!!$     j0     = j
