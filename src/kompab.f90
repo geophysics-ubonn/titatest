@@ -138,12 +138,12 @@ subroutine kompab(nelec,ki,my_a,my_b)
     end do
 
     ! electrode capacitances: start
-    write (*,*) ''
-    write (*,*) 'Electrode capacitances'
-    write (*,*) eanz
-    write (*,*) nr_elec_capacitances
-    write (*,*) 'sanz', sanz, mb
     if (nr_elec_capacitances.gt.0) then
+        write (*,*) ''
+        write (*,*) 'Electrode capacitances'
+        write (*,*) eanz
+        write (*,*) nr_elec_capacitances
+        write (*,*) 'sanz', sanz, mb
         write(*,*) 'Applying electrode capacitances'
         do i=1,eanz
             im = j*mb + imin
@@ -155,9 +155,6 @@ subroutine kompab(nelec,ki,my_a,my_b)
             !
         end do
     end if
-    ! get electrode nodes
-
-    stop -1
     ! electrode capacitances: end
 
 
