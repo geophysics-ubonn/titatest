@@ -257,11 +257,11 @@ CONTAINS
     OPEN (kanal,file=TRIM(fname),status='replace',err=999)
     errnr = 4
 
-    WRITE (kanal,*)manz
+    WRITE (kanal,*)manz,dig_min,dig_max
     DO i=1,manz
        WRITE (kanal,*)dig(i),LOG10(dig(i))-LOG10(dig_max)
     END DO
-    WRITE (kanal,*)'Max/Min:',dig_max,'/',dig_min
+
     WRITE (*,*)'Max/Min:',dig_max,'/',dig_min
     CLOSE(kanal)
 

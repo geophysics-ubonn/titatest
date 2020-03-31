@@ -86,7 +86,8 @@ SUBROUTINE bbsens(kanal,datei)
     errnr = 1
     OPEN(kanal,file=TRIM(fetxt),status='replace',err=999)
     errnr = 4
-    WRITE(kanal,*,err=1000) manz
+    ! write number of values and maximum sensitivity
+    WRITE(kanal,*,err=1000) manz, csensmax
 
     !!!$     Koordinaten und Sensitivitaetsbetraege schreiben
     !!!$     (logarithmierter (Basis 10) normierter Betrag)
@@ -94,9 +95,6 @@ SUBROUTINE bbsens(kanal,datei)
         WRITE (kanal,*,err=1000)espx(i),espy(i),LOG10(csens(i)/csensmax)
     END DO
 
-    !!!$     Maximale Sensitivitaet schreiben
-    WRITE (kanal,*,err=1000)'Max:',csensmax
-    !!!$     'datei' schliessen
     CLOSE (kanal)
 
     DEALLOCATE (csens)
