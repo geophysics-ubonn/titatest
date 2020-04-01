@@ -1,5 +1,5 @@
-! Copyright © 1990-2017 Andreas Kemna <kemna@geo.uni-bonn.de>
-! Copyright © 2008-2017 CRTomo development team (see AUTHORS file)
+! Copyright © 1990-2020 Andreas Kemna <kemna@geo.uni-bonn.de>
+! Copyright © 2008-2020 CRTomo development team (see AUTHORS file)
 !
 !
 ! Permission is hereby granted, free of charge, to any person obtaining a copy of
