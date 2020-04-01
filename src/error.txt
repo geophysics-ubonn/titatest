@@ -325,10 +325,11 @@
 109 Min. stepsize reached
 109 Execution time:
 109
-110 Mixed boundary condition not  
+110 Mixed boundary condition not
 110 yet implemented for 2D case
 110
-111 Mixed boundary condition  
+111 Mixed boundary condition
 111 border to element connection
 111 failed (rnr)
 112 Stiffness matrix not positive definite
+113 Each electrode requires a capacitance

@@ -93,8 +93,8 @@ program fem
 
     PRINT*,'######### CMod ############'
     WRITE(*,"(a)") 'Licence:', &
-    'Copyright © 1990-2017 Andreas Kemna <kemna@geo.uni-bonn.de>', &
-    'Copyright © 2008-2017 CRTomo development team (see AUTHORS file)',&
+    'Copyright © 1990-2020 Andreas Kemna <kemna@geo.uni-bonn.de>', &
+    'Copyright © 2008-2020 CRTomo development team (see AUTHORS file)',&
     'Permission is hereby granted, free of charge, to any person obtaining a copy of',&
     'this software and associated documentation files (the “Software”), to deal in',&
     'the Software without restriction, including without limitation the rights to',&
@@ -183,6 +183,7 @@ program fem
   fetxt = 'reading mswitch'
   read(12,'(I4)',end=101,err=100) mswitch
 
+
   GOTO 101
 
 100 BACKSPACE (12)
@@ -213,6 +214,29 @@ program fem
   call rdatm(kanal,dstrom)
   if (errnr.ne.0) goto 999
 
+    !!! MW: electrode capacitances
+    INQUIRE(FILE=TRIM("electrode_capacitances.dat"), EXIST=elec_caps_file_exists)
+    IF (elec_caps_file_exists) THEN
+        WRITE(*,*) "Found electrode capacitances file"
+        OPEN(kanal, file=TRIM('electrode_capacitances.dat'), status='old')
+        READ(kanal,*) nr_elec_capacitances
+        WRITE(*,*) "number of electrode capacitances: ", nr_elec_capacitances
+        ALLOCATE (electrode_capacitances(nr_elec_capacitances), stat=errnr)
+        DO j=1,nr_elec_capacitances
+            READ(kanal, *) electrode_capacitances(j)
+            WRITE(*,*) "Capacitance: ", j, electrode_capacitances(j)
+        END DO
+        CLOSE(kanal)
+        IF (nr_elec_capacitances /= eanz) THEN
+            fetxt = 'Number of capacitances does not match number of electrodes'
+            errnr = 113
+            GOTO 999
+        END IF
+    ELSE
+        write (*,*) "No electrode cap file"
+        nr_elec_capacitances = 0
+    END IF
+    !!! electrode capacitances end
 
   if (swrtr.eq.0) then
      lana = .FALSE.
@@ -490,7 +514,7 @@ program fem
   errflag = 2
   CALL get_error(ftext,errnr,errflag,fetxt)
   write(9,'(a80,i3,i1)') fetxt,errnr,errflag
-  write(9,*)ftext
+  write(9,*) ftext
   close(9)
   stop '-1'
 
