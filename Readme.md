@@ -126,7 +126,8 @@ The command
 
 creates a Debian package in the "package/" subdirectory.
 
-The version number can be set in **configure.ac**
+The version number can be set in **configure.ac**, and a new entry in
+debian/changelog must be created.
 
 ## Limiting CPU usage
 

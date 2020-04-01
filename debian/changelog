@@ -1,3 +1,7 @@
+crtomomod (1.8.0) stable; urgency=medium
+
+  * adjust some output files
+
 crtomomod (1.7.1) stable; urgency=medium
 
   * make output of first line in eps.ctr more consistent for DC mode
