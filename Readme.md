@@ -123,6 +123,8 @@ The command
 
 creates a Debian package in the "package/" subdirectory.
 
+The version number can be set in **configure.ac**
+
 ## Limiting CPU usage
 
 CRTomoMod is compiled using openmp. The number of CPU cores that are
