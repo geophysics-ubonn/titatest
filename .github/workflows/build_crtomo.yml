@@ -16,7 +16,7 @@ jobs:
       run: ls
 
     - name: Install dependencies
-      run: sudo apt -y update && sudo apt install autotools-dev gfortran dpkg-dev automake autoconf debhelper
+      run: sudo apt -y update && sudo apt install autotools-dev gfortran dpkg-dev automake autoconf debhelper quilt
 
     - name: Prepare configuration files
       run: CRT_PREFIX="stable" ./autogen.sh
