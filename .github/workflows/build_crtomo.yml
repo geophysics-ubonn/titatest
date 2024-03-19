@@ -33,37 +33,39 @@ jobs:
             src/CRTomo_stable
             cutmckee/CutMcK_stable
 
-    - name: Build debian package
-      run: ./prep_deb_package.sh
+#     - name: Build debian package
+#       run: ./prep_deb_package.sh
 
-    - name: Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: Debian-Image-with-source-package
-        path: |
-            package/crtomomod_*
+#     - name: Artifacts
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: Debian-Image-with-source-package
+#         path: |
+#             package/crtomomod_*
 
-    - name: Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: Debian-Image
-        path: |
-            package/crtomomod_*.deb
+#     - name: Artifacts
+#       uses: actions/upload-artifact@v4
+#       with:
+#         name: Debian-Image
+#         path: |
+#             package/crtomomod_*.deb
 
   do_release:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       - build_crtomo
     steps:
       - name: Clone workflow repository
         uses: actions/checkout@v3
       - name: Download image artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts/
+      - name: Display structure of downloaded files
+        run: ls -R artifacts/
       - name: Make release
         uses: softprops/action-gh-release@v0.1.15
         with:
           draft: true
           files: |
-            artifacts/Debian-Image/*.deb
+            artifacts/CRTomo_binaries/CRMod_stable
