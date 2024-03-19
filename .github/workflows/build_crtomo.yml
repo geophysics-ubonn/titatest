@@ -33,23 +33,19 @@ jobs:
             src/CRTomo_stable
             cutmckee/CutMcK_stable
 
-    - name: ls1
-      run: |
-          ls src/
-          ls cutmckee/
-
     - name: Build debian package
       run: ./prep_deb_package.sh
-
-    - name: ls1
-      run: |
-          ls src/
-          ls cutmckee/
-          ls package/
 
     - name: Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: Debian-Images
+        name: Debian-Image-with-source-package
         path: |
             package/crtomomod_*
+
+    - name: Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Debian-Image
+        path: |
+            package/crtomomod_*.deb
