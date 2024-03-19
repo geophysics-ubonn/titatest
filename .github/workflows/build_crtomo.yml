@@ -19,7 +19,7 @@ jobs:
       run: sudo apt -y update && sudo apt install autotools-dev gfortran dpkg-dev automake autoconf
 
     - name: Prepare configuration files
-      run: PREFIX="stable" ./autogen.sh
+      run: CRT_PREFIX="stable" ./autogen.sh
 
     - name: Run configure
       run: ./configure
@@ -27,8 +27,14 @@ jobs:
     - name: Build
       run: make -j 2
 
+    - name: Build debian package
+      run: ./prep_deb_package.sh
+
     - name: ls1
-      run: ls src/
+      run: |
+          ls src/
+          ls cutmckee/
+          ls package/
 
     - name: Artifacts
       uses: actions/upload-artifact@v4
