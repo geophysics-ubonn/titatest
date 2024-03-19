@@ -71,4 +71,5 @@ jobs:
             artifacts/CRTomo_binaries/src/CRMod_stable
             artifacts/CRTomo_binaries/src/CRTomo_stable
             artifacts/CRTomo_binaries/cutmckee/CutMcK_stable
-            artifacts/Debian-Image/package/*.deb
+            artifacts/Debian-Image-with-source-package/*
+
