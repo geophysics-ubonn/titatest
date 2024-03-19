@@ -16,7 +16,7 @@ jobs:
       run: ls
 
     - name: Install dependencies
-      run: sudo apt -y update && sudo apt install autotools gfortran
+      run: sudo apt -y update && sudo apt install autotools-dev gfortran dpkg-dev automake
 
     - name: Prepare configuration files
       run: ./autogen.sh
