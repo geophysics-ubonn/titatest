@@ -1,0 +1,34 @@
+name: Build Debian image using github actions
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_crtomo:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: ls1
+      run: ls
+
+    - name: Install dependencies
+      run: sudo apt -y update && sudo apt install autotools gfortran
+
+    - name: Prepare configuration files:
+      run: ./autogen.sh
+
+    - name: Run configure
+      run: ./configure
+
+    - name: Build
+      run: make -j 2
+
+    # - name: Artifacts
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: rootfs_archive_partition_${{matrix.partition}}
+    #     path: pinenote_arm64_debian_bookworm_partition_${{matrix.partition}}.tar.gz
