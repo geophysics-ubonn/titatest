@@ -19,7 +19,7 @@ jobs:
       run: sudo apt -y update && sudo apt install autotools-dev gfortran dpkg-dev automake autoconf
 
     - name: Prepare configuration files
-      run: ./autogen.sh
+      run: PREFIX="stable" ./autogen.sh
 
     - name: Run configure
       run: ./configure
@@ -27,8 +27,13 @@ jobs:
     - name: Build
       run: make -j 2
 
-    # - name: Artifacts
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: rootfs_archive_partition_${{matrix.partition}}
-    #     path: pinenote_arm64_debian_bookworm_partition_${{matrix.partition}}.tar.gz
+    - name: ls1
+      run: ls src/
+
+    - name: Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: CRTomo_binaries
+        path: |
+            src/CRMod_stable
+            src/CRTomo_stable
